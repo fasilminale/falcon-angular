@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# Author: Carlo Vedovato, Doug Hoke, Madhu Chary
+
+# regex to validate in commit msg
+commit_regex='[[aA-zZ]{1,}-\d+]'
+error_msg="Aborting commit. Your commit message is missing a JIRA Issue number such as [ABC-11]' "
+
+if ! grep -iqE "$commit_regex" "$1"; then
+    echo "$error_msg" >&2
+    exit 1
+fi
