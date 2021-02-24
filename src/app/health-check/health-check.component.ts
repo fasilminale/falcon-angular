@@ -22,6 +22,7 @@ export class HealthCheckComponent implements OnInit {
       .httpGet(`${environment.baseServiceUrl}/v1/health`)
       .subscribe(
         (result: HttpResponse<never>) => {
+          console.log(result);
           // non-error responses route here
           this.status = 'PASS';
         },
