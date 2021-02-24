@@ -1,17 +1,14 @@
-# Project Title
-
-One Paragraph of project description goes here
+# Elm Falcon UI
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.0.
 
 ## Getting Started
+This section should only need to be followed just after your first time cloning.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+### Installing the Angular CLI
+Run `npm install -g @angular/cli` in the terminal of your choice to install the Angular CLI
 
-### Prerequisites
-
-What things you need to install the software and how to install them
+### Set Up Git Hooks
 ```
-#### FIRST TIME ONLY ####
-
 After cloning the repo locally, run the cah-repo-init to initialize the git validations (hooks):
 
  *  Window: run the cah-repo-init.bat 
@@ -21,66 +18,14 @@ After cloning the repo locally, run the cah-repo-init to initialize the git vali
 Remove Everything above this line after the initialization
 ```
 
-### Installing
+## Development server
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-A step by step series of examples that tell you how to get a development env running
+## Build
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-Say what the step will be
+## Running unit tests
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Willie Cardinal** - *Initial work* - 
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-
-## Acknowledgments
-
-* Hat tip to https://gist.github.com/PurpleBooth
-
+## Running end-to-end tests
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
