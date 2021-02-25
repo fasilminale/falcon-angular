@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { HealthCheckComponent } from './health-check/health-check.component';
 import {WebServices} from './services/web-services';
 import {HttpClientModule} from '@angular/common/http';
+import {ButtonModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,10 @@ import {HttpClientModule} from '@angular/common/http';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    NavigationModule,
+    ButtonModule,
+    ProgressModule
   ],
   providers: [WebServices],
   bootstrap: [AppComponent]

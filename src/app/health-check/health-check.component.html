@@ -1,5 +1,6 @@
-<input
-  type='button'
-  value="API Health Check: {{status}}"
+<cardinal-button
+  buttonType="outlined"
+  id="feedback-button"
+  buttonText="API Health Check: {{status}}"
   (click)="callHealthCheck()"
-/>
+></cardinal-button>
