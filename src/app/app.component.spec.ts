@@ -26,10 +26,12 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('elm-falcon-ui');
   });
 
-  it('should contain health check', () => {
+  it(`should not be loading after init`, () => {
+    // falcon does not currently support loading spinners
     const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('#healthCheck')).toBeTruthy();
+    const app = fixture.componentInstance;
+    app.ngOnInit();
+    expect(app.dataLoading).toEqual(false);
   });
+
 });

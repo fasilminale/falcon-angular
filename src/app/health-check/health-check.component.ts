@@ -19,7 +19,7 @@ export class HealthCheckComponent implements OnInit {
 
   callHealthCheck(): void {
     this.webService
-      .httpGet(`${environment.baseServiceUrl}/v1/health`)
+      .httpGet<HttpResponse<never>>(`${environment.baseServiceUrl}/v1/health`)
       .subscribe(
         (result: HttpResponse<never>) => {
           console.log(result);

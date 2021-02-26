@@ -13,8 +13,8 @@ export class WebServices {
     return this.http.post(url, body);
   }
 
-  public httpGet(url: string): Observable<any> {
-    return this.http.get(url);
+  public httpGet<T>(url: string): Observable<T> {
+    return this.http.get<T>(url);
   }
 
   public httpPut(url: string, body: any): Observable<any> {
