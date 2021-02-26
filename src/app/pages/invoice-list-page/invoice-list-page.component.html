@@ -1,1 +1,13 @@
-<p>invoice-list-page works!</p>
+<cardinal-card>
+  <cardinal-section-header
+    [sectionTitle]="'Invoices'"
+  ></cardinal-section-header>
+  <cardinal-data-table
+    [data]="invoices"
+    [headers]="headers"
+    (pageChangedEvent)="pageChanged($event)"
+    (rowClick)="rowClicked($event)"
+    [totalResults]="paginationModel.total"
+    [pageSizes]="paginationModel.pageSizes"
+  ></cardinal-data-table>
+</cardinal-card>
