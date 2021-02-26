@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseServiceUrl: '/chile-api'
+  baseServiceUrl: '/falcon-api'
 };
