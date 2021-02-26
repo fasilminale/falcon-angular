@@ -46,14 +46,6 @@ describe('InvoiceListPageComponent', () => {
     expect(component.paginationModel).toEqual({total: 1, pageSizes: [1]});
   });
 
-  it('should handle bad invoice data from api', () => {
-    component.loadInvoices();
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)
-      .flush([{notAtInvoice: true}]);
-    expect(component.invoices).toEqual([]);
-    expect(component.paginationModel).toEqual({total: 0, pageSizes: [0]});
-  });
-
   it('should handle failing invoices call', () => {
     component.loadInvoices();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)

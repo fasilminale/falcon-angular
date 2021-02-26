@@ -34,7 +34,7 @@ export class InvoiceListPageComponent implements OnInit {
       .httpGet<Array<Invoice>>(`${environment.baseServiceUrl}/v1/invoices`)
       .subscribe(
         (invoices: Array<Invoice>) => {
-          this.invoices = invoices.filter(isInvoice);
+          this.invoices = invoices;
         },
         (error: HttpErrorResponse) => {
           this.invoices = [];
