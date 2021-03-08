@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {WebServices} from '../services/web-services';
-import {environment} from '../../environments/environment';
+import {WebServices} from '../../services/web-services';
+import {environment} from '../../../environments/environment';
 import {HttpErrorResponse, HttpResponse} from '@angular/common/http';
 
 @Component({

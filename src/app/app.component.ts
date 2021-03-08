@@ -8,7 +8,10 @@ import {Component, OnInit} from '@angular/core';
 export class AppComponent implements OnInit {
   title = 'elm-falcon-ui';
   dataLoading = true;
-  pageTabs = [];
+  pageTabs = [
+    {label: 'Create Invoice', path: '/invoice/create'},
+    {label: 'Invoice List', path: '/invoices'}
+  ];
 
   public ngOnInit(): void {
     this.dataLoading = false;

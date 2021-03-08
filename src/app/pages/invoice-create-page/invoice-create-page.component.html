@@ -1,0 +1,104 @@
+<div id="container" class="row justify-content-start">
+  <form [formGroup]="formGroup"
+        (ngSubmit)="onSubmit()"
+        class="col-12 col-md-8 col-xl-6">
+
+    <div class="row no-gutter">
+
+      <!-- WORK TYPE -->
+      <div class="col-12">
+        <label for="work-type-input" class="form-label fieldLabel1">
+          Work Type
+        </label>
+        <ng-select id="work-type-input"
+                   formControlName="workType"
+                   [items]="['type 1', 'type 2']"
+                   [searchable]="true"
+                   placeholder="Select One....">
+        </ng-select>
+      </div>
+
+      <!-- COMPANY CODE -->
+      <div class="col-12">
+        <label for="company-code-input" class="form-label fieldLabel1">
+          Company Code
+        </label>
+        <input type="text"
+               id="company-code-input"
+               formControlName="companyCode"
+               class="form-control"
+        />
+      </div>
+
+      <!-- ERP TYPE -->
+      <div class="col-12">
+        <label for="erp-type-input" class="form-label fieldLabel1">
+          ERP Type
+        </label>
+        <ng-select id="erp-type-input"
+                   formControlName="erpType"
+                   [items]="['Pharma Corp (test)', 'TPM (test)']"
+                   [searchable]="true"
+                   placeholder="Select One....">
+        </ng-select>
+      </div>
+
+      <!-- VENDOR NUMBER -->
+      <div class="col-6">
+        <label for="vendor-number-input" class="form-label fieldLabel1">
+          Vendor Number
+        </label>
+        <input type="text"
+               id="vendor-number-input"
+               class="form-control"
+               formControlName="vendorNumber"
+        />
+      </div>
+
+      <!-- EXTERNAL INVOICE NUMBER -->
+      <div class="col-6">
+        <label for="external-invoice-number-input" class="form-label fieldLabel1">
+          External Invoice Number
+        </label>
+        <input type="text"
+               id="external-invoice-number-input"
+               class="form-control"
+               formControlName="externalInvoiceNumber"
+        />
+      </div>
+
+      <!-- EXTERNAL INVOICE DATE -->
+      <app-fal-date-input class="col-5"
+                          label="External Invoice Date"
+                          id="external-invoice-date-input"
+                          formControlName="externalInvoiceDate">
+      </app-fal-date-input>
+
+      <!-- INVOICE AMOUNT -->
+      <div class="col-4">
+        <label for="invoice-amount-input" class="form-label fieldLabel1">
+          Invoice Amount
+        </label>
+        <input type="text"
+               id="invoice-amount-input"
+               class="form-control"
+               formControlName="invoiceAmount"
+        />
+      </div>
+
+      <!-- CURRENCY -->
+      <div class="col-3">
+        <label for="currency-input" class="form-label fieldLabel1">
+          Currency
+        </label>
+        <ng-select id="currency-input"
+                   formControlName="currency"
+                   [items]="['CAD (test)', 'USD (test)']"
+                   [searchable]="true"
+                   placeholder="Select One....">
+        </ng-select>
+      </div>
+
+    </div>
+  </form>
+</div>
