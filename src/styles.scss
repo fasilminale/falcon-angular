@@ -1,8 +1,5 @@
 @import "~@elm/elm-styleguide-ui/src/styles/styles";
 @import "~@ng-select/ng-select/themes/default.theme.css";
-@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "~bootstrap/scss/bootstrap";
 
-#container {
-  padding-left: 4em;
-  padding-right: 4em;
-}
+
