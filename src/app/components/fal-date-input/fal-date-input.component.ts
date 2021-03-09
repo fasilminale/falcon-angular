@@ -43,15 +43,18 @@ export class FalDateInputComponent implements OnInit, ControlValueAccessor {
   value = '';
   onChange: (newValue: string) => void = _ => {
     // by default, do nothing
-  };
+  }
   onTouched: (currentValue: string) => void = _ => {
     // by default do nothing
-  };
+  }
 
   constructor() {
   }
 
   ngOnInit(): void {
+    if (!this.id || this.id === '') {
+      throw new TypeError('component requires id attribute to be filled');
+    }
   }
 
   writeValue(newValue: string): void {
