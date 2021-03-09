@@ -22,7 +22,6 @@
     "@angular/platform-browser-dynamic": "~11.2.0",
     "@angular/router": "~11.2.0",
     "@elm/elm-styleguide-ui": "^1.0.14",
-    "@ng-select/ng-select": "^6.1.0",
     "karma-typescript": "^5.4.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",

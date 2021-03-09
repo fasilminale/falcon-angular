@@ -1,6 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { InvoiceCreatePageComponent } from './invoice-create-page.component';
+import {InvoiceCreatePageComponent} from './invoice-create-page.component';
+import {WebServices} from '../../services/web-services';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('InvoiceCreatePageComponent', () => {
   let component: InvoiceCreatePageComponent;
@@ -8,9 +10,11 @@ describe('InvoiceCreatePageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InvoiceCreatePageComponent ]
+      imports: [HttpClientTestingModule],
+      declarations: [InvoiceCreatePageComponent],
+      providers: [WebServices]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

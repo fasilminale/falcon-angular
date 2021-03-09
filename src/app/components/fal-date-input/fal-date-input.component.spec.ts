@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FalDateInputComponent } from './fal-date-input.component';
+import {FalDateInputComponent} from './fal-date-input.component';
+import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 
 describe('FalDateInputComponent', () => {
   let component: FalDateInputComponent;
@@ -8,14 +9,16 @@ describe('FalDateInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FalDateInputComponent ]
+      imports: [NgbDatepickerModule],
+      declarations: [FalDateInputComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FalDateInputComponent);
     component = fixture.componentInstance;
+    component.id = 'test-id';
     fixture.detectChanges();
   });
 
