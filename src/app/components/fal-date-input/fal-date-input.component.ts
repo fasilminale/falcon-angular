@@ -47,6 +47,7 @@ export class FalDateInputComponent implements OnInit, ControlValueAccessor {
   set value(val: string) {
     this.val = val;
     this.onChange(this.val);
+    this.onTouched();
   }
 
   onChange: (newValue: string) => void = _ => {
