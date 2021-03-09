@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {InvoiceListPageComponent} from './invoice-list-page.component';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -7,18 +7,34 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {environment} from '../../../environments/environment';
 import {EXAMPLE_INVOICE} from '../../models/invoice-model';
 import {PageEvent} from '@angular/material/paginator';
+import {LoadingService} from '../../services/loading-service';
 
 describe('InvoiceListPageComponent', () => {
   let component: InvoiceListPageComponent;
   let fixture: ComponentFixture<InvoiceListPageComponent>;
+  let webservice: WebServices;
   let http: HttpTestingController;
+  let loadingService: LoadingService;
+
+  const pageEvent = new PageEvent();
+  pageEvent.pageSize = 30;
+  pageEvent.pageIndex = 1;
+
+  const invoiceData = {
+    total: 1,
+    data: [{
+      externalInvoiceNumber: '1'
+    }]
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       declarations: [InvoiceListPageComponent],
-      providers: [WebServices]
+      providers: [WebServices, LoadingService]
     }).compileComponents();
+    webservice = TestBed.inject(WebServices);
+    loadingService = TestBed.inject(LoadingService);
     http = TestBed.inject(HttpTestingController);
   });
 
@@ -26,8 +42,7 @@ describe('InvoiceListPageComponent', () => {
     fixture = TestBed.createComponent(InvoiceListPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    // consume the initial http call so tests don't have to catch it
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush([]);
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
   });
 
   afterEach(() => {
@@ -38,23 +53,28 @@ describe('InvoiceListPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should init with invoices from api', () => {
-    component.loadInvoices();
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)
-      .flush([EXAMPLE_INVOICE]);
-    expect(component.invoices).toEqual([EXAMPLE_INVOICE]);
-    expect(component.paginationModel).toEqual({total: 1, pageSizes: [1]});
-  });
+  it('should get table data',  fakeAsync(() => {
+    expect(component.invoices[0].externalInvoiceNumber).toEqual('1');
+  }));
 
-  it('should handle failing invoices call', () => {
-    component.loadInvoices();
+  it('should Page Change', fakeAsync( () => {
+    spyOn(component, 'pageChanged').and.callThrough();
+    spyOn(component, 'getTableData').and.callThrough();
+    component.pageChanged(pageEvent);
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
+    tick(150);
+    fixture.detectChanges();
+    expect(component.pageChanged).toHaveBeenCalled();
+    expect(component.getTableData).toHaveBeenCalled();
+    expect(component.paginationModel.pageIndex).toEqual(2);
+    expect(component.paginationModel.numberPerPage).toEqual(30);
+  }));
+
+  it('should init with invoices from api', () => {
+    component.getTableData(pageEvent.pageSize);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)
-      .error(new ErrorEvent('test error event'), {
-        status: 123,
-        statusText: 'test status text'
-      });
-    expect(component.invoices).toEqual([]);
-    expect(component.paginationModel).toEqual({total: 0, pageSizes: [0]});
+      .flush(invoiceData);
+    expect(component.invoices).toEqual(invoiceData.data);
   });
 
   it('should do nothing on row click', () => {
@@ -62,11 +82,4 @@ describe('InvoiceListPageComponent', () => {
     component.rowClicked(EXAMPLE_INVOICE);
     expect().nothing();
   });
-
-  it('should do nothing on page change', () => {
-    // falcon does not currently support pagination
-    component.pageChanged(new PageEvent());
-    expect().nothing();
-  });
-
 });

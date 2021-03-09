@@ -3,8 +3,8 @@ import {Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
 import {Invoice, INVOICE_FIELDS} from '../../models/invoice-model';
-import {PageEvent} from '@angular/material/paginator';
-import {HttpErrorResponse} from '@angular/common/http';
+import {PaginationModel} from '../../models/PaginationModel';
+import {LoadingService} from '../../services/loading-service';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -12,37 +12,35 @@ import {HttpErrorResponse} from '@angular/common/http';
   styleUrls: ['./invoice-list-page.component.scss']
 })
 export class InvoiceListPageComponent implements OnInit {
-  invoices: Array<Invoice> = [];
+  paginationModel: PaginationModel = new PaginationModel();
   headers = INVOICE_FIELDS;
-  paginationModel = {
-    total: 0,
-    pageSizes: [0]
-  };
+  invoices: Array<any> = [];
 
   constructor(
     private router: Router,
+    private loadingService: LoadingService,
     private webservice: WebServices
   ) {
   }
 
   ngOnInit(): void {
-    this.loadInvoices();
+    this.getTableData(this.paginationModel.numberPerPage);
   }
 
-  loadInvoices(): void {
-    this.webservice
-      .httpGet<Array<Invoice>>(`${environment.baseServiceUrl}/v1/invoices`)
-      .subscribe(
-        (invoices: Array<Invoice>) => {
-          this.invoices = invoices;
-        },
-        (error: HttpErrorResponse) => {
-          this.invoices = [];
-        })
-      .add(() => {
-        this.paginationModel.total = this.invoices.length;
-        this.paginationModel.pageSizes = [this.invoices.length];
+  getTableData(numberPerPage: number): void {
+    this.loadingService.showLoading();
+    this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
+      page: this.paginationModel.pageIndex,
+      numberPerPage
+    }).subscribe((invoiceData: any) => {
+      this.paginationModel.total = invoiceData.total;
+      const invoiceArray: Array<Invoice> = [];
+      invoiceData.data.map((invoice: any) => {
+        invoiceArray.push(invoice);
       });
+      this.invoices = invoiceArray;
+      this.loadingService.hideLoading();
+    });
   }
 
   rowClicked(invoice: Invoice): Promise<boolean> {
@@ -50,7 +48,10 @@ export class InvoiceListPageComponent implements OnInit {
     return Promise.resolve(false);
   }
 
-  pageChanged(page: PageEvent): void {
+  pageChanged(page: any): void {
+    this.paginationModel.pageIndex = page.pageIndex + 1;
+    this.paginationModel.numberPerPage = page.pageSize;
+    this.getTableData(this.paginationModel.numberPerPage);
   }
 
 }

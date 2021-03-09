@@ -1,0 +1,29 @@
+@import "~src/cardinal-colors";
+
+.app {
+  min-height: 100vh;
+  height: 100%;
+  background-color: $bkg-grey;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-body {
+  padding: 36px 24px 16px;
+  flex: 1;
+}
+
+::ng-deep :active {
+  outline: none;
+}
+.cardinal-spinner{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  border-radius: 6px;
+  background-color: $cardinal-white;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.16);
+  padding: 15px;
+}
