@@ -6,6 +6,7 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {HealthCheckComponent} from '../../components/health-check/health-check.component';
 import {environment} from '../../../environments/environment';
 import {HttpResponse} from '@angular/common/http';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 
 describe('InvoiceCreatePageComponent', () => {
   let component: InvoiceCreatePageComponent;
@@ -14,9 +15,9 @@ describe('InvoiceCreatePageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule, MatSnackBarModule],
       declarations: [InvoiceCreatePageComponent],
-      providers: [WebServices]
+      providers: [WebServices, MatSnackBar]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
   });

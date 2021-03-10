@@ -3,6 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {Invoice} from '../../models/invoice-model';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -18,7 +19,8 @@ export class InvoiceCreatePageComponent implements OnInit {
 
   private invoice = {} as Invoice;
 
-  public constructor(private webService: WebServices) {
+  public constructor(private webService: WebServices,
+                     private snackBar: MatSnackBar) {
     const {required} = Validators;
     this.formGroup = new FormGroup({
       workType: new FormControl(this.invoice.workType, [required]),
@@ -33,6 +35,10 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    // default work type as long as there is only one value
+    if (this.workTypeOptions.length === 1) {
+      this.formGroup.controls.workType.setValue(this.workTypeOptions[0]);
+    }
   }
 
   public onSubmit(): void {
@@ -42,8 +48,14 @@ export class InvoiceCreatePageComponent implements OnInit {
     this.webService.httpPost(
       `${environment.baseServiceUrl}/v1/invoice`,
       invoice
-    ).subscribe(_ => {
-    });
+    ).subscribe(
+      _ => this.openSnackBar('Success, invoice created!'),
+      error => this.openSnackBar('Failure, invoice was not created!')
+    );
+  }
+
+  private openSnackBar(message: string): void {
+    this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
 
 }
