@@ -3,6 +3,8 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceCreatePageComponent} from './invoice-create-page.component';
 import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('InvoiceCreatePageComponent', () => {
   let component: InvoiceCreatePageComponent;
@@ -10,9 +12,10 @@ describe('InvoiceCreatePageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule, NoopAnimationsModule],
       declarations: [InvoiceCreatePageComponent],
-      providers: [WebServices]
+      providers: [WebServices],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
       .compileComponents();
   });

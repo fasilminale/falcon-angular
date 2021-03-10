@@ -8,6 +8,8 @@ import {environment} from '../../../environments/environment';
 import {EXAMPLE_INVOICE} from '../../models/invoice-model';
 import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('InvoiceListPageComponent', () => {
   let component: InvoiceListPageComponent;
@@ -29,9 +31,10 @@ describe('InvoiceListPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule],
+      imports: [RouterTestingModule, HttpClientTestingModule, NoopAnimationsModule],
       declarations: [InvoiceListPageComponent],
-      providers: [WebServices, LoadingService]
+      providers: [WebServices, LoadingService],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     }).compileComponents();
     webservice = TestBed.inject(WebServices);
     loadingService = TestBed.inject(LoadingService);

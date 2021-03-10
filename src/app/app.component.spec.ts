@@ -3,19 +3,22 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {AppComponent} from './app.component';
 import {LoadingService} from './services/loading-service';
 import {AppModule} from './app.module';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule, AppModule
+        RouterTestingModule, AppModule, NoopAnimationsModule
       ],
       declarations: [
         AppComponent
       ],
       providers: [
         LoadingService
-      ]
+      ],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     }).compileComponents();
   });
 
