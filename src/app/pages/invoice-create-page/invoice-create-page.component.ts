@@ -28,7 +28,7 @@ export class InvoiceCreatePageComponent implements OnInit {
       erpType: new FormControl(this.invoice.erpType, [required]),
       vendorNumber: new FormControl(this.invoice.vendorNumber, [required]),
       externalInvoiceNumber: new FormControl(this.invoice.externalInvoiceNumber, [required]),
-      externalInvoiceDate: new FormControl(this.invoice.invoiceDate, [required]),
+      invoiceDate: new FormControl(this.invoice.invoiceDate, [required]),
       amountOfInvoice: new FormControl(this.invoice.amountOfInvoice, [required]),
       currency: new FormControl(this.invoice.currency, [required]),
     });
@@ -44,7 +44,6 @@ export class InvoiceCreatePageComponent implements OnInit {
   public onSubmit(): void {
     const invoice = this.formGroup.getRawValue() as Invoice;
     invoice.createdBy = 'Falcon User';
-    console.log(invoice);
     this.webService.httpPost(
       `${environment.baseServiceUrl}/v1/invoice`,
       invoice
