@@ -1,10 +1,11 @@
+<cardinal-section-header
+  [sectionTitle]="'Create Invoice'"
+></cardinal-section-header>
 <div id="container" class="row justify-content-start">
-
-  <h1>Create Invoice</h1>
 
   <form [formGroup]="formGroup"
         (ngSubmit)="onSubmit()"
-        class="col-12 col-md-8 col-xl-6">
+        class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
 
     <div class="row">
 
@@ -15,7 +16,7 @@
         </label>
         <ng-select id="work-type-input"
                    formControlName="workType"
-                   [items]="['type 1', 'type 2']"
+                   [items]="workTypeOptions"
                    [searchable]="true"
                    placeholder="Select One....">
         </ng-select>
@@ -40,7 +41,7 @@
         </label>
         <ng-select id="erp-type-input"
                    formControlName="erpType"
-                   [items]="['Pharma Corp (test)', 'TPM (test)']"
+                   [items]="erpTypeOptions"
                    [searchable]="true"
                    placeholder="Select One....">
         </ng-select>
@@ -71,11 +72,15 @@
       </div>
 
       <!-- EXTERNAL INVOICE DATE -->
-      <app-fal-date-input class="col-12 col-md-5"
-                          label="External Invoice Date"
-                          id="external-invoice-date-input"
-                          formControlName="externalInvoiceDate">
-      </app-fal-date-input>
+      <div class="col-12 col-md-5">
+        <label for="external-invoice-date-input" class="form-label fieldLabel1">
+          External Invoice Date
+        </label>
+        <app-fal-date-input id="external-invoice-date-input"
+                            formControlName="invoiceDate">
+        </app-fal-date-input>
+      </div>
+
 
       <!-- INVOICE AMOUNT -->
       <div class="col-6 col-md-4">
@@ -85,7 +90,7 @@
         <input type="text"
                id="invoice-amount-input"
                class="form-control"
-               formControlName="invoiceAmount"
+               formControlName="amountOfInvoice"
         />
       </div>
 
@@ -96,7 +101,7 @@
         </label>
         <ng-select id="currency-input"
                    formControlName="currency"
-                   [items]="['CAD (test)', 'USD (test)']"
+                   [items]="currencyOptions"
                    [searchable]="true"
                    placeholder="Select One....">
         </ng-select>
@@ -114,8 +119,11 @@
 
         <!-- SUBMIT -->
         <input type="submit"
-               class="form-control btn-primary w-25"
+               class="w-25 btn"
+               [ngClass]="formGroup.valid ? 'btn-primary' : 'btn-outline-secondary'"
                id="submit-button"
+               value="Create"
+               [disabled]="!formGroup.valid"
         />
       </div>
 

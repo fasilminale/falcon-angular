@@ -16,8 +16,7 @@ describe('HealthCheckComponent', () => {
       imports: [HttpClientTestingModule],
       declarations: [HealthCheckComponent],
       providers: [WebServices]
-    })
-      .compileComponents();
+    }).compileComponents();
     http = TestBed.inject(HttpTestingController);
   });
 

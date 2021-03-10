@@ -1,22 +1,20 @@
 import {Component, forwardRef, Input, OnInit} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {NgbDateNativeAdapter, NgbDateAdapter} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-fal-date-input',
   template: `
-    <label [id]="id + '-label'" [for]="id + '-input'" class="form-label fieldLabel1">
-      {{label}}
-    </label>
     <div class="form-group">
       <div class="input-group">
-        <input [id]="id + '-input'"
-               class="form-control"
+        <input class="form-control"
                placeholder="yyyy-mm-dd"
                ngbDatepicker #d="ngbDatepicker"
                [readOnly]="true"
                navigation="select"
                container="body"
-               [value]="value"
+               [(ngModel)]="value"
+               (ngModelChange)="value"
         />
         <button type="button"
                 class="btn btn-outline-secondary material-icons align-middle"
@@ -32,19 +30,30 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => FalDateInputComponent),
       multi: true
-    }
+    },
+    {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}
   ]
 })
 export class FalDateInputComponent implements OnInit, ControlValueAccessor {
-  @Input() label = '';
-  @Input() id = '';
+
   @Input() navigation = 'select';
 
-  value = '';
+  private val = '';
+
+  get value(): string {
+    return this.val;
+  }
+
+  set value(val: string) {
+    this.val = val;
+    this.onChange(this.val);
+    this.onTouched();
+  }
+
   onChange: (newValue: string) => void = _ => {
     // by default, do nothing
   }
-  onTouched: (currentValue: string) => void = _ => {
+  onTouched: () => void = () => {
     // by default do nothing
   }
 
@@ -52,9 +61,6 @@ export class FalDateInputComponent implements OnInit, ControlValueAccessor {
   }
 
   ngOnInit(): void {
-    if (!this.id || this.id === '') {
-      throw new TypeError('component requires id attribute to be filled');
-    }
   }
 
   writeValue(newValue: string): void {
@@ -65,7 +71,7 @@ export class FalDateInputComponent implements OnInit, ControlValueAccessor {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: (currentValue: string) => void): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 

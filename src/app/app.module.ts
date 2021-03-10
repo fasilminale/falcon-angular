@@ -14,6 +14,7 @@ import {NgSelectModule} from '@ng-select/ng-select';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 import { FalDateInputComponent } from './components/fal-date-input/fal-date-input.component';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
 
 @NgModule({
@@ -37,9 +38,10 @@ import {LoadingService} from './services/loading-service';
     NgSelectModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbDatepickerModule
+    NgbDatepickerModule,
+    MatSnackBarModule
   ],
-  providers: [WebServices, LoadingService],
+  providers: [WebServices, MatSnackBar, LoadingService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
