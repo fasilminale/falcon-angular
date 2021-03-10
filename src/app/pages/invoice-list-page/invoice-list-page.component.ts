@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
-import {Invoice, INVOICE_FIELDS, isInvoice} from '../../models/invoice-model';
+import {Invoice, INVOICE_FIELDS} from '../../models/invoice-model';
 import {PageEvent} from '@angular/material/paginator';
 import {HttpErrorResponse} from '@angular/common/http';
 

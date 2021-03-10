@@ -1,9 +1,9 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {HealthCheckComponent} from './health-check.component';
-import {WebServices} from '../services/web-services';
+import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 import {HttpResponse} from '@angular/common/http';
 
 describe('HealthCheckComponent', () => {
@@ -16,8 +16,7 @@ describe('HealthCheckComponent', () => {
       imports: [HttpClientTestingModule],
       declarations: [HealthCheckComponent],
       providers: [WebServices]
-    })
-      .compileComponents();
+    }).compileComponents();
     http = TestBed.inject(HttpTestingController);
   });
 
