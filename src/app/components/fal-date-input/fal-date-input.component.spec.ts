@@ -2,6 +2,8 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {FalDateInputComponent} from './fal-date-input.component';
 import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('FalDateInputComponent', () => {
   let component: FalDateInputComponent;
@@ -9,8 +11,9 @@ describe('FalDateInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NgbDatepickerModule],
-      declarations: [FalDateInputComponent]
+      imports: [NgbDatepickerModule, NoopAnimationsModule],
+      declarations: [FalDateInputComponent],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
       .compileComponents();
   });

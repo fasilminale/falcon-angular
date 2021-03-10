@@ -3,10 +3,11 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceCreatePageComponent} from './invoice-create-page.component';
 import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {HealthCheckComponent} from '../../components/health-check/health-check.component';
 import {environment} from '../../../environments/environment';
 import {HttpResponse} from '@angular/common/http';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('InvoiceCreatePageComponent', () => {
   let component: InvoiceCreatePageComponent;
@@ -15,9 +16,10 @@ describe('InvoiceCreatePageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MatSnackBarModule],
+      imports: [HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule],
       declarations: [InvoiceCreatePageComponent],
-      providers: [WebServices, MatSnackBar]
+      providers: [WebServices, MatSnackBar],
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
   });
@@ -41,6 +43,5 @@ describe('InvoiceCreatePageComponent', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
       .flush(new HttpResponse<never>());
   });
-
 
 });
