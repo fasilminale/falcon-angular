@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
-import {Invoice} from '../../models/invoice-model';
+import {InvoiceDataModel} from '../../models/invoice-model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -17,7 +17,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public currencyOptions = ['CAD', 'USD'];
   public formGroup: FormGroup;
 
-  private invoice = {} as Invoice;
+  private invoice = {} as InvoiceDataModel;
 
   public constructor(private webService: WebServices,
                      private snackBar: MatSnackBar) {
@@ -42,7 +42,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    const invoice = this.formGroup.getRawValue() as Invoice;
+    const invoice = this.formGroup.getRawValue() as InvoiceDataModel;
     invoice.createdBy = 'Falcon User';
     this.webService.httpPost(
       `${environment.baseServiceUrl}/v1/invoice`,
