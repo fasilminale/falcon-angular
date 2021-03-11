@@ -1,43 +1,45 @@
-export interface Invoice {
-  workType: string;
-  externalInvoiceNumber: string;
-  invoiceDate: string;
-  companyCode: string;
-  amountOfInvoice: number;
-  erpType: string;
-  createdBy: string;
-  vendorNumber: string;
-  currency: string;
+import {StatusModel} from './status-model';
+
+export class InvoiceDataModel {
+
+  static invoiceTableHeaders = [
+    {header: 'statusLabel', label: 'Status'},
+    {header: 'falconInvoiceNumber', label: 'Falcon Invoice No.'},
+    {header: 'externalInvoiceNumber', label: 'Ext. Invoice No.'},
+    {header: 'amountOfInvoice', label: 'Invoice Amount'},
+    {header: 'vendorNumber', label: 'Vendor No.'},
+    {header: 'invoiceDate', label: 'Invoice Date'},
+    {header: 'createdBy', label: 'Created By'},
+    {header: 'companyCode', label: 'Company Code'}
+  ];
+
+  status = new StatusModel();
+  statusLabel = '';
+  falconInvoiceNumber = '';
+  externalInvoiceNumber = '';
+  amountOfInvoice = '';
+  vendorNumber = '';
+  invoiceDate = '';
+  createdBy = '';
+  companyCode = '';
+  createdDate = '';
+  workType = '';
+  erpType = '';
+  currency = '';
+
+  constructor(json?: any){
+    if (json?.status) { this.status = new StatusModel(json.status); }
+    if (this.status.label) { this.statusLabel = this.status.getLabel(); }
+    if (json?.falconInvoiceNumber) { this.falconInvoiceNumber = json.falconInvoiceNumber; }
+    if (json?.externalInvoiceNumber) { this.externalInvoiceNumber = json.externalInvoiceNumber; }
+    if (json?.amountOfInvoice) { this.amountOfInvoice = json.amountOfInvoice; }
+    if (json?.vendorNumber) { this.vendorNumber = json.vendorNumber; }
+    if (json?.invoiceDate) { this.invoiceDate = json.invoiceDate; }
+    if (json?.createdBy) { this.createdBy = json.createdBy; }
+    if (json?.companyCode) { this.companyCode = json.companyCode; }
+    if (json?.createdDate) { this.createdDate = json.createdDate; }
+    if (json?.workType) { this.workType = json.workType; }
+    if (json?.erpType) { this.erpType = json.erpType; }
+    if (json?.currency) { this.currency = json.currency; }
+  }
 }
-
-export const INVOICE_FIELDS = [
-  {header: 'workType', label: 'Work Type'},
-  {header: 'companyCode', label: 'Company Code'},
-  {header: 'externalInvoiceNumber', label: 'Ext. Invoice No.'},
-  {header: 'erpType', label: 'ERP Type'},
-  {header: 'vendorNumber', label: 'Vendor No.'},
-  {header: 'invoiceDate', label: 'Invoice Date'},
-  {header: 'amountOfInvoice', label: 'Amount'},
-  {header: 'currency', label: 'Currency'},
-  {header: 'createdBy', label: 'Created By'},
-];
-
-export function isInvoice(arg: any): arg is Invoice {
-  return INVOICE_FIELDS
-    .filter(field => arg[field.header] === undefined)
-    .length <= 0;
-}
-
-export const EXAMPLE_INVOICE = {
-  workType: 'Indirect Non-PO Invoice',
-  externalInvoiceNumber: '56123',
-  invoiceDate: '08/31/2021',
-  companyCode: '0000000',
-  amountOfInvoice: 4532.60,
-  erpType: 'Pharma Corp',
-  createdBy: 'Grimes, Ron',
-  vendorNumber: '895421',
-  currency: 'USD'
-};
-
-
