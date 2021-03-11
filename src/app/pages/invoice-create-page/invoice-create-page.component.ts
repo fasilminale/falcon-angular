@@ -6,6 +6,7 @@ import {Invoice} from '../../models/invoice/invoice-model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {EMPTY_LINE_ITEM, LineItem} from '../../models/line-item/line-item-model';
 import {LintCommand} from '@angular/cli/commands/lint-impl';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -25,7 +26,8 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public constructor(private webService: WebServices,
-                     private snackBar: MatSnackBar) {
+                     private snackBar: MatSnackBar,
+                     private router: Router) {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
       workType: new FormControl('', [required]),
@@ -59,10 +61,10 @@ export class InvoiceCreatePageComponent implements OnInit {
 
   private createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
-      glAccount: new FormControl(''),
-      costCenter: new FormControl(''),
-      companyCode: new FormControl(''),
-      lineItemNetAmount: new FormControl(0),
+      glAccount: new FormControl('', [Validators.required]),
+      costCenter: new FormControl('', [Validators.required]),
+      companyCode: new FormControl('', [Validators.required]),
+      lineItemNetAmount: new FormControl(0, [Validators.required]),
       notes: new FormControl('')
     });
   }
@@ -72,6 +74,11 @@ export class InvoiceCreatePageComponent implements OnInit {
     if (this.lineItemsFormArray.length <= 1) {
       this.lineItemRemoveButtonDisable = true;
     }
+  }
+
+  public cancelLink(): void {
+    this.invoiceFormGroup.reset();
+    this.ngOnInit();
   }
 
   public onSubmit(): void {

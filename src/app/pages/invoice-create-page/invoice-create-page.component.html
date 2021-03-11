@@ -8,6 +8,7 @@
 
       <div class="row">
 
+        <div class="row col-6">
         <!-- WORK TYPE -->
         <div class="col-12">
           <label for="work-type-input" class="form-label fieldLabel1">
@@ -105,6 +106,15 @@
                      placeholder="Select One....">
           </ng-select>
         </div>
+        </div>
+
+        <div class="row col-6">
+          <!-- Placeholder for document uploads -->
+        </div>
+      </div>
+      <div class="row">
+
+
 
         <!-- LINE ITEMS -->
         <cardinal-card id="line-items-card"
@@ -213,6 +223,7 @@
                  id="cancel-button"
                  class="btn btn-link flex-shrink-1"
                  value="Cancel"
+                 (click)="cancelLink()"
           />
 
           <!-- SUBMIT -->
