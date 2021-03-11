@@ -5,7 +5,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {environment} from '../../../environments/environment';
-import {EXAMPLE_INVOICE} from '../../models/invoice-model';
+import {EXAMPLE_INVOICE} from '../../models/invoice/invoice-model';
 import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';

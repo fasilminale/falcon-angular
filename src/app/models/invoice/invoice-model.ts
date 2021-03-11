@@ -1,3 +1,5 @@
+import {LineItem} from '../line-item/line-item-model';
+
 export interface Invoice {
   workType: string;
   externalInvoiceNumber: string;
@@ -8,6 +10,7 @@ export interface Invoice {
   createdBy: string;
   vendorNumber: string;
   currency: string;
+  lineItems: Array<LineItem>;
 }
 
 export const INVOICE_FIELDS = [
