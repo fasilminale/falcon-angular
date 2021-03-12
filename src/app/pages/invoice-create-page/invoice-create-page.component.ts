@@ -1,14 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Form, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {Invoice} from '../../models/invoice/invoice-model';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
-import {never} from 'rxjs';
-import {HttpErrorResponse, HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -25,6 +22,19 @@ export class InvoiceCreatePageComponent implements OnInit {
 
   get lineItemsFormArray(): FormArray {
     return this.invoiceFormGroup.get('lineItems') as FormArray;
+  }
+
+  get currencyFormControl(): FormControl {
+    return this.invoiceFormGroup.get('currency') as FormControl;
+  }
+
+  get amountOfInvoiceFormControl(): FormControl {
+    return this.invoiceFormGroup.get('amountOfInvoice') as FormControl;
+  }
+
+  public lineItemNetAmountFormControl(index: number): FormControl {
+    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItemFormGroup.get('lineItemNetAmount') as FormControl;
   }
 
   public constructor(private webService: WebServices,

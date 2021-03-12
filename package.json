@@ -23,6 +23,7 @@
     "@angular/router": "~11.2.0",
     "@elm/elm-styleguide-ui": "^1.0.14",
     "karma-typescript": "^5.4.0",
+    "mat-currency-format": "0.0.7",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.3"

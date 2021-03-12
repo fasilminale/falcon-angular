@@ -18,6 +18,7 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
 import {FalConfirmationModalComponent} from './components/fal-confirmation-modal/fal-confirmation-modal.component';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatCurrencyFormatModule} from 'mat-currency-format';
 
 @NgModule({
   declarations: [
@@ -28,23 +29,24 @@ import {MatDialog, MatDialogModule} from '@angular/material/dialog';
     FalDateInputComponent,
     FalConfirmationModalComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule, // must be imported immediately after BrowserModule
-    AppRoutingModule,
-    HttpClientModule,
-    NavigationModule,
-    ButtonModule,
-    ProgressModule,
-    ContainersModule,
-    DataTableModule,
-    NgSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbDatepickerModule,
-    MatSnackBarModule,
-    MatDialogModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule, // must be imported immediately after BrowserModule
+        AppRoutingModule,
+        HttpClientModule,
+        NavigationModule,
+        ButtonModule,
+        ProgressModule,
+        ContainersModule,
+        DataTableModule,
+        NgSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbDatepickerModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatCurrencyFormatModule
+    ],
   providers: [
     WebServices,
     MatSnackBar,
