@@ -7,6 +7,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
+import {never} from 'rxjs';
+import {HttpErrorResponse, HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -80,7 +82,7 @@ export class InvoiceCreatePageComponent implements OnInit {
     }
   }
 
-  public cancelLink(): void {
+  public onCancel(): void {
     this.dialog.open(FalConfirmationModalComponent,
       {
         autoFocus: false,
@@ -112,11 +114,11 @@ export class InvoiceCreatePageComponent implements OnInit {
       invoice
     ).subscribe(
       _ => this.openSnackBar('Success, invoice created!'),
-      error => this.openSnackBar('Failure, invoice was not created!')
+      _ => this.openSnackBar('Failure, invoice was not created!')
     );
   }
 
-  private openSnackBar(message: string): void {
+  public openSnackBar(message: string): void {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
 
