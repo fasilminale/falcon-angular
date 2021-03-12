@@ -31,7 +31,7 @@ export function isInvoice(arg: any): arg is Invoice {
     .length <= 0;
 }
 
-export const EXAMPLE_INVOICE = {
+export const EXAMPLE_INVOICE: Invoice = {
   workType: 'Indirect Non-PO Invoice',
   externalInvoiceNumber: '56123',
   invoiceDate: '08/31/2021',
@@ -40,7 +40,15 @@ export const EXAMPLE_INVOICE = {
   erpType: 'Pharma Corp',
   createdBy: 'Grimes, Ron',
   vendorNumber: '895421',
-  currency: 'USD'
+  currency: 'USD',
+  lineItems: [{
+    lineItemNumber: '124',
+    lineItemNetAmount: 200.35,
+    companyCode: '8888888',
+    costCenter: 'ASDF',
+    glAccount: '1839402',
+    notes: 'some notes'
+  }]
 };
 
 

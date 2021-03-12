@@ -8,6 +8,7 @@ import {HttpResponse} from '@angular/common/http';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 
 describe('InvoiceCreatePageComponent', () => {
   let component: InvoiceCreatePageComponent;
@@ -16,9 +17,9 @@ describe('InvoiceCreatePageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule],
+      imports: [HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
       declarations: [InvoiceCreatePageComponent],
-      providers: [WebServices, MatSnackBar],
+      providers: [WebServices, MatSnackBar, MatDialog],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);

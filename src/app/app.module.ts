@@ -13,9 +13,11 @@ import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-cr
 import {NgSelectModule} from '@ng-select/ng-select';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
-import { FalDateInputComponent } from './components/fal-date-input/fal-date-input.component';
+import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.component';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
+import {FalConfirmationModalComponent} from './components/fal-confirmation-modal/fal-confirmation-modal.component';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,7 @@ import {LoadingService} from './services/loading-service';
     InvoiceListPageComponent,
     InvoiceCreatePageComponent,
     FalDateInputComponent,
+    FalConfirmationModalComponent
   ],
   imports: [
     BrowserModule,
@@ -39,10 +42,18 @@ import {LoadingService} from './services/loading-service';
     FormsModule,
     ReactiveFormsModule,
     NgbDatepickerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule
   ],
-  providers: [WebServices, MatSnackBar, LoadingService],
-  bootstrap: [AppComponent]
+  providers: [
+    WebServices,
+    MatSnackBar,
+    LoadingService,
+    MatDialog
+  ],
+  bootstrap: [
+    AppComponent
+  ]
 })
 export class AppModule {
 }

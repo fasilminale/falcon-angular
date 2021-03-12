@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {Form, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {Invoice} from '../../models/invoice/invoice-model';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {EMPTY_LINE_ITEM, LineItem} from '../../models/line-item/line-item-model';
-import {LintCommand} from '@angular/cli/commands/lint-impl';
 import {Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -27,25 +27,29 @@ export class InvoiceCreatePageComponent implements OnInit {
 
   public constructor(private webService: WebServices,
                      private snackBar: MatSnackBar,
-                     private router: Router) {
+                     private dialog: MatDialog) {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
-      workType: new FormControl('', [required]),
-      companyCode: new FormControl('', [required]),
-      erpType: new FormControl('', [required]),
-      vendorNumber: new FormControl('', [required]),
-      externalInvoiceNumber: new FormControl('', [required]),
-      invoiceDate: new FormControl('', [required]),
-      amountOfInvoice: new FormControl(0, [required]),
-      currency: new FormControl('', [required]),
+      workType: new FormControl(null, [required]),
+      companyCode: new FormControl(null, [required]),
+      erpType: new FormControl(null, [required]),
+      vendorNumber: new FormControl(null, [required]),
+      externalInvoiceNumber: new FormControl(null, [required]),
+      invoiceDate: new FormControl(null, [required]),
+      amountOfInvoice: new FormControl(null, [required]),
+      currency: new FormControl(null, [required]),
       lineItems: new FormArray([])
     });
-    if (this.lineItemsFormArray.length <= 0) {
-      this.addNewEmptyLineItem();
-    }
   }
 
   public ngOnInit(): void {
+    this.resetForm();
+  }
+
+  public resetForm(): void {
+    this.invoiceFormGroup.reset();
+    this.lineItemsFormArray.clear();
+    this.addNewEmptyLineItem();
     // default work type as long as there is only one value
     if (this.workTypeOptions.length === 1) {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
@@ -61,11 +65,11 @@ export class InvoiceCreatePageComponent implements OnInit {
 
   private createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
-      glAccount: new FormControl('', [Validators.required]),
-      costCenter: new FormControl('', [Validators.required]),
-      companyCode: new FormControl('', [Validators.required]),
-      lineItemNetAmount: new FormControl(0, [Validators.required]),
-      notes: new FormControl('')
+      glAccount: new FormControl(null, [Validators.required]),
+      costCenter: new FormControl(null, [Validators.required]),
+      companyCode: new FormControl(null, [Validators.required]),
+      lineItemNetAmount: new FormControl(null, [Validators.required]),
+      notes: new FormControl(null)
     });
   }
 
@@ -77,8 +81,27 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public cancelLink(): void {
-    this.invoiceFormGroup.reset();
-    this.ngOnInit();
+    this.dialog.open(FalConfirmationModalComponent,
+      {
+        autoFocus: false,
+        data: {
+          title: 'Cancel',
+          html: `<p>
+                    You will lose all entered information if you cancel creation of this invoice now.
+                 </p>
+                 <p>
+                    <strong>Are you sure you want to cancel creation of this invoice?</strong>
+                 </p>`,
+          denyText: 'No, go back',
+          confirmText: 'Yes, cancel'
+        }
+      })
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.resetForm();
+        }
+      });
   }
 
   public onSubmit(): void {
