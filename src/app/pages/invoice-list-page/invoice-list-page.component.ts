@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
-import {Invoice, INVOICE_FIELDS} from '../../models/invoice/invoice-model';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -13,8 +13,8 @@ import {LoadingService} from '../../services/loading-service';
 })
 export class InvoiceListPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
-  headers = INVOICE_FIELDS;
-  invoices: Array<any> = [];
+  headers = InvoiceDataModel.invoiceTableHeaders;
+  invoices: Array<InvoiceDataModel> = [];
 
   constructor(
     private router: Router,
@@ -34,16 +34,16 @@ export class InvoiceListPageComponent implements OnInit {
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
-      const invoiceArray: Array<Invoice> = [];
+      const invoiceArray: Array<InvoiceDataModel> = [];
       invoiceData.data.map((invoice: any) => {
-        invoiceArray.push(invoice);
+        invoiceArray.push(new InvoiceDataModel(invoice));
       });
       this.invoices = invoiceArray;
       this.loadingService.hideLoading();
     });
   }
 
-  rowClicked(invoice: Invoice): Promise<boolean> {
+  rowClicked(invoice: InvoiceDataModel): Promise<boolean> {
     // eventually, we will want to go to a details page from here
     return Promise.resolve(false);
   }

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Form, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
-import {Invoice} from '../../models/invoice/invoice-model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
 
 @Component({
@@ -14,27 +14,12 @@ import {FalConfirmationModalComponent} from '../../components/fal-confirmation-m
 })
 export class InvoiceCreatePageComponent implements OnInit {
 
-  public workTypeOptions = ['Indirect Non-PO Invoice'];
-  public erpTypeOptions = ['Pharma Corp', 'TPM'];
-  public currencyOptions = ['CAD', 'USD'];
-  public lineItemRemoveButtonDisable = true;
-  public invoiceFormGroup: FormGroup;
-
   get lineItemsFormArray(): FormArray {
     return this.invoiceFormGroup.get('lineItems') as FormArray;
   }
 
-  get currencyFormControl(): FormControl {
-    return this.invoiceFormGroup.get('currency') as FormControl;
-  }
-
   get amountOfInvoiceFormControl(): FormControl {
     return this.invoiceFormGroup.get('amountOfInvoice') as FormControl;
-  }
-
-  public lineItemNetAmountFormControl(index: number): FormControl {
-    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItemFormGroup.get('lineItemNetAmount') as FormControl;
   }
 
   public constructor(private webService: WebServices,
@@ -54,6 +39,27 @@ export class InvoiceCreatePageComponent implements OnInit {
     });
   }
 
+  public workTypeOptions = ['Indirect Non-PO Invoice'];
+  public erpTypeOptions = ['Pharma Corp', 'TPM'];
+  public currencyOptions = ['CAD', 'USD'];
+  public lineItemRemoveButtonDisable = true;
+  public invoiceFormGroup: FormGroup;
+
+  private static createEmptyLineItemForm(): FormGroup {
+    return new FormGroup({
+      glAccount: new FormControl(null, [Validators.required]),
+      costCenter: new FormControl(null, [Validators.required]),
+      companyCode: new FormControl(null, [Validators.required]),
+      lineItemNetAmount: new FormControl(null, [Validators.required]),
+      notes: new FormControl(null)
+    });
+  }
+
+  public lineItemNetAmountFormControl(index: number): FormControl {
+    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItemFormGroup.get('lineItemNetAmount') as FormControl;
+  }
+
   public ngOnInit(): void {
     this.resetForm();
   }
@@ -69,20 +75,10 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public addNewEmptyLineItem(): void {
-    this.lineItemsFormArray.push(this.createEmptyLineItemForm());
+    this.lineItemsFormArray.push(InvoiceCreatePageComponent.createEmptyLineItemForm());
     if (this.lineItemsFormArray.length > 1) {
       this.lineItemRemoveButtonDisable = false;
     }
-  }
-
-  private createEmptyLineItemForm(): FormGroup {
-    return new FormGroup({
-      glAccount: new FormControl(null, [Validators.required]),
-      costCenter: new FormControl(null, [Validators.required]),
-      companyCode: new FormControl(null, [Validators.required]),
-      lineItemNetAmount: new FormControl(null, [Validators.required]),
-      notes: new FormControl(null)
-    });
   }
 
   public removeLineItem(index: number): void {
@@ -117,7 +113,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    const invoice = this.invoiceFormGroup.getRawValue() as Invoice;
+    const invoice = this.invoiceFormGroup.getRawValue() as InvoiceDataModel;
     invoice.createdBy = 'Falcon User';
     this.webService.httpPost(
       `${environment.baseServiceUrl}/v1/invoice`,

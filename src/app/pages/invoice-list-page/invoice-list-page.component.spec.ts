@@ -5,11 +5,11 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {environment} from '../../../environments/environment';
-import {EXAMPLE_INVOICE} from '../../models/invoice/invoice-model';
 import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 describe('InvoiceListPageComponent', () => {
   let component: InvoiceListPageComponent;
@@ -77,12 +77,13 @@ describe('InvoiceListPageComponent', () => {
     component.getTableData(pageEvent.pageSize);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)
       .flush(invoiceData);
-    expect(component.invoices).toEqual(invoiceData.data);
+    expect(component.invoices[0].externalInvoiceNumber)
+      .toEqual(invoiceData.data[0].externalInvoiceNumber);
   });
 
   it('should do nothing on row click', () => {
     // falcon does not currently support row clicking
-    component.rowClicked(EXAMPLE_INVOICE);
+    component.rowClicked(new InvoiceDataModel(invoiceData.data[0]));
     expect().nothing();
   });
 });
