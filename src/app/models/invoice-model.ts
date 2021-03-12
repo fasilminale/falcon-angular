@@ -14,7 +14,7 @@ export class InvoiceDataModel {
     {header: 'companyCode', label: 'Company Code'}
   ];
 
-  readonly dateFormat = 'MM/DD/YYYY';
+  static dateFormat = 'MM/DD/YYYY';
 
   status = new StatusModel();
   statusLabel = '';
@@ -37,7 +37,7 @@ export class InvoiceDataModel {
     if (json?.externalInvoiceNumber) { this.externalInvoiceNumber = json.externalInvoiceNumber; }
     if (json?.amountOfInvoice) { this.amountOfInvoice = json.amountOfInvoice; }
     if (json?.vendorNumber) { this.vendorNumber = json.vendorNumber; }
-    if (json?.invoiceDate) { this.invoiceDate = moment(json.invoiceDate).format(this.dateFormat).toString(); }
+    if (json?.invoiceDate) { this.invoiceDate = moment(json.invoiceDate).format(InvoiceDataModel.dateFormat).toString(); }
     if (json?.createdBy) { this.createdBy = json.createdBy; }
     if (json?.companyCode) { this.companyCode = json.companyCode; }
     if (json?.createdDate) { this.createdDate = json.createdDate; }
