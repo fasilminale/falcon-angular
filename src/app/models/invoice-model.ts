@@ -1,5 +1,6 @@
 import {StatusModel} from './status-model';
 import * as moment from 'moment';
+import {formatCurrency} from '@angular/common';
 
 export class InvoiceDataModel {
 
@@ -35,7 +36,9 @@ export class InvoiceDataModel {
     if (this.status.label) { this.statusLabel = this.status.getLabel(); }
     if (json?.falconInvoiceNumber) { this.falconInvoiceNumber = json.falconInvoiceNumber; }
     if (json?.externalInvoiceNumber) { this.externalInvoiceNumber = json.externalInvoiceNumber; }
-    if (json?.amountOfInvoice) { this.amountOfInvoice = json.amountOfInvoice; }
+    if (json?.amountOfInvoice) {
+      this.amountOfInvoice = formatCurrency(json.amountOfInvoice, 'en-US', json.currency === 'CAD' ? 'C$' : '$');
+    }
     if (json?.vendorNumber) { this.vendorNumber = json.vendorNumber; }
     if (json?.invoiceDate) { this.invoiceDate = moment(json.invoiceDate).format(InvoiceDataModel.dateFormat); }
     if (json?.createdBy) { this.createdBy = json.createdBy; }
