@@ -68,14 +68,18 @@ label {
   z-index: 0;
 }
 
-.content {
-  padding-left: 1em;
-  padding-right: 1em;
+.side-nav-content {
+  overflow: hidden;
 }
 
 .side-nav {
   border-color: $cardinal-red;
   width: 25%;
+}
+
+.content {
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .milestone-button {
