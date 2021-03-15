@@ -1,12 +1,12 @@
 import {InvoiceDataModel} from './invoice-model';
 import {TestBed} from '@angular/core/testing';
-import {AppModule} from '../app.module';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {StatusModel} from './status-model';
+import {AppModule} from '../../app.module';
 
 describe('Invoice Model Tests', () => {
 
-  const expectedEmptyInvoice = {
+  const expectedEmptyInvoice: InvoiceDataModel = {
     status: new StatusModel(),
     statusLabel: '',
     falconInvoiceNumber: '',
@@ -19,7 +19,8 @@ describe('Invoice Model Tests', () => {
     createdDate: '',
     workType: '',
     erpType: '',
-    currency: ''
+    currency: '',
+    lineItems: []
   };
 
   const invoice = {
@@ -35,7 +36,8 @@ describe('Invoice Model Tests', () => {
     createdDate: '07/10/2021',
     workType: 'Indirect Non-PO Invoice',
     erpType: 'Pharma Corp',
-    currency: 'USD'
+    currency: 'USD',
+    lineItems: []
   };
 
   const expectedInvoice = {
@@ -43,7 +45,7 @@ describe('Invoice Model Tests', () => {
     statusLabel: 'Invoice Created',
     falconInvoiceNumber: '123456',
     externalInvoiceNumber: '0000000001',
-    amountOfInvoice: '2999.99',
+    amountOfInvoice: '$2,999.99',
     vendorNumber: '50000',
     invoiceDate: '07/10/2021',
     createdBy: 'user',
@@ -51,7 +53,8 @@ describe('Invoice Model Tests', () => {
     createdDate: '07/10/2021',
     workType: 'Indirect Non-PO Invoice',
     erpType: 'Pharma Corp',
-    currency: 'USD'
+    currency: 'USD',
+    lineItems: []
   };
 
   let prototypeEmptyInvoice: InvoiceDataModel;
