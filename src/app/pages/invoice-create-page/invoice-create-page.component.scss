@@ -1,8 +1,6 @@
 @import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
 
 #container {
-  padding-left: 1em;
-  padding-right: 1em;
   padding-bottom: 1em;
 }
 
@@ -63,4 +61,33 @@ cardinal-card {
 
 .line-item-remove-button:enabled {
   color: $cardinal-red;
+}
+
+.side-nav-container {
+  background-color: unset;
+  z-index: 0;
+}
+
+.content {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.side-nav {
+  border-color: $cardinal-red;
+  width: 25%;
+}
+
+.milestone-button {
+  position: absolute;
+  z-index: 100;
+  left: 100%;
+  top: 10%;
+  transform-origin: 0% 0%;
+  -webkit-transform: rotate(270deg);
+  transform: rotate(270deg) translateY(-95%) translateX(-50%);
+}
+
+.milestone {
+  margin: 16px;
 }
