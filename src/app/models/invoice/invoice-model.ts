@@ -1,18 +1,22 @@
 import {StatusModel} from './status-model';
+import * as moment from 'moment';
 import {LineItem} from '../line-item/line-item-model';
+import {formatCurrency} from '@angular/common';
 
 export class InvoiceDataModel {
 
   static invoiceTableHeaders = [
     {header: 'statusLabel', label: 'Status'},
     {header: 'falconInvoiceNumber', label: 'Falcon Invoice No.'},
-    {header: 'externalInvoiceNumber', label: 'Ext. Invoice No.'},
+    {header: 'externalInvoiceNumber', label: 'External Invoice No.'},
     {header: 'amountOfInvoice', label: 'Invoice Amount'},
     {header: 'vendorNumber', label: 'Vendor No.'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'createdBy', label: 'Created By'},
     {header: 'companyCode', label: 'Company Code'}
   ];
+
+  static dateFormat = 'MM/DD/YYYY';
 
   status = new StatusModel();
   statusLabel = '';
@@ -43,13 +47,13 @@ export class InvoiceDataModel {
       this.externalInvoiceNumber = json.externalInvoiceNumber;
     }
     if (json?.amountOfInvoice) {
-      this.amountOfInvoice = json.amountOfInvoice;
+      this.amountOfInvoice = formatCurrency(json.amountOfInvoice, 'en-US', json.currency === 'CAD' ? 'C$' : '$');
     }
     if (json?.vendorNumber) {
       this.vendorNumber = json.vendorNumber;
     }
     if (json?.invoiceDate) {
-      this.invoiceDate = json.invoiceDate;
+      this.invoiceDate = moment(json.invoiceDate).format(InvoiceDataModel.dateFormat);
     }
     if (json?.createdBy) {
       this.createdBy = json.createdBy;
