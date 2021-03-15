@@ -45,11 +45,11 @@ export class InvoiceCreatePageComponent implements OnInit {
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
 
-  private createEmptyLineItemForm(): FormGroup {
+  private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
       glAccount: new FormControl(null, [Validators.required]),
       costCenter: new FormControl(null, [Validators.required]),
-      companyCode: new FormControl(this.invoiceFormGroup.controls.companyCode.value, [Validators.required]),
+      companyCode: new FormControl(null),
       lineItemNetAmount: new FormControl(null, [Validators.required]),
       notes: new FormControl(null)
     });
@@ -72,10 +72,11 @@ export class InvoiceCreatePageComponent implements OnInit {
     if (this.workTypeOptions.length === 1) {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
     }
+    this.invoiceFormGroup.controls.companyCode.setValue('');
   }
 
   public addNewEmptyLineItem(): void {
-    this.lineItemsFormArray.push(this.createEmptyLineItemForm());
+    this.lineItemsFormArray.push(InvoiceCreatePageComponent.createEmptyLineItemForm());
     if (this.lineItemsFormArray.length > 1) {
       this.lineItemRemoveButtonDisable = false;
     }
@@ -115,6 +116,13 @@ export class InvoiceCreatePageComponent implements OnInit {
   public onSubmit(): void {
     const invoice = this.invoiceFormGroup.getRawValue() as InvoiceDataModel;
     invoice.createdBy = 'Falcon User';
+
+    invoice.lineItems.forEach(lineItem => {
+      if (!lineItem.companyCode) {
+        lineItem.companyCode = invoice.companyCode;
+      }
+    });
+
     this.webService.httpPost(
       `${environment.baseServiceUrl}/v1/invoice`,
       invoice

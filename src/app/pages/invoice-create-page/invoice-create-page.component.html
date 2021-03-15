@@ -1,6 +1,7 @@
 <cardinal-card>
   <cardinal-section-header [sectionTitle]="'Create Invoice'">
   </cardinal-section-header>
+
   <div id="container" class="">
 
     <form [formGroup]="invoiceFormGroup"
@@ -148,6 +149,7 @@
                 <input type="text"
                        class="form-control"
                        formControlName="companyCode"
+                       [placeholder]="invoiceFormGroup.controls.companyCode.value"
                 />
               </div>
 
@@ -248,4 +250,5 @@
     </form>
   </div>
 </cardinal-card>
+
 
