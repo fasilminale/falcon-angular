@@ -47,7 +47,7 @@ export class InvoiceDataModel {
       this.externalInvoiceNumber = json.externalInvoiceNumber;
     }
     if (json?.amountOfInvoice) {
-      this.amountOfInvoice = formatCurrency(json.amountOfInvoice, 'en-US', 'USD');
+      this.amountOfInvoice = formatCurrency(json.amountOfInvoice, 'en-US', '$');
     }
     if (json?.vendorNumber) {
       this.vendorNumber = json.vendorNumber;

@@ -1,4 +1,4 @@
-import {Component, OnInit, Renderer2} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
@@ -46,8 +46,7 @@ export class InvoiceCreatePageComponent implements OnInit {
 
   public constructor(private webService: WebServices,
                      private snackBar: MatSnackBar,
-                     private dialog: MatDialog,
-                     private renderer: Renderer2) {
+                     private dialog: MatDialog) {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
       workType: new FormControl(null, [required]),

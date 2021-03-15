@@ -14,7 +14,7 @@
 
     <mat-sidenav-content class="side-nav-content">
       <div id="container">
-        <cardinal-button class="milestone-button" buttonText="Milestones" (buttonClick)="toggleMilestones()" mat-dialog-close></cardinal-button>
+        <cardinal-button class="milestone-button" id="milestones-button" buttonText="Milestones" (buttonClick)="toggleMilestones()" mat-dialog-close></cardinal-button>
         <div class="content">
           <form [formGroup]="invoiceFormGroup"
             (ngSubmit)="onSubmit()">
