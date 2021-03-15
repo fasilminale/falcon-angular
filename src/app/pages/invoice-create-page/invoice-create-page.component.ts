@@ -45,11 +45,11 @@ export class InvoiceCreatePageComponent implements OnInit {
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
 
-  private static createEmptyLineItemForm(): FormGroup {
+  private createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
       glAccount: new FormControl(null, [Validators.required]),
       costCenter: new FormControl(null, [Validators.required]),
-      companyCode: new FormControl(null, [Validators.required]),
+      companyCode: new FormControl(this.invoiceFormGroup.controls.companyCode.value, [Validators.required]),
       lineItemNetAmount: new FormControl(null, [Validators.required]),
       notes: new FormControl(null)
     });
@@ -75,7 +75,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public addNewEmptyLineItem(): void {
-    this.lineItemsFormArray.push(InvoiceCreatePageComponent.createEmptyLineItemForm());
+    this.lineItemsFormArray.push(this.createEmptyLineItemForm());
     if (this.lineItemsFormArray.length > 1) {
       this.lineItemRemoveButtonDisable = false;
     }
