@@ -13,9 +13,12 @@ import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-cr
 import {NgSelectModule} from '@ng-select/ng-select';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
-import { FalDateInputComponent } from './components/fal-date-input/fal-date-input.component';
+import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.component';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
+import {FalConfirmationModalComponent} from './components/fal-confirmation-modal/fal-confirmation-modal.component';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatCurrencyFormatModule} from 'mat-currency-format';
 
 @NgModule({
   declarations: [
@@ -24,25 +27,35 @@ import {LoadingService} from './services/loading-service';
     InvoiceListPageComponent,
     InvoiceCreatePageComponent,
     FalDateInputComponent,
+    FalConfirmationModalComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule, // must be imported immediately after BrowserModule
-    AppRoutingModule,
-    HttpClientModule,
-    NavigationModule,
-    ButtonModule,
-    ProgressModule,
-    ContainersModule,
-    DataTableModule,
-    NgSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbDatepickerModule,
-    MatSnackBarModule
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule, // must be imported immediately after BrowserModule
+        AppRoutingModule,
+        HttpClientModule,
+        NavigationModule,
+        ButtonModule,
+        ProgressModule,
+        ContainersModule,
+        DataTableModule,
+        NgSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbDatepickerModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatCurrencyFormatModule
+    ],
+  providers: [
+    WebServices,
+    MatSnackBar,
+    LoadingService,
+    MatDialog
   ],
-  providers: [WebServices, MatSnackBar, LoadingService],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent
+  ]
 })
 export class AppModule {
 }

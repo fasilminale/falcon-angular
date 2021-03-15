@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
-import {InvoiceDataModel} from '../../models/invoice-model';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 @Component({
   selector: 'app-invoice-list-page',

@@ -9,7 +9,7 @@ import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {InvoiceDataModel} from '../../models/invoice-model';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 describe('InvoiceListPageComponent', () => {
   let component: InvoiceListPageComponent;
@@ -77,7 +77,8 @@ describe('InvoiceListPageComponent', () => {
     component.getTableData(pageEvent.pageSize);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)
       .flush(invoiceData);
-    expect(component.invoices[0].externalInvoiceNumber).toEqual(invoiceData.data[0].externalInvoiceNumber);
+    expect(component.invoices[0].externalInvoiceNumber)
+      .toEqual(invoiceData.data[0].externalInvoiceNumber);
   });
 
   it('should do nothing on row click', () => {
