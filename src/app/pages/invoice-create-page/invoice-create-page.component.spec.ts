@@ -10,6 +10,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 
 describe('InvoiceCreatePageComponent', () => {
 
@@ -19,6 +20,11 @@ describe('InvoiceCreatePageComponent', () => {
   });
 
   const MOCK_DENY_DIALOG = jasmine.createSpyObj({
+    afterClosed: of(false),
+    close: null
+  });
+
+  const MOCK_CLOSE_ERROR_DIALOG = jasmine.createSpyObj({
     afterClosed: of(false),
     close: null
   });
@@ -54,6 +60,7 @@ describe('InvoiceCreatePageComponent', () => {
 
   it('should show success snackbar on post', () => {
     spyOn(component, 'openSnackBar').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
       .flush(new HttpResponse<never>());
@@ -63,6 +70,7 @@ describe('InvoiceCreatePageComponent', () => {
 
   it('should show failure snackbar on failed post', () => {
     spyOn(component, 'openSnackBar').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
       .error(new ErrorEvent('test error event'), {
@@ -80,6 +88,7 @@ describe('InvoiceCreatePageComponent', () => {
   });
 
   it('should enable remove button after going up to more than one line item', () => {
+    component.amountOfInvoiceFormControl.setValue('0');
     component.addNewEmptyLineItem();
     expect(component.lineItemRemoveButtonDisable).toBeFalse();
   });
@@ -93,6 +102,40 @@ describe('InvoiceCreatePageComponent', () => {
   it('should toggle the milestones sidenav', () => {
     component.toggleMilestones();
     expect(component.milestonesTabOpen).toBeTrue();
+  });
+
+  it('should display an error modal for invalid invoice amounts', () => {
+    spyOn(component, 'displayInvalidAmountError').and.callThrough();
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_ERROR_DIALOG);
+    component.displayInvalidAmountError();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(component.displayInvalidAmountError).toHaveBeenCalled();
+  });
+
+  it('should validate invoice amounts and return true', () => {
+    spyOn(component, 'validateInvoiceAmount').and.callThrough();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.validateInvoiceAmount();
+    expect(component.validateInvoiceAmount).toHaveBeenCalled();
+    expect(component.validAmount).toBeTrue();
+  });
+
+  it('should validate invoice amounts and return false', () => {
+    spyOn(component, 'validateInvoiceAmount').and.callThrough();
+    component.amountOfInvoiceFormControl.setValue('1');
+    component.validateInvoiceAmount();
+    expect(component.validateInvoiceAmount).toHaveBeenCalled();
+    expect(component.validAmount).toBeFalse();
+  });
+
+  it('should not create a new invoice with invalid invoice amounts', () => {
+    spyOn(component, 'validateInvoiceAmount').and.callThrough();
+    spyOn(component, 'onSubmit').and.callThrough();
+    component.amountOfInvoiceFormControl.setValue('1');
+    component.validateInvoiceAmount();
+    component.onSubmit();
+    expect(component.validateInvoiceAmount).toHaveBeenCalled();
+    expect(component.onSubmit).toHaveBeenCalled();
   });
 
   it('should reset form when cancel dialog is confirmed', () => {

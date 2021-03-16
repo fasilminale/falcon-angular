@@ -4,8 +4,8 @@ import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
+import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-error-modal/invoice-amount-error-modal';
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -55,7 +55,7 @@ export class InvoiceCreatePageComponent implements OnInit {
       vendorNumber: new FormControl(null, [required]),
       externalInvoiceNumber: new FormControl(null, [required]),
       invoiceDate: new FormControl(null, [required]),
-      amountOfInvoice: new FormControl(null, [required]),
+      amountOfInvoice: new FormControl('0', [required]),
       currency: new FormControl(null, [required]),
       lineItems: new FormArray([])
     });
@@ -66,15 +66,30 @@ export class InvoiceCreatePageComponent implements OnInit {
   public currencyOptions = ['CAD', 'USD'];
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
+  public validAmount = true;
 
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
       glAccount: new FormControl(null, [Validators.required]),
       costCenter: new FormControl(null, [Validators.required]),
       companyCode: new FormControl(null, [Validators.required]),
-      lineItemNetAmount: new FormControl(null, [Validators.required]),
+      lineItemNetAmount: new FormControl('0', [Validators.required]),
       notes: new FormControl(null)
     });
+  }
+
+  public validateInvoiceAmount(): void {
+    let sum = 0;
+    const invoiceAmount = Number(this.amountOfInvoiceFormControl.value.replace(',', '')).toFixed(2);
+    for (let i = 0; i < this.lineItemsFormArray.controls.length; i++) {
+      const lineItem = this.lineItemsFormArray.at(i) as FormGroup;
+      const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
+      sum += Number(lineItemAmount.value.replace(',', ''));
+    }
+    this.validAmount = sum.toFixed(2) === invoiceAmount;
+    if (!this.validAmount) {
+      this.displayInvalidAmountError();
+    }
   }
 
   public lineItemNetAmountFormControl(index: number): FormControl {
@@ -110,6 +125,21 @@ export class InvoiceCreatePageComponent implements OnInit {
     }
   }
 
+  public displayInvalidAmountError(): void {
+    this.dialog.open(InvoiceAmountErrorModalComponent,
+      {
+        autoFocus: false,
+        data: {
+          title: 'Invalid Line Amounts',
+          html: `<p>
+                    The sum of the line item net amounts does not equal the Total amount of the invoice.
+                 </p>`,
+          closeText: 'Close',
+        }
+      })
+      .afterClosed();
+  }
+
   public onCancel(): void {
     this.dialog.open(FalConfirmationModalComponent,
       {
@@ -139,17 +169,27 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    const invoice = this.invoiceFormGroup.getRawValue() as InvoiceDataModel;
-    invoice.createdBy = 'Falcon User';
-    this.webService.httpPost(
-      `${environment.baseServiceUrl}/v1/invoice`,
-      invoice
-    ).subscribe((res: any) => {
-        this.milestones = res.milestones;
-        this.openSnackBar('Success, invoice created!');
-      },
-      () => this.openSnackBar('Failure, invoice was not created!')
-    );
+    this.validateInvoiceAmount();
+    if (this.validAmount) {
+      const invoice = this.invoiceFormGroup.getRawValue() as any;
+      invoice.createdBy = 'Falcon User';
+
+      // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
+      invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
+      invoice.lineItems.forEach((lineItem: any) => {
+        lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
+      });
+
+      this.webService.httpPost(
+        `${environment.baseServiceUrl}/v1/invoice`,
+        invoice
+      ).subscribe((res: any) => {
+          this.milestones = res.milestones;
+          this.openSnackBar('Success, invoice created!');
+        },
+        () => this.openSnackBar('Failure, invoice was not created!')
+      );
+    }
   }
 
   public openSnackBar(message: string): void {
