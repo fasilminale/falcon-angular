@@ -117,6 +117,11 @@ describe('InvoiceCreatePageComponent', () => {
     expect(component.lineItemRemoveButtonDisable).toBeTrue();
   });
 
+  it('should toggle the milestones sidenav', () => {
+    component.toggleMilestones();
+    expect(component.milestonesTabOpen).toBeTrue();
+  });
+
   it('should reset form when cancel dialog is confirmed', () => {
     spyOn(component, 'resetForm').and.stub();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
@@ -132,5 +137,4 @@ describe('InvoiceCreatePageComponent', () => {
     expect(dialog.open).toHaveBeenCalled();
     expect(component.resetForm).not.toHaveBeenCalled();
   });
-
 });
