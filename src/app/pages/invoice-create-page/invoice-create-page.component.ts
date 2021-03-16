@@ -72,7 +72,7 @@ export class InvoiceCreatePageComponent implements OnInit {
     return new FormGroup({
       glAccount: new FormControl(null, [Validators.required]),
       costCenter: new FormControl(null, [Validators.required]),
-      companyCode: new FormControl(null, [Validators.required]),
+      companyCode: new FormControl(null),
       lineItemNetAmount: new FormControl('0', [Validators.required]),
       notes: new FormControl(null)
     });
@@ -109,6 +109,7 @@ export class InvoiceCreatePageComponent implements OnInit {
     if (this.workTypeOptions.length === 1) {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
     }
+    this.invoiceFormGroup.controls.companyCode.setValue('');
   }
 
   public addNewEmptyLineItem(): void {
@@ -177,6 +178,9 @@ export class InvoiceCreatePageComponent implements OnInit {
       // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
       invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
       invoice.lineItems.forEach((lineItem: any) => {
+        if (!lineItem.companyCode) {
+          lineItem.companyCode = invoice.companyCode;
+        }
         lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
       });
 
