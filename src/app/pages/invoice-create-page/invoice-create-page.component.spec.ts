@@ -10,6 +10,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 describe('InvoiceCreatePageComponent', () => {
 
@@ -82,6 +83,32 @@ describe('InvoiceCreatePageComponent', () => {
   it('should enable remove button after going up to more than one line item', () => {
     component.addNewEmptyLineItem();
     expect(component.lineItemRemoveButtonDisable).toBeFalse();
+  });
+
+  it('should copy head companyCode to line item companyCode', () => {
+
+    component.invoiceFormGroup.controls.companyCode.setValue('123456');
+    component.onSubmit();
+    const testRequest = http.expectOne(`${environment.baseServiceUrl}/v1/invoice`);
+
+    expect(testRequest.request.body.lineItems.length).toEqual(1);
+    expect(testRequest.request.body.lineItems[0].companyCode).toEqual('123456');
+    testRequest.flush(new HttpResponse<never>());
+
+  });
+
+  it('should not copy head companyCode to populated line item companyCode', () => {
+
+    component.invoiceFormGroup.controls.companyCode.setValue('123456');
+    // @ts-ignore
+    component.invoiceFormGroup.controls.lineItems.get('0').controls.companyCode.setValue('234567');
+    component.onSubmit();
+    const testRequest = http.expectOne(`${environment.baseServiceUrl}/v1/invoice`);
+
+    expect(testRequest.request.body.lineItems.length).toEqual(1);
+    expect(testRequest.request.body.lineItems[0].companyCode).toEqual('234567');
+    testRequest.flush(new HttpResponse<never>());
+
   });
 
   it('should disable remove button after going down to one line item', () => {
