@@ -21,6 +21,7 @@ import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatCurrencyFormatModule} from 'mat-currency-format';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
+import {InvoiceAmountErrorModalComponent} from './components/invoice-amount-error-modal/invoice-amount-error-modal';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import {MatListModule} from '@angular/material/list';
     InvoiceListPageComponent,
     InvoiceCreatePageComponent,
     FalDateInputComponent,
-    FalConfirmationModalComponent
+    FalConfirmationModalComponent,
+    InvoiceAmountErrorModalComponent
   ],
   imports: [
     BrowserModule,

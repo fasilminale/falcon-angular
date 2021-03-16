@@ -59,6 +59,10 @@ label {
   padding-left: 0em;
 }
 
+.line-item-row-error {
+  border-color: $cardinal-red;
+}
+
 .line-item-remove-button:enabled {
   color: $cardinal-red;
 }

@@ -105,7 +105,7 @@
                    [allowNegative]="true"
                    [value]="amountOfInvoiceFormControl.value"
                    id="invoice-amount-input"
-                   class="form-control"
+                   [ngClass]="!validAmount ? 'line-item-row-error form-control' : 'form-control'"
                    formControlName="amountOfInvoice"
             />
           </div>
@@ -196,7 +196,7 @@
                              mvndrMatCurrencyFormat
                        [allowNegative]="true"
                        [value]="lineItemNetAmountFormControl(i).value"
-                       class="form-control"
+                       [ngClass]="!validAmount ? 'line-item-row-error form-control' : 'form-control'"
                        formControlName="lineItemNetAmount"
                 />
               </div>
