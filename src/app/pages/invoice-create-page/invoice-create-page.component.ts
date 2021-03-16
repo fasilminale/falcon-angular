@@ -131,9 +131,9 @@ export class InvoiceCreatePageComponent implements OnInit {
       {
         autoFocus: false,
         data: {
-          title: 'Invalid Line Amounts',
+          title: 'Invalid Amount(s)',
           html: `<p>
-                    The sum of the line item net amounts does not equal the Total amount of the invoice.
+                    Total of Line Net Amount(s) must equal Invoice Net Amount.
                  </p>`,
           closeText: 'Close',
         }
