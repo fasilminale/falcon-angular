@@ -14,6 +14,28 @@ import {FalConfirmationModalComponent} from '../../components/fal-confirmation-m
 })
 export class InvoiceCreatePageComponent implements OnInit {
 
+  public milestonesTabOpen = false;
+
+  // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
+  public milestones: Array<any> = [
+    {
+      status: {
+        label: 'Invoice Created',
+        key: 'CREATED'
+      },
+      timestamp: Date.now(),
+      user: 'Falcon System'
+    },
+    {
+      status: {
+        label: 'Invoice Created',
+        key: 'CREATED'
+      },
+      timestamp: Date.now(),
+      user: 'Falcon System'
+    }
+  ];
+
   get lineItemsFormArray(): FormArray {
     return this.invoiceFormGroup.get('lineItems') as FormArray;
   }
@@ -112,15 +134,21 @@ export class InvoiceCreatePageComponent implements OnInit {
       });
   }
 
+  public toggleMilestones(): void {
+    this.milestonesTabOpen = !this.milestonesTabOpen;
+  }
+
   public onSubmit(): void {
     const invoice = this.invoiceFormGroup.getRawValue() as InvoiceDataModel;
     invoice.createdBy = 'Falcon User';
     this.webService.httpPost(
       `${environment.baseServiceUrl}/v1/invoice`,
       invoice
-    ).subscribe(
-      _ => this.openSnackBar('Success, invoice created!'),
-      _ => this.openSnackBar('Failure, invoice was not created!')
+    ).subscribe((res: any) => {
+        this.milestones = res.milestones;
+        this.openSnackBar('Success, invoice created!');
+      },
+      () => this.openSnackBar('Failure, invoice was not created!')
     );
   }
 
