@@ -71,7 +71,7 @@ export class InvoiceCreatePageComponent implements OnInit {
     return new FormGroup({
       glAccount: new FormControl(null, [Validators.required]),
       costCenter: new FormControl(null, [Validators.required]),
-      companyCode: new FormControl(null, [Validators.required]),
+      companyCode: new FormControl(null),
       lineItemNetAmount: new FormControl(null, [Validators.required]),
       notes: new FormControl(null)
     });
@@ -94,6 +94,7 @@ export class InvoiceCreatePageComponent implements OnInit {
     if (this.workTypeOptions.length === 1) {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
     }
+    this.invoiceFormGroup.controls.companyCode.setValue('');
   }
 
   public addNewEmptyLineItem(): void {
@@ -141,6 +142,13 @@ export class InvoiceCreatePageComponent implements OnInit {
   public onSubmit(): void {
     const invoice = this.invoiceFormGroup.getRawValue() as InvoiceDataModel;
     invoice.createdBy = 'Falcon User';
+
+    invoice.lineItems.forEach(lineItem => {
+      if (!lineItem.companyCode) {
+        lineItem.companyCode = invoice.companyCode;
+      }
+    });
+
     this.webService.httpPost(
       `${environment.baseServiceUrl}/v1/invoice`,
       invoice

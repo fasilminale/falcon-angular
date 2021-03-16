@@ -153,16 +153,17 @@
                       </div>
                     </div>
 
-                    <!-- LINE ITEM - COMPANY CODE -->
-                    <div>
-                      <label class="form-label fieldLabel1">
-                        Company Code
-                      </label>
-                      <input type="text"
-                             class="form-control"
-                             formControlName="companyCode"
-                      />
-                    </div>
+              <!-- LINE ITEM - COMPANY CODE -->
+              <div>
+                <label class="form-label fieldLabel1">
+                  Company Code
+                </label>
+                <input type="text"
+                       class="form-control"
+                       formControlName="companyCode"
+                       [placeholder]="invoiceFormGroup.controls.companyCode.value"
+                />
+              </div>
 
                     <!-- LINE ITEM - COST CENTER -->
                     <div>
