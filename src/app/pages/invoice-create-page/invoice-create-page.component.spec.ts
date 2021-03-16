@@ -97,6 +97,7 @@ describe('InvoiceCreatePageComponent', () => {
   it('should copy head companyCode to line item companyCode', () => {
 
     component.invoiceFormGroup.controls.companyCode.setValue('123456');
+    component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
     const testRequest = http.expectOne(`${environment.baseServiceUrl}/v1/invoice`);
 
@@ -109,6 +110,7 @@ describe('InvoiceCreatePageComponent', () => {
   it('should not copy head companyCode to populated line item companyCode', () => {
 
     component.invoiceFormGroup.controls.companyCode.setValue('123456');
+    component.amountOfInvoiceFormControl.setValue('0');
     // @ts-ignore
     component.invoiceFormGroup.controls.lineItems.get('0').controls.companyCode.setValue('234567');
     component.onSubmit();
