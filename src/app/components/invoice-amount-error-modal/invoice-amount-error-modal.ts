@@ -15,7 +15,7 @@ export interface InvoiceAmountErrorModalData {
     </div>
     <div [innerHTML]="data.html">
     </div>
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-end">
       <input type="button"
              class="flex-shrink-1 btn btn-primary"
              [value]="data.closeText"
