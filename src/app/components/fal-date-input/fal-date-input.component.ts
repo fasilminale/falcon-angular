@@ -1,6 +1,7 @@
 import {Component, forwardRef, Input, OnInit} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {NG_VALUE_ACCESSOR} from '@angular/forms';
 import {NgbDateNativeAdapter, NgbDateAdapter} from '@ng-bootstrap/ng-bootstrap';
+import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fal-control-value-accessor.component';
 
 @Component({
   selector: 'app-fal-date-input',
@@ -34,47 +35,18 @@ import {NgbDateNativeAdapter, NgbDateAdapter} from '@ng-bootstrap/ng-bootstrap';
     {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}
   ]
 })
-export class FalDateInputComponent implements OnInit, ControlValueAccessor {
+export class FalDateInputComponent extends FalControlValueAccessorComponent<string>
+  implements OnInit {
 
   @Input() navigation = 'select';
 
-  private val = '';
-
-  get value(): string {
-    return this.val;
-  }
-
-  set value(val: string) {
-    this.val = val;
-    this.onChange(this.val);
-    this.onTouched();
-  }
-
-  onChange: (newValue: string) => void = _ => {
-    // by default, do nothing
-  }
-  onTouched: () => void = () => {
-    // by default do nothing
-  }
-
   constructor() {
+    super();
   }
 
   ngOnInit(): void {
+    this.value = '';
   }
-
-  writeValue(newValue: string): void {
-    this.value = newValue;
-  }
-
-  registerOnChange(fn: (newValue: string) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
 
 }
 
