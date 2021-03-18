@@ -3,4 +3,5 @@ export class PaginationModel {
   numberPerPage = 10;
   total = 0;
   pageIndex = 1;
+  sortOrder = '';
 }
