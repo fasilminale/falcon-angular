@@ -12,7 +12,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-create-page.component';
 import {NgSelectModule} from '@ng-select/ng-select';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDatepickerModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.component';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
@@ -22,6 +22,7 @@ import {MatCurrencyFormatModule} from 'mat-currency-format';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {InvoiceAmountErrorModalComponent} from './components/invoice-amount-error-modal/invoice-amount-error-modal';
+import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-input.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {InvoiceAmountErrorModalComponent} from './components/invoice-amount-erro
     InvoiceCreatePageComponent,
     FalDateInputComponent,
     FalConfirmationModalComponent,
-    InvoiceAmountErrorModalComponent
+    InvoiceAmountErrorModalComponent,
+    FalRadioInputComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,8 @@ import {InvoiceAmountErrorModalComponent} from './components/invoice-amount-erro
     MatDialogModule,
     MatCurrencyFormatModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    NgbModule
   ],
   providers: [
     WebServices,

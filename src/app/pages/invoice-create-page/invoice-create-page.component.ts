@@ -61,6 +61,10 @@ export class InvoiceCreatePageComponent implements OnInit {
     });
   }
 
+  get erpValue(): string {
+    return this.invoiceFormGroup.controls.erpType.value;
+  }
+
   public workTypeOptions = ['Indirect Non-PO Invoice'];
   public erpTypeOptions = ['Pharma Corp', 'TPM'];
   public currencyOptions = ['CAD', 'USD'];

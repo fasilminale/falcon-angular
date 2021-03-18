@@ -21,7 +21,7 @@
     "@angular/platform-browser": "~11.2.0",
     "@angular/platform-browser-dynamic": "~11.2.0",
     "@angular/router": "~11.2.0",
-    "@elm/elm-styleguide-ui": "^1.0.14",
+    "@elm/elm-styleguide-ui": "^1.0.23",
     "karma-typescript": "^5.4.0",
     "mat-currency-format": "0.0.7",
     "moment": "^2.29.1",
