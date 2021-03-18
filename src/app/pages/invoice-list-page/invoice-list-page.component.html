@@ -7,6 +7,8 @@
     [headers]="headers"
     (pageChangedEvent)="pageChanged($event)"
     (rowClick)="rowClicked($event)"
+    (sortEvent)="sortChanged($event)"
+    [shouldSort]=true
     [totalResults]="paginationModel.total"
     [pageSizes]="paginationModel.pageSizes"
   ></cardinal-data-table>
