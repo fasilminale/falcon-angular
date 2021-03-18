@@ -39,7 +39,7 @@ export interface FalRadioDisplayOption {
       <div [ngClass]="{'row': isHorizontal()}">
         <div *ngIf="options.length <= 0"
              class="fieldLabel1">
-          (Missing Radio Options)
+          {{noOptionMessage}}
         </div>
         <div *ngFor="let option of options; index as i"
              [ngClass]="{'col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3': isHorizontal()}">
@@ -63,6 +63,7 @@ export class FalRadioInputComponent extends FalControlValueAccessorComponent<str
   @Input() outline = true;
   @Input() orientation = FalRadioOrientation.VERTICAL;
   @Input() options: Array<FalRadioOption> = [];
+  @Input() noOptionMessage = '(Missing Radio Options)';
   @Input() initialValue: string | undefined;
 
   constructor() {
