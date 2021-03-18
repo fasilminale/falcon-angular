@@ -16,7 +16,7 @@ export class InvoiceListPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
   headers = InvoiceDataModel.invoiceTableHeaders;
   invoices: Array<InvoiceDataModel> = [];
-  sortFields: Array<any> = [];
+  sortField = '';
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
@@ -34,7 +34,7 @@ export class InvoiceListPageComponent implements OnInit {
     this.loadingService.showLoading();
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
-      sortFields: this.sortFields,
+      sortField: this.sortField,
       sortOrder: this.paginationModel.sortOrder,
       numberPerPage
     }).subscribe((invoiceData: any) => {
@@ -55,7 +55,7 @@ export class InvoiceListPageComponent implements OnInit {
 
   sortChanged(sort: any): void {
     this.paginationModel.sortOrder = sort.direction;
-    this.sortFields = [sort.active];
+    this.sortField = sort.active;
     if (this.paginationModel.pageIndex !== 1) {
       this.dataTable.goToFirstPage();
     } else {
