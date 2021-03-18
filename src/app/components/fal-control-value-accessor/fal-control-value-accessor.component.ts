@@ -17,7 +17,6 @@ export class FalControlValueAccessorComponent<T> implements ControlValueAccessor
     this._value = t;
     if (this.onChange) {
       this.onChange(this.value);
-      console.log(t);
     }
     if (this.onTouched) {
       this.onTouched();
