@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {DataTableComponent} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -15,6 +16,8 @@ export class InvoiceListPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
   headers = InvoiceDataModel.invoiceTableHeaders;
   invoices: Array<InvoiceDataModel> = [];
+  sortFields: Array<any> = [];
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
     private router: Router,
@@ -31,6 +34,8 @@ export class InvoiceListPageComponent implements OnInit {
     this.loadingService.showLoading();
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
+      sortFields: this.sortFields,
+      sortOrder: this.paginationModel.sortOrder,
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
@@ -46,6 +51,16 @@ export class InvoiceListPageComponent implements OnInit {
   rowClicked(invoice: InvoiceDataModel): Promise<boolean> {
     // eventually, we will want to go to a details page from here
     return Promise.resolve(false);
+  }
+
+  sortChanged(sort: any): void {
+    this.paginationModel.sortOrder = sort.direction;
+    this.sortFields = [sort.active];
+    if (this.paginationModel.pageIndex !== 1) {
+      this.dataTable.goToFirstPage();
+    } else {
+      this.getTableData(this.paginationModel.numberPerPage);
+    }
   }
 
   pageChanged(page: any): void {
