@@ -6,6 +6,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
 import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-error-modal/invoice-amount-error-modal';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -15,8 +16,10 @@ import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-
 export class InvoiceCreatePageComponent implements OnInit {
 
   public milestonesTabOpen = false;
+  public attachments: File[] = [];
+  private attachment: File | undefined ;
 
-  // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
+   // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
   public milestones: Array<any> = [
     {
       status: {
@@ -67,6 +70,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
   public validAmount = true;
+  public  file = null;
 
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
@@ -184,6 +188,8 @@ export class InvoiceCreatePageComponent implements OnInit {
         lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
       });
 
+      this.uploadFiles();
+
       this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/invoice`,
         invoice
@@ -200,4 +206,40 @@ export class InvoiceCreatePageComponent implements OnInit {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
 
+  onChangeFile($event: Event): void {
+    // @ts-ignore
+    this.attachment = $event.target.files[0];
+  }
+
+  public uploadFiles(): void{
+    const baseApiUrl = 'https://file.io';
+    for (const attachment of this.attachments) {
+       const formData = new FormData();
+       formData.append('file', attachment, attachment.name);
+
+       this.webService.httpPost(
+        `${environment.baseServiceUrl}/v1/attachment`,
+        formData
+      ).subscribe((res: any) => {
+
+          this.openSnackBar('Success, file upload');
+        },
+        () => this.openSnackBar('Failure, file was not created!')
+      );
+
+    }
+
+    // return this.http.post(this.baseApiUrl, formData);
+  }
+
+  addAttachment(): void {
+
+    if (this.attachment) {
+      this.attachments.push(this.attachment);
+    } else {
+      console.log('Error adding attachment.');
+    }
+
+    console.log('---------------------------- ' + this.attachments.length);
+  }
 }

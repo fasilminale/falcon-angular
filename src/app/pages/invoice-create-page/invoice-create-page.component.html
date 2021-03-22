@@ -126,6 +126,19 @@
 
               <!-- UPLOAD DOCUMENT -->
               <div class="row col-6">
+                <label class="form-label fieldLabel1">
+                  Upload Attachments (optional)
+                </label>
+                <div class="form-control">
+                  <input type="file" class="form-control" id="customFile" (change)="onChangeFile($event)"/>
+                  <input type="upload"
+                         id="upload-button"
+                         value="Upload"
+                         [ngClass]="'btn-primary'"
+                         class="btn flex-shrink-1"
+                        (click)="addAttachment()"/>
+
+                </div>
                 <!-- Placeholder for document uploads -->
               </div>
 
