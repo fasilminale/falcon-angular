@@ -16,8 +16,10 @@ import {HttpClient} from '@angular/common/http';
 export class InvoiceCreatePageComponent implements OnInit {
 
   public milestonesTabOpen = false;
-  public attachments: File[] = [];
-  private attachment: File | undefined ;
+  // public attachments: File[] = [];
+  private attachment: File | undefined;
+
+  public attachments: [File, string][] = [];
 
    // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
   public milestones: Array<any> = [
@@ -62,6 +64,11 @@ export class InvoiceCreatePageComponent implements OnInit {
       currency: new FormControl(null, [required]),
       lineItems: new FormArray([])
     });
+
+    this.attachmentFormGroup = new FormGroup({
+      attachmentType: new FormControl(null, [required]),
+      file: new FormControl(null, [required])
+    });
   }
 
   public workTypeOptions = ['Indirect Non-PO Invoice'];
@@ -69,8 +76,10 @@ export class InvoiceCreatePageComponent implements OnInit {
   public currencyOptions = ['CAD', 'USD'];
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
+  public attachmentFormGroup: FormGroup;
   public validAmount = true;
   public  file = null;
+  public attachmentTypeOptions = ['AAA', 'BBB', 'CCC'];
 
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
@@ -212,10 +221,11 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   public uploadFiles(): void{
-    const baseApiUrl = 'https://file.io';
     for (const attachment of this.attachments) {
        const formData = new FormData();
-       formData.append('file', attachment, attachment.name);
+       formData.append('file', attachment[0], attachment[0].name);
+       formData.append('attachmentType', attachment[1]);
+       // formData.append('attachmentType', attachment[1], attachment[1]);
 
        this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/attachment`,
@@ -233,9 +243,11 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   addAttachment(): void {
+    const attachmentType = this.attachmentFormGroup.controls.attachmentType;
 
     if (this.attachment) {
-      this.attachments.push(this.attachment);
+      console.log('---------------------+++ ' + attachmentType);
+      this.attachments.push([this.attachment, this.attachmentFormGroup.controls.attachmentType.value]);
     } else {
       console.log('Error adding attachment.');
     }
