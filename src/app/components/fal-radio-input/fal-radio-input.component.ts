@@ -1,5 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, forwardRef, Input, OnInit} from '@angular/core';
 import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fal-control-value-accessor.component';
+import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
 /**
  * Represents different ways of laying out radio buttons
@@ -34,7 +35,7 @@ export interface FalRadioDisplayOption {
   selector: 'app-fal-radio-input',
   template: `
     <div ngbRadioGroup
-         [ngClass]="{'form-control': outline}"
+         [ngClass]="{'form-control': outline, 'error': isError}"
          [(ngModel)]="value">
       <div [ngClass]="{'row': isHorizontal()}">
         <div *ngIf="options.length <= 0"
@@ -55,12 +56,20 @@ export interface FalRadioDisplayOption {
       </div>
     </div>
   `,
-  styles: []
+  styleUrls: ['./fal-radio-input.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FalRadioInputComponent),
+      multi: true
+    }
+  ]
 })
 export class FalRadioInputComponent extends FalControlValueAccessorComponent<string>
   implements OnInit {
 
   @Input() outline = true;
+  @Input() isError = false;
   @Input() orientation = FalRadioOrientation.VERTICAL;
   @Input() options: Array<FalRadioOption> = [];
   @Input() noOptionMessage = '(Missing Radio Options)';

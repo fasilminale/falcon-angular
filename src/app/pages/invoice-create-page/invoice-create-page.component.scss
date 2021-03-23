@@ -59,7 +59,23 @@ label {
   padding-left: 0em;
 }
 
-.line-item-row-error {
+.error {
+  border-color: $cardinal-red;
+}
+
+.form-control.error {
+  border-color: $cardinal-red;
+}
+
+.app-fal-date-input.error ::ng-deep .form-control {
+  border-color: red;
+}
+
+.error-text {
+  color: $cardinal-red;
+}
+
+.ng-select.error ::ng-deep .ng-select-container{
   border-color: $cardinal-red;
 }
 

@@ -31,8 +31,13 @@
                              formControlName="workType"
                              [items]="workTypeOptions"
                              [searchable]="true"
-                             placeholder="Select One....">
+                             placeholder="Select One...."
+                             [ngClass]="workType.errors && workType.hasError('required') ? 'error' : ''">
                   </ng-select>
+                  <small class="error-text"
+                         *ngIf="workType.hasError('required')">
+                    Work Type is required
+                  </small>
                 </div>
 
                 <!-- COMPANY CODE -->
@@ -44,7 +49,14 @@
                          id="company-code-input"
                          formControlName="companyCode"
                          class="form-control"
+                         (keypress)="validateRegex($event, alphanumericRegex)"
+                         maxlength="4"
+                         [ngClass]="companyCode.errors && companyCode.hasError('required') ? 'error' : ''"
                   />
+                  <small class="error-text"
+                         *ngIf="companyCode.hasError('required')">
+                    Company Code is required
+                  </small>
                 </div>
 
                 <!-- ERP TYPE -->
@@ -53,8 +65,14 @@
                     ERP Type
                   </label>
                   <app-fal-radio-input id="erp-type-input"
-                                       [options]="erpTypeOptions">
+                                       formControlName="erpType"
+                                       [options]="erpTypeOptions"
+                                       [isError]="!!(erpType.errors && erpType.hasError('required'))">
                   </app-fal-radio-input>
+                  <small class="error-text"
+                         *ngIf="erpType.hasError('required')">
+                    ERP Type is required
+                  </small>
                 </div>
 
                 <!-- VENDOR NUMBER -->
@@ -66,7 +84,14 @@
                          id="vendor-number-input"
                          class="form-control"
                          formControlName="vendorNumber"
+                         (keypress)="validateRegex($event, numericRegex)"
+                         maxlength="10"
+                         [ngClass]="vendorNumber.errors && vendorNumber.hasError('required')? 'error' : ''"
                   />
+                  <small class="error-text"
+                         *ngIf="vendorNumber.hasError('required')">
+                    Vendor Number is required
+                  </small>
                 </div>
 
                 <!-- EXTERNAL INVOICE NUMBER -->
@@ -78,7 +103,14 @@
                          id="external-invoice-number-input"
                          class="form-control"
                          formControlName="externalInvoiceNumber"
+                         (keypress)="validateRegex($event, noSpecialCharacterRegex)"
+                         maxlength="16"
+                         [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')? 'error' : ''"
                   />
+                  <small class="error-text"
+                         *ngIf="externalInvoiceNumber.hasError('required')">
+                    External Invoice Number is required
+                  </small>
                 </div>
 
                 <!-- EXTERNAL INVOICE DATE -->
@@ -87,8 +119,13 @@
                     External Invoice Date
                   </label>
                   <app-fal-date-input id="external-invoice-date-input"
-                                      formControlName="invoiceDate">
+                                      formControlName="invoiceDate"
+                                      [isError]="!!(invoiceDate.errors && invoiceDate.hasError('required'))">
                   </app-fal-date-input>
+                  <small class="error-text"
+                         *ngIf="invoiceDate.hasError('required')">
+                    External Invoice Date is required
+                  </small>
                 </div>
 
 
@@ -98,13 +135,18 @@
                     Invoice Net Amount
                   </label>
                   <input type="text"
+                         class="form-control"
                          mvndrMatCurrencyFormat
                          [allowNegative]="true"
                          [value]="amountOfInvoiceFormControl.value"
                          id="invoice-amount-input"
-                         [ngClass]="!validAmount ? 'line-item-row-error form-control' : 'form-control'"
+                         [ngClass]="((amountOfInvoice.errors && amountOfInvoice.hasError('required')) || !validAmount) ? 'error' : ''"
                          formControlName="amountOfInvoice"
                   />
+                  <small class="error-text"
+                         *ngIf="amountOfInvoice.hasError('required')">
+                    Invoice Net Amount is required
+                  </small>
                 </div>
 
                 <!-- CURRENCY -->
@@ -116,8 +158,13 @@
                              formControlName="currency"
                              [items]="currencyOptions"
                              [searchable]="true"
-                             placeholder="Select One....">
+                             placeholder="Select One...."
+                             [ngClass]="currency.errors && currency.hasError('required') ? 'error' : ''">
                   </ng-select>
+                  <small class="error-text"
+                         *ngIf="currency.hasError('required')">
+                    Currency is required
+                  </small>
                 </div>
               </div>
 
@@ -193,7 +240,7 @@
                              mvndrMatCurrencyFormat
                              [allowNegative]="true"
                              [value]="lineItemNetAmountFormControl(i).value"
-                             [ngClass]="!validAmount ? 'line-item-row-error form-control' : 'form-control'"
+                             [ngClass]="!validAmount ? 'error form-control' : 'form-control'"
                              formControlName="lineItemNetAmount"
                       />
                     </div>

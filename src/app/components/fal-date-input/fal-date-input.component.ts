@@ -9,6 +9,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
     <div class="form-group">
       <div class="input-group">
         <input class="form-control"
+               [ngClass]="isError ? 'error' : ''"
                placeholder="yyyy-mm-dd"
                ngbDatepicker #d="ngbDatepicker"
                [readOnly]="true"
@@ -17,7 +18,8 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
                [(ngModel)]="value"
                (ngModelChange)="value"
         />
-        <button type="button"
+        <button [ngClass]="isError ? 'error' : ''"
+                type="button"
                 class="btn btn-outline-secondary material-icons align-middle"
                 (click)="d.toggle()">
           today
@@ -25,7 +27,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
       </div>
     </div>
   `,
-  styles: [],
+  styleUrls: ['./fal-date-input.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -39,12 +41,14 @@ export class FalDateInputComponent extends FalControlValueAccessorComponent<stri
   implements OnInit {
 
   @Input() navigation = 'select';
+  @Input() isError = false;
 
   constructor() {
     super();
   }
 
   ngOnInit(): void {
+    console.log(this.isError);
     this.value = '';
   }
 
