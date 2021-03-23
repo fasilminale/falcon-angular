@@ -14,9 +14,9 @@ import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-
 })
 export class InvoiceCreatePageComponent implements OnInit {
 
-  public alphanumericRegex = /[a-zA-Z0-9]/;
-  public numericRegex = /[0-9]/;
-  public noSpecialCharacterRegex = /[a-zA-Z0-9_\\-]/;
+  public readonly alphanumericRegex = /[a-zA-Z0-9]/;
+  public readonly numericRegex = /[0-9]/;
+  public readonly noSpecialCharacterRegex = /[a-zA-Z0-9_\\-]/;
 
   public milestonesTabOpen = false;
 

@@ -48,7 +48,6 @@ export class FalDateInputComponent extends FalControlValueAccessorComponent<stri
   }
 
   ngOnInit(): void {
-    console.log(this.isError);
     this.value = '';
   }
 
