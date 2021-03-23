@@ -28,9 +28,7 @@ describe('InvoiceCreatePageComponent', () => {
     close: null
   });
 
-  const alphanumericRegex = /[a-zA-Z0-9]/;
-  const numericRegex = /[0-9]/;
-  const noSpecialCharacterRegex = /[a-zA-Z0-9_\\-]/;
+  const regex = /[a-zA-Z0-9_\\-]/;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -150,27 +148,27 @@ describe('InvoiceCreatePageComponent', () => {
   });
 
   it('should allow valid alphabet values', () => {
-    const result = component.validateRegex(validAlphabetValueEvent, alphanumericRegex);
+    const result = component.validateRegex(validAlphabetValueEvent);
     expect(result).toBeTrue();
   });
 
   it('should allow valid numeric values', () => {
-    const result = component.validateRegex(validNumericValueEvent, numericRegex);
+    const result = component.validateRegex(validNumericValueEvent);
     expect(result).toBeTrue();
   });
 
   it('should allow underscore values', () => {
-    const result = component.validateRegex(validUnderscoreEvent, noSpecialCharacterRegex);
+    const result = component.validateRegex(validUnderscoreEvent);
     expect(result).toBeTrue();
   });
 
   it('should allow hyphen values', () => {
-    const result = component.validateRegex(validHyphenEvent, noSpecialCharacterRegex);
+    const result = component.validateRegex(validHyphenEvent);
     expect(result).toBeTrue();
   });
 
   it('should ignore invalid character values', () => {
-    const result = component.validateRegex(invalidCharacterEvent, alphanumericRegex);
+    const result = component.validateRegex(invalidCharacterEvent);
     expect(result).toBeFalse();
   });
 
