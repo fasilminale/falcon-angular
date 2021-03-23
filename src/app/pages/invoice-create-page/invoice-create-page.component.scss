@@ -14,8 +14,26 @@
   padding-right: 0em;
 }
 
+#upload-button {
+  margin-top: 1em;
+}
+
 label {
   margin-top: 1em;
+}
+
+.attachment {
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  background-color: $cardinal-grey;
+  vertical-align: middle;
+  border-radius: 0.25rem;
+  font-size: small;
+  }
+
+.upload-container {
+  padding-bottom: 1em;
+  padding-top: 1em;
 }
 
 .fake-form-control {

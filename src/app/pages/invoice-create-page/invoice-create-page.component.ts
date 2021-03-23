@@ -225,18 +225,16 @@ export class InvoiceCreatePageComponent implements OnInit {
        const formData = new FormData();
        formData.append('file', attachment[0], attachment[0].name);
        formData.append('attachmentType', attachment[1]);
-       // formData.append('attachmentType', attachment[1], attachment[1]);
+       formData.append('fileName', attachment[0].name);
 
        this.webService.httpPost(
-        `${environment.baseServiceUrl}/v1/attachment`,
-        formData
-      ).subscribe((res: any) => {
-
+          `${environment.baseServiceUrl}/v1/attachment`,
+          formData
+        ).subscribe((res: any) => {
           this.openSnackBar('Success, file upload');
         },
         () => this.openSnackBar('Failure, file was not created!')
       );
-
     }
 
     // return this.http.post(this.baseApiUrl, formData);
