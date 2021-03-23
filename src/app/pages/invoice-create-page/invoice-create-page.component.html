@@ -49,7 +49,7 @@
                          id="company-code-input"
                          formControlName="companyCode"
                          class="form-control"
-                         (keypress)="validateRegex($event, alphanumericRegex)"
+                         (keypress)="validateRegex($event)"
                          maxlength="4"
                          [ngClass]="companyCode.errors && companyCode.hasError('required') ? 'error' : ''"
                   />
@@ -84,7 +84,7 @@
                          id="vendor-number-input"
                          class="form-control"
                          formControlName="vendorNumber"
-                         (keypress)="validateRegex($event, numericRegex)"
+                         (keypress)="validateRegex($event)"
                          maxlength="10"
                          [ngClass]="vendorNumber.errors && vendorNumber.hasError('required')? 'error' : ''"
                   />
@@ -103,7 +103,7 @@
                          id="external-invoice-number-input"
                          class="form-control"
                          formControlName="externalInvoiceNumber"
-                         (keypress)="validateRegex($event, noSpecialCharacterRegex)"
+                         (keypress)="validateRegex($event)"
                          maxlength="16"
                          [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')? 'error' : ''"
                   />

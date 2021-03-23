@@ -14,9 +14,7 @@ import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-
 })
 export class InvoiceCreatePageComponent implements OnInit {
 
-  public readonly alphanumericRegex = /[a-zA-Z0-9]/;
-  public readonly numericRegex = /[0-9]/;
-  public readonly noSpecialCharacterRegex = /[a-zA-Z0-9_\\-]/;
+  public readonly regex = /[a-zA-Z0-9_\\-]/;
 
   public milestonesTabOpen = false;
 
@@ -114,10 +112,10 @@ export class InvoiceCreatePageComponent implements OnInit {
     });
   }
 
-  public validateRegex(event: any, regex: RegExp): boolean {
+  public validateRegex(event: any): boolean {
     const char = String.fromCharCode(event.keyCode);
 
-    if (regex.test(char)) {
+    if (this.regex.test(char)) {
       return true;
     } else {
       event.preventDefault();
