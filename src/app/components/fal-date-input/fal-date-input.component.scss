@@ -1,0 +1,9 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.form-control.error {
+  border-color: $cardinal-red;
+}
+
+.btn.error {
+  border-color: $cardinal-red;
+}

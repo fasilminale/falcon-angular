@@ -10,8 +10,6 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 describe('InvoiceCreatePageComponent', () => {
 
@@ -29,6 +27,35 @@ describe('InvoiceCreatePageComponent', () => {
     afterClosed: of(false),
     close: null
   });
+
+  const alphanumericRegex = /[a-zA-Z0-9]/;
+  const numericRegex = /[0-9]/;
+  const noSpecialCharacterRegex = /[a-zA-Z0-9_\\-]/;
+
+  const validNumericValueEvent = {
+    keyCode: '048', // The character '0'
+    preventDefault: () => {}
+  };
+
+  const validAlphabetValueEvent = {
+    keyCode: '065', // The character 'A'
+    preventDefault: () => {}
+  };
+
+  const validUnderscoreEvent = {
+    keyCode: '095', // The character '_'
+    preventDefault: () => {}
+  };
+
+  const validHyphenEvent = {
+    keyCode: '095', // The character '_'
+    preventDefault: () => {}
+  };
+
+  const invalidCharacterEvent = {
+    keyCode: 33, // The character '!'
+    preventDefault: () => {}
+  };
 
   let component: InvoiceCreatePageComponent;
   let fixture: ComponentFixture<InvoiceCreatePageComponent>;
@@ -120,6 +147,31 @@ describe('InvoiceCreatePageComponent', () => {
     expect(testRequest.request.body.lineItems[0].companyCode).toEqual('234567');
     testRequest.flush(new HttpResponse<never>());
 
+  });
+
+  it('should allow valid alphabet values', () => {
+    const result = component.validateRegex(validAlphabetValueEvent, alphanumericRegex);
+    expect(result).toBeTrue();
+  });
+
+  it('should allow valid numeric values', () => {
+    const result = component.validateRegex(validNumericValueEvent, numericRegex);
+    expect(result).toBeTrue();
+  });
+
+  it('should allow underscore values', () => {
+    const result = component.validateRegex(validUnderscoreEvent, noSpecialCharacterRegex);
+    expect(result).toBeTrue();
+  });
+
+  it('should allow hyphen values', () => {
+    const result = component.validateRegex(validHyphenEvent, noSpecialCharacterRegex);
+    expect(result).toBeTrue();
+  });
+
+  it('should ignore invalid character values', () => {
+    const result = component.validateRegex(invalidCharacterEvent, alphanumericRegex);
+    expect(result).toBeFalse();
   });
 
   it('should disable remove button after going down to one line item', () => {

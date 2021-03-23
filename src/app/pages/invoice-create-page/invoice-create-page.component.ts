@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -13,6 +13,10 @@ import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-
   styleUrls: ['./invoice-create-page.component.scss']
 })
 export class InvoiceCreatePageComponent implements OnInit {
+
+  public readonly alphanumericRegex = /[a-zA-Z0-9]/;
+  public readonly numericRegex = /[0-9]/;
+  public readonly noSpecialCharacterRegex = /[a-zA-Z0-9_\\-]/;
 
   public milestonesTabOpen = false;
 
@@ -61,8 +65,36 @@ export class InvoiceCreatePageComponent implements OnInit {
     });
   }
 
-  get erpValue(): string {
-    return this.invoiceFormGroup.controls.erpType.value;
+  get erpType(): AbstractControl {
+    return this.invoiceFormGroup.controls.erpType;
+  }
+
+  get workType(): AbstractControl {
+    return this.invoiceFormGroup.controls.workType;
+  }
+
+  get companyCode(): AbstractControl {
+    return this.invoiceFormGroup.controls.companyCode;
+  }
+
+  get externalInvoiceNumber(): AbstractControl {
+    return this.invoiceFormGroup.controls.externalInvoiceNumber;
+  }
+
+  get vendorNumber(): AbstractControl {
+    return this.invoiceFormGroup.controls.vendorNumber;
+  }
+
+  get invoiceDate(): AbstractControl {
+    return this.invoiceFormGroup.controls.invoiceDate;
+  }
+
+  get amountOfInvoice(): AbstractControl {
+    return this.invoiceFormGroup.controls.amountOfInvoice;
+  }
+
+  get currency(): AbstractControl {
+    return this.invoiceFormGroup.controls.currency;
   }
 
   public workTypeOptions = ['Indirect Non-PO Invoice'];
@@ -80,6 +112,17 @@ export class InvoiceCreatePageComponent implements OnInit {
       lineItemNetAmount: new FormControl('0', [Validators.required]),
       notes: new FormControl(null)
     });
+  }
+
+  public validateRegex(event: any, regex: RegExp): boolean {
+    const char = String.fromCharCode(event.keyCode);
+
+    if (regex.test(char)) {
+      return true;
+    } else {
+      event.preventDefault();
+      return false;
+    }
   }
 
   public validateInvoiceAmount(): void {
