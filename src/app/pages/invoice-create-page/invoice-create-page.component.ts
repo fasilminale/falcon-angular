@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -7,6 +7,12 @@ import {MatDialog} from '@angular/material/dialog';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
 import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-error-modal/invoice-amount-error-modal';
 import {HttpClient} from '@angular/common/http';
+import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
+
+interface Attachment {
+  file: File;
+  type: string;
+}
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -15,13 +21,13 @@ import {HttpClient} from '@angular/common/http';
 })
 export class InvoiceCreatePageComponent implements OnInit {
 
+  public readonly regex = /[a-zA-Z0-9_\\-]/;
   public milestonesTabOpen = false;
-  // public attachments: File[] = [];
-  private attachment: File | undefined;
+  public attachments: Array<Attachment> = [];
 
-  public attachments: [File, string][] = [];
+  @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
 
-   // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
+  // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
   public milestones: Array<any> = [
     {
       status: {
@@ -71,6 +77,38 @@ export class InvoiceCreatePageComponent implements OnInit {
     });
   }
 
+  get erpType(): AbstractControl {
+    return this.invoiceFormGroup.controls.erpType;
+  }
+
+  get workType(): AbstractControl {
+    return this.invoiceFormGroup.controls.workType;
+  }
+
+  get companyCode(): AbstractControl {
+    return this.invoiceFormGroup.controls.companyCode;
+  }
+
+  get externalInvoiceNumber(): AbstractControl {
+    return this.invoiceFormGroup.controls.externalInvoiceNumber;
+  }
+
+  get vendorNumber(): AbstractControl {
+    return this.invoiceFormGroup.controls.vendorNumber;
+  }
+
+  get invoiceDate(): AbstractControl {
+    return this.invoiceFormGroup.controls.invoiceDate;
+  }
+
+  get amountOfInvoice(): AbstractControl {
+    return this.invoiceFormGroup.controls.amountOfInvoice;
+  }
+
+  get currency(): AbstractControl {
+    return this.invoiceFormGroup.controls.currency;
+  }
+
   public workTypeOptions = ['Indirect Non-PO Invoice'];
   public erpTypeOptions = ['Pharma Corp', 'TPM'];
   public currencyOptions = ['CAD', 'USD'];
@@ -78,7 +116,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public invoiceFormGroup: FormGroup;
   public attachmentFormGroup: FormGroup;
   public validAmount = true;
-  public  file = null;
+  public file = null;
   public attachmentTypeOptions = ['AAA', 'BBB', 'CCC'];
 
   private static createEmptyLineItemForm(): FormGroup {
@@ -89,6 +127,17 @@ export class InvoiceCreatePageComponent implements OnInit {
       lineItemNetAmount: new FormControl('0', [Validators.required]),
       notes: new FormControl(null)
     });
+  }
+
+  public validateRegex(event: any): boolean {
+    const char = String.fromCharCode(event.keyCode);
+
+    if (this.regex.test(char)) {
+      return true;
+    } else {
+      event.preventDefault();
+      return false;
+    }
   }
 
   public validateInvoiceAmount(): void {
@@ -204,7 +253,8 @@ export class InvoiceCreatePageComponent implements OnInit {
         invoice
       ).subscribe((res: any) => {
           this.milestones = res.milestones;
-          this.openSnackBar('Success, invoice created!');
+          this.resetForm();
+          this.openSnackBar(`Success! Falcon Invoice ${res.falconInvoiceNumber} has been created.`);
         },
         () => this.openSnackBar('Failure, invoice was not created!')
       );
@@ -215,22 +265,17 @@ export class InvoiceCreatePageComponent implements OnInit {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
 
-  onChangeFile($event: Event): void {
-    // @ts-ignore
-    this.attachment = $event.target.files[0];
-  }
-
-  public uploadFiles(): void{
+  public uploadFiles(): void {
     for (const attachment of this.attachments) {
-       const formData = new FormData();
-       formData.append('file', attachment[0], attachment[0].name);
-       formData.append('attachmentType', attachment[1]);
-       formData.append('fileName', attachment[0].name);
+      const formData = new FormData();
+      formData.append('file', attachment.file, attachment.file.name);
+      formData.append('attachmentType', attachment.type);
+      formData.append('fileName', attachment.file.name);
 
-       this.webService.httpPost(
-          `${environment.baseServiceUrl}/v1/attachment`,
-          formData
-        ).subscribe((res: any) => {
+      this.webService.httpPost(
+        `${environment.baseServiceUrl}/v1/attachment`,
+        formData
+      ).subscribe((res: any) => {
           this.openSnackBar('Success, file upload');
         },
         () => this.openSnackBar('Failure, file was not created!')
@@ -241,15 +286,20 @@ export class InvoiceCreatePageComponent implements OnInit {
   }
 
   addAttachment(): void {
-    const attachmentType = this.attachmentFormGroup.controls.attachmentType;
-
-    if (this.attachment) {
-      console.log('---------------------+++ ' + attachmentType);
-      this.attachments.push([this.attachment, this.attachmentFormGroup.controls.attachmentType.value]);
-    } else {
-      console.log('Error adding attachment.');
+    const attachmentFileValue = this.attachmentFormGroup.controls.file.value;
+    const attachmentTypeValue = this.attachmentFormGroup.controls.attachmentType.value;
+    if (attachmentFileValue && attachmentTypeValue) {
+      this.attachments.push({
+        file: attachmentFileValue,
+        type: attachmentTypeValue
+      });
+      this.attachmentFormGroup.reset();
+      this.fileChooserInput?.reset();
     }
-
-    console.log('---------------------------- ' + this.attachments.length);
   }
+
+  removeAttachment(index: number): void {
+    this.attachments.splice(index, 1);
+  }
+
 }

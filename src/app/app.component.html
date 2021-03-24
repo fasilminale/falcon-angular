@@ -3,20 +3,16 @@
 </div>
 <div class="app">
   <div class="page-header">
-    <cardinal-header headerTitle="FALCON">
-      <cardinal-tabs [tabs]="pageTabs"></cardinal-tabs>
-    </cardinal-header>
+    <elm-header headerTitle="FALCON"
+                [NavBarItems]="navBarItems"
+                [showLogout]="false"
+                (itemClickEvent)="navItemClicked($event)"
+                [userMenuItems]="userMenuItems"
+    >
+    </elm-header>
   </div>
   <div class="page-body">
     <router-outlet>
     </router-outlet>
-  </div>
-  <div class="page-footer">
-    <cardinal-footer footerTitle="FALCON">
-      <div class="d-flex justify-content-end">
-        <!-- feedback button would go here -->
-        <app-health-check></app-health-check>
-      </div>
-    </cardinal-footer>
   </div>
 </div>

@@ -22,10 +22,17 @@ describe('InvoiceListPageComponent', () => {
   pageEvent.pageSize = 30;
   pageEvent.pageIndex = 1;
 
+  const sortEvent = {
+    active: 'externalInvoiceNumber',
+    direction: 'desc'
+  };
+
   const invoiceData = {
     total: 1,
     data: [{
       externalInvoiceNumber: '1'
+    }, {
+      externalInvoiceNumber: '2'
     }]
   };
 
@@ -71,6 +78,19 @@ describe('InvoiceListPageComponent', () => {
     expect(component.getTableData).toHaveBeenCalled();
     expect(component.paginationModel.pageIndex).toEqual(2);
     expect(component.paginationModel.numberPerPage).toEqual(30);
+  }));
+
+  it('should Sort Fields', fakeAsync( () => {
+    spyOn(component, 'sortChanged').and.callThrough();
+    spyOn(component, 'getTableData').and.callThrough();
+    component.sortChanged(sortEvent);
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
+    tick(150);
+    fixture.detectChanges();
+    expect(component.sortChanged).toHaveBeenCalled();
+    expect(component.getTableData).toHaveBeenCalled();
+    expect(component.sortField).toEqual(sortEvent.active);
+    expect(component.paginationModel.sortOrder).toEqual(sortEvent.direction);
   }));
 
   it('should init with invoices from api', () => {

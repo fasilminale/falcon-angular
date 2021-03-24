@@ -26,14 +26,20 @@ label {
   padding: 0.5em;
   margin-bottom: 0.5em;
   background-color: $cardinal-grey;
-  vertical-align: middle;
   border-radius: 0.25rem;
   font-size: small;
-  }
+}
+
+.btn-remove-attachment {
+  padding: 0em;
+}
+
+.btn-remove-attachment:hover {
+  background-color: $cardinal-whiteBkg-hover;
+}
 
 .upload-container {
-  padding-bottom: 1em;
-  padding-top: 1em;
+  padding: 1em;
 }
 
 .fake-form-control {
@@ -77,7 +83,23 @@ label {
   padding-left: 0em;
 }
 
-.line-item-row-error {
+.error {
+  border-color: $cardinal-red;
+}
+
+.form-control.error {
+  border-color: $cardinal-red;
+}
+
+.app-fal-date-input.error ::ng-deep .form-control {
+  border-color: red;
+}
+
+.error-text {
+  color: $cardinal-red;
+}
+
+.ng-select.error ::ng-deep .ng-select-container {
   border-color: $cardinal-red;
 }
 

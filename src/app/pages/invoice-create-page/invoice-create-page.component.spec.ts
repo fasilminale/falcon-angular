@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {InvoiceCreatePageComponent} from './invoice-create-page.component';
 import {WebServices} from '../../services/web-services';
@@ -10,8 +10,6 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 describe('InvoiceCreatePageComponent', () => {
 
@@ -29,6 +27,37 @@ describe('InvoiceCreatePageComponent', () => {
     afterClosed: of(false),
     close: null
   });
+
+  const regex = /[a-zA-Z0-9_\\-]/;
+
+  const validNumericValueEvent = {
+    keyCode: '048', // The character '0'
+    preventDefault: () => {}
+  };
+
+  const validAlphabetValueEvent = {
+    keyCode: '065', // The character 'A'
+    preventDefault: () => {}
+  };
+
+  const validUnderscoreEvent = {
+    keyCode: '095', // The character '_'
+    preventDefault: () => {}
+  };
+
+  const validHyphenEvent = {
+    keyCode: '095', // The character '_'
+    preventDefault: () => {}
+  };
+
+  const invalidCharacterEvent = {
+    keyCode: 33, // The character '!'
+    preventDefault: () => {}
+  };
+
+  const invoiceResponse = {
+    falconInvoiceNumber: 'F0000000001'
+  };
 
   let component: InvoiceCreatePageComponent;
   let fixture: ComponentFixture<InvoiceCreatePageComponent>;
@@ -59,15 +88,16 @@ describe('InvoiceCreatePageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should show success snackbar on post', () => {
+  it('should show success snackbar on post', fakeAsync(() => {
     spyOn(component, 'openSnackBar').and.stub();
     component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
+    fixture.detectChanges();
     expect(component.openSnackBar)
-      .toHaveBeenCalledWith('Success, invoice created!');
-  });
+      .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been created.`);
+  }));
 
   it('should show failure snackbar on failed post', () => {
     spyOn(component, 'openSnackBar').and.stub();
@@ -120,6 +150,31 @@ describe('InvoiceCreatePageComponent', () => {
     expect(testRequest.request.body.lineItems[0].companyCode).toEqual('234567');
     testRequest.flush(new HttpResponse<never>());
 
+  });
+
+  it('should allow valid alphabet values', () => {
+    const result = component.validateRegex(validAlphabetValueEvent);
+    expect(result).toBeTrue();
+  });
+
+  it('should allow valid numeric values', () => {
+    const result = component.validateRegex(validNumericValueEvent);
+    expect(result).toBeTrue();
+  });
+
+  it('should allow underscore values', () => {
+    const result = component.validateRegex(validUnderscoreEvent);
+    expect(result).toBeTrue();
+  });
+
+  it('should allow hyphen values', () => {
+    const result = component.validateRegex(validHyphenEvent);
+    expect(result).toBeTrue();
+  });
+
+  it('should ignore invalid character values', () => {
+    const result = component.validateRegex(invalidCharacterEvent);
+    expect(result).toBeFalse();
   });
 
   it('should disable remove button after going down to one line item', () => {
@@ -181,5 +236,14 @@ describe('InvoiceCreatePageComponent', () => {
     component.onCancel();
     expect(dialog.open).toHaveBeenCalled();
     expect(component.resetForm).not.toHaveBeenCalled();
+  });
+
+  it('should reset form when invoice is successfully created', () => {
+    spyOn(component, 'resetForm').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.onSubmit();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
+      .flush(new HttpResponse<never>());
+    expect(component.resetForm).toHaveBeenCalled();
   });
 });

@@ -31,8 +31,13 @@
                              formControlName="workType"
                              [items]="workTypeOptions"
                              [searchable]="true"
-                             placeholder="Select One....">
+                             placeholder="Select One...."
+                             [ngClass]="workType.errors && workType.hasError('required') ? 'error' : ''">
                   </ng-select>
+                  <small class="error-text"
+                         *ngIf="workType.hasError('required')">
+                    Work Type is required
+                  </small>
                 </div>
 
                 <!-- COMPANY CODE -->
@@ -44,7 +49,14 @@
                          id="company-code-input"
                          formControlName="companyCode"
                          class="form-control"
+                         (keypress)="validateRegex($event)"
+                         maxlength="4"
+                         [ngClass]="companyCode.errors && companyCode.hasError('required') ? 'error' : ''"
                   />
+                  <small class="error-text"
+                         *ngIf="companyCode.hasError('required')">
+                    Company Code is required
+                  </small>
                 </div>
 
                 <!-- ERP TYPE -->
@@ -52,12 +64,15 @@
                   <label for="erp-type-input" class="form-label fieldLabel1">
                     ERP Type
                   </label>
-                  <ng-select id="erp-type-input"
-                             formControlName="erpType"
-                             [items]="erpTypeOptions"
-                             [searchable]="true"
-                             placeholder="Select One....">
-                  </ng-select>
+                  <app-fal-radio-input id="erp-type-input"
+                                       formControlName="erpType"
+                                       [options]="erpTypeOptions"
+                                       [isError]="!!(erpType.errors && erpType.hasError('required'))">
+                  </app-fal-radio-input>
+                  <small class="error-text"
+                         *ngIf="erpType.hasError('required')">
+                    ERP Type is required
+                  </small>
                 </div>
 
                 <!-- VENDOR NUMBER -->
@@ -69,7 +84,14 @@
                          id="vendor-number-input"
                          class="form-control"
                          formControlName="vendorNumber"
+                         (keypress)="validateRegex($event)"
+                         maxlength="10"
+                         [ngClass]="vendorNumber.errors && vendorNumber.hasError('required')? 'error' : ''"
                   />
+                  <small class="error-text"
+                         *ngIf="vendorNumber.hasError('required')">
+                    Vendor Number is required
+                  </small>
                 </div>
 
                 <!-- EXTERNAL INVOICE NUMBER -->
@@ -81,7 +103,14 @@
                          id="external-invoice-number-input"
                          class="form-control"
                          formControlName="externalInvoiceNumber"
+                         (keypress)="validateRegex($event)"
+                         maxlength="16"
+                         [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')? 'error' : ''"
                   />
+                  <small class="error-text"
+                         *ngIf="externalInvoiceNumber.hasError('required')">
+                    External Invoice Number is required
+                  </small>
                 </div>
 
                 <!-- EXTERNAL INVOICE DATE -->
@@ -90,9 +119,15 @@
                     External Invoice Date
                   </label>
                   <app-fal-date-input id="external-invoice-date-input"
-                                      formControlName="invoiceDate">
+                                      formControlName="invoiceDate"
+                                      [isError]="!!(invoiceDate.errors && invoiceDate.hasError('required'))">
                   </app-fal-date-input>
+                  <small class="error-text"
+                         *ngIf="invoiceDate.hasError('required')">
+                    External Invoice Date is required
+                  </small>
                 </div>
+
 
                 <!-- INVOICE AMOUNT -->
                 <div class="col-6 col-md-4">
@@ -100,13 +135,18 @@
                     Invoice Net Amount
                   </label>
                   <input type="text"
+                         class="form-control"
                          mvndrMatCurrencyFormat
                          [allowNegative]="true"
                          [value]="amountOfInvoiceFormControl.value"
                          id="invoice-amount-input"
-                         [ngClass]="!validAmount ? 'line-item-row-error form-control' : 'form-control'"
+                         [ngClass]="((amountOfInvoice.errors && amountOfInvoice.hasError('required')) || !validAmount) ? 'error' : ''"
                          formControlName="amountOfInvoice"
                   />
+                  <small class="error-text"
+                         *ngIf="amountOfInvoice.hasError('required')">
+                    Invoice Net Amount is required
+                  </small>
                 </div>
 
                 <!-- CURRENCY -->
@@ -118,11 +158,17 @@
                              formControlName="currency"
                              [items]="currencyOptions"
                              [searchable]="true"
-                             placeholder="Select One....">
+                             placeholder="Select One...."
+                             [ngClass]="currency.errors && currency.hasError('required') ? 'error' : ''">
                   </ng-select>
+                  <small class="error-text"
+                         *ngIf="currency.hasError('required')">
+                    Currency is required
+                  </small>
                 </div>
               </div>
-              <!-- UPLOAD DOCUMENT -->
+
+              <!-- UPLOAD DOCUMENT SECTION -->
               <div class="row col-6">
                 <form [formGroup]="attachmentFormGroup"
                       (ngSubmit)="addAttachment()">
@@ -130,52 +176,74 @@
                     Upload Attachments (optional)
                   </label>
                   <div class="form-control upload-container">
-                    <div class="container">
-                      <div class="row">
-                        <div class="col-12">
-                          Supported file types: eml, doc, jpg, pdf, xlsx
-                        </div>
-
+                    <div class="row">
+                      <div class="col-12 fieldLabel3">
+                        Supported file types: eml, doc, jpg, pdf, xlsx
                       </div>
-                      <div class="row">
-                        <div class="col-6">
 
-
-                          <label for="attachment-type-input" class="form-label fieldLabel1">
-                            File
-                          </label>
-                          <input type="file" class="form-control" id="customFile" (change)="onChangeFile($event)"/>
-
-                          <label for="attachment-type-input" class="form-label fieldLabel1">
-                            Attatchment Type
-                          </label>
-                          <ng-select id="attachment-type-input"
-                                     formControlName="attachmentType"
-                                     [items]="attachmentTypeOptions"
-                                     [searchable]="true"
-                                     placeholder="Select One....">
-                          </ng-select>
-                          <label for="upload-button" class="form-label fieldLabel1">
-
-                          </label>
-                          <input type="submit"
-                                 id="upload-button"
-                                 value="Upload"
-                                 [ngClass]="'btn-primary'"
-                                 class="btn flex-shrink-1"/>
-
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <!-- FILE CHOOSER -->
+                        <label for="file-chooser-input"
+                               class="form-label fieldLabel1">
+                          File
+                        </label>
+                        <app-fal-file-input id="file-chooser-input"
+                                            formControlName="file">
+                        </app-fal-file-input>
+                        <div class="form-label fieldLabel1 p-1">
+                          Maximum file size ???MB
                         </div>
-                        <div class="col-6">
-                          <div *ngFor="let attachment of attachments" class="attachment form-control">
-                            <div class="material-icons">file_present</div>{{attachment[0].name}}<div class="material-icons">close</div>
+
+                        <!-- ATTACHMENT TYPE -->
+                        <label for="attachment-type-input"
+                               class="form-label fieldLabel1">
+                          Attachment Type
+                        </label>
+                        <ng-select id="attachment-type-input"
+                                   formControlName="attachmentType"
+                                   [items]="attachmentTypeOptions"
+                                   [searchable]="true"
+                                   placeholder="Select One....">
+                        </ng-select>
+
+                        <!-- UPLOAD BUTTON -->
+                        <input type="submit"
+                               id="upload-button"
+                               value="Upload"
+                               [disabled]="!(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value)"
+                               class="btn flex-shrink-1"
+                               [ngClass]="(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value) ? 'btn-primary' : 'btn-outline-secondary'"
+                        />
+                      </div>
+
+                      <div class="col-6">
+                        <!-- ATTACHMENTS LOOP-->
+                        <div *ngFor="let attachment of attachments; index as i"
+                             class="attachment form-control d-flex align-items-center justify-content-between">
+
+                          <!-- ATTACHMENT - ICON -->
+                          <div class="material-icons">file_present</div>
+
+                          <!-- ATTACHMENT - CONTENT -->
+                          <div class="flex-grow-1 p-1">
+                            {{attachment.file.name}}&nbsp;({{attachment.type}})
                           </div>
+
+                          <!-- ATTACHMENT - REMOVE -->
+                          <input type="button"
+                                 value="close"
+                                 class="material-icons btn btn-remove-attachment"
+                                 (click)="removeAttachment(i)"
+                          />
                         </div>
                       </div>
+
                     </div>
                   </div>
                 </form>
               </div>
-              <!-- Placeholder for document uploads -->
             </div>
 
             <div class="row">
@@ -184,6 +252,8 @@
                              formArrayName="lineItems">
                 <cardinal-section-header [sectionTitle]="'Line Items'">
                 </cardinal-section-header>
+
+                <!-- LINE ITEM - LOOP -->
                 <div id="line-item-rows-container">
                   <div *ngFor="let _ of lineItemsFormArray.controls; index as i"
                        class="line-item-row d-flex flex-nowrap justify-content-between align-items-end"
@@ -242,7 +312,7 @@
                              mvndrMatCurrencyFormat
                              [allowNegative]="true"
                              [value]="lineItemNetAmountFormControl(i).value"
-                             [ngClass]="!validAmount ? 'line-item-row-error form-control' : 'form-control'"
+                             [ngClass]="!validAmount ? 'error form-control' : 'form-control'"
                              formControlName="lineItemNetAmount"
                       />
                     </div>
@@ -273,6 +343,8 @@
 
                   </div>
                 </div>
+
+                <!-- LINE ITEMS - ADD NEW -->
                 <input type="button"
                        id="add-new-line-item-button"
                        class="btn btn-link m-1"
