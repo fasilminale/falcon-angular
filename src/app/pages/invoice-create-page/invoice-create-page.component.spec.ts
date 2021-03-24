@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {InvoiceCreatePageComponent} from './invoice-create-page.component';
 import {WebServices} from '../../services/web-services';
@@ -55,6 +55,10 @@ describe('InvoiceCreatePageComponent', () => {
     preventDefault: () => {}
   };
 
+  const invoiceResponse = {
+    falconInvoiceNumber: 'F0000000001'
+  };
+
   let component: InvoiceCreatePageComponent;
   let fixture: ComponentFixture<InvoiceCreatePageComponent>;
   let http: HttpTestingController;
@@ -84,15 +88,16 @@ describe('InvoiceCreatePageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should show success snackbar on post', () => {
+  it('should show success snackbar on post', fakeAsync(() => {
     spyOn(component, 'openSnackBar').and.stub();
     component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
+    fixture.detectChanges();
     expect(component.openSnackBar)
-      .toHaveBeenCalledWith('Success, invoice created!');
-  });
+      .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been created.`);
+  }));
 
   it('should show failure snackbar on failed post', () => {
     spyOn(component, 'openSnackBar').and.stub();
@@ -231,5 +236,14 @@ describe('InvoiceCreatePageComponent', () => {
     component.onCancel();
     expect(dialog.open).toHaveBeenCalled();
     expect(component.resetForm).not.toHaveBeenCalled();
+  });
+
+  it('should reset form when invoice is successfully created', () => {
+    spyOn(component, 'resetForm').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.onSubmit();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
+      .flush(new HttpResponse<never>());
+    expect(component.resetForm).toHaveBeenCalled();
   });
 });
