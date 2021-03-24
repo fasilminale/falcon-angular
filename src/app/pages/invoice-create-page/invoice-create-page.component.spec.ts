@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {InvoiceCreatePageComponent} from './invoice-create-page.component';
 import {WebServices} from '../../services/web-services';
@@ -231,5 +231,14 @@ describe('InvoiceCreatePageComponent', () => {
     component.onCancel();
     expect(dialog.open).toHaveBeenCalled();
     expect(component.resetForm).not.toHaveBeenCalled();
+  });
+
+  it('should reset form when invoice is successfully created', () => {
+    spyOn(component, 'resetForm').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.onSubmit();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
+      .flush(new HttpResponse<never>());
+    expect(component.resetForm).toHaveBeenCalled();
   });
 });

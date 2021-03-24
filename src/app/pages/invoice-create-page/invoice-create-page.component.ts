@@ -234,6 +234,7 @@ export class InvoiceCreatePageComponent implements OnInit {
         invoice
       ).subscribe((res: any) => {
           this.milestones = res.milestones;
+          this.resetForm();
           this.openSnackBar('Success, invoice created!');
         },
         () => this.openSnackBar('Failure, invoice was not created!')
