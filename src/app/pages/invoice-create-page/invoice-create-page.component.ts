@@ -16,8 +16,6 @@ export class InvoiceCreatePageComponent implements OnInit {
 
   public readonly regex = /[a-zA-Z0-9_\\-]/;
 
-  public milestonesTabOpen = false;
-
   // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
   public milestones: Array<any> = [
     {
@@ -208,10 +206,6 @@ export class InvoiceCreatePageComponent implements OnInit {
           this.resetForm();
         }
       });
-  }
-
-  public toggleMilestones(): void {
-    this.milestonesTabOpen = !this.milestonesTabOpen;
   }
 
   public onSubmit(): void {

@@ -23,6 +23,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {InvoiceAmountErrorModalComponent} from './components/invoice-amount-error-modal/invoice-amount-error-modal';
 import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-input.component';
+import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-inp
     FalDateInputComponent,
     FalConfirmationModalComponent,
     InvoiceAmountErrorModalComponent,
-    FalRadioInputComponent
+    FalRadioInputComponent,
+    InvoiceDetailPageComponent
   ],
   imports: [
     BrowserModule,

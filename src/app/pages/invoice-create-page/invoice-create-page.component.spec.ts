@@ -183,11 +183,6 @@ describe('InvoiceCreatePageComponent', () => {
     expect(component.lineItemRemoveButtonDisable).toBeTrue();
   });
 
-  it('should toggle the milestones sidenav', () => {
-    component.toggleMilestones();
-    expect(component.milestonesTabOpen).toBeTrue();
-  });
-
   it('should display an error modal for invalid invoice amounts', () => {
     spyOn(component, 'displayInvalidAmountError').and.callThrough();
     spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_ERROR_DIALOG);
