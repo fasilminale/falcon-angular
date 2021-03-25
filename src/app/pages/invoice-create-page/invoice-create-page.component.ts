@@ -16,26 +16,6 @@ export class InvoiceCreatePageComponent implements OnInit {
 
   public readonly regex = /[a-zA-Z0-9_\\-]/;
 
-  // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
-  public milestones: Array<any> = [
-    {
-      status: {
-        label: 'Invoice Created',
-        key: 'CREATED'
-      },
-      timestamp: Date.now(),
-      user: 'Falcon System'
-    },
-    {
-      status: {
-        label: 'Invoice Created',
-        key: 'CREATED'
-      },
-      timestamp: Date.now(),
-      user: 'Falcon System'
-    }
-  ];
-
   get lineItemsFormArray(): FormArray {
     return this.invoiceFormGroup.get('lineItems') as FormArray;
   }
@@ -227,7 +207,6 @@ export class InvoiceCreatePageComponent implements OnInit {
         `${environment.baseServiceUrl}/v1/invoice`,
         invoice
       ).subscribe((res: any) => {
-          this.milestones = res.milestones;
           this.resetForm();
           this.openSnackBar(`Success! Falcon Invoice ${res.falconInvoiceNumber} has been created.`);
         },

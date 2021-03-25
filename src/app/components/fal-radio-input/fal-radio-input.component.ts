@@ -35,7 +35,7 @@ export interface FalRadioDisplayOption {
   selector: 'app-fal-radio-input',
   template: `
     <div ngbRadioGroup
-         [disabled]="disabled"
+         [disabled]="isDisabled"
          [ngClass]="{'form-control': outline, 'error': isError}"
          [(ngModel)]="value">
       <div [ngClass]="{'row': isHorizontal()}">
@@ -45,7 +45,7 @@ export interface FalRadioDisplayOption {
         </div>
         <div *ngFor="let option of options; index as i"
              [ngClass]="{'col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3': isHorizontal()}">
-          <label ngbButtonLabel [ngClass]="{'disabled': disabled}">
+          <label ngbButtonLabel [ngClass]="{'disabled': isDisabled}">
             <input ngbButton
                    type="radio"
                    [value]="getValue(option)"
@@ -71,7 +71,7 @@ export class FalRadioInputComponent extends FalControlValueAccessorComponent<str
 
   @Input() outline = true;
   @Input() isError = false;
-  @Input() disabled = false;
+  @Input() isDisabled = false;
   @Input() orientation = FalRadioOrientation.VERTICAL;
   @Input() options: Array<FalRadioOption> = [];
   @Input() noOptionMessage = '(Missing Radio Options)';

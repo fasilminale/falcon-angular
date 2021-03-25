@@ -61,7 +61,7 @@
                   <input type="text"
                          id="company-code-input"
                          formControlName="companyCode"
-                         class="form-control disabled"
+                         class="form-control"
                          maxlength="4"
                          [ngClass]="companyCode.errors && companyCode.hasError('required') ? 'error' : ''"
                   />
@@ -79,7 +79,7 @@
                   <app-fal-radio-input id="erp-type-input"
                                        formControlName="erpType"
                                        [options]="erpTypeOptions"
-                                       [disabled]="readOnly"
+                                       [isDisabled]="readOnly"
                                        [isError]="!!(erpType.errors && erpType.hasError('required'))">
                   </app-fal-radio-input>
                   <small class="error-text"
