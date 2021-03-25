@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FalFileInputComponent } from './fal-file-input.component';
+import {FalFileInputComponent} from './fal-file-input.component';
+import {FileChangeEvent} from '@angular/compiler-cli/src/perform_watch';
 
 describe('FalFileInputComponent', () => {
   let component: FalFileInputComponent;
@@ -8,9 +9,9 @@ describe('FalFileInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FalFileInputComponent ]
+      declarations: [FalFileInputComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -22,4 +23,10 @@ describe('FalFileInputComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should reset value', () => {
+    component.reset();
+    expect(component.value).toBeUndefined();
+  });
+
 });
