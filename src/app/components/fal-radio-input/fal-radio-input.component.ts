@@ -36,7 +36,7 @@ export interface FalRadioDisplayOption {
   template: `
     <div ngbRadioGroup
          [disabled]="isDisabled"
-         [ngClass]="{'form-control': outline, 'error': isError}"
+         [ngClass]="{'form-control': outline, 'error': isError, 'background-disabled': isDisabled}"
          [(ngModel)]="value">
       <div [ngClass]="{'row': isHorizontal()}">
         <div *ngIf="options.length <= 0"

@@ -15,20 +15,19 @@ import {LoadingService} from '../../services/loading-service';
 export class InvoiceDetailPageComponent implements OnInit {
 
   public readonly regex = /[a-zA-Z0-9_\\-]/;
-  public readonly readOnly = true;
 
+  public readOnly = true;
   public milestonesTabOpen = false;
   public falconInvoiceNumber = '';
   public milestones: Array<any> = [];
+  public workTypeOptions = ['Indirect Non-PO Invoice'];
+  public erpTypeOptions = ['Pharma Corp', 'TPM'];
+  public currencyOptions = ['CAD', 'USD'];
+  public lineItemRemoveButtonDisable = true;
+  public invoiceFormGroup: FormGroup;
+  public validAmount = true;
+
   private invoice = new InvoiceDataModel();
-
-  get lineItemsFormArray(): FormArray {
-    return this.invoiceFormGroup.get('lineItems') as FormArray;
-  }
-
-  get amountOfInvoiceFormControl(): FormControl {
-    return this.invoiceFormGroup.get('amountOfInvoice') as FormControl;
-  }
 
   public constructor(private webService: WebServices,
                      private route: ActivatedRoute,
@@ -47,50 +46,6 @@ export class InvoiceDetailPageComponent implements OnInit {
       currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
       lineItems: new FormArray([])
     });
-  }
-
-  get erpType(): AbstractControl {
-    return this.invoiceFormGroup.controls.erpType;
-  }
-
-  get workType(): AbstractControl {
-    return this.invoiceFormGroup.controls.workType;
-  }
-
-  get companyCode(): AbstractControl {
-    return this.invoiceFormGroup.controls.companyCode;
-  }
-
-  get externalInvoiceNumber(): AbstractControl {
-    return this.invoiceFormGroup.controls.externalInvoiceNumber;
-  }
-
-  get vendorNumber(): AbstractControl {
-    return this.invoiceFormGroup.controls.vendorNumber;
-  }
-
-  get invoiceDate(): AbstractControl {
-    return this.invoiceFormGroup.controls.invoiceDate;
-  }
-
-  get amountOfInvoice(): AbstractControl {
-    return this.invoiceFormGroup.controls.amountOfInvoice;
-  }
-
-  get currency(): AbstractControl {
-    return this.invoiceFormGroup.controls.currency;
-  }
-
-  public workTypeOptions = ['Indirect Non-PO Invoice'];
-  public erpTypeOptions = ['Pharma Corp', 'TPM'];
-  public currencyOptions = ['CAD', 'USD'];
-  public lineItemRemoveButtonDisable = true;
-  public invoiceFormGroup: FormGroup;
-  public validAmount = true;
-
-  public lineItemNetAmountFormControl(index: number): FormControl {
-    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItemFormGroup.get('lineItemNetAmount') as FormControl;
   }
 
   public ngOnInit(): void {
@@ -130,6 +85,51 @@ export class InvoiceDetailPageComponent implements OnInit {
         this.milestones = invoice.milestones;
         this.loadingService.hideLoading();
       });
+  }
+
+  get lineItemsFormArray(): FormArray {
+    return this.invoiceFormGroup.get('lineItems') as FormArray;
+  }
+
+  public lineItemNetAmountFormControl(index: number): FormControl {
+    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItemFormGroup.get('lineItemNetAmount') as FormControl;
+  }
+
+  get amountOfInvoiceFormControl(): FormControl {
+    return this.invoiceFormGroup.get('amountOfInvoice') as FormControl;
+  }
+
+  get erpType(): AbstractControl {
+    return this.invoiceFormGroup.controls.erpType;
+  }
+
+  get workType(): AbstractControl {
+    return this.invoiceFormGroup.controls.workType;
+  }
+
+  get companyCode(): AbstractControl {
+    return this.invoiceFormGroup.controls.companyCode;
+  }
+
+  get externalInvoiceNumber(): AbstractControl {
+    return this.invoiceFormGroup.controls.externalInvoiceNumber;
+  }
+
+  get vendorNumber(): AbstractControl {
+    return this.invoiceFormGroup.controls.vendorNumber;
+  }
+
+  get invoiceDate(): AbstractControl {
+    return this.invoiceFormGroup.controls.invoiceDate;
+  }
+
+  get amountOfInvoice(): AbstractControl {
+    return this.invoiceFormGroup.controls.amountOfInvoice;
+  }
+
+  get currency(): AbstractControl {
+    return this.invoiceFormGroup.controls.currency;
   }
 
   public toggleMilestones(): void {
