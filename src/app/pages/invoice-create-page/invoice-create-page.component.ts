@@ -12,6 +12,7 @@ import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-in
 interface Attachment {
   file: File;
   type: string;
+  uploadError: boolean;
 }
 
 @Component({
@@ -117,7 +118,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public attachmentFormGroup: FormGroup;
   public validAmount = true;
   public file = null;
-  public attachmentTypeOptions = ['AAA', 'BBB', 'CCC'];
+  public attachmentTypeOptions = ['EML', 'DOC', 'JPG', 'PDF', 'XLSX'];
 
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
@@ -246,13 +247,13 @@ export class InvoiceCreatePageComponent implements OnInit {
         lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
       });
 
-      this.uploadFiles();
-
       this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/invoice`,
         invoice
       ).subscribe((res: any) => {
           this.milestones = res.milestones;
+          const falconInvoiceId = res.falconInvoiceNumber;
+          this.uploadFiles(falconInvoiceId);
           this.resetForm();
           this.openSnackBar(`Success! Falcon Invoice ${res.falconInvoiceNumber} has been created.`);
         },
@@ -265,7 +266,7 @@ export class InvoiceCreatePageComponent implements OnInit {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
 
-  public uploadFiles(): void {
+  public uploadFiles(invoiceNumber: string): void {
     for (const attachment of this.attachments) {
       const formData = new FormData();
       formData.append('file', attachment.file, attachment.file.name);
@@ -273,12 +274,13 @@ export class InvoiceCreatePageComponent implements OnInit {
       formData.append('fileName', attachment.file.name);
 
       this.webService.httpPost(
-        `${environment.baseServiceUrl}/v1/attachment`,
+        `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
         formData
-      ).subscribe((res: any) => {
-          this.openSnackBar('Success, file upload');
-        },
-        () => this.openSnackBar('Failure, file was not created!')
+      ).subscribe((res: any) => {},
+        () => {
+          attachment.uploadError = true;
+          this.openSnackBar('Failure, file was not created!');
+        }
       );
     }
 
@@ -290,6 +292,7 @@ export class InvoiceCreatePageComponent implements OnInit {
     const attachmentTypeValue = this.attachmentFormGroup.controls.attachmentType.value;
     if (attachmentFileValue && attachmentTypeValue) {
       this.attachments.push({
+        uploadError: false,
         file: attachmentFileValue,
         type: attachmentTypeValue
       });
