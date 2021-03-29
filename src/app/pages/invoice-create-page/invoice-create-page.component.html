@@ -168,20 +168,92 @@
                 </div>
               </div>
 
-              <!-- UPLOAD DOCUMENT -->
+              <!-- UPLOAD DOCUMENT SECTION -->
               <div class="row col-6">
-                <!-- Placeholder for document uploads -->
-              </div>
+                <form [formGroup]="attachmentFormGroup"
+                      (ngSubmit)="addAttachment()">
+                  <label class="form-label fieldLabel1">
+                    Upload Attachments (optional)
+                  </label>
+                  <div class="form-control upload-container">
+                    <div class="row">
+                      <div class="col-12 fieldLabel3">
+                        Supported file types: eml, doc, jpg, pdf, xlsx
+                      </div>
 
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <!-- FILE CHOOSER -->
+                        <label for="file-chooser-input"
+                               class="form-label fieldLabel1">
+                          File
+                        </label>
+                        <app-fal-file-input id="file-chooser-input"
+                                            formControlName="file">
+                        </app-fal-file-input>
+                        <div class="form-label fieldLabel1 p-1">
+                          Maximum file size ???MB
+                        </div>
+
+                        <!-- ATTACHMENT TYPE -->
+                        <label for="attachment-type-input"
+                               class="form-label fieldLabel1">
+                          Attachment Type
+                        </label>
+                        <ng-select id="attachment-type-input"
+                                   formControlName="attachmentType"
+                                   [items]="attachmentTypeOptions"
+                                   [searchable]="true"
+                                   placeholder="Select One....">
+                        </ng-select>
+
+                        <!-- UPLOAD BUTTON -->
+                        <input type="submit"
+                               id="upload-button"
+                               value="Upload"
+                               [disabled]="!(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value)"
+                               class="btn flex-shrink-1"
+                               [ngClass]="(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value) ? 'btn-primary' : 'btn-outline-secondary'"
+                        />
+                      </div>
+
+                      <div class="col-6">
+                        <!-- ATTACHMENTS LOOP-->
+                        <div *ngFor="let attachment of attachments; index as i"
+                             class="attachment form-control d-flex align-items-center justify-content-between">
+
+                          <!-- ATTACHMENT - ICON -->
+                          <div class="material-icons">file_present</div>
+
+                          <!-- ATTACHMENT - CONTENT -->
+                          <div class="flex-grow-1 p-1">
+                            {{attachment.file.name}}&nbsp;({{attachment.type}})
+                          </div>
+
+                          <!-- ATTACHMENT - REMOVE -->
+                          <input type="button"
+                                 value="close"
+                                 class="material-icons btn btn-remove-attachment"
+                                 (click)="removeAttachment(i)"
+                          />
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
 
             <div class="row">
-
               <!-- LINE ITEMS -->
               <cardinal-card id="line-items-card"
                              formArrayName="lineItems">
                 <cardinal-section-header [sectionTitle]="'Line Items'">
                 </cardinal-section-header>
+
+                <!-- LINE ITEM - LOOP -->
                 <div id="line-item-rows-container">
                   <div *ngFor="let _ of lineItemsFormArray.controls; index as i"
                        class="line-item-row d-flex flex-nowrap justify-content-between align-items-end"
@@ -271,6 +343,8 @@
 
                   </div>
                 </div>
+
+                <!-- LINE ITEMS - ADD NEW -->
                 <input type="button"
                        id="add-new-line-item-button"
                        class="btn btn-link m-1"

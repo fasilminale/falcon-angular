@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
@@ -6,6 +6,16 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
 import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-error-modal/invoice-amount-error-modal';
+import {HttpClient} from '@angular/common/http';
+import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
+import {map, mergeMap} from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+
+interface Attachment {
+  file: File;
+  type: string;
+  uploadError: boolean;
+}
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -15,8 +25,10 @@ import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-
 export class InvoiceCreatePageComponent implements OnInit {
 
   public readonly regex = /[a-zA-Z0-9_\\-]/;
-
   public milestonesTabOpen = false;
+  public attachments: Array<Attachment> = [];
+
+  @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
 
   // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
   public milestones: Array<any> = [
@@ -61,6 +73,11 @@ export class InvoiceCreatePageComponent implements OnInit {
       currency: new FormControl(null, [required]),
       lineItems: new FormArray([])
     });
+
+    this.attachmentFormGroup = new FormGroup({
+      attachmentType: new FormControl(null, [required]),
+      file: new FormControl(null, [required])
+    });
   }
 
   get erpType(): AbstractControl {
@@ -100,7 +117,10 @@ export class InvoiceCreatePageComponent implements OnInit {
   public currencyOptions = ['CAD', 'USD'];
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
+  public attachmentFormGroup: FormGroup;
   public validAmount = true;
+  public file = null;
+  public attachmentTypeOptions = ['EML', 'DOC', 'JPG', 'PDF', 'XLSX'];
 
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
@@ -149,6 +169,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public resetForm(): void {
     this.invoiceFormGroup.reset();
     this.lineItemsFormArray.clear();
+    this.attachments = [];
     this.addNewEmptyLineItem();
     // default work type as long as there is only one value
     if (this.workTypeOptions.length === 1) {
@@ -229,14 +250,39 @@ export class InvoiceCreatePageComponent implements OnInit {
         lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
       });
 
+      let invoiceNumber: any;
       this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/invoice`,
         invoice
-      ).subscribe((res: any) => {
-          this.milestones = res.milestones;
+      ).pipe(
+
+        mergeMap((result: any, index: number) => {
+          invoiceNumber = result.falconInvoiceNumber;
+          if (this.attachments.length > 0) {
+
+            const attachmentCalls: Array<any> = [];
+            for (const attachment of this.attachments) {
+              const formData = new FormData();
+              formData.append('file', attachment.file, attachment.file.name);
+              formData.append('attachmentType', attachment.type);
+              formData.append('fileName', attachment.file.name);
+
+              const attachmentCall = this.webService.httpPost(
+                `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
+                formData
+              );
+              attachmentCalls.push(attachmentCall);
+            }
+            return forkJoin(attachmentCalls);
+          }
+
+          return of({});
+        })
+      ).subscribe(res => {
           this.resetForm();
-          this.openSnackBar(`Success! Falcon Invoice ${res.falconInvoiceNumber} has been created.`);
-        },
+          // @ts-ignore
+          this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
+      },
         () => this.openSnackBar('Failure, invoice was not created!')
       );
     }
@@ -246,4 +292,21 @@ export class InvoiceCreatePageComponent implements OnInit {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
 
+  addAttachment(): void {
+    const attachmentFileValue = this.attachmentFormGroup.controls.file.value;
+    const attachmentTypeValue = this.attachmentFormGroup.controls.attachmentType.value;
+    if (attachmentFileValue && attachmentTypeValue) {
+      this.attachments.push({
+        uploadError: false,
+        file: attachmentFileValue,
+        type: attachmentTypeValue
+      });
+      this.attachmentFormGroup.reset();
+      this.fileChooserInput?.reset();
+    }
+  }
+
+  removeAttachment(index: number): void {
+    this.attachments.splice(index, 1);
+  }
 }
