@@ -110,7 +110,7 @@ export class InvoiceDetailPageComponent implements OnInit {
         for (const attachment of invoice.attachments) {
           console.log(attachment.fileName);
           this.attachments.push({
-            file: attachment.fileName,
+            file: new File([], attachment.fileName),
             type: attachment.type,
             uploadError: false
           });

@@ -16,6 +16,13 @@ describe('InvoiceDetailPageComponent', () => {
   const invoiceResponse = {
     falconInvoiceNumber: 'F0000000001',
     amountOfInvoice: 2999.99,
+    attachments: [
+      {
+        file: {
+          name: 'test'
+        }
+      }
+    ],
     milestones: [],
     lineItems: [
       {
