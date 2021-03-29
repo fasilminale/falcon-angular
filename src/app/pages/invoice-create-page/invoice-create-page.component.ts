@@ -291,7 +291,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public openSnackBar(message: string): void {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
-s
+
   addAttachment(): void {
     const attachmentFileValue = this.attachmentFormGroup.controls.file.value;
     const attachmentTypeValue = this.attachmentFormGroup.controls.attachmentType.value;
