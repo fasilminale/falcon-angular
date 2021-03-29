@@ -3,3 +3,11 @@
 .form-control.error {
   border-color: $cardinal-red;
 }
+
+.disabled {
+  opacity: 1;
+}
+
+.background-disabled {
+  background-color: #e9ecef;
+}

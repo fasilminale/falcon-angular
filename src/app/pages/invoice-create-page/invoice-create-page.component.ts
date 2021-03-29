@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
@@ -6,10 +6,9 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
 import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-error-modal/invoice-amount-error-modal';
-import {HttpClient} from '@angular/common/http';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
-import {map, mergeMap} from 'rxjs/operators';
-import { forkJoin, Observable, of } from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 
 interface Attachment {
   file: File;
@@ -25,30 +24,9 @@ interface Attachment {
 export class InvoiceCreatePageComponent implements OnInit {
 
   public readonly regex = /[a-zA-Z0-9_\\-]/;
-  public milestonesTabOpen = false;
   public attachments: Array<Attachment> = [];
 
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
-
-  // TODO: Placeholder milestones is temporary for FAL-104 until individual invoices can be viewed
-  public milestones: Array<any> = [
-    {
-      status: {
-        label: 'Invoice Created',
-        key: 'CREATED'
-      },
-      timestamp: Date.now(),
-      user: 'Falcon System'
-    },
-    {
-      status: {
-        label: 'Invoice Created',
-        key: 'CREATED'
-      },
-      timestamp: Date.now(),
-      user: 'Falcon System'
-    }
-  ];
 
   get lineItemsFormArray(): FormArray {
     return this.invoiceFormGroup.get('lineItems') as FormArray;
@@ -231,10 +209,6 @@ export class InvoiceCreatePageComponent implements OnInit {
       });
   }
 
-  public toggleMilestones(): void {
-    this.milestonesTabOpen = !this.milestonesTabOpen;
-  }
-
   public onSubmit(): void {
     this.validateInvoiceAmount();
     if (this.validAmount) {
@@ -309,4 +283,5 @@ export class InvoiceCreatePageComponent implements OnInit {
   removeAttachment(index: number): void {
     this.attachments.splice(index, 1);
   }
+
 }
