@@ -10,6 +10,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
       <div class="input-group">
         <input class="form-control"
                [ngClass]="isError ? 'error' : ''"
+               [disabled]="isDisabled"
                placeholder="yyyy-mm-dd"
                ngbDatepicker #d="ngbDatepicker"
                [readOnly]="true"
@@ -19,6 +20,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
                (ngModelChange)="value"
         />
         <button [ngClass]="isError ? 'error' : ''"
+                [disabled]="isDisabled"
                 type="button"
                 class="btn btn-outline-secondary material-icons align-middle"
                 (click)="d.toggle()">
@@ -40,6 +42,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
 export class FalDateInputComponent extends FalControlValueAccessorComponent<string>
   implements OnInit {
 
+  @Input() isDisabled = false;
   @Input() navigation = 'select';
   @Input() isError = false;
 
