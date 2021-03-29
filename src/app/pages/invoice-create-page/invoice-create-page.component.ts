@@ -8,6 +8,8 @@ import {FalConfirmationModalComponent} from '../../components/fal-confirmation-m
 import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-error-modal/invoice-amount-error-modal';
 import {HttpClient} from '@angular/common/http';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
+import {map, mergeMap} from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 interface Attachment {
   file: File;
@@ -250,15 +252,55 @@ export class InvoiceCreatePageComponent implements OnInit {
       this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/invoice`,
         invoice
+      ).pipe(
+        map((res:any)  => {
+          return res.falconInvoiceNumber;
+        }),
+        mergeMap((invoiceNumber:any, index:number) => {
+
+          const attachmentCalls: Array<any> = [];
+          for (const attachment of this.attachments) {
+            const formData = new FormData();
+            formData.append('file', attachment.file, attachment.file.name);
+            formData.append('attachmentType', attachment.type);
+            formData.append('fileName', attachment.file.name);
+
+            const atttachmentCall = this.webService.httpPost(
+              `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
+              formData
+            )
+            attachmentCalls.push(atttachmentCall);
+          }
+          return forkJoin(attachmentCalls);
+        })
+
+      ).subscribe(results => {
+        for(const result of results){
+          // @ts-ignore
+          console.log(result[1]);
+        }
+        this.resetForm();
+        this.openSnackBar(`Success! Falcon Invoice has been created.`);
+
+      },
+        () => this.openSnackBar('Failure, invoice was not created!')
+
+      )
+
+
+      /*this.webService.httpPost(
+        `${environment.baseServiceUrl}/v1/invoice`,
+        invoice
       ).subscribe((res: any) => {
           this.milestones = res.milestones;
           const falconInvoiceId = res.falconInvoiceNumber;
           this.uploadFiles(falconInvoiceId);
           this.resetForm();
           this.openSnackBar(`Success! Falcon Invoice ${res.falconInvoiceNumber} has been created.`);
+          console.log('Invoice Created');
         },
         () => this.openSnackBar('Failure, invoice was not created!')
-      );
+      );*/
     }
   }
 
@@ -276,7 +318,10 @@ export class InvoiceCreatePageComponent implements OnInit {
       this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
         formData
-      ).subscribe((res: any) => {},
+      ).subscribe((res: any) => {
+          this.openSnackBar('Success, file was created!');
+          console.log('File Created' + attachment.type);
+        },
         () => {
           attachment.uploadError = true;
           this.openSnackBar('Failure, file was not created!');
