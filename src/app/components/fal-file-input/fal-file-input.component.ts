@@ -1,4 +1,4 @@
-import {Component, ElementRef, forwardRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fal-control-value-accessor.component';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
@@ -8,6 +8,7 @@ import {NG_VALUE_ACCESSOR} from '@angular/forms';
     <input #childInput
            type="file"
            class="form-control"
+           [accept]="accept"
            (change)="onChildInputChange($event)"
     />`,
   styleUrls: ['./fal-file-input.component.scss'],
@@ -22,6 +23,7 @@ import {NG_VALUE_ACCESSOR} from '@angular/forms';
 export class FalFileInputComponent extends FalControlValueAccessorComponent<File> implements OnInit {
 
   @ViewChild('childInput') childInput?: ElementRef;
+  @Input() accept: string = '';
 
   constructor() {
     super();
