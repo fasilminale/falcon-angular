@@ -98,7 +98,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public attachmentFormGroup: FormGroup;
   public validAmount = true;
   public file = null;
-  public attachmentTypeOptions = ['EML', 'DOC', 'JPG', 'PDF', 'XLSX'];
+  public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
 
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
