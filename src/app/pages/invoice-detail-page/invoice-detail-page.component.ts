@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
@@ -6,6 +6,16 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {LoadingService} from '../../services/loading-service';
+import {HttpClient} from '@angular/common/http';
+import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
+import {map, mergeMap} from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+
+interface Attachment {
+  file: File;
+  type: string;
+  uploadError: boolean;
+}
 
 @Component({
   selector: 'app-detail-create-page',
@@ -16,6 +26,8 @@ export class InvoiceDetailPageComponent implements OnInit {
 
   public readonly regex = /[a-zA-Z0-9_\\-]/;
 
+  @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
+
   public readOnly = true;
   public milestonesTabOpen = false;
   public falconInvoiceNumber = '';
@@ -25,7 +37,11 @@ export class InvoiceDetailPageComponent implements OnInit {
   public currencyOptions = ['CAD', 'USD'];
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
+  public attachmentFormGroup: FormGroup;
   public validAmount = true;
+  public file = null;
+  public attachmentTypeOptions = ['EML', 'DOC', 'JPG', 'PDF', 'XLSX'];
+  public attachments: Array<Attachment> = [];
 
   private invoice = new InvoiceDataModel();
 
@@ -45,6 +61,11 @@ export class InvoiceDetailPageComponent implements OnInit {
       amountOfInvoice: new FormControl({value: '0', disabled: this.readOnly}, [required]),
       currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
       lineItems: new FormArray([])
+    });
+
+    this.attachmentFormGroup = new FormGroup({
+      attachmentType: new FormControl({value: null, disabled: this.readOnly}, [required]),
+      file: new FormControl({value: null, disabled: this.readOnly}, [required])
     });
   }
 
@@ -73,6 +94,8 @@ export class InvoiceDetailPageComponent implements OnInit {
         this.invoiceFormGroup.controls.invoiceDate.setValue(new Date(invoice.invoiceDate));
         this.invoiceFormGroup.controls.amountOfInvoice.setValue(invoice.amountOfInvoice);
         this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
+
+        // Line Items
         for (const lineItem of invoice.lineItems) {
           this.lineItemsFormArray.push(new FormGroup({
             glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
@@ -82,6 +105,17 @@ export class InvoiceDetailPageComponent implements OnInit {
             notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
           }));
         }
+
+        // Attachments
+        for (const attachment of invoice.attachments) {
+          console.log(attachment.fileName);
+          this.attachments.push({
+            file: attachment.fileName,
+            type: attachment.type,
+            uploadError: false
+          });
+        }
+
         this.milestones = invoice.milestones;
         this.loadingService.hideLoading();
       });

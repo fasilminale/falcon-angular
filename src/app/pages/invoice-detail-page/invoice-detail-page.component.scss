@@ -14,8 +14,32 @@
   padding-right: 0em;
 }
 
+#upload-button {
+  margin-top: 1em;
+}
+
 label {
   margin-top: 1em;
+}
+
+.attachment {
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  background-color: $cardinal-grey;
+  border-radius: 0.25rem;
+  font-size: small;
+}
+
+.btn-remove-attachment {
+  padding: 0em;
+}
+
+.btn-remove-attachment:hover {
+  background-color: $cardinal-whiteBkg-hover;
+}
+
+.upload-container {
+  padding: 1em;
 }
 
 .header-button {

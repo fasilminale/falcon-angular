@@ -32,27 +32,32 @@ describe('InvoiceCreatePageComponent', () => {
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
-    preventDefault: () => {}
+    preventDefault: () => {
+    }
   };
 
   const validAlphabetValueEvent = {
     keyCode: '065', // The character 'A'
-    preventDefault: () => {}
+    preventDefault: () => {
+    }
   };
 
   const validUnderscoreEvent = {
     keyCode: '095', // The character '_'
-    preventDefault: () => {}
+    preventDefault: () => {
+    }
   };
 
   const validHyphenEvent = {
     keyCode: '095', // The character '_'
-    preventDefault: () => {}
+    preventDefault: () => {
+    }
   };
 
   const invalidCharacterEvent = {
     keyCode: 33, // The character '!'
-    preventDefault: () => {}
+    preventDefault: () => {
+    }
   };
 
   const invoiceResponse = {
@@ -241,4 +246,34 @@ describe('InvoiceCreatePageComponent', () => {
       .flush(new HttpResponse<never>());
     expect(component.resetForm).toHaveBeenCalled();
   });
+
+  it('should add attachment', () => {
+    const testFile = new File([], 'test file');
+    const testType = 'test type';
+    component.attachmentFormGroup.controls.file.setValue(testFile);
+    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
+    component.addAttachment();
+    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false}]);
+  });
+
+  it('should reset form controls on attachment add', () => {
+    const testFile = new File([], 'test file');
+    const testType = 'test type';
+    component.attachmentFormGroup.controls.file.setValue(testFile);
+    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
+    component.addAttachment();
+    expect(component.attachmentFormGroup.controls.file.value).toBeFalsy();
+    expect(component.attachmentFormGroup.controls.attachmentType.value).toBeFalsy();
+  });
+
+  it('should remove attachment', () => {
+    const testFile = new File([], 'test file');
+    const testType = 'test type';
+    component.attachmentFormGroup.controls.file.setValue(testFile);
+    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
+    component.addAttachment();
+    component.removeAttachment(0);
+    expect(component.attachments).toEqual([]);
+  });
+
 });

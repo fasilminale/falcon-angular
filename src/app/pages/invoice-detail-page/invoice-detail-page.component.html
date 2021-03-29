@@ -180,9 +180,81 @@
                 </div>
               </div>
 
-              <!-- UPLOAD DOCUMENT -->
+              <!-- UPLOAD DOCUMENT SECTION -->
               <div class="row col-6">
-                <!-- Placeholder for document uploads -->
+                <form [formGroup]="attachmentFormGroup">
+                  <label class="form-label fieldLabel1">
+                    Upload Attachments (optional)
+                  </label>
+                  <div class="form-control upload-container">
+                    <div class="row">
+                      <div class="col-12 fieldLabel3">
+                        Supported file types: eml, doc, jpg, pdf, xlsx
+                      </div>
+
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <!-- FILE CHOOSER -->
+                        <label for="file-chooser-input"
+                               class="form-label fieldLabel1">
+                          File
+                        </label>
+                        <app-fal-file-input id="file-chooser-input"
+                                            formControlName="file"
+                                            [isDisabled]="readOnly">
+                        </app-fal-file-input>
+                        <div class="form-label fieldLabel1 p-1">
+                          Maximum file size ???MB
+                        </div>
+
+                        <!-- ATTACHMENT TYPE -->
+                        <label for="attachment-type-input"
+                               class="form-label fieldLabel1">
+                          Attachment Type
+                        </label>
+                        <ng-select id="attachment-type-input"
+                                   formControlName="attachmentType"
+                                   [items]="attachmentTypeOptions"
+                                   [searchable]="true"
+                                   placeholder="Select One...."
+                                   [ngClass]="{'disabled': readOnly}">
+                        </ng-select>
+
+                        <!-- UPLOAD BUTTON -->
+                        <input type="submit"
+                               id="upload-button"
+                               value="Upload"
+                               [disabled]="!(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value)"
+                               class="btn flex-shrink-1"
+                               [ngClass]="(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value) ? 'btn-primary' : 'btn-outline-secondary'"
+                        />
+                      </div>
+
+                      <div class="col-6">
+                        <!-- ATTACHMENTS LOOP-->
+                        <div *ngFor="let attachment of attachments; index as i"
+                             class="attachment form-control d-flex align-items-center justify-content-between">
+
+                          <!-- ATTACHMENT - ICON -->
+                          <div class="material-icons">file_present</div>
+
+                          <!-- ATTACHMENT - CONTENT -->
+                          <div class="flex-grow-1 p-1">
+                            {{attachment.file.name || attachment.file}}&nbsp;({{attachment.type}})
+                          </div>
+
+                          <!-- ATTACHMENT - REMOVE -->
+                          <input *ngIf="!readOnly" type="button"
+                                 value="close"
+                                 class="material-icons btn btn-remove-attachment"
+                          />
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </form>
               </div>
 
             </div>
