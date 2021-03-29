@@ -9,7 +9,7 @@ import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-
 import {HttpClient} from '@angular/common/http';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
 import {map, mergeMap} from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 
 interface Attachment {
   file: File;
@@ -169,6 +169,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public resetForm(): void {
     this.invoiceFormGroup.reset();
     this.lineItemsFormArray.clear();
+    this.attachments = [];
     this.addNewEmptyLineItem();
     // default work type as long as there is only one value
     if (this.workTypeOptions.length === 1) {
@@ -249,58 +250,41 @@ export class InvoiceCreatePageComponent implements OnInit {
         lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
       });
 
+      let invoiceNumber: any;
       this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/invoice`,
         invoice
       ).pipe(
-        map((res:any)  => {
-          return res.falconInvoiceNumber;
-        }),
-        mergeMap((invoiceNumber:any, index:number) => {
 
-          const attachmentCalls: Array<any> = [];
-          for (const attachment of this.attachments) {
-            const formData = new FormData();
-            formData.append('file', attachment.file, attachment.file.name);
-            formData.append('attachmentType', attachment.type);
-            formData.append('fileName', attachment.file.name);
+        mergeMap((result: any, index: number) => {
+          invoiceNumber = result.falconInvoiceNumber;
+          if (this.attachments.length > 0) {
 
-            const atttachmentCall = this.webService.httpPost(
-              `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
-              formData
-            )
-            attachmentCalls.push(atttachmentCall);
+            const attachmentCalls: Array<any> = [];
+            for (const attachment of this.attachments) {
+              const formData = new FormData();
+              formData.append('file', attachment.file, attachment.file.name);
+              formData.append('attachmentType', attachment.type);
+              formData.append('fileName', attachment.file.name);
+
+              const attachmentCall = this.webService.httpPost(
+                `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
+                formData
+              );
+              attachmentCalls.push(attachmentCall);
+            }
+            return forkJoin(attachmentCalls);
           }
-          return forkJoin(attachmentCalls);
+
+          return of({});
         })
-
-      ).subscribe(results => {
-        for(const result of results){
+      ).subscribe(res => {
+          this.resetForm();
           // @ts-ignore
-          console.log(result[1]);
-        }
-        this.resetForm();
-        this.openSnackBar(`Success! Falcon Invoice has been created.`);
-
+          this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
       },
         () => this.openSnackBar('Failure, invoice was not created!')
-
-      )
-
-
-      /*this.webService.httpPost(
-        `${environment.baseServiceUrl}/v1/invoice`,
-        invoice
-      ).subscribe((res: any) => {
-          this.milestones = res.milestones;
-          const falconInvoiceId = res.falconInvoiceNumber;
-          this.uploadFiles(falconInvoiceId);
-          this.resetForm();
-          this.openSnackBar(`Success! Falcon Invoice ${res.falconInvoiceNumber} has been created.`);
-          console.log('Invoice Created');
-        },
-        () => this.openSnackBar('Failure, invoice was not created!')
-      );*/
+      );
     }
   }
 
@@ -349,5 +333,4 @@ export class InvoiceCreatePageComponent implements OnInit {
   removeAttachment(index: number): void {
     this.attachments.splice(index, 1);
   }
-
 }

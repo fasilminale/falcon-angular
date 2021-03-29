@@ -258,7 +258,7 @@ describe('InvoiceCreatePageComponent', () => {
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    expect(component.attachments).toEqual([{file: testFile, type: testType}]);
+    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false}]);
   });
 
   it('should reset form controls on attachment add', () => {
