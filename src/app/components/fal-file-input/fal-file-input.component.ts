@@ -1,4 +1,4 @@
-import {Component, ElementRef, forwardRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fal-control-value-accessor.component';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
@@ -23,9 +23,9 @@ import {NG_VALUE_ACCESSOR} from '@angular/forms';
 })
 export class FalFileInputComponent extends FalControlValueAccessorComponent<File> implements OnInit {
 
-  @Input() isDisabled = false;
   @ViewChild('childInput') childInput?: ElementRef;
-  @Input() accept: string = '';
+  @Input() isDisabled = false;
+  @Input() accept = '';
 
   constructor() {
     super();
