@@ -276,7 +276,10 @@ export class InvoiceCreatePageComponent implements OnInit {
         type: attachmentTypeValue
       });
       this.attachmentFormGroup.reset();
-      this.fileChooserInput?.reset();
+      const fileChooserInput = this.fileChooserInput;
+      if (fileChooserInput) {
+        fileChooserInput.reset();
+      }
     }
   }
 
