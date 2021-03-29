@@ -6,7 +6,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {FalConfirmationModalComponent} from '../../components/fal-confirmation-modal/fal-confirmation-modal.component';
 import {InvoiceAmountErrorModalComponent} from '../../components/invoice-amount-error-modal/invoice-amount-error-modal';
-import {HttpClient} from '@angular/common/http';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
 import {map, mergeMap} from 'rxjs/operators';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -120,7 +119,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public attachmentFormGroup: FormGroup;
   public validAmount = true;
   public file = null;
-  public attachmentTypeOptions = ['EML', 'DOC', 'JPG', 'PDF', 'XLSX'];
+  public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
 
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
