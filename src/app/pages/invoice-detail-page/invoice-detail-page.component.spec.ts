@@ -71,12 +71,6 @@ describe('InvoiceDetailPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('Should load data after loading the page', () => {
-    spyOn(component, 'loadData').and.stub();
-    component.loadData();
-    expect(component.loadData).toHaveBeenCalled();
-  });
-
   it('should toggle the milestones sidenav', () => {
     component.toggleMilestones();
     expect(component.milestonesTabOpen).toBeTrue();
