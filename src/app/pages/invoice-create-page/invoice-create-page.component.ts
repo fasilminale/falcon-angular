@@ -291,31 +291,7 @@ export class InvoiceCreatePageComponent implements OnInit {
   public openSnackBar(message: string): void {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
-
-  public uploadFiles(invoiceNumber: string): void {
-    for (const attachment of this.attachments) {
-      const formData = new FormData();
-      formData.append('file', attachment.file, attachment.file.name);
-      formData.append('attachmentType', attachment.type);
-      formData.append('fileName', attachment.file.name);
-
-      this.webService.httpPost(
-        `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
-        formData
-      ).subscribe((res: any) => {
-          this.openSnackBar('Success, file was created!');
-          console.log('File Created' + attachment.type);
-        },
-        () => {
-          attachment.uploadError = true;
-          this.openSnackBar('Failure, file was not created!');
-        }
-      );
-    }
-
-    // return this.http.post(this.baseApiUrl, formData);
-  }
-
+s
   addAttachment(): void {
     const attachmentFileValue = this.attachmentFormGroup.controls.file.value;
     const attachmentTypeValue = this.attachmentFormGroup.controls.attachmentType.value;
