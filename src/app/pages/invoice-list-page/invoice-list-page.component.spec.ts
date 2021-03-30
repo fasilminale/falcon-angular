@@ -104,7 +104,7 @@ describe('InvoiceListPageComponent', () => {
       .toEqual(invoiceData.data[0].falconInvoiceNumber);
   });
 
-  it('should route to a load with an input string',  fakeAsync(() => {
+  it('should route to an invoice',  fakeAsync(() => {
     const invoice = new InvoiceDataModel({falconInvoiceNumber: '1'});
     const navigateSpy = spyOn(router, 'navigate');
     component.rowClicked(invoice);
