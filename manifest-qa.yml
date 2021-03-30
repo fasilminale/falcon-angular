@@ -15,5 +15,3 @@ applications:
         APMID: "27191"
         environment: "QA"
         ingress_routes: "UI"
-
-
