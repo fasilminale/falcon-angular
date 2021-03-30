@@ -10,7 +10,6 @@ import {WebServices} from '../../services/web-services';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpResponse} from '@angular/common/http';
-import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
 
@@ -87,18 +86,11 @@ describe('InvoiceFormComponent', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
 
-  const route = {
-    snapshot: {url: [{path: 'invoice'}, {path: 'F0000000001'}]},
-    paramMap: of(convertToParamMap({falconInvoiceNumber: 'F0000000001'}))
-  };
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
       declarations: [InvoiceFormComponent],
-      providers: [WebServices, MatSnackBar, MatDialog, LoadingService, MatSnackBar,
-        { provide: ActivatedRoute, useValue: route }
-      ],
+      providers: [WebServices, MatSnackBar, MatDialog, LoadingService, MatSnackBar],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
@@ -107,11 +99,7 @@ describe('InvoiceFormComponent', () => {
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/F0000000001`).flush(invoiceResponse);
-    fixture.detectChanges();
-    component.amountOfInvoiceFormControl.setValue('0');
-    component.lineItemsFormArray.setValue([]);
-    fixture.detectChanges();
+    spyOn(component, 'getInvoiceId').and.callFake(() => {});
   });
 
   afterEach(() => {
@@ -135,6 +123,7 @@ describe('InvoiceFormComponent', () => {
 
   it('should show failure snackbar on failed post', () => {
     spyOn(component, 'openSnackBar').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
       .error(new ErrorEvent('test error event'), {
@@ -292,6 +281,27 @@ describe('InvoiceFormComponent', () => {
     component.addAttachment();
     expect(component.attachmentFormGroup.controls.file.value).toBeFalsy();
     expect(component.attachmentFormGroup.controls.attachmentType.value).toBeFalsy();
+  });
+
+  it('should submit with attachments', () => {
+    spyOn(component, 'validateInvoiceAmount').and.callFake(() => {});
+    spyOn(component, 'addAttachment').and.callThrough();
+    spyOn(component, 'onSubmit').and.callThrough();
+    component.amountOfInvoiceFormControl.setValue('1');
+    const testFile = new File([], 'test file');
+    const testType = 'test type';
+    component.attachmentFormGroup.controls.file.setValue(testFile);
+    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
+    component.addAttachment();
+    component.onSubmit();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
+      .flush(invoiceResponse);
+    fixture.detectChanges();
+    http.expectOne(`${environment.baseServiceUrl}/v1/attachment/${invoiceResponse.falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    fixture.detectChanges();
+    expect(component.addAttachment).toHaveBeenCalled();
+    expect(component.onSubmit).toHaveBeenCalled();
   });
 
   it('should remove attachment', () => {

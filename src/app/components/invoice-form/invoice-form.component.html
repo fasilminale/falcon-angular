@@ -179,6 +179,7 @@
                   </label>
                   <app-fal-file-input id="file-chooser-input"
                                       formControlName="file"
+                                      accept=".eml, .doc, .jpg, .pdf, .xlsx"
                                       [isDisabled]="readOnly">
                   </app-fal-file-input>
                   <div class="form-label fieldLabel1 p-1">
@@ -188,7 +189,7 @@
                   <!-- ATTACHMENT TYPE -->
                   <label for="attachment-type-input"
                          class="form-label fieldLabel1">
-                    Attachment Type
+                    Document Type
                   </label>
                   <ng-select id="attachment-type-input"
                              formControlName="attachmentType"

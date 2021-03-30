@@ -107,7 +107,7 @@ export class InvoiceFormComponent implements OnInit {
   public attachmentFormGroup: FormGroup;
   public validAmount = true;
   public file = null;
-  public attachmentTypeOptions = ['EML', 'DOC', 'JPG', 'PDF', 'XLSX'];
+  public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
   public attachments: Array<Attachment> = [];
   private invoice = new InvoiceDataModel();
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
