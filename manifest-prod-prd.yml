@@ -13,7 +13,7 @@ applications:
         contact: "bj.hanley@cardinalhealth.com friat.hadush@cardinalhealth.com"
       labels:
         APMID: "27191"
-        environment: "DEV"
+        environment: "PROD"
         ingress_routes: "UI"
 
 

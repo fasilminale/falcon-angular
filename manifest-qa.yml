@@ -8,5 +8,12 @@ applications:
     memory: 128M
     buildpack: staticfile_buildpack
     path: ./elm-falcon-ui.zip
+    metadata:
+      annotations:
+        contact: "bj.hanley@cardinalhealth.com friat.hadush@cardinalhealth.com"
+      labels:
+        APMID: "27191"
+        environment: "QA"
+        ingress_routes: "UI"
 
 
