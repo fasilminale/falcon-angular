@@ -48,9 +48,8 @@ export class InvoiceListPageComponent implements OnInit {
     });
   }
 
-  rowClicked(invoice: InvoiceDataModel): Promise<boolean> {
-    // eventually, we will want to go to a details page from here
-    return Promise.resolve(false);
+  rowClicked(invoice: InvoiceDataModel): Promise<any> {
+    return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
   }
 
   sortChanged(sort: any): void {

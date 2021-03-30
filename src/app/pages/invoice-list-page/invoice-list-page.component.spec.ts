@@ -9,6 +9,7 @@ import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 describe('InvoiceListPageComponent', () => {
@@ -17,6 +18,7 @@ describe('InvoiceListPageComponent', () => {
   let webservice: WebServices;
   let http: HttpTestingController;
   let loadingService: LoadingService;
+  let router: Router;
 
   const pageEvent = new PageEvent();
   pageEvent.pageSize = 30;
@@ -30,9 +32,9 @@ describe('InvoiceListPageComponent', () => {
   const invoiceData = {
     total: 1,
     data: [{
-      externalInvoiceNumber: '1'
+      falconInvoiceNumber: '1'
     }, {
-      externalInvoiceNumber: '2'
+      falconInvoiceNumber: '2'
     }]
   };
 
@@ -46,6 +48,7 @@ describe('InvoiceListPageComponent', () => {
     webservice = TestBed.inject(WebServices);
     loadingService = TestBed.inject(LoadingService);
     http = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
   });
 
   beforeEach(() => {
@@ -64,7 +67,7 @@ describe('InvoiceListPageComponent', () => {
   });
 
   it('should get table data',  fakeAsync(() => {
-    expect(component.invoices[0].externalInvoiceNumber).toEqual('1');
+    expect(component.invoices[0].falconInvoiceNumber).toEqual('1');
   }));
 
   it('should Page Change', fakeAsync( () => {
@@ -97,13 +100,14 @@ describe('InvoiceListPageComponent', () => {
     component.getTableData(pageEvent.pageSize);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)
       .flush(invoiceData);
-    expect(component.invoices[0].externalInvoiceNumber)
-      .toEqual(invoiceData.data[0].externalInvoiceNumber);
+    expect(component.invoices[0].falconInvoiceNumber)
+      .toEqual(invoiceData.data[0].falconInvoiceNumber);
   });
 
-  it('should do nothing on row click', () => {
-    // falcon does not currently support row clicking
-    component.rowClicked(new InvoiceDataModel(invoiceData.data[0]));
-    expect().nothing();
-  });
+  it('should route to a load with an input string',  fakeAsync(() => {
+    const invoice = new InvoiceDataModel({falconInvoiceNumber: '1'});
+    const navigateSpy = spyOn(router, 'navigate');
+    component.rowClicked(invoice);
+    expect(navigateSpy).toHaveBeenCalledWith(['/invoice/1']);
+  }));
 });
