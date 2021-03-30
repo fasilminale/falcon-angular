@@ -1,9 +1,9 @@
 applications:
   - name: elm-falcon-ui
     routes:
-      - route: https://elm-falcon-ui-noisy-wolverine.apps.cf.np.gc.cahcloud.net
+      - route: https://elm-falcon-ui-patient-gecko.apps.cf.np.gc.cahcloud.net
     env:
-      baseServiceUrl: https://elm-falcon-noisy-wolverine.apps.cf.np.gc.cahcloud.net
+      baseServiceUrl: https://elm-falcon-patient-gecko.apps.cf.np.gc.cahcloud.net
     disk_quota: 256M
     memory: 128M
     buildpack: staticfile_buildpack
@@ -13,5 +13,5 @@ applications:
         contact: "bj.hanley@cardinalhealth.com friat.hadush@cardinalhealth.com"
       labels:
         APMID: "27191"
-        environment: "QA"
+        environment: "STG"
         ingress_routes: "UI"
