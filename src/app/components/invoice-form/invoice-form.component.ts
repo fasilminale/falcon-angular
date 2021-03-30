@@ -355,7 +355,27 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   removeAttachment(index: number): void {
-    this.attachments.splice(index, 1);
+    this.dialog.open(FalConfirmationModalComponent,
+      {
+        autoFocus: false,
+        data: {
+          title: 'Remove Attachment',
+          html: `<p>
+                    Are you sure you want to remove this attachment?
+                 </p>
+                 <p>
+                    <strong>This action cannot be undone</strong>
+                 </p>`,
+          denyText: 'Cancel',
+          confirmText: 'Remove Attachment'
+        }
+      })
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.attachments.splice(index, 1);
+        }
+      });
   }
 
   public toggleSidenav(): void {

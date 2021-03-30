@@ -307,6 +307,7 @@ describe('InvoiceFormComponent', () => {
   it('should remove attachment', () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
