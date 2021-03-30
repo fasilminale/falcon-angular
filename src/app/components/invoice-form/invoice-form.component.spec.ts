@@ -314,4 +314,16 @@ describe('InvoiceFormComponent', () => {
     component.removeAttachment(0);
     expect(component.attachments).toEqual([]);
   });
+
+  it('should not remove attachment', () => {
+    const testFile = new File([], 'test file');
+    const testType = 'test type';
+    spyOn(dialog, 'open').and.returnValue(MOCK_DENY_DIALOG);
+    component.attachmentFormGroup.controls.file.setValue(testFile);
+    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
+    component.addAttachment();
+    component.removeAttachment(0);
+    expect(component.attachments).toHaveSize(1);
+  });
+
 });
