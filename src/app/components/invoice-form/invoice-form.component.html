@@ -223,7 +223,7 @@
                     </div>
 
                     <!-- ATTACHMENT - REMOVE -->
-                    <input type="button"
+                    <input *ngIf="!readOnly" type="button"
                            value="close"
                            class="material-icons btn btn-remove-attachment"
                            (click)="removeAttachment(i)"

@@ -1,21 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {WebServices} from '../../services/web-services';
-import {environment} from '../../../environments/environment';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {ActivatedRoute, Router} from '@angular/router';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {LoadingService} from '../../services/loading-service';
-import {HttpClient} from '@angular/common/http';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
-import {map, mergeMap} from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
-
-interface Attachment {
-  file: File;
-  type: string;
-  uploadError: boolean;
-}
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -33,12 +18,14 @@ export class InvoiceDetailPageComponent implements OnInit {
   public falconInvoiceNumber = '';
   public milestones: Array<any> = [];
 
-  private invoice = new InvoiceDataModel();
-
-  public constructor() {
+  public constructor(private route: ActivatedRoute) {
   }
 
   public ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const falconInvoiceNumber = params.get('falconInvoiceNumber');
+      falconInvoiceNumber ? this.falconInvoiceNumber = falconInvoiceNumber : this.falconInvoiceNumber = '';
+    });
   }
 
   public updateMilestones(milestones: any): void {
