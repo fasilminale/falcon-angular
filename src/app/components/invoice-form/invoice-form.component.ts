@@ -179,6 +179,7 @@ export class InvoiceFormComponent implements OnInit {
             uploadError: false
           });
         }
+        this.attachmentFormGroup.disable();
 
         this.updateMilestones.emit(invoice.milestones);
         this.loadingService.hideLoading();

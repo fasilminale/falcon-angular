@@ -18,7 +18,7 @@
                        [items]="workTypeOptions"
                        [searchable]="true"
                        placeholder="Select One...."
-                       [ngClass]="workType.errors && workType.hasError('required') ? 'error' : ''">
+                       [ngClass]="{ 'error': workType.errors && workType.hasError('required'), 'disabled': readOnly }">
             </ng-select>
             <small class="error-text"
                    *ngIf="workType.hasError('required')">
@@ -147,7 +147,7 @@
                        [items]="currencyOptions"
                        [searchable]="true"
                        placeholder="Select One...."
-                       [ngClass]="currency.errors && currency.hasError('required') ? 'error' : ''">
+                       [ngClass]="{ 'error': currency.errors && currency.hasError('required'), 'disabled': readOnly }">
             </ng-select>
             <small class="error-text"
                    *ngIf="currency.hasError('required')">
@@ -196,7 +196,7 @@
                              [items]="attachmentTypeOptions"
                              [searchable]="true"
                              placeholder="Select One...."
-                             [ngClass]="{'disabled': readOnly}">
+                             [ngClass]="{ 'disabled': readOnly }">
                   </ng-select>
 
                   <!-- UPLOAD BUTTON -->
