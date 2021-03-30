@@ -25,6 +25,7 @@ import {InvoiceAmountErrorModalComponent} from './components/invoice-amount-erro
 import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-input.component';
 import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
 import { FalFileInputComponent } from './components/fal-file-input/fal-file-input.component';
+import { InvoiceFormComponent } from './components/invoice-form/invoice-form.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { FalFileInputComponent } from './components/fal-file-input/fal-file-inpu
     InvoiceAmountErrorModalComponent,
     FalRadioInputComponent,
     InvoiceDetailPageComponent,
-    FalFileInputComponent
+    FalFileInputComponent,
+    InvoiceFormComponent
   ],
   imports: [
     BrowserModule,
