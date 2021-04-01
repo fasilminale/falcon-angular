@@ -242,6 +242,31 @@ export class InvoiceFormComponent implements OnInit {
     }
   }
 
+  public lineItemCompanyCode(index: number): AbstractControl {
+    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItem.controls.companyCode;
+  }
+
+  public lineItemCostCenter(index: number): AbstractControl {
+    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItem.controls.costCenter;
+  }
+
+  public lineItemGlAccount(index: number): AbstractControl {
+    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItem.controls.glAccount;
+  }
+
+  public lineItemNetAmount(index: number): AbstractControl {
+    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItem.controls.lineItemNetAmount;
+  }
+
+  public lineItemNotes(index: number): AbstractControl {
+    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItem.controls.notes;
+  }
+
   public displayInvalidAmountError(): void {
     this.dialog.open(InvoiceAmountErrorModalComponent,
       {

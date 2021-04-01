@@ -270,6 +270,9 @@
                        class="form-control"
                        formControlName="companyCode"
                        [placeholder]="invoiceFormGroup.controls.companyCode.value"
+                       (keypress)="validateRegex($event)"
+                       maxlength="4"
+                       [ngClass]="lineItemCompanyCode(i).errors && lineItemCompanyCode(i).hasError('required') ? 'error' : ''"
                 />
               </div>
 
@@ -281,6 +284,9 @@
                 <input type="text"
                        class="form-control"
                        formControlName="costCenter"
+                       (keypress)="validateRegex($event)"
+                       maxlength="10"
+                       [ngClass]="lineItemCostCenter(i).errors && lineItemCostCenter(i).hasError('required') ? 'error' : ''"
                 />
               </div>
 
@@ -292,6 +298,9 @@
                 <input type="text"
                        class="form-control"
                        formControlName="glAccount"
+                       (keypress)="validateRegex($event)"
+                       maxlength="10"
+                       [ngClass]="lineItemGlAccount(i).errors && lineItemGlAccount(i).hasError('required') ? 'error' : ''"
                 />
               </div>
 
@@ -304,7 +313,8 @@
                        mvndrMatCurrencyFormat
                        [allowNegative]="true"
                        [value]="lineItemNetAmountFormControl(i).value"
-                       [ngClass]="!validAmount ? 'error form-control' : 'form-control'"
+                       class="form-control"
+                       [ngClass]="{ 'error': !validAmount || (lineItemNotes(i).errors && lineItemNotes(i).hasError('required')) }"
                        formControlName="lineItemNetAmount"
                 />
               </div>
@@ -317,6 +327,9 @@
                 <input type="text"
                        class="form-control"
                        formControlName="notes"
+                       (keypress)="validateRegex($event)"
+                       maxlength="50"
+                       [ngClass]="lineItemNotes(i).errors && lineItemNotes(i).hasError('required') ? 'error' : ''"
                 />
               </div>
 
