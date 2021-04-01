@@ -127,3 +127,8 @@ label {
   -webkit-transform: rotate(270deg);
   transform: rotate(270deg) translateY(-95%) translateX(-50%);
 }
+
+.upload-file-div {
+  height: 300px;
+  overflow: auto; 
+}
