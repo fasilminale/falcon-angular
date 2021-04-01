@@ -101,7 +101,7 @@ export class InvoiceFormComponent implements OnInit {
   public readonly regex = /[a-zA-Z0-9_\\-]/;
   public workTypeOptions = ['Indirect Non-PO Invoice'];
   public erpTypeOptions = ['Pharma Corp', 'TPM'];
-  public currencyOptions = ['CAD', 'USD'];
+  public currencyOptions = ['USD', 'CAD'];
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
   public attachmentFormGroup: FormGroup;
@@ -191,6 +191,8 @@ export class InvoiceFormComponent implements OnInit {
     this.lineItemsFormArray.clear();
     this.attachments = [];
     this.addNewEmptyLineItem();
+    //set default currency to USD
+    this.invoiceFormGroup.controls.currency.setValue(this.currencyOptions[0]);
     // default work type as long as there is only one value
     if (this.workTypeOptions.length === 1) {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
