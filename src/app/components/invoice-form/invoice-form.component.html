@@ -209,7 +209,7 @@
                   />
                 </div>
 
-                <div class="col-6">
+                <div class="col-6 upload-file-div">
                   <!-- ATTACHMENTS LOOP-->
                   <div *ngFor="let attachment of attachments; index as i"
                        class="attachment form-control d-flex align-items-center justify-content-between">
@@ -218,7 +218,7 @@
                     <div class="material-icons">file_present</div>
 
                     <!-- ATTACHMENT - CONTENT -->
-                    <div class="flex-grow-1 p-1">
+                    <div class=" flex-grow-1 p-1">
                       {{attachment.file.name}}&nbsp;({{attachment.type}})
                     </div>
 
