@@ -128,11 +128,11 @@
                    [allowNegative]="true"
                    [value]="amountOfInvoiceFormControl.value"
                    id="invoice-amount-input"
-                   [ngClass]="((amountOfInvoice.errors && amountOfInvoice.hasError('required')) || !validAmount) ? 'error' : ''"
+                   [ngClass]="((amountOfInvoiceFormControl.errors && amountOfInvoiceFormControl.hasError('required')) || !validAmount) ? 'error' : ''"
                    formControlName="amountOfInvoice"
             />
             <small class="error-text"
-                   *ngIf="amountOfInvoice.hasError('required')">
+                   *ngIf="amountOfInvoiceFormControl.hasError('required')">
               Invoice Net Amount is required
             </small>
           </div>
@@ -270,6 +270,8 @@
                        class="form-control"
                        formControlName="companyCode"
                        [placeholder]="invoiceFormGroup.controls.companyCode.value"
+                       (keypress)="validateRegex($event)"
+                       maxlength="4"
                 />
               </div>
 
@@ -281,6 +283,9 @@
                 <input type="text"
                        class="form-control"
                        formControlName="costCenter"
+                       (keypress)="validateRegex($event)"
+                       maxlength="10"
+                       [ngClass]="lineItemCostCenter(i).errors && lineItemCostCenter(i).hasError('required') ? 'error' : ''"
                 />
               </div>
 
@@ -292,6 +297,9 @@
                 <input type="text"
                        class="form-control"
                        formControlName="glAccount"
+                       (keypress)="validateRegex($event)"
+                       maxlength="10"
+                       [ngClass]="lineItemGlAccount(i).errors && lineItemGlAccount(i).hasError('required') ? 'error' : ''"
                 />
               </div>
 
@@ -304,7 +312,8 @@
                        mvndrMatCurrencyFormat
                        [allowNegative]="true"
                        [value]="lineItemNetAmountFormControl(i).value"
-                       [ngClass]="!validAmount ? 'error form-control' : 'form-control'"
+                       class="form-control"
+                       [ngClass]="lineItemNetAmountFormControl(i).errors && lineItemNetAmountFormControl(i).hasError('required') ? 'error' : ''"
                        formControlName="lineItemNetAmount"
                 />
               </div>
@@ -317,6 +326,8 @@
                 <input type="text"
                        class="form-control"
                        formControlName="notes"
+                       (keypress)="validateRegex($event)"
+                       maxlength="50"
                 />
               </div>
 

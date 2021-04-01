@@ -82,10 +82,6 @@ export class InvoiceFormComponent implements OnInit {
     return this.invoiceFormGroup.controls.invoiceDate;
   }
 
-  get amountOfInvoice(): AbstractControl {
-    return this.invoiceFormGroup.controls.amountOfInvoice;
-  }
-
   get currency(): AbstractControl {
     return this.invoiceFormGroup.controls.currency;
   }
@@ -228,6 +224,16 @@ export class InvoiceFormComponent implements OnInit {
   public lineItemNetAmountFormControl(index: number): FormControl {
     const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
     return lineItemFormGroup.get('lineItemNetAmount') as FormControl;
+  }
+
+  public lineItemCostCenter(index: number): AbstractControl {
+    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItemFormGroup.controls.costCenter;
+  }
+
+  public lineItemGlAccount(index: number): AbstractControl {
+    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItemFormGroup.controls.glAccount;
   }
 
   public addNewEmptyLineItem(): void {
