@@ -82,10 +82,6 @@ export class InvoiceFormComponent implements OnInit {
     return this.invoiceFormGroup.controls.invoiceDate;
   }
 
-  get amountOfInvoice(): AbstractControl {
-    return this.invoiceFormGroup.controls.amountOfInvoice;
-  }
-
   get currency(): AbstractControl {
     return this.invoiceFormGroup.controls.currency;
   }
@@ -230,6 +226,16 @@ export class InvoiceFormComponent implements OnInit {
     return lineItemFormGroup.get('lineItemNetAmount') as FormControl;
   }
 
+  public lineItemCostCenter(index: number): AbstractControl {
+    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItemFormGroup.controls.costCenter;
+  }
+
+  public lineItemGlAccount(index: number): AbstractControl {
+    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItemFormGroup.controls.glAccount;
+  }
+
   public addNewEmptyLineItem(): void {
     this.lineItemsFormArray.push(InvoiceFormComponent.createEmptyLineItemForm());
     if (this.lineItemsFormArray.length > 1) {
@@ -242,31 +248,6 @@ export class InvoiceFormComponent implements OnInit {
     if (this.lineItemsFormArray.length <= 1) {
       this.lineItemRemoveButtonDisable = true;
     }
-  }
-
-  public lineItemCompanyCode(index: number): AbstractControl {
-    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItem.controls.companyCode;
-  }
-
-  public lineItemCostCenter(index: number): AbstractControl {
-    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItem.controls.costCenter;
-  }
-
-  public lineItemGlAccount(index: number): AbstractControl {
-    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItem.controls.glAccount;
-  }
-
-  public lineItemNetAmount(index: number): AbstractControl {
-    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItem.controls.lineItemNetAmount;
-  }
-
-  public lineItemNotes(index: number): AbstractControl {
-    const lineItem = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItem.controls.notes;
   }
 
   public displayInvalidAmountError(): void {

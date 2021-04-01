@@ -128,11 +128,11 @@
                    [allowNegative]="true"
                    [value]="amountOfInvoiceFormControl.value"
                    id="invoice-amount-input"
-                   [ngClass]="((amountOfInvoice.errors && amountOfInvoice.hasError('required')) || !validAmount) ? 'error' : ''"
+                   [ngClass]="((amountOfInvoiceFormControl.errors && amountOfInvoiceFormControl.hasError('required')) || !validAmount) ? 'error' : ''"
                    formControlName="amountOfInvoice"
             />
             <small class="error-text"
-                   *ngIf="amountOfInvoice.hasError('required')">
+                   *ngIf="amountOfInvoiceFormControl.hasError('required')">
               Invoice Net Amount is required
             </small>
           </div>
@@ -272,7 +272,6 @@
                        [placeholder]="invoiceFormGroup.controls.companyCode.value"
                        (keypress)="validateRegex($event)"
                        maxlength="4"
-                       [ngClass]="lineItemCompanyCode(i).errors && lineItemCompanyCode(i).hasError('required') ? 'error' : ''"
                 />
               </div>
 
@@ -314,7 +313,7 @@
                        [allowNegative]="true"
                        [value]="lineItemNetAmountFormControl(i).value"
                        class="form-control"
-                       [ngClass]="{ 'error': !validAmount || (lineItemNotes(i).errors && lineItemNotes(i).hasError('required')) }"
+                       [ngClass]="lineItemNetAmountFormControl(i).errors && lineItemNetAmountFormControl(i).hasError('required') ? 'error' : ''"
                        formControlName="lineItemNetAmount"
                 />
               </div>
@@ -329,7 +328,6 @@
                        formControlName="notes"
                        (keypress)="validateRegex($event)"
                        maxlength="50"
-                       [ngClass]="lineItemNotes(i).errors && lineItemNotes(i).hasError('required') ? 'error' : ''"
                 />
               </div>
 
