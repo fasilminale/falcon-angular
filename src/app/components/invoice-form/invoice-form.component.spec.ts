@@ -58,6 +58,12 @@ describe('InvoiceFormComponent', () => {
     }
   };
 
+  const validSpaceEvent = {
+    keyCode: '032', // The space character ' '
+    preventDefault: () => {
+    }
+  };
+
   const invalidCharacterEvent = {
     keyCode: 33, // The character '!'
     preventDefault: () => {
@@ -196,6 +202,16 @@ describe('InvoiceFormComponent', () => {
 
   it('should ignore invalid character values', () => {
     const result = component.validateRegex(invalidCharacterEvent);
+    expect(result).toBeFalse();
+  });
+
+  it('should allow spaces in the free text regex', () => {
+    const result = component.validateFreeTextRegex(validSpaceEvent);
+    expect(result).toBeTrue();
+  });
+
+  it('should ignore invalid character values in the free text regex', () => {
+    const result = component.validateFreeTextRegex(invalidCharacterEvent);
     expect(result).toBeFalse();
   });
 
