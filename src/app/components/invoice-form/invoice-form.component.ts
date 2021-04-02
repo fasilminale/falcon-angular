@@ -95,6 +95,7 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   public readonly regex = /[a-zA-Z0-9_\\-]/;
+  public readonly freeTextRegex = /[\w\-\s]/;
   public workTypeOptions = ['Indirect Non-PO Invoice'];
   public erpTypeOptions = ['Pharma Corp', 'TPM'];
   public currencyOptions = ['USD', 'CAD'];
@@ -142,7 +143,7 @@ export class InvoiceFormComponent implements OnInit {
   public loadData(): void {
     this.loadingService.showLoading();
     this.webService.httpGet(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
-      .subscribe( (invoice: any) => {
+      .subscribe((invoice: any) => {
         this.invoice = new InvoiceDataModel(invoice);
         this.invoiceFormGroup.controls.workType.setValue(invoice.workType);
         this.invoiceFormGroup.controls.companyCode.setValue(invoice.companyCode);
@@ -200,6 +201,19 @@ export class InvoiceFormComponent implements OnInit {
     const char = String.fromCharCode(event.keyCode);
 
     if (this.regex.test(char)) {
+      return true;
+    } else {
+      event.preventDefault();
+      return false;
+    }
+  }
+
+  public validateFreeTextRegex(event: any): boolean {
+    const char = String.fromCharCode(event.keyCode);
+    console.log(char);
+    console.log(event.keyCode);
+
+    if (this.freeTextRegex.test(char)) {
       return true;
     } else {
       event.preventDefault();
@@ -309,7 +323,6 @@ export class InvoiceFormComponent implements OnInit {
         `${environment.baseServiceUrl}/v1/invoice`,
         invoice
       ).pipe(
-
         mergeMap((result: any, index: number) => {
           invoiceNumber = result.falconInvoiceNumber;
           if (this.attachments.length > 0) {
