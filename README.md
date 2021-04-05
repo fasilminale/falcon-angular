@@ -5,7 +5,9 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 This section should only need to be followed just after your first time cloning.
 
 ### Installing the Angular CLI
-Run `npm install -g @angular/cli` in the terminal of your choice to install the Angular CLI
+- Configure npm to use the Cardinal [Man-In-The-Middle](https://en.wikipedia.org/wiki/Man-in-the-middle_attack) Root CA cert
+    - `npm config -g set cafile ./CAH-Root-CA-PR1.pem`
+- Run `npm install -g @angular/cli` in the terminal of your choice to install the Angular CLI
 
 ### Set Up Git Hooks
 ```
