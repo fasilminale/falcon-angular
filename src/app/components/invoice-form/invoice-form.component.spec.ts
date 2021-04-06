@@ -1,17 +1,17 @@
-import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 
 import { InvoiceFormComponent } from './invoice-form.component';
-import {of} from 'rxjs';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {WebServices} from '../../services/web-services';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {environment} from '../../../environments/environment';
-import {HttpResponse} from '@angular/common/http';
-import {LoadingService} from '../../services/loading-service';
-import {RouterTestingModule} from '@angular/router/testing';
+import { of } from 'rxjs';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { WebServices } from '../../services/web-services';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpResponse } from '@angular/common/http';
+import { LoadingService } from '../../services/loading-service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('InvoiceFormComponent', () => {
   let component: InvoiceFormComponent;
@@ -105,7 +105,7 @@ describe('InvoiceFormComponent', () => {
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    spyOn(component, 'getInvoiceId').and.callFake(() => {});
+    spyOn(component, 'getInvoiceId').and.callFake(() => { });
   });
 
   afterEach(() => {
@@ -115,6 +115,14 @@ describe('InvoiceFormComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should be enabled editable fields', fakeAsync(() => {
+    component.readOnly = true;
+    fixture.detectChanges();
+    component.readOnly = false;
+    fixture.detectChanges();
+    expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
+  }));
 
   it('should show success snackbar on post', fakeAsync(() => {
     spyOn(component, 'openSnackBar').and.stub();
@@ -286,7 +294,7 @@ describe('InvoiceFormComponent', () => {
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false}]);
+    expect(component.attachments).toEqual([{ file: testFile, type: testType, uploadError: false }]);
   });
 
   it('should reset form controls on attachment add', () => {
@@ -300,7 +308,7 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should submit with attachments', () => {
-    spyOn(component, 'validateInvoiceAmount').and.callFake(() => {});
+    spyOn(component, 'validateInvoiceAmount').and.callFake(() => { });
     spyOn(component, 'addAttachment').and.callThrough();
     spyOn(component, 'onSubmit').and.callThrough();
     component.amountOfInvoiceFormControl.setValue('1');

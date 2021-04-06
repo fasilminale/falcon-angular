@@ -1,17 +1,17 @@
-import {Component, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
-import {WebServices} from '../../services/web-services';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatDialog} from '@angular/material/dialog';
-import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
-import {InvoiceAmountErrorModalComponent} from '../invoice-amount-error-modal/invoice-amount-error-modal';
-import {FalConfirmationModalComponent} from '../fal-confirmation-modal/fal-confirmation-modal.component';
-import {environment} from '../../../environments/environment';
-import {mergeMap} from 'rxjs/operators';
-import {forkJoin, of} from 'rxjs';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {ActivatedRoute, Router} from '@angular/router';
-import {LoadingService} from '../../services/loading-service';
+import { Component, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+import { AbstractControl, FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
+import { WebServices } from '../../services/web-services';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { FalFileInputComponent } from '../fal-file-input/fal-file-input.component';
+import { InvoiceAmountErrorModalComponent } from '../invoice-amount-error-modal/invoice-amount-error-modal';
+import { FalConfirmationModalComponent } from '../fal-confirmation-modal/fal-confirmation-modal.component';
+import { environment } from '../../../environments/environment';
+import { mergeMap } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { InvoiceDataModel } from '../../models/invoice/invoice-model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LoadingService } from '../../services/loading-service';
 
 interface Attachment {
   file: File;
@@ -31,30 +31,30 @@ interface Attachment {
     },
   ]
 })
-export class InvoiceFormComponent implements OnInit {
+export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public constructor(private webService: WebServices,
-                     private snackBar: MatSnackBar,
-                     private route: ActivatedRoute,
-                     private dialog: MatDialog,
-                     private router: Router,
-                     private loadingService: LoadingService) {
-    const {required} = Validators;
+    private snackBar: MatSnackBar,
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private router: Router,
+    private loadingService: LoadingService) {
+    const { required } = Validators;
     this.invoiceFormGroup = new FormGroup({
-      workType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      companyCode: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      erpType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      vendorNumber: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      externalInvoiceNumber: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      invoiceDate: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      amountOfInvoice: new FormControl({value: '0', disabled: this.readOnly}, [required]),
-      currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
+      workType: new FormControl({ value: null, disabled: this.readOnly }, [required]),
+      companyCode: new FormControl({ value: null, disabled: this.readOnly }, [required]),
+      erpType: new FormControl({ value: null, disabled: this.readOnly }, [required]),
+      vendorNumber: new FormControl({ value: null, disabled: this.readOnly }, [required]),
+      externalInvoiceNumber: new FormControl({ value: null, disabled: this.readOnly }, [required]),
+      invoiceDate: new FormControl({ value: null, disabled: this.readOnly }, [required]),
+      amountOfInvoice: new FormControl({ value: '0', disabled: this.readOnly }, [required]),
+      currency: new FormControl({ value: null, disabled: this.readOnly }, [required]),
       lineItems: new FormArray([])
     });
 
     this.attachmentFormGroup = new FormGroup({
-      attachmentType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      file: new FormControl({value: null, disabled: this.readOnly}, [required])
+      attachmentType: new FormControl({ value: null, disabled: this.readOnly }, [required]),
+      file: new FormControl({ value: null, disabled: this.readOnly }, [required])
     });
   }
 
@@ -133,6 +133,14 @@ export class InvoiceFormComponent implements OnInit {
     }
   }
 
+  public ngOnChanges(change: SimpleChanges): void {
+    const readOnlyChange: SimpleChange = change['readOnly'];
+    console.log(readOnlyChange);
+    if (readOnlyChange.currentValue === false) {
+      this.enableFormFields();
+    }
+  }
+
   public getInvoiceId(): void {
     this.route.paramMap.subscribe(params => {
       const falconInvoiceNumber = params.get('falconInvoiceNumber');
@@ -159,11 +167,11 @@ export class InvoiceFormComponent implements OnInit {
         // Line Items
         for (const lineItem of invoice.lineItems) {
           this.lineItemsFormArray.push(new FormGroup({
-            glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
-            costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
-            companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
-            lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
-            notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
+            glAccount: new FormControl({ value: lineItem.glAccount, disabled: this.readOnly }, [Validators.required]),
+            costCenter: new FormControl({ value: lineItem.costCenter, disabled: this.readOnly }, [Validators.required]),
+            companyCode: new FormControl({ value: lineItem.companyCode, disabled: this.readOnly }),
+            lineItemNetAmount: new FormControl({ value: lineItem.lineItemNetAmount, disabled: this.readOnly }, [Validators.required]),
+            notes: new FormControl({ value: lineItem.notes, disabled: this.readOnly })
           }));
         }
 
@@ -346,17 +354,17 @@ export class InvoiceFormComponent implements OnInit {
           return of({});
         })
       ).subscribe(res => {
-          this.resetForm();
-          // @ts-ignore
-          this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
-        },
+        this.resetForm();
+        // @ts-ignore
+        this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
+      },
         () => this.openSnackBar('Failure, invoice was not created!')
       );
     }
   }
 
   public openSnackBar(message: string): void {
-    this.snackBar.open(message, 'close', {duration: 5 * 1000});
+    this.snackBar.open(message, 'close', { duration: 5 * 1000 });
   }
 
   addAttachment(): void {
@@ -402,5 +410,17 @@ export class InvoiceFormComponent implements OnInit {
 
   public toggleSidenav(): void {
     this.toggleMilestones.emit();
+  }
+
+  private enableFormFields(): void {
+    this.invoiceFormGroup.controls.workType.enable();
+    this.invoiceFormGroup.controls.companyCode.enable();
+    this.invoiceFormGroup.controls.erpType.enable();
+    this.invoiceFormGroup.controls.vendorNumber.enable();
+    this.invoiceFormGroup.controls.externalInvoiceNumber.enable();
+    this.invoiceFormGroup.controls.invoiceDate.disable();
+    this.invoiceFormGroup.controls.amountOfInvoice.enable();
+    this.invoiceFormGroup.controls.currency.enable();
+    this.invoiceFormGroup.controls.lineItems.enable();
   }
 }

@@ -1,11 +1,12 @@
 <cardinal-card>
   <cardinal-section-header [sectionTitle]="'Invoice ' + falconInvoiceNumber">
     <div class="col-12 d-flex justify-content-end">
-      <input id="edit-button"
+      <input type="button"
+              id="edit-button"
              value="Edit"
-             class="btn flex-shrink-1 header-button"
+             class="btn flex-shrink-1"
              [ngClass]="'btn-outline-secondary'"
-             [disabled]="readOnly"
+             (click)="editInvoice()"
       />
       <input id="delete-button"
              value="Delete"
@@ -26,7 +27,7 @@
     </mat-sidenav>
 
     <mat-sidenav-content class="side-nav-content">
-      <app-invoice-form [enableMilestones]="true" [readOnly]="true" (updateMilestones)="updateMilestones($event)"
+      <app-invoice-form [enableMilestones]="true" [readOnly]="readOnly" (updateMilestones)="updateMilestones($event)"
                         (toggleMilestones)="toggleMilestones()"></app-invoice-form>
     </mat-sidenav-content>
   </mat-sidenav-container>

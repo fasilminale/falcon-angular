@@ -1,6 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
-import {ActivatedRoute} from '@angular/router';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FalFileInputComponent } from '../../components/fal-file-input/fal-file-input.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -34,5 +34,9 @@ export class InvoiceDetailPageComponent implements OnInit {
 
   public toggleMilestones(): void {
     this.milestonesTabOpen = !this.milestonesTabOpen;
+  }
+
+  public editInvoice(): void {
+    this.readOnly = false;
   }
 }
