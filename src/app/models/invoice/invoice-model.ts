@@ -10,6 +10,7 @@ export class InvoiceDataModel {
     {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number'},
     {header: 'externalInvoiceNumber', label: 'External Invoice Number'},
     {header: 'amountOfInvoice', label: 'Invoice Amount'},
+    {header: 'currency', label: 'Currency'},
     {header: 'vendorNumber', label: 'Vendor Number'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'createdBy', label: 'Created By'},
