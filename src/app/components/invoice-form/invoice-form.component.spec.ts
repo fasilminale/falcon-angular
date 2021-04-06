@@ -1,6 +1,6 @@
 import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 
-import { InvoiceFormComponent } from './invoice-form.component';
+import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
@@ -105,7 +105,8 @@ describe('InvoiceFormComponent', () => {
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    spyOn(component, 'getInvoiceId').and.callFake(() => {});
+    spyOn(component, 'getInvoiceId').and.callFake(() => {
+    });
   });
 
   afterEach(() => {
@@ -300,7 +301,8 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should submit with attachments', () => {
-    spyOn(component, 'validateInvoiceAmount').and.callFake(() => {});
+    spyOn(component, 'validateInvoiceAmount').and.callFake(() => {
+    });
     spyOn(component, 'addAttachment').and.callThrough();
     spyOn(component, 'onSubmit').and.callThrough();
     component.amountOfInvoiceFormControl.setValue('1');
@@ -340,6 +342,12 @@ describe('InvoiceFormComponent', () => {
     component.addAttachment();
     component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
+  });
+
+  it('should disable line item remove button on form reset', () => {
+    component.lineItemRemoveButtonDisable = false;
+    component.resetForm();
+    expect(component.lineItemRemoveButtonDisable).toBeTrue();
   });
 
 });

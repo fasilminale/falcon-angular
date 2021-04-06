@@ -188,6 +188,7 @@ export class InvoiceFormComponent implements OnInit {
     this.lineItemsFormArray.clear();
     this.attachments = [];
     this.addNewEmptyLineItem();
+    this.lineItemRemoveButtonDisable = true;
     //set default currency to USD
     this.invoiceFormGroup.controls.currency.setValue(this.currencyOptions[0]);
     // default work type as long as there is only one value
