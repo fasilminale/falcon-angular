@@ -148,6 +148,32 @@ describe('InvoiceFormComponent', () => {
       .toHaveBeenCalledWith('Failure, invoice was not created!');
   });
 
+  it('should show success snackbar on put', fakeAsync(() => {
+    spyOn(component, 'openSnackBar').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.falconInvoiceNumber = 'F0000000001';
+    component.onSubmit();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${component.falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    fixture.detectChanges();
+    expect(component.openSnackBar)
+      .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been updated.`);
+  }));
+
+  it('should show failure snackbar on failed put', () => {
+    spyOn(component, 'openSnackBar').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.falconInvoiceNumber = 'F0000000001';
+    component.onSubmit();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${component.falconInvoiceNumber}`)
+      .error(new ErrorEvent('test error event'), {
+        status: 123,
+        statusText: 'test status text'
+      });
+    expect(component.openSnackBar)
+      .toHaveBeenCalledWith('Failure, invoice was not updated!');
+  });
+
   it('should called material snackbar when openSnackBar method called', () => {
     spyOn(snackBar, 'open').and.stub();
     component.openSnackBar('test message');
