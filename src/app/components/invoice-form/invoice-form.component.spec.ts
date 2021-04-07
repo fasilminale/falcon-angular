@@ -34,6 +34,12 @@ describe('InvoiceFormComponent', () => {
 
   const regex = /[a-zA-Z0-9_\\-]/;
 
+  const companyCode = 'CODE';
+  const vendorNumber = '1';
+  const externalInvoiceNumber = '1';
+  const invoiceDate = new Date(2021, 4, 7);
+  const isValidUrl = `${environment.baseServiceUrl}/v1/invoice/is-valid?companyCode=${companyCode}&vendorNumber=${vendorNumber}&externalInvoiceNumber=${externalInvoiceNumber}&invoiceDate=${invoiceDate.getTime()}`;
+
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
     preventDefault: () => {
@@ -105,6 +111,10 @@ describe('InvoiceFormComponent', () => {
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    component.companyCode.setValue(companyCode);
+    component.vendorNumber.setValue(vendorNumber);
+    component.externalInvoiceNumber.setValue(externalInvoiceNumber);
+    component.invoiceDate.setValue(invoiceDate);
     spyOn(component, 'getInvoiceId').and.callFake(() => {
     });
   });
@@ -121,6 +131,8 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'openSnackBar').and.stub();
     component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
       .flush(invoiceResponse);
     fixture.detectChanges();
@@ -132,6 +144,8 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'openSnackBar').and.stub();
     component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
       .error(new ErrorEvent('test error event'), {
         status: 123,
@@ -155,28 +169,32 @@ describe('InvoiceFormComponent', () => {
 
   it('should copy head companyCode to line item companyCode', () => {
 
-    component.invoiceFormGroup.controls.companyCode.setValue('123456');
+    component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
     const testRequest = http.expectOne(`${environment.baseServiceUrl}/v1/invoice`);
 
     expect(testRequest.request.body.lineItems.length).toEqual(1);
-    expect(testRequest.request.body.lineItems[0].companyCode).toEqual('123456');
+    expect(testRequest.request.body.lineItems[0].companyCode).toEqual('CODE');
     testRequest.flush(new HttpResponse<never>());
 
   });
 
   it('should not copy head companyCode to populated line item companyCode', () => {
 
-    component.invoiceFormGroup.controls.companyCode.setValue('123456');
+    component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     component.amountOfInvoiceFormControl.setValue('0');
     // @ts-ignore
-    component.invoiceFormGroup.controls.lineItems.get('0').controls.companyCode.setValue('234567');
+    component.invoiceFormGroup.controls.lineItems.get('0').controls.companyCode.setValue('CODE');
     component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
     const testRequest = http.expectOne(`${environment.baseServiceUrl}/v1/invoice`);
 
     expect(testRequest.request.body.lineItems.length).toEqual(1);
-    expect(testRequest.request.body.lineItems[0].companyCode).toEqual('234567');
+    expect(testRequest.request.body.lineItems[0].companyCode).toEqual('CODE');
     testRequest.flush(new HttpResponse<never>());
 
   });
@@ -256,6 +274,17 @@ describe('InvoiceFormComponent', () => {
     expect(component.onSubmit).toHaveBeenCalled();
   });
 
+  it('should display an error indicating a duplicate invoice', () => {
+    spyOn(component, 'validateInvoiceAmount').and.callThrough();
+    spyOn(component, 'onSubmit').and.callThrough();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.onSubmit();
+    http.expectOne(isValidUrl)
+      .flush(new HttpResponse<never>());
+    expect(component.validateInvoiceAmount).toHaveBeenCalled();
+    expect(component.onSubmit).toHaveBeenCalled();
+  });
+
   it('should reset form when cancel dialog is confirmed', () => {
     spyOn(component, 'resetForm').and.stub();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
@@ -276,6 +305,8 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'resetForm').and.stub();
     component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
       .flush(new HttpResponse<never>());
     expect(component.resetForm).toHaveBeenCalled();
@@ -312,6 +343,8 @@ describe('InvoiceFormComponent', () => {
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
     component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice`)
       .flush(invoiceResponse);
     fixture.detectChanges();
