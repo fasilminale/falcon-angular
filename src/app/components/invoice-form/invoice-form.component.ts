@@ -196,6 +196,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.lineItemsFormArray.clear();
     this.attachments = [];
     this.addNewEmptyLineItem();
+    this.lineItemRemoveButtonDisable = true;
     //set default currency to USD
     this.invoiceFormGroup.controls.currency.setValue(this.currencyOptions[0]);
     // default work type as long as there is only one value
@@ -231,11 +232,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateInvoiceAmount(): void {
     let sum = 0;
-    const invoiceAmount = Number(this.amountOfInvoiceFormControl.value).toFixed(2);
+    const invoiceAmount = Number(this.amountOfInvoiceFormControl.value.replace(',', '')).toFixed(2);
     for (let i = 0; i < this.lineItemsFormArray.controls.length; i++) {
       const lineItem = this.lineItemsFormArray.at(i) as FormGroup;
       const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
-      sum += Number(lineItemAmount.value);
+      sum += Number(lineItemAmount.value.replace(',', ''));
     }
     this.validAmount = sum.toFixed(2) === invoiceAmount;
     if (!this.validAmount) {
@@ -318,12 +319,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       invoice.createdBy = 'Falcon User';
 
       // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
-      invoice.amountOfInvoice = Number(invoice.amountOfInvoice);
+      invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
       invoice.lineItems.forEach((lineItem: any) => {
         if (!lineItem.companyCode) {
           lineItem.companyCode = invoice.companyCode;
         }
-        lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount);
+        lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
       });
 
       let invoiceNumber: any;
