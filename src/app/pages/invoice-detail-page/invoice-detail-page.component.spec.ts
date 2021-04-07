@@ -1,13 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { InvoiceDetailPageComponent } from './invoice-detail-page.component';
-import { WebServices } from '../../services/web-services';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MatDialogModule } from '@angular/material/dialog';
-import { RouterTestingModule } from '@angular/router/testing';
-import { LoadingService } from '../../services/loading-service';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {InvoiceDetailPageComponent} from './invoice-detail-page.component';
+import {WebServices} from '../../services/web-services';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {MatDialogModule} from '@angular/material/dialog';
+import {RouterTestingModule} from '@angular/router/testing';
+import {LoadingService} from '../../services/loading-service';
 
 describe('InvoiceDetailPageComponent', () => {
   let component: InvoiceDetailPageComponent;
