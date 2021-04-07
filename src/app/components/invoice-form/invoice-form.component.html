@@ -107,7 +107,7 @@
             </label>
             <app-fal-date-input id="external-invoice-date-input"
                                 formControlName="invoiceDate"
-                                [isDisabled]="readOnly"
+                                [isDisabled]="readOnlyOther"
                                 [isError]="!!(invoiceDate.errors && invoiceDate.hasError('required'))">
             </app-fal-date-input>
             <small class="error-text"

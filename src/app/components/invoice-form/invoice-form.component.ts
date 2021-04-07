@@ -8,7 +8,7 @@ import { InvoiceAmountErrorModalComponent } from '../invoice-amount-error-modal/
 import { FalConfirmationModalComponent } from '../fal-confirmation-modal/fal-confirmation-modal.component';
 import { environment } from '../../../environments/environment';
 import { mergeMap } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { InvoiceDataModel } from '../../models/invoice/invoice-model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '../../services/loading-service';
@@ -107,6 +107,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
   public attachments: Array<Attachment> = [];
   private invoice = new InvoiceDataModel();
+  public readOnlyOther = false;
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @Input() enableMilestones = false;
   @Input() readOnly = false;
@@ -125,6 +126,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public ngOnInit(): void {
+    this.readOnlyOther = this.readOnly;
     this.getInvoiceId();
     if (this.falconInvoiceNumber) {
       this.loadData();
@@ -231,11 +233,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateInvoiceAmount(): void {
     let sum = 0;
-    const invoiceAmount = Number(this.amountOfInvoiceFormControl.value.replace(',', '')).toFixed(2);
+    const invoiceAmount = Number(this.amountOfInvoiceFormControl.value).toFixed(2);
     for (let i = 0; i < this.lineItemsFormArray.controls.length; i++) {
       const lineItem = this.lineItemsFormArray.at(i) as FormGroup;
       const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
-      sum += Number(lineItemAmount.value.replace(',', ''));
+      sum += Number(lineItemAmount.value);
     }
     this.validAmount = sum.toFixed(2) === invoiceAmount;
     if (!this.validAmount) {
@@ -318,19 +320,28 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       invoice.createdBy = 'Falcon User';
 
       // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
-      invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
+      invoice.amountOfInvoice = Number(invoice.amountOfInvoice);
       invoice.lineItems.forEach((lineItem: any) => {
         if (!lineItem.companyCode) {
           lineItem.companyCode = invoice.companyCode;
         }
-        lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
+        lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount);
       });
 
       let invoiceNumber: any;
-      this.webService.httpPost(
-        `${environment.baseServiceUrl}/v1/invoice`,
-        invoice
-      ).pipe(
+      let httpRequestObs: Observable<any>;
+      if (this.falconInvoiceNumber) {
+        httpRequestObs = this.webService.httpPut(
+          `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
+          invoice
+        )
+      } else {
+        httpRequestObs = this.webService.httpPost(
+          `${environment.baseServiceUrl}/v1/invoice`,
+          invoice
+        );
+      }
+      httpRequestObs.pipe(
         mergeMap((result: any, index: number) => {
           invoiceNumber = result.falconInvoiceNumber;
           if (this.attachments.length > 0) {
@@ -356,9 +367,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       ).subscribe(res => {
         this.resetForm();
         // @ts-ignore
-        this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
+        this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
       },
-        () => this.openSnackBar('Failure, invoice was not created!')
+        () => this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`)
       );
     }
   }
