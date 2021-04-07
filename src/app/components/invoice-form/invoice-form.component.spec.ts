@@ -105,7 +105,9 @@ describe('InvoiceFormComponent', () => {
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    spyOn(component, 'getInvoiceId').and.callFake(() => { });
+
+    spyOn(component, 'getInvoiceId').and.callFake(() => {
+    });
   });
 
   afterEach(() => {
@@ -374,6 +376,12 @@ describe('InvoiceFormComponent', () => {
     component.addAttachment();
     component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
+  });
+
+  it('should disable line item remove button on form reset', () => {
+    component.lineItemRemoveButtonDisable = false;
+    component.resetForm();
+    expect(component.lineItemRemoveButtonDisable).toBeTrue();
   });
 
 });
