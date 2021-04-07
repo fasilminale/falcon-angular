@@ -4,7 +4,7 @@ import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
-import {InvoiceAmountErrorModalComponent} from '../invoice-amount-error-modal/invoice-amount-error-modal';
+import {InvoiceErrorModalComponent} from '../invoice-error-modal/invoice-error-modal';
 import {FalConfirmationModalComponent} from '../fal-confirmation-modal/fal-confirmation-modal.component';
 import {environment} from '../../../environments/environment';
 import {mergeMap} from 'rxjs/operators';
@@ -266,7 +266,7 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   public displayInvalidAmountError(): void {
-    this.dialog.open(InvoiceAmountErrorModalComponent,
+    this.dialog.open(InvoiceErrorModalComponent,
       {
         autoFocus: false,
         data: {
@@ -274,6 +274,25 @@ export class InvoiceFormComponent implements OnInit {
           html: `<p>
                     Total of Line Net Amount(s) must equal Invoice Net Amount.
                  </p>`,
+          closeText: 'Close',
+        }
+      })
+      .afterClosed();
+  }
+
+  public displayDuplicateInvoiceError(): void {
+    this.dialog.open(InvoiceErrorModalComponent,
+      {
+        autoFocus: false,
+        data: {
+          title: 'Duplicate Invoice',
+          html: `<p>
+                    An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.
+                 </p>
+                 <br/>
+                 <b>
+                    Please update these fields and try again.
+                 </b>`,
           closeText: 'Close',
         }
       })
@@ -308,51 +327,65 @@ export class InvoiceFormComponent implements OnInit {
     this.validateInvoiceAmount();
     if (this.validAmount) {
       const invoice = this.invoiceFormGroup.getRawValue() as any;
-      invoice.createdBy = 'Falcon User';
 
-      // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
-      invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
-      invoice.lineItems.forEach((lineItem: any) => {
-        if (!lineItem.companyCode) {
-          lineItem.companyCode = invoice.companyCode;
-        }
-        lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
-      });
-
-      let invoiceNumber: any;
       this.webService.httpPost(
-        `${environment.baseServiceUrl}/v1/invoice`,
-        invoice
-      ).pipe(
-        mergeMap((result: any, index: number) => {
-          invoiceNumber = result.falconInvoiceNumber;
-          if (this.attachments.length > 0) {
-
-            const attachmentCalls: Array<any> = [];
-            for (const attachment of this.attachments) {
-              const formData = new FormData();
-              formData.append('file', attachment.file, attachment.file.name);
-              formData.append('attachmentType', attachment.type);
-              formData.append('fileName', attachment.file.name);
-
-              const attachmentCall = this.webService.httpPost(
-                `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
-                formData
-              );
-              attachmentCalls.push(attachmentCall);
-            }
-            return forkJoin(attachmentCalls);
-          }
-
-          return of({});
-        })
-      ).subscribe(res => {
-          this.resetForm();
-          // @ts-ignore
-          this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
+        `${environment.baseServiceUrl}/v1/invoice/is-valid`,
+        {
+          companyCode: invoice.companyCode,
+          vendorNumber: invoice.vendorNumber,
+          externalInvoiceNumber: invoice.externalInvoiceNumber,
+          invoiceDate: invoice.invoiceDate
+        }
+      ).subscribe(() => {
+          this.displayDuplicateInvoiceError();
         },
-        () => this.openSnackBar('Failure, invoice was not created!')
-      );
+        () => {
+          invoice.createdBy = 'Falcon User';
+
+          // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
+          invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
+          invoice.lineItems.forEach((lineItem: any) => {
+            if (!lineItem.companyCode) {
+              lineItem.companyCode = invoice.companyCode;
+            }
+            lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
+          });
+
+          let invoiceNumber: any;
+          this.webService.httpPost(
+            `${environment.baseServiceUrl}/v1/invoice`,
+            invoice
+          ).pipe(
+            mergeMap((result: any, index: number) => {
+              invoiceNumber = result.falconInvoiceNumber;
+              if (this.attachments.length > 0) {
+
+                const attachmentCalls: Array<any> = [];
+                for (const attachment of this.attachments) {
+                  const formData = new FormData();
+                  formData.append('file', attachment.file, attachment.file.name);
+                  formData.append('attachmentType', attachment.type);
+                  formData.append('fileName', attachment.file.name);
+
+                  const attachmentCall = this.webService.httpPost(
+                    `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
+                    formData
+                  );
+                  attachmentCalls.push(attachmentCall);
+                }
+                return forkJoin(attachmentCalls);
+              }
+
+              return of({});
+            })
+          ).subscribe(res => {
+              this.resetForm();
+              // @ts-ignore
+              this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
+            },
+            () => this.openSnackBar('Failure, invoice was not created!')
+          );
+        });
     }
   }
 

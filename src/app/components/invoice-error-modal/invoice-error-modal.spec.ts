@@ -1,12 +1,12 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {InvoiceAmountErrorModalComponent} from './invoice-amount-error-modal';
+import {InvoiceErrorModalComponent} from './invoice-error-modal';
 import {MAT_DIALOG_DATA, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 
 describe('FalConfirmationModalComponent', () => {
-  let component: InvoiceAmountErrorModalComponent;
-  let fixture: ComponentFixture<InvoiceAmountErrorModalComponent>;
+  let component: InvoiceErrorModalComponent;
+  let fixture: ComponentFixture<InvoiceErrorModalComponent>;
 
   let injectedMatDialogRef: MatDialogRef<any>;
 
@@ -18,7 +18,7 @@ describe('FalConfirmationModalComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MatDialogModule],
-      declarations: [InvoiceAmountErrorModalComponent],
+      declarations: [InvoiceErrorModalComponent],
       providers: [
         {provide: MAT_DIALOG_DATA, useValue: {}},
         {provide: MatDialogRef, useValue: dialogMock}
@@ -29,7 +29,7 @@ describe('FalConfirmationModalComponent', () => {
 
   beforeEach(() => {
     injectedMatDialogRef = TestBed.inject(MatDialogRef);
-    fixture = TestBed.createComponent(InvoiceAmountErrorModalComponent);
+    fixture = TestBed.createComponent(InvoiceErrorModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
