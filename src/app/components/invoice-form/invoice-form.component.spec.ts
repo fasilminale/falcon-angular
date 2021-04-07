@@ -38,7 +38,7 @@ describe('InvoiceFormComponent', () => {
   const vendorNumber = '1';
   const externalInvoiceNumber = '1';
   const invoiceDate = new Date(2021, 4, 7);
-  const isValidUrl = `${environment.baseServiceUrl}/v1/invoice/is-valid?companyCode=${companyCode}&vendorNumber=${vendorNumber}&externalInvoiceNumber=${externalInvoiceNumber}&invoiceDate=${invoiceDate.getTime()}`;
+  const isValidUrl = `${environment.baseServiceUrl}/v1/invoice/is-valid`;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'

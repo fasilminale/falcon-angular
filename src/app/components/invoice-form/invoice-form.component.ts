@@ -326,13 +326,20 @@ export class InvoiceFormComponent implements OnInit {
   public onSubmit(): void {
     this.validateInvoiceAmount();
     if (this.validAmount) {
-      this.webService.httpGet(
-        `${environment.baseServiceUrl}/v1/invoice/is-valid?companyCode=${this.companyCode.value}&vendorNumber=${this.vendorNumber.value}&externalInvoiceNumber=${this.externalInvoiceNumber.value}&invoiceDate=${this.invoiceDate.value.getTime()}`
+      const invoice = this.invoiceFormGroup.getRawValue() as any;
+
+      this.webService.httpPost(
+        `${environment.baseServiceUrl}/v1/invoice/is-valid`,
+        {
+          companyCode: invoice.companyCode,
+          vendorNumber: invoice.vendorNumber,
+          externalInvoiceNumber: invoice.externalInvoiceNumber,
+          invoiceDate: invoice.invoiceDate
+        }
       ).subscribe(() => {
           this.displayDuplicateInvoiceError();
         },
         () => {
-          const invoice = this.invoiceFormGroup.getRawValue() as any;
           invoice.createdBy = 'Falcon User';
 
           // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
