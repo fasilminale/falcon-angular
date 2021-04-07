@@ -107,7 +107,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
   public attachments: Array<Attachment> = [];
   private invoice = new InvoiceDataModel();
-  public readOnlyOther = false;
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @Input() enableMilestones = false;
   @Input() readOnly = false;
@@ -126,7 +125,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public ngOnInit(): void {
-    this.readOnlyOther = this.readOnly;
     this.getInvoiceId();
     if (this.falconInvoiceNumber) {
       this.loadData();
