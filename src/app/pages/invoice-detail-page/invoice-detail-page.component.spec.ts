@@ -49,4 +49,10 @@ describe('InvoiceDetailPageComponent', () => {
     component.updateMilestones({});
     expect(component.updateMilestones).toHaveBeenCalled();
   });
+
+  it('should update the readOnly flag', () => {
+    spyOn(component, 'editInvoice').and.callThrough();
+    component.editInvoice();
+    expect(component.readOnly).toBeFalsy();
+  });
 });

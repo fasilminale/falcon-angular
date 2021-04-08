@@ -1,4 +1,4 @@
-import {Component, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChange, SimpleChanges, ViewChild} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -8,7 +8,7 @@ import {InvoiceErrorModalComponent} from '../invoice-error-modal/invoice-error-m
 import {FalConfirmationModalComponent} from '../fal-confirmation-modal/fal-confirmation-modal.component';
 import {environment} from '../../../environments/environment';
 import {mergeMap} from 'rxjs/operators';
-import {forkJoin, of} from 'rxjs';
+import {forkJoin, Observable, of} from 'rxjs';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
@@ -31,7 +31,7 @@ interface Attachment {
     },
   ]
 })
-export class InvoiceFormComponent implements OnInit {
+export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public constructor(private webService: WebServices,
                      private snackBar: MatSnackBar,
@@ -133,6 +133,14 @@ export class InvoiceFormComponent implements OnInit {
     }
   }
 
+  public ngOnChanges(change: SimpleChanges): void {	
+    const readOnlyChange: SimpleChange = change['readOnly'];	
+    console.log(readOnlyChange);	
+    if (readOnlyChange.currentValue === false) {	
+      this.enableFormFields();	
+    }	
+  }
+
   public getInvoiceId(): void {
     this.route.paramMap.subscribe(params => {
       const falconInvoiceNumber = params.get('falconInvoiceNumber');
@@ -224,11 +232,11 @@ export class InvoiceFormComponent implements OnInit {
 
   public validateInvoiceAmount(): void {
     let sum = 0;
-    const invoiceAmount = Number(this.amountOfInvoiceFormControl.value.replace(',', '')).toFixed(2);
+    const invoiceAmount = this.getValue(this.amountOfInvoiceFormControl.value).toFixed(2);
     for (let i = 0; i < this.lineItemsFormArray.controls.length; i++) {
       const lineItem = this.lineItemsFormArray.at(i) as FormGroup;
       const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
-      sum += Number(lineItemAmount.value.replace(',', ''));
+      sum += this.getValue(lineItemAmount.value);
     }
     this.validAmount = sum.toFixed(2) === invoiceAmount;
     if (!this.validAmount) {
@@ -265,38 +273,38 @@ export class InvoiceFormComponent implements OnInit {
     }
   }
 
-  public displayInvalidAmountError(): void {
-    this.dialog.open(InvoiceErrorModalComponent,
-      {
-        autoFocus: false,
-        data: {
-          title: 'Invalid Amount(s)',
-          html: `<p>
-                    Total of Line Net Amount(s) must equal Invoice Net Amount.
-                 </p>`,
-          closeText: 'Close',
-        }
-      })
-      .afterClosed();
+  public displayInvalidAmountError(): void {	
+    this.dialog.open(InvoiceErrorModalComponent,	
+      {	
+        autoFocus: false,	
+        data: {	
+          title: 'Invalid Amount(s)',	
+          html: `<p>	
+                    Total of Line Net Amount(s) must equal Invoice Net Amount.	
+                 </p>`,	
+          closeText: 'Close',	
+        }	
+      })	
+      .afterClosed();	
   }
 
-  public displayDuplicateInvoiceError(): void {
-    this.dialog.open(InvoiceErrorModalComponent,
-      {
-        autoFocus: false,
-        data: {
-          title: 'Duplicate Invoice',
-          html: `<p>
-                    An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.
-                 </p>
-                 <br/>
-                 <b>
-                    Please update these fields and try again.
-                 </b>`,
-          closeText: 'Close',
-        }
-      })
-      .afterClosed();
+  public displayDuplicateInvoiceError(): void {	
+    this.dialog.open(InvoiceErrorModalComponent,	
+      {	
+        autoFocus: false,	
+        data: {	
+          title: 'Duplicate Invoice',	
+          html: `<p>	
+                    An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.	
+                 </p>	
+                 <br/>	
+                 <b>	
+                    Please update these fields and try again.	
+                 </b>`,	
+          closeText: 'Close',	
+        }	
+      })	
+      .afterClosed();	
   }
 
   public onCancel(): void {
@@ -327,65 +335,55 @@ export class InvoiceFormComponent implements OnInit {
     this.validateInvoiceAmount();
     if (this.validAmount) {
       const invoice = this.invoiceFormGroup.getRawValue() as any;
-
-      this.webService.httpPost(
-        `${environment.baseServiceUrl}/v1/invoice/is-valid`,
-        {
-          companyCode: invoice.companyCode,
-          vendorNumber: invoice.vendorNumber,
-          externalInvoiceNumber: invoice.externalInvoiceNumber,
-          invoiceDate: invoice.invoiceDate
+      invoice.createdBy = 'Falcon User';
+      // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
+      invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
+      invoice.lineItems.forEach((lineItem: any) => {
+        if (!lineItem.companyCode) {
+          lineItem.companyCode = invoice.companyCode;
         }
-      ).subscribe(() => {
-          this.displayDuplicateInvoiceError();
-        },
-        () => {
-          invoice.createdBy = 'Falcon User';
-
-          // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
-          invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
-          invoice.lineItems.forEach((lineItem: any) => {
-            if (!lineItem.companyCode) {
-              lineItem.companyCode = invoice.companyCode;
+        lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
+      });
+      let invoiceNumber: any;
+      let httpRequestObs: Observable<any>;
+      if (this.falconInvoiceNumber) {
+        httpRequestObs = this.webService.httpPut(
+          `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
+          invoice
+        );
+      } else {
+        httpRequestObs = this.webService.httpPost(
+          `${environment.baseServiceUrl}/v1/invoice`,
+          invoice
+        );
+      }
+      httpRequestObs.pipe(
+        mergeMap((result: any, index: number) => {
+          invoiceNumber = result.falconInvoiceNumber;
+          if (this.attachments.length > 0) {
+            const attachmentCalls: Array<any> = [];
+            for (const attachment of this.attachments) {
+              const formData = new FormData();
+              formData.append('file', attachment.file, attachment.file.name);
+              formData.append('attachmentType', attachment.type);
+              formData.append('fileName', attachment.file.name);
+              const attachmentCall = this.webService.httpPost(
+                `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
+                formData
+              );
+              attachmentCalls.push(attachmentCall);
             }
-            lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
-          });
-
-          let invoiceNumber: any;
-          this.webService.httpPost(
-            `${environment.baseServiceUrl}/v1/invoice`,
-            invoice
-          ).pipe(
-            mergeMap((result: any, index: number) => {
-              invoiceNumber = result.falconInvoiceNumber;
-              if (this.attachments.length > 0) {
-
-                const attachmentCalls: Array<any> = [];
-                for (const attachment of this.attachments) {
-                  const formData = new FormData();
-                  formData.append('file', attachment.file, attachment.file.name);
-                  formData.append('attachmentType', attachment.type);
-                  formData.append('fileName', attachment.file.name);
-
-                  const attachmentCall = this.webService.httpPost(
-                    `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
-                    formData
-                  );
-                  attachmentCalls.push(attachmentCall);
-                }
-                return forkJoin(attachmentCalls);
-              }
-
-              return of({});
-            })
-          ).subscribe(res => {
-              this.resetForm();
-              // @ts-ignore
-              this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
-            },
-            () => this.openSnackBar('Failure, invoice was not created!')
-          );
-        });
+            return forkJoin(attachmentCalls);
+          }
+          return of({});
+        })
+      ).subscribe(res => {
+          this.resetForm();
+          // @ts-ignore
+          this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
+        },
+        () => this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`)
+      );
     }
   }
 
@@ -436,5 +434,26 @@ export class InvoiceFormComponent implements OnInit {
 
   public toggleSidenav(): void {
     this.toggleMilestones.emit();
+  }
+
+  private enableFormFields(): void {
+    this.invoiceFormGroup.controls.workType.enable();
+    this.invoiceFormGroup.controls.companyCode.enable();
+    this.invoiceFormGroup.controls.erpType.enable();
+    this.invoiceFormGroup.controls.vendorNumber.enable();
+    this.invoiceFormGroup.controls.externalInvoiceNumber.enable();
+    this.invoiceFormGroup.controls.invoiceDate.disable();
+    this.invoiceFormGroup.controls.amountOfInvoice.enable();
+    this.invoiceFormGroup.controls.currency.enable();
+    this.invoiceFormGroup.controls.lineItems.enable();
+    this.attachmentFormGroup.controls.attachmentType.enable();
+  }
+  
+  private getValue(value: any) {
+    if(isNaN(value)) {
+      return Number(value.replace(',', ''));
+    } else {
+      return Number(value);
+    }
   }
 }
