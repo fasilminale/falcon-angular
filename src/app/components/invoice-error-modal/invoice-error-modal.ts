@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
-export interface InvoiceAmountErrorModalData {
+export interface InvoiceErrorModalData {
   title: string;
   html: string;
   closeText: string;
@@ -24,10 +24,10 @@ export interface InvoiceAmountErrorModalData {
     </div>
   `
 })
-export class InvoiceAmountErrorModalComponent implements OnInit {
+export class InvoiceErrorModalComponent implements OnInit {
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: InvoiceAmountErrorModalData,
-              private dialogRef: MatDialogRef<InvoiceAmountErrorModalComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: InvoiceErrorModalData,
+              private dialogRef: MatDialogRef<InvoiceErrorModalComponent>) {
   }
 
   ngOnInit(): void {

@@ -4,7 +4,7 @@ import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
-import {InvoiceAmountErrorModalComponent} from '../invoice-amount-error-modal/invoice-amount-error-modal';
+import {InvoiceErrorModalComponent} from '../invoice-error-modal/invoice-error-modal';
 import {FalConfirmationModalComponent} from '../fal-confirmation-modal/fal-confirmation-modal.component';
 import {environment} from '../../../environments/environment';
 import {mergeMap} from 'rxjs/operators';
@@ -133,12 +133,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public ngOnChanges(change: SimpleChanges): void {
-    const readOnlyChange: SimpleChange = change['readOnly'];
-    console.log(readOnlyChange);
-    if (readOnlyChange.currentValue === false) {
-      this.enableFormFields();
-    }
+  public ngOnChanges(change: SimpleChanges): void {	
+    const readOnlyChange: SimpleChange = change['readOnly'];	
+    console.log(readOnlyChange);	
+    if (readOnlyChange.currentValue === false) {	
+      this.enableFormFields();	
+    }	
   }
 
   public getInvoiceId(): void {
@@ -273,19 +273,38 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public displayInvalidAmountError(): void {
-    this.dialog.open(InvoiceAmountErrorModalComponent,
-      {
-        autoFocus: false,
-        data: {
-          title: 'Invalid Amount(s)',
-          html: `<p>
-                    Total of Line Net Amount(s) must equal Invoice Net Amount.
-                 </p>`,
-          closeText: 'Close',
-        }
-      })
-      .afterClosed();
+  public displayInvalidAmountError(): void {	
+    this.dialog.open(InvoiceErrorModalComponent,	
+      {	
+        autoFocus: false,	
+        data: {	
+          title: 'Invalid Amount(s)',	
+          html: `<p>	
+                    Total of Line Net Amount(s) must equal Invoice Net Amount.	
+                 </p>`,	
+          closeText: 'Close',	
+        }	
+      })	
+      .afterClosed();	
+  }
+
+  public displayDuplicateInvoiceError(): void {	
+    this.dialog.open(InvoiceErrorModalComponent,	
+      {	
+        autoFocus: false,	
+        data: {	
+          title: 'Duplicate Invoice',	
+          html: `<p>	
+                    An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.	
+                 </p>	
+                 <br/>	
+                 <b>	
+                    Please update these fields and try again.	
+                 </b>`,	
+          closeText: 'Close',	
+        }	
+      })	
+      .afterClosed();	
   }
 
   public onCancel(): void {
@@ -317,7 +336,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     if (this.validAmount) {
       const invoice = this.invoiceFormGroup.getRawValue() as any;
       invoice.createdBy = 'Falcon User';
-
       // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
       invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
       invoice.lineItems.forEach((lineItem: any) => {
@@ -326,7 +344,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         }
         lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
       });
-
       let invoiceNumber: any;
       let httpRequestObs: Observable<any>;
       if (this.falconInvoiceNumber) {
@@ -344,14 +361,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         mergeMap((result: any, index: number) => {
           invoiceNumber = result.falconInvoiceNumber;
           if (this.attachments.length > 0) {
-
             const attachmentCalls: Array<any> = [];
             for (const attachment of this.attachments) {
               const formData = new FormData();
               formData.append('file', attachment.file, attachment.file.name);
               formData.append('attachmentType', attachment.type);
               formData.append('fileName', attachment.file.name);
-
               const attachmentCall = this.webService.httpPost(
                 `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
                 formData
@@ -360,7 +375,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             }
             return forkJoin(attachmentCalls);
           }
-
           return of({});
         })
       ).subscribe(res => {
@@ -434,7 +448,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.invoiceFormGroup.controls.lineItems.enable();
     this.attachmentFormGroup.controls.attachmentType.enable();
   }
-
+  
   private getValue(value: any) {
     if(isNaN(value)) {
       return Number(value.replace(',', ''));
