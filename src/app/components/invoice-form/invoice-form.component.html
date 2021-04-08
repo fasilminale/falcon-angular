@@ -1,6 +1,11 @@
 <div id="container">
-  <cardinal-button *ngIf="enableMilestones" class="milestone-button" id="milestones-button" buttonText="Milestones"
-                   (buttonClick)="toggleSidenav()" mat-dialog-close></cardinal-button>
+  <elm-button *ngIf="enableMilestones"
+              id="milestones-button"
+              class="milestone-button"
+              (buttonClick)="toggleSidenav()"
+              mat-dialog-close>
+    Milestones
+  </elm-button>
   <div class="content">
     <form [formGroup]="invoiceFormGroup"
           (ngSubmit)="onSubmit()">
