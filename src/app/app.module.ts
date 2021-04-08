@@ -3,7 +3,6 @@ import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {HealthCheckComponent} from './components/health-check/health-check.component';
 import {WebServices} from './services/web-services';
 import {HttpClientModule} from '@angular/common/http';
 import {ButtonModule, ContainersModule, DataTableModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
@@ -16,12 +15,10 @@ import {NgbDatepickerModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.component';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
-import {FalConfirmationModalComponent} from './components/fal-confirmation-modal/fal-confirmation-modal.component';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatCurrencyFormatModule} from 'mat-currency-format';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
-import {InvoiceErrorModalComponent} from './components/invoice-error-modal/invoice-error-modal';
 import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-input.component';
 import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
 import { FalFileInputComponent } from './components/fal-file-input/fal-file-input.component';
@@ -30,12 +27,9 @@ import { InvoiceFormComponent } from './components/invoice-form/invoice-form.com
 @NgModule({
   declarations: [
     AppComponent,
-    HealthCheckComponent,
     InvoiceListPageComponent,
     InvoiceCreatePageComponent,
     FalDateInputComponent,
-    FalConfirmationModalComponent,
-    InvoiceErrorModalComponent,
     FalRadioInputComponent,
     InvoiceDetailPageComponent,
     FalFileInputComponent,
