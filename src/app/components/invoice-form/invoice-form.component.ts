@@ -232,11 +232,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateInvoiceAmount(): void {
     let sum = 0;
-    const invoiceAmount = Number(this.amountOfInvoiceFormControl.value.replace(',', '')).toFixed(2);
+    const invoiceAmount = this.getValue(this.amountOfInvoiceFormControl.value).toFixed(2);
     for (let i = 0; i < this.lineItemsFormArray.controls.length; i++) {
       const lineItem = this.lineItemsFormArray.at(i) as FormGroup;
       const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
-      sum += Number(lineItemAmount.value.replace(',', ''));
+      sum += this.getValue(lineItemAmount.value);
     }
     this.validAmount = sum.toFixed(2) === invoiceAmount;
     if (!this.validAmount) {
@@ -319,12 +319,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       invoice.createdBy = 'Falcon User';
 
       // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
-      invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
+      invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
       invoice.lineItems.forEach((lineItem: any) => {
         if (!lineItem.companyCode) {
           lineItem.companyCode = invoice.companyCode;
         }
-        lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
+        lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
       });
 
       let invoiceNumber: any;
@@ -432,5 +432,14 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.invoiceFormGroup.controls.amountOfInvoice.enable();
     this.invoiceFormGroup.controls.currency.enable();
     this.invoiceFormGroup.controls.lineItems.enable();
+    this.attachmentFormGroup.controls.attachmentType.enable();
+  }
+
+  private getValue(value: any) {
+    if(isNaN(value)) {
+      return Number(value.replace(',', ''));
+    } else {
+      return Number(value);
+    }
   }
 }
