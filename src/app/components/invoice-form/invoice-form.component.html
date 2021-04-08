@@ -205,13 +205,13 @@
                   </ng-select>
 
                   <!-- UPLOAD BUTTON -->
-                  <input type="submit"
-                         id="upload-button"
-                         value="Upload"
-                         [disabled]="!(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value)"
-                         class="btn flex-shrink-1"
-                         [ngClass]="(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value) ? 'btn-primary' : 'btn-outline-secondary'"
-                  />
+                  <div id="upload-button-container">
+                    <elm-button buttonType="submit"
+                                buttonStyle="primary"
+                                [isDisabled]="!(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value)">
+                      Upload
+                    </elm-button>
+                  </div>
                 </div>
 
                 <div class="col-6 upload-file-div">
@@ -353,13 +353,13 @@
           </div>
 
           <!-- LINE ITEMS - ADD NEW -->
-          <input *ngIf=!readOnly type="button"
-                 id="add-new-line-item-button"
-                 class="btn btn-link m-1"
-                 value="+ Add New Line Item"
-                 (click)="addNewEmptyLineItem()"
-
-          />
+          <elm-button *ngIf="!readOnly"
+                      buttonType="button"
+                      buttonStyle="text"
+                      id="add-new-line-item-button"
+                      (buttonClick)="addNewEmptyLineItem()">
+            <u>+ Add New Line Item</u>
+          </elm-button>
         </cardinal-card>
 
         <!-- FORM FOOTER -->
@@ -367,21 +367,22 @@
              class="col-12 d-flex {{!falconInvoiceNumber ? 'justify-content-between' : 'justify-content-end'}}">
 
           <!-- CANCEL -->
-          <input *ngIf="!falconInvoiceNumber" type="button"
-                 id="cancel-button"
-                 class="btn btn-link flex-shrink-1"
-                 value="Cancel"
-                 (click)="onCancel()"
-          />
+          <elm-button id="cancel-button"
+                      buttonType="reset"
+                      buttonStyle="text"
+                      class="flex-shrink-1"
+                      (buttonClick)="onCancel()">
+            <u>Cancel</u>
+          </elm-button>
 
           <!-- SUBMIT -->
-          <input type="submit"
-                 id="submit-button"
-                 value="{{!falconInvoiceNumber ? 'Create' : 'Save'}}"
-                 class="btn flex-shrink-1"
-                 [ngClass]="invoiceFormGroup.valid && !readOnly ? 'btn-primary' : 'btn-outline-secondary'"
-                 [disabled]="!invoiceFormGroup.valid || readOnly"
-          />
+          <elm-button id="submit-button"
+                      buttonType="submit"
+                      buttonStyle="primary"
+                      class="flex-shrink-1"
+                      [isDisabled]="invoiceFormGroup.invalid || readOnly">
+            {{falconInvoiceNumber ? 'Save' : 'Create'}}
+          </elm-button>
         </div>
 
       </div>

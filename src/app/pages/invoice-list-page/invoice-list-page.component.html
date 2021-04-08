@@ -1,8 +1,8 @@
 <cardinal-card>
   <cardinal-section-header
-    [sectionTitle]="'Invoices'"
-  ></cardinal-section-header>
-  <cardinal-data-table
+    [sectionTitle]="'Invoices'">
+  </cardinal-section-header>
+  <elm-data-table
     [data]="invoices"
     [headers]="headers"
     (pageChangedEvent)="pageChanged($event)"
@@ -10,6 +10,6 @@
     (sortEvent)="sortChanged($event)"
     [shouldSort]=true
     [totalResults]="paginationModel.total"
-    [pageSizes]="paginationModel.pageSizes"
-  ></cardinal-data-table>
+    [pageSizes]="paginationModel.pageSizes">
+  </elm-data-table>
 </cardinal-card>
