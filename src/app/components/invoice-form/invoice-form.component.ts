@@ -133,12 +133,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public ngOnChanges(change: SimpleChanges): void {	
-    const readOnlyChange: SimpleChange = change['readOnly'];	
-    console.log(readOnlyChange);	
-    if (readOnlyChange.currentValue === false) {	
-      this.enableFormFields();	
-    }	
+  public ngOnChanges(change: SimpleChanges): void {
+    const readOnlyChange: SimpleChange = change['readOnly'];
+    console.log(readOnlyChange);
+    if (readOnlyChange.currentValue === false) {
+      this.enableFormFields();
+    }
   }
 
   public getInvoiceId(): void {
@@ -273,38 +273,38 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public displayInvalidAmountError(): void {	
-    this.dialog.open(InvoiceErrorModalComponent,	
-      {	
-        autoFocus: false,	
-        data: {	
-          title: 'Invalid Amount(s)',	
-          html: `<p>	
-                    Total of Line Net Amount(s) must equal Invoice Net Amount.	
-                 </p>`,	
-          closeText: 'Close',	
-        }	
-      })	
-      .afterClosed();	
+  public displayInvalidAmountError(): void {
+    this.dialog.open(InvoiceErrorModalComponent,
+      {
+        autoFocus: false,
+        data: {
+          title: 'Invalid Amount(s)',
+          html: `<p>
+                    Total of Line Net Amount(s) must equal Invoice Net Amount.
+                 </p>`,
+          closeText: 'Close',
+        }
+      })
+      .afterClosed();
   }
 
-  public displayDuplicateInvoiceError(): void {	
-    this.dialog.open(InvoiceErrorModalComponent,	
-      {	
-        autoFocus: false,	
-        data: {	
-          title: 'Duplicate Invoice',	
-          html: `<p>	
-                    An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.	
-                 </p>	
-                 <br/>	
-                 <b>	
-                    Please update these fields and try again.	
-                 </b>`,	
-          closeText: 'Close',	
-        }	
-      })	
-      .afterClosed();	
+  public displayDuplicateInvoiceError(): void {
+    this.dialog.open(InvoiceErrorModalComponent,
+      {
+        autoFocus: false,
+        data: {
+          title: 'Duplicate Invoice',
+          html: `<p>
+                    An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.
+                 </p>
+                 <br/>
+                 <b>
+                    Please update these fields and try again.
+                 </b>`,
+          closeText: 'Close',
+        }
+      })
+      .afterClosed();
   }
 
   public onCancel(): void {
@@ -335,55 +335,73 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.validateInvoiceAmount();
     if (this.validAmount) {
       const invoice = this.invoiceFormGroup.getRawValue() as any;
-      invoice.createdBy = 'Falcon User';
-      // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
-      invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
-      invoice.lineItems.forEach((lineItem: any) => {
-        if (!lineItem.companyCode) {
-          lineItem.companyCode = invoice.companyCode;
+
+      this.webService.httpPost(
+        `${environment.baseServiceUrl}/v1/invoice/is-valid`,
+        {
+          companyCode: invoice.companyCode,
+          vendorNumber: invoice.vendorNumber,
+          externalInvoiceNumber: invoice.externalInvoiceNumber,
+          invoiceDate: invoice.invoiceDate
         }
-        lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
-      });
-      let invoiceNumber: any;
-      let httpRequestObs: Observable<any>;
-      if (this.falconInvoiceNumber) {
-        httpRequestObs = this.webService.httpPut(
-          `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
-          invoice
-        );
-      } else {
-        httpRequestObs = this.webService.httpPost(
-          `${environment.baseServiceUrl}/v1/invoice`,
-          invoice
-        );
-      }
-      httpRequestObs.pipe(
-        mergeMap((result: any, index: number) => {
-          invoiceNumber = result.falconInvoiceNumber;
-          if (this.attachments.length > 0) {
-            const attachmentCalls: Array<any> = [];
-            for (const attachment of this.attachments) {
-              const formData = new FormData();
-              formData.append('file', attachment.file, attachment.file.name);
-              formData.append('attachmentType', attachment.type);
-              formData.append('fileName', attachment.file.name);
-              const attachmentCall = this.webService.httpPost(
-                `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
-                formData
-              );
-              attachmentCalls.push(attachmentCall);
+      ).subscribe(() => {
+        this.displayDuplicateInvoiceError();
+      },
+        () => {
+          invoice.createdBy = 'Falcon User';
+
+          // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
+          invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
+          invoice.lineItems.forEach((lineItem: any) => {
+            if (!lineItem.companyCode) {
+              lineItem.companyCode = invoice.companyCode;
             }
-            return forkJoin(attachmentCalls);
+            lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
+          });
+          let invoiceNumber: any;
+          let httpRequestObs: Observable<any>;
+          if (this.falconInvoiceNumber) {
+            httpRequestObs = this.webService.httpPut(
+              `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
+              invoice
+            );
+          } else {
+            httpRequestObs = this.webService.httpPost(
+              `${environment.baseServiceUrl}/v1/invoice`,
+              invoice
+            );
           }
-          return of({});
-        })
-      ).subscribe(res => {
-          this.resetForm();
-          // @ts-ignore
-          this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
-        },
-        () => this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`)
-      );
+          httpRequestObs.pipe(
+            mergeMap((result: any, index: number) => {
+              invoiceNumber = result.falconInvoiceNumber;
+              if (this.attachments.length > 0) {
+
+                const attachmentCalls: Array<any> = [];
+                for (const attachment of this.attachments) {
+                  const formData = new FormData();
+                  formData.append('file', attachment.file, attachment.file.name);
+                  formData.append('attachmentType', attachment.type);
+                  formData.append('fileName', attachment.file.name);
+
+                  const attachmentCall = this.webService.httpPost(
+                    `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
+                    formData
+                  );
+                  attachmentCalls.push(attachmentCall);
+                }
+                return forkJoin(attachmentCalls);
+              }
+
+              return of({});
+            })
+          ).subscribe(res => {
+            this.resetForm();
+            // @ts-ignore
+            this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
+          },
+            () => this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`)
+          );
+        });
     }
   }
 
