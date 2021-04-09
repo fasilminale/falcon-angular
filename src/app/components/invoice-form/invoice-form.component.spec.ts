@@ -7,7 +7,7 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {WebServices} from '../../services/web-services';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, SimpleChange} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpResponse} from '@angular/common/http';
 import {LoadingService} from '../../services/loading-service';
@@ -131,7 +131,9 @@ describe('InvoiceFormComponent', () => {
   it('should be enabled editable fields', fakeAsync(() => {
     component.readOnly = true;
     fixture.detectChanges();
+    component.invoiceFormGroup.controls.workType.disable();
     component.readOnly = false;
+    component.ngOnChanges({readOnly: new SimpleChange(null, component.readOnly, true)});
     fixture.detectChanges();
     expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
   }));
