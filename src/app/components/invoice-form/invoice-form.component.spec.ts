@@ -39,6 +39,7 @@ describe('InvoiceFormComponent', () => {
   const externalInvoiceNumber = '1';
   const invoiceDate = new Date(2021, 4, 7);
   const isValidUrl = `${environment.baseServiceUrl}/v1/invoice/is-valid`;
+  const invoiceNumber = '1';
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -166,8 +167,10 @@ describe('InvoiceFormComponent', () => {
   it('should show success snackbar on put', fakeAsync(() => {
     spyOn(component, 'openSnackBar').and.stub();
     component.amountOfInvoiceFormControl.setValue('0');
-    component.falconInvoiceNumber = 'F0000000001';
+    component.falconInvoiceNumber = 'F0000000010';
     component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${component.falconInvoiceNumber}`)
       .flush(invoiceResponse);
     fixture.detectChanges();
@@ -178,8 +181,10 @@ describe('InvoiceFormComponent', () => {
   it('should show failure snackbar on failed put', () => {
     spyOn(component, 'openSnackBar').and.stub();
     component.amountOfInvoiceFormControl.setValue('0');
-    component.falconInvoiceNumber = 'F0000000001';
+    component.falconInvoiceNumber = 'F0000000010';
     component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${component.falconInvoiceNumber}`)
       .error(new ErrorEvent('test error event'), {
         status: 123,
