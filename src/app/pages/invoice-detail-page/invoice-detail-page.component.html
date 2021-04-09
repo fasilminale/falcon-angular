@@ -5,6 +5,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
+                  [isDisabled]="!readOnly"
                   (buttonClick)="editInvoice()">
         Edit
       </elm-button>
