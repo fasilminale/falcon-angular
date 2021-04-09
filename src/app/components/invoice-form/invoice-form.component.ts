@@ -345,8 +345,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
           invoiceDate: invoice.invoiceDate
         }
       ).subscribe(() => {
-          this.displayDuplicateInvoiceError();
-        },
+        this.displayDuplicateInvoiceError();
+      },
         () => {
           invoice.createdBy = 'Falcon User';
 
@@ -358,12 +358,20 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             }
             lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
           });
-
           let invoiceNumber: any;
-          this.webService.httpPost(
-            `${environment.baseServiceUrl}/v1/invoice`,
-            invoice
-          ).pipe(
+          let httpRequestObs: Observable<any>;
+          if (this.falconInvoiceNumber) {
+            httpRequestObs = this.webService.httpPut(
+              `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
+              invoice
+            );
+          } else {
+            httpRequestObs = this.webService.httpPost(
+              `${environment.baseServiceUrl}/v1/invoice`,
+              invoice
+            );
+          }
+          httpRequestObs.pipe(
             mergeMap((result: any, index: number) => {
               invoiceNumber = result.falconInvoiceNumber;
               if (this.attachments.length > 0) {
@@ -387,11 +395,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
               return of({});
             })
           ).subscribe(res => {
-              this.resetForm();
-              // @ts-ignore
-              this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
-            },
-            () => this.openSnackBar('Failure, invoice was not created!')
+            this.resetForm();
+            // @ts-ignore
+            this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
+          },
+            () => this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`)
           );
         });
     }
