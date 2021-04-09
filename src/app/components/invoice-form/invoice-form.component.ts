@@ -135,7 +135,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public ngOnChanges(change: SimpleChanges): void {
     const readOnlyChange: SimpleChange = change['readOnly'];
-    console.log(readOnlyChange);
     if (readOnlyChange.currentValue === false) {
       this.enableFormFields();
     }
@@ -177,7 +176,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
         // Attachments
         for (const attachment of invoice.attachments) {
-          console.log(attachment.fileName);
           this.attachments.push({
             file: new File([], attachment.fileName),
             type: attachment.type,
@@ -219,8 +217,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateFreeTextRegex(event: any): boolean {
     const char = String.fromCharCode(event.keyCode);
-    console.log(char);
-    console.log(event.keyCode);
 
     if (this.freeTextRegex.test(char)) {
       return true;
@@ -322,17 +318,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.validateInvoiceAmount();
     if (this.validAmount) {
       const invoice = this.invoiceFormGroup.getRawValue() as any;
-      invoice.createdBy = 'Falcon User';
-
-      // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
-      invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
-      invoice.lineItems.forEach((lineItem: any) => {
-        if (!lineItem.companyCode) {
-          lineItem.companyCode = invoice.companyCode;
-        }
-        lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
-      });
-      let invoiceNumber: any;
       let httpRequestObs: Observable<any>;
 
       httpRequestObs = this.webService.httpPost(
@@ -354,6 +339,18 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         })
       ).subscribe(res => {
         if (!this.duplicateInvoice) {
+          invoice.createdBy = 'Falcon User';
+
+          // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
+          invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
+          invoice.lineItems.forEach((lineItem: any) => {
+            if (!lineItem.companyCode) {
+              lineItem.companyCode = invoice.companyCode;
+            }
+            lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
+          });
+          let invoiceNumber: any;
+
           if (this.falconInvoiceNumber) {
             httpRequestObs = this.webService.httpPut(
               `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
