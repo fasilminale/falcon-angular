@@ -3,6 +3,7 @@
     [sectionTitle]="'Invoices'">
   </cardinal-section-header>
   <elm-data-table
+    tableType="clickable"
     [data]="invoices"
     [headers]="headers"
     (pageChangedEvent)="pageChanged($event)"

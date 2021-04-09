@@ -10,9 +10,9 @@
     <form [formGroup]="invoiceFormGroup"
           (ngSubmit)="onSubmit()">
 
-      <div class="row">
+      <div class="row me-0">
 
-        <div class="row col-6">
+        <div class="row col-12 col-lg-6 me-1">
           <!-- WORK TYPE -->
           <div class="col-12">
             <label for="work-type-input" class="form-label fieldLabel1">
@@ -123,7 +123,7 @@
 
 
           <!-- INVOICE AMOUNT -->
-          <div class="col-6 col-md-4">
+          <div class="col-12 col-sm-6 col-md-4">
             <label for="invoice-amount-input" class="form-label fieldLabel1">
               Invoice Net Amount
             </label>
@@ -143,7 +143,7 @@
           </div>
 
           <!-- CURRENCY -->
-          <div class="col-6 col-md-3">
+          <div class="col-12 col-sm-6 col-md-3">
             <label for="currency-input" class="form-label fieldLabel1">
               Currency
             </label>
@@ -162,7 +162,7 @@
         </div>
 
         <!-- UPLOAD DOCUMENT SECTION -->
-        <div class="row col-6">
+        <div class="row col-12 col-lg-6">
           <form [formGroup]="attachmentFormGroup"
                 (ngSubmit)="addAttachment()">
             <label class="form-label fieldLabel1">

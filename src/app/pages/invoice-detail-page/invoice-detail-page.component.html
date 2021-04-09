@@ -1,33 +1,43 @@
 <cardinal-card>
   <cardinal-section-header [sectionTitle]="'Invoice ' + falconInvoiceNumber">
     <div class="col-12 d-flex justify-content-end">
-      <input id="edit-button"
-             value="Edit"
-             class="btn flex-shrink-1 header-button"
-             [ngClass]="'btn-outline-secondary'"
-             [disabled]="readOnly"
-      />
-      <input id="delete-button"
-             value="Delete"
-             class="btn flex-shrink-1 header-button"
-             [ngClass]="'btn-outline-secondary'"
-             [disabled]="readOnly"
-      />
+      <elm-button id="edit-button"
+                  buttonType="button"
+                  buttonStyle="secondary"
+                  class="flex-shrink-1 header-button"
+                  [isDisabled]="readOnly">
+        Edit
+      </elm-button>
+      <elm-button id="delete-button"
+                  buttonType="button"
+                  buttonStyle="secondary"
+                  class="flex-shrink-1 header-button"
+                  [isDisabled]="readOnly">
+        Delete
+      </elm-button>
     </div>
   </cardinal-section-header>
 
-  <mat-sidenav-container class="side-nav-container" [hasBackdrop]="false">
-    <mat-sidenav class="side-nav" [fixedInViewport]="false" mode="side" position="end" [opened]="milestonesTabOpen">
+  <mat-sidenav-container class="side-nav-container"
+                         [hasBackdrop]="false">
+    <mat-sidenav class="side-nav"
+                 [fixedInViewport]="false"
+                 mode="side" position="end"
+                 [opened]="milestonesTabOpen">
       <mat-nav-list>
-        <div class="milestone" *ngFor="let milestone of this.milestones; index as i">
+        <div class="milestone"
+             *ngFor="let milestone of this.milestones; index as i">
           {{milestone.status.label}} in Falcon at {{milestone.timestamp | date: 'short'}} by {{milestone.user}}
         </div>
       </mat-nav-list>
     </mat-sidenav>
 
     <mat-sidenav-content class="side-nav-content">
-      <app-invoice-form [enableMilestones]="true" [readOnly]="true" (updateMilestones)="updateMilestones($event)"
-                        (toggleMilestones)="toggleMilestones()"></app-invoice-form>
+      <app-invoice-form [enableMilestones]="true"
+                        [readOnly]="true"
+                        (updateMilestones)="updateMilestones($event)"
+                        (toggleMilestones)="toggleMilestones()">
+      </app-invoice-form>
     </mat-sidenav-content>
   </mat-sidenav-container>
 
