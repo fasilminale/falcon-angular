@@ -39,6 +39,7 @@ describe('InvoiceFormComponent', () => {
   const externalInvoiceNumber = '1';
   const invoiceDate = new Date(2021, 4, 7);
   const isValidUrl = `${environment.baseServiceUrl}/v1/invoice/is-valid`;
+  const invoiceNumber = '1';
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -98,25 +99,25 @@ describe('InvoiceFormComponent', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
-      declarations: [InvoiceFormComponent],
-      providers: [WebServices, MatSnackBar, MatDialog, LoadingService, MatSnackBar],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    }).compileComponents();
-    http = TestBed.inject(HttpTestingController);
-    snackBar = TestBed.inject(MatSnackBar);
-    dialog = TestBed.inject(MatDialog);
-    fixture = TestBed.createComponent(InvoiceFormComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-    component.companyCode.setValue(companyCode);
-    component.vendorNumber.setValue(vendorNumber);
-    component.externalInvoiceNumber.setValue(externalInvoiceNumber);
-    component.invoiceDate.setValue(invoiceDate);
-    spyOn(component, 'getInvoiceId').and.callFake(() => {
-    });
+  beforeEach(async () => {	
+    await TestBed.configureTestingModule({	
+      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],	
+      declarations: [InvoiceFormComponent],	
+      providers: [WebServices, MatSnackBar, MatDialog, LoadingService, MatSnackBar],	
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]	
+    }).compileComponents();	
+    http = TestBed.inject(HttpTestingController);	
+    snackBar = TestBed.inject(MatSnackBar);	
+    dialog = TestBed.inject(MatDialog);	
+    fixture = TestBed.createComponent(InvoiceFormComponent);	
+    component = fixture.componentInstance;	
+    fixture.detectChanges();	
+    component.companyCode.setValue(companyCode);	
+    component.vendorNumber.setValue(vendorNumber);	
+    component.externalInvoiceNumber.setValue(externalInvoiceNumber);	
+    component.invoiceDate.setValue(invoiceDate);	
+    spyOn(component, 'getInvoiceId').and.callFake(() => {	
+    });	
   });
 
   afterEach(() => {
@@ -126,6 +127,14 @@ describe('InvoiceFormComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should be enabled editable fields', fakeAsync(() => {
+    component.readOnly = true;
+    fixture.detectChanges();
+    component.readOnly = false;
+    fixture.detectChanges();
+    expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
+  }));
 
   it('should show success snackbar on post', fakeAsync(() => {
     spyOn(component, 'openSnackBar').and.stub();
@@ -153,6 +162,36 @@ describe('InvoiceFormComponent', () => {
       });
     expect(component.openSnackBar)
       .toHaveBeenCalledWith('Failure, invoice was not created!');
+  });
+
+  it('should show success snackbar on put', fakeAsync(() => {
+    spyOn(component, 'openSnackBar').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.falconInvoiceNumber = 'F0000000010';
+    component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${component.falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    fixture.detectChanges();
+    expect(component.openSnackBar)
+      .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been updated.`);
+  }));
+
+  it('should show failure snackbar on failed put', () => {
+    spyOn(component, 'openSnackBar').and.stub();
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.falconInvoiceNumber = 'F0000000010';
+    component.onSubmit();
+    http.expectOne(isValidUrl)
+      .error(new ErrorEvent('Invoice Not Found'));
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${component.falconInvoiceNumber}`)
+      .error(new ErrorEvent('test error event'), {
+        status: 123,
+        statusText: 'test status text'
+      });
+    expect(component.openSnackBar)
+      .toHaveBeenCalledWith('Failure, invoice was not updated!');
   });
 
   it('should called material snackbar when openSnackBar method called', () => {

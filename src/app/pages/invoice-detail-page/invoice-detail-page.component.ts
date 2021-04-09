@@ -35,4 +35,8 @@ export class InvoiceDetailPageComponent implements OnInit {
   public toggleMilestones(): void {
     this.milestonesTabOpen = !this.milestonesTabOpen;
   }
+
+  public editInvoice(): void {
+    this.readOnly = false;
+  }
 }

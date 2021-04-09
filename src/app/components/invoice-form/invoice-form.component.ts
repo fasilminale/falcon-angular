@@ -1,4 +1,4 @@
-import {Component, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChange, SimpleChanges, ViewChild} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -6,7 +6,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {environment} from '../../../environments/environment';
 import {mergeMap} from 'rxjs/operators';
-import {forkJoin, of} from 'rxjs';
+import {forkJoin, Observable, of} from 'rxjs';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
@@ -30,7 +30,7 @@ interface Attachment {
     },
   ]
 })
-export class InvoiceFormComponent implements OnInit {
+export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public constructor(private webService: WebServices,
                      private snackBar: MatSnackBar,
@@ -132,6 +132,14 @@ export class InvoiceFormComponent implements OnInit {
     }
   }
 
+  public ngOnChanges(change: SimpleChanges): void {
+    const readOnlyChange: SimpleChange = change['readOnly'];
+    console.log(readOnlyChange);
+    if (readOnlyChange.currentValue === false) {
+      this.enableFormFields();
+    }
+  }
+
   public getInvoiceId(): void {
     this.route.paramMap.subscribe((params: ParamMap) => {
       const falconInvoiceNumber = params.get('falconInvoiceNumber');
@@ -223,11 +231,11 @@ export class InvoiceFormComponent implements OnInit {
 
   public validateInvoiceAmount(): void {
     let sum = 0;
-    const invoiceAmount = Number(this.amountOfInvoiceFormControl.value.replace(',', '')).toFixed(2);
+    const invoiceAmount = this.getValue(this.amountOfInvoiceFormControl.value).toFixed(2);
     for (let i = 0; i < this.lineItemsFormArray.controls.length; i++) {
       const lineItem = this.lineItemsFormArray.at(i) as FormGroup;
       const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
-      sum += Number(lineItemAmount.value.replace(',', ''));
+      sum += this.getValue(lineItemAmount.value);
     }
     this.validAmount = sum.toFixed(2) === invoiceAmount;
     if (!this.validAmount) {
@@ -323,27 +331,35 @@ export class InvoiceFormComponent implements OnInit {
           invoiceDate: invoice.invoiceDate
         }
       ).subscribe(() => {
-          this.displayDuplicateInvoiceError();
-        },
+        this.displayDuplicateInvoiceError();
+      },
         () => {
           invoice.createdBy = 'Falcon User';
 
           /* TODO: Ensuring invoice amount values are valid when sent to the API.
            *  Will address the dependency around this in a different card. */
-          invoice.amountOfInvoice = Number(invoice.amountOfInvoice.replace(',', ''));
+          invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
           invoice.lineItems.forEach((lineItem: any) => {
             if (!lineItem.companyCode) {
               lineItem.companyCode = invoice.companyCode;
             }
-            lineItem.lineItemNetAmount = Number(lineItem.lineItemNetAmount.replace(',', ''));
+            lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
           });
-
           let invoiceNumber: any;
-          this.webService.httpPost(
-            `${environment.baseServiceUrl}/v1/invoice`,
-            invoice
-          ).pipe(
-            mergeMap((result: any) => {
+          let httpRequestObs: Observable<any>;
+          if (this.falconInvoiceNumber) {
+            httpRequestObs = this.webService.httpPut(
+              `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
+              invoice
+            );
+          } else {
+            httpRequestObs = this.webService.httpPost(
+              `${environment.baseServiceUrl}/v1/invoice`,
+              invoice
+            );
+          }
+          httpRequestObs.pipe(
+            mergeMap((result: any, index: number) => {
               invoiceNumber = result.falconInvoiceNumber;
               if (this.attachments.length > 0) {
 
@@ -366,11 +382,11 @@ export class InvoiceFormComponent implements OnInit {
               return of({});
             })
           ).subscribe(() => {
-              this.resetForm();
-              // @ts-ignore
-              this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
-            },
-            () => this.openSnackBar('Failure, invoice was not created!')
+            this.resetForm();
+            // @ts-ignore
+            this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
+          },
+            () => this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`)
           );
         });
     }
@@ -419,5 +435,26 @@ export class InvoiceFormComponent implements OnInit {
 
   public toggleSidenav(): void {
     this.toggleMilestones.emit();
+  }
+
+  private enableFormFields(): void {
+    this.invoiceFormGroup.controls.workType.enable();
+    this.invoiceFormGroup.controls.companyCode.enable();
+    this.invoiceFormGroup.controls.erpType.enable();
+    this.invoiceFormGroup.controls.vendorNumber.enable();
+    this.invoiceFormGroup.controls.externalInvoiceNumber.enable();
+    this.invoiceFormGroup.controls.invoiceDate.disable();
+    this.invoiceFormGroup.controls.amountOfInvoice.enable();
+    this.invoiceFormGroup.controls.currency.enable();
+    this.invoiceFormGroup.controls.lineItems.enable();
+    this.attachmentFormGroup.controls.attachmentType.enable();
+  }
+
+  private getValue(value: any) {
+    if(isNaN(value)) {
+      return Number(value.replace(',', ''));
+    } else {
+      return Number(value);
+    }
   }
 }

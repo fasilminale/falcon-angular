@@ -5,7 +5,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="readOnly">
+                  (buttonClick)="editInvoice()">
         Edit
       </elm-button>
       <elm-button id="delete-button"
@@ -34,7 +34,7 @@
 
     <mat-sidenav-content class="side-nav-content">
       <app-invoice-form [enableMilestones]="true"
-                        [readOnly]="true"
+                        [readOnly]="readOnly"
                         (updateMilestones)="updateMilestones($event)"
                         (toggleMilestones)="toggleMilestones()">
       </app-invoice-form>
