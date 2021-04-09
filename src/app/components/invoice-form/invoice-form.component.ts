@@ -360,19 +360,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
           });
 
           let invoiceNumber: any;
-          let httpRequestObs: Observable<any>;
-          if (this.falconInvoiceNumber) {
-            httpRequestObs = this.webService.httpPut(
-              `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
-              invoice
-            );
-          } else {
-            httpRequestObs = this.webService.httpPost(
-              `${environment.baseServiceUrl}/v1/invoice`,
-              invoice
-            );
-          }
-          httpRequestObs.pipe(
+          this.webService.httpPost(
+            `${environment.baseServiceUrl}/v1/invoice`,
+            invoice
+          ).pipe(
             mergeMap((result: any, index: number) => {
               invoiceNumber = result.falconInvoiceNumber;
               if (this.attachments.length > 0) {
@@ -397,9 +388,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             })
           ).subscribe(res => {
               this.resetForm();
-              this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
+              // @ts-ignore
+              this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been created.`);
             },
-            () => this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`)
+            () => this.openSnackBar('Failure, invoice was not created!')
           );
         });
     }
