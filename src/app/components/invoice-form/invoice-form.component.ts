@@ -4,14 +4,13 @@ import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
-import {InvoiceErrorModalComponent} from '../invoice-error-modal/invoice-error-modal';
-import {FalConfirmationModalComponent} from '../fal-confirmation-modal/fal-confirmation-modal.component';
 import {environment} from '../../../environments/environment';
 import {mergeMap} from 'rxjs/operators';
 import {forkJoin, Observable, of} from 'rxjs';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
+import {ConfirmationModalComponent, ErrorModalComponent} from '@elm/elm-styleguide-ui';
 
 interface Attachment {
   file: File;
@@ -142,7 +141,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public getInvoiceId(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params: ParamMap) => {
       const falconInvoiceNumber = params.get('falconInvoiceNumber');
       falconInvoiceNumber ? this.falconInvoiceNumber = falconInvoiceNumber : this.falconInvoiceNumber = '';
     });
@@ -197,7 +196,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.attachments = [];
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
-    //set default currency to USD
+    // set default currency to USD
     this.invoiceFormGroup.controls.currency.setValue(this.currencyOptions[0]);
     // default work type as long as there is only one value
     if (this.workTypeOptions.length === 1) {
@@ -274,57 +273,44 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public displayInvalidAmountError(): void {
-    this.dialog.open(InvoiceErrorModalComponent,
+    this.dialog.open(ErrorModalComponent,
       {
         autoFocus: false,
         data: {
           title: 'Invalid Amount(s)',
-          html: `<p>
-                    Total of Line Net Amount(s) must equal Invoice Net Amount.
-                 </p>`,
-          closeText: 'Close',
+          innerHtmlMessage: `Total of Line Net Amount(s) must equal Invoice Net Amount.`
         }
       })
       .afterClosed();
   }
 
   public displayDuplicateInvoiceError(): void {
-    this.dialog.open(InvoiceErrorModalComponent,
+    this.dialog.open(ErrorModalComponent,
       {
         autoFocus: false,
         data: {
           title: 'Duplicate Invoice',
-          html: `<p>
-                    An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.
-                 </p>
-                 <br/>
-                 <b>
-                    Please update these fields and try again.
-                 </b>`,
-          closeText: 'Close',
+          innerHtmlMessage: `An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.
+            <br/><br/><strong>Please update these fields and try again.</strong>`
         }
       })
       .afterClosed();
   }
 
   public onCancel(): void {
-    this.dialog.open(FalConfirmationModalComponent,
+    this.dialog.open(ConfirmationModalComponent,
       {
         autoFocus: false,
         data: {
           title: 'Cancel',
-          html: `<p>
-                    You will lose all entered information if you cancel creation of this invoice now.
-                 </p>
-                 <p>
-                    <strong>Are you sure you want to cancel creation of this invoice?</strong>
-                 </p>`,
-          denyText: 'No, go back',
-          confirmText: 'Yes, cancel'
+          innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
+                 <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
+          confirmButtonText: 'Yes, cancel',
+          cancelButtonText: 'No, go back'
         }
       })
       .afterClosed()
-      .subscribe(result => {
+      .subscribe((result: any) => {
         if (result) {
           this.resetForm();
         }
@@ -334,7 +320,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public onSubmit(): void {
     this.validateInvoiceAmount();
     if (this.validAmount) {
-      const invoice = this.invoiceFormGroup.getRawValue() as any;
+      const invoice = this.invoiceFormGroup.getRawValue();
 
       this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/invoice/is-valid`,
@@ -350,7 +336,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         () => {
           invoice.createdBy = 'Falcon User';
 
-          // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
+          /* TODO: Ensuring invoice amount values are valid when sent to the API.
+           *  Will address the dependency around this in a different card. */
           invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
           invoice.lineItems.forEach((lineItem: any) => {
             if (!lineItem.companyCode) {
@@ -394,7 +381,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
               return of({});
             })
-          ).subscribe(res => {
+          ).subscribe(() => {
             this.resetForm();
             // @ts-ignore
             this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
@@ -427,23 +414,19 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   removeAttachment(index: number): void {
-    this.dialog.open(FalConfirmationModalComponent,
+    this.dialog.open(ConfirmationModalComponent,
       {
         autoFocus: false,
         data: {
           title: 'Remove Attachment',
-          html: `<p>
-                    Are you sure you want to remove this attachment?
-                 </p>
-                 <p>
-                    <strong>This action cannot be undone</strong>
-                 </p>`,
-          denyText: 'Cancel',
-          confirmText: 'Remove Attachment'
+          innerHtmlMessage: `Are you sure you want to remove this attachment?
+            <br/><br/><strong>This action cannot be undone.</strong>`,
+          confirmButtonText: 'Remove Attachment',
+          cancelButtonText: 'Cancel'
         }
       })
       .afterClosed()
-      .subscribe(result => {
+      .subscribe((result: any) => {
         if (result) {
           this.attachments.splice(index, 1);
         }
@@ -466,7 +449,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.invoiceFormGroup.controls.lineItems.enable();
     this.attachmentFormGroup.controls.attachmentType.enable();
   }
-  
+
   private getValue(value: any) {
     if(isNaN(value)) {
       return Number(value.replace(',', ''));

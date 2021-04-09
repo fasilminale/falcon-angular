@@ -1,15 +1,17 @@
 <div *ngIf="dataLoading" class="cardinal-spinner">
-  <cardinal-progress-spinner spinnerType="indeterminate"></cardinal-progress-spinner>
+  <elm-progress-spinner spinnerType="indeterminate"></elm-progress-spinner>
 </div>
 <div class="app">
   <div class="page-header">
-    <elm-header headerTitle="FALCON"
+    <elm-navbar headerTitle="FALCON"
+                logoUrl="/assets/ELM_logo.svg"
                 [NavBarItems]="navBarItems"
                 [showLogout]="false"
+                [showFeedback]="false"
                 (itemClickEvent)="navItemClicked($event)"
                 [userMenuItems]="userMenuItems"
     >
-    </elm-header>
+    </elm-navbar>
   </div>
   <div class="page-body">
     <router-outlet>
