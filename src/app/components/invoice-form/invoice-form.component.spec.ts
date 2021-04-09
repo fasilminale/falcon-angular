@@ -318,7 +318,6 @@ describe('InvoiceFormComponent', () => {
   it('should display an error indicating a duplicate invoice', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(component, 'onSubmit').and.callThrough();
-    component.falconInvoiceNumber = 'F0000000010';
     component.amountOfInvoiceFormControl.setValue('0');
     component.onSubmit();
     http.expectOne(isValidUrl)
