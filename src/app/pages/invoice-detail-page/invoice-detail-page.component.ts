@@ -5,6 +5,7 @@ import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -25,7 +26,8 @@ export class InvoiceDetailPageComponent implements OnInit {
   public constructor(private webService: WebServices,
                      private router: Router,
                      private route: ActivatedRoute,
-                     private dialog: MatDialog) {
+                     private dialog: MatDialog,
+                     private snackBar: MatSnackBar) {
   }
 
   public ngOnInit(): void {
@@ -64,7 +66,8 @@ export class InvoiceDetailPageComponent implements OnInit {
         this.webService.httpDelete(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
           .subscribe(() => {
             return this.router.navigate([`/invoices`], { queryParams: { falconInvoiceNumber: this.falconInvoiceNumber } });
-          });
+          },
+          () => this.snackBar.open(`Failure, invoice was not deleted.`, 'close', {duration: 5 * 1000}));
       });
   }
 }

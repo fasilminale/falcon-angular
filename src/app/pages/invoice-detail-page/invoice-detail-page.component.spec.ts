@@ -77,4 +77,12 @@ describe('InvoiceDetailPageComponent', () => {
     expect(dialog.open).toHaveBeenCalled();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`).flush(new HttpResponse<never>());
   });
+
+  it('should fail to delete an invoice', () => {
+    spyOn(component, 'deleteInvoice').and.callThrough();
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    component.deleteInvoice();
+    expect(dialog.open).toHaveBeenCalled();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`).error(new ErrorEvent('Delete Invoice Failed'));
+  });
 });
