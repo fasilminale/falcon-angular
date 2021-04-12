@@ -9,8 +9,19 @@ import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {InvoiceDetailPageComponent} from '../invoice-detail-page/invoice-detail-page.component';
+import {of} from 'rxjs';
+
+class MockActivatedRoute extends ActivatedRoute {
+  constructor(private map: any) {
+    super();
+    this.queryParams = of(map);
+  }
+}
 
 describe('InvoiceListPageComponent', () => {
   let component: InvoiceListPageComponent;
@@ -19,6 +30,7 @@ describe('InvoiceListPageComponent', () => {
   let http: HttpTestingController;
   let loadingService: LoadingService;
   let router: Router;
+  let snackBar: MatSnackBar;
 
   const pageEvent = new PageEvent();
   pageEvent.pageSize = 30;
@@ -40,14 +52,20 @@ describe('InvoiceListPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule, NoopAnimationsModule],
+      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule],
       declarations: [InvoiceListPageComponent],
-      providers: [WebServices, LoadingService],
+      providers: [WebServices, LoadingService, MatSnackBar,
+        {
+          provide: ActivatedRoute,
+          useValue: new MockActivatedRoute({ falconInvoiceNumber: '1' })
+        }
+      ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     }).compileComponents();
     webservice = TestBed.inject(WebServices);
     loadingService = TestBed.inject(LoadingService);
     http = TestBed.inject(HttpTestingController);
+    snackBar = TestBed.inject(MatSnackBar);
     router = TestBed.inject(Router);
   });
 

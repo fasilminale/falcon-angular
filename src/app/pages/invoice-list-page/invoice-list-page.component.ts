@@ -1,7 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
@@ -21,13 +22,21 @@ export class InvoiceListPageComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private loadingService: LoadingService,
-    private webservice: WebServices
+    private webservice: WebServices,
+    private snackBar: MatSnackBar
   ) {
   }
 
   ngOnInit(): void {
     this.getTableData(this.paginationModel.numberPerPage);
+    this.route.queryParamMap.subscribe(queryParams => {
+      const falconInvoiceNumber = queryParams.get('falconInvoiceNumber');
+      if (falconInvoiceNumber) {
+        this.snackBar.open(`Success! Falcon Invoice ${falconInvoiceNumber} has been deleted.`, 'close', {duration: 5 * 1000});
+      }
+    });
   }
 
   getTableData(numberPerPage: number): void {

@@ -1,6 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
+import {MatDialog} from '@angular/material/dialog';
+import {environment} from '../../../environments/environment';
+import {WebServices} from '../../services/web-services';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -18,7 +22,10 @@ export class InvoiceDetailPageComponent implements OnInit {
   public falconInvoiceNumber = '';
   public milestones: Array<any> = [];
 
-  public constructor(private route: ActivatedRoute) {
+  public constructor(private webService: WebServices,
+                     private router: Router,
+                     private route: ActivatedRoute,
+                     private dialog: MatDialog) {
   }
 
   public ngOnInit(): void {
@@ -38,5 +45,26 @@ export class InvoiceDetailPageComponent implements OnInit {
 
   public editInvoice(): void {
     this.readOnly = false;
+  }
+
+  public deleteInvoice(): void {
+    this.dialog.open(ConfirmationModalComponent,
+      {
+        autoFocus: false,
+        data: {
+          title: 'Delete Invoice',
+          innerHtmlMessage: `Are you sure you want to delete this invoice?
+                 <br/><br/><strong>This action cannot be undone.</strong>`,
+          confirmButtonText: 'Delete Invoice',
+          cancelButtonText: 'Cancel'
+        }
+      })
+      .afterClosed()
+      .subscribe(() => {
+        this.webService.httpDelete(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
+          .subscribe(() => {
+            return this.router.navigate([`/invoices`], { queryParams: { falconInvoiceNumber: this.falconInvoiceNumber } });
+          });
+      });
   }
 }
