@@ -99,25 +99,25 @@ describe('InvoiceFormComponent', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
 
-  beforeEach(async () => {	
-    await TestBed.configureTestingModule({	
-      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],	
-      declarations: [InvoiceFormComponent],	
-      providers: [WebServices, MatSnackBar, MatDialog, LoadingService, MatSnackBar],	
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]	
-    }).compileComponents();	
-    http = TestBed.inject(HttpTestingController);	
-    snackBar = TestBed.inject(MatSnackBar);	
-    dialog = TestBed.inject(MatDialog);	
-    fixture = TestBed.createComponent(InvoiceFormComponent);	
-    component = fixture.componentInstance;	
-    fixture.detectChanges();	
-    component.companyCode.setValue(companyCode);	
-    component.vendorNumber.setValue(vendorNumber);	
-    component.externalInvoiceNumber.setValue(externalInvoiceNumber);	
-    component.invoiceDate.setValue(invoiceDate);	
-    spyOn(component, 'getInvoiceId').and.callFake(() => {	
-    });	
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
+      declarations: [InvoiceFormComponent],
+      providers: [WebServices, MatSnackBar, MatDialog, LoadingService, MatSnackBar],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
+    http = TestBed.inject(HttpTestingController);
+    snackBar = TestBed.inject(MatSnackBar);
+    dialog = TestBed.inject(MatDialog);
+    fixture = TestBed.createComponent(InvoiceFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    component.companyCode.setValue(companyCode);
+    component.vendorNumber.setValue(vendorNumber);
+    component.externalInvoiceNumber.setValue(externalInvoiceNumber);
+    component.invoiceDate.setValue(invoiceDate);
+    spyOn(component, 'getInvoiceId').and.callFake(() => {
+    });
   });
 
   afterEach(() => {
@@ -322,6 +322,18 @@ describe('InvoiceFormComponent', () => {
     component.onSubmit();
     http.expectOne(isValidUrl)
       .flush(new HttpResponse<never>());
+    expect(component.validateInvoiceAmount).toHaveBeenCalled();
+    expect(component.onSubmit).toHaveBeenCalled();
+  });
+
+  it('should recognized the invoice being edited and not display a duplicate invoice error', () => {
+    spyOn(component, 'validateInvoiceAmount').and.callThrough();
+    spyOn(component, 'onSubmit').and.callThrough();
+    component.falconInvoiceNumber = 'F0000000010';
+    component.amountOfInvoiceFormControl.setValue('0');
+    component.onSubmit();
+    http.expectOne(isValidUrl)
+      .flush({falconInvoiceNumber: 'F0000000010'});
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
     expect(component.onSubmit).toHaveBeenCalled();
   });

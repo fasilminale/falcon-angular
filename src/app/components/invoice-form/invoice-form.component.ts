@@ -5,7 +5,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {environment} from '../../../environments/environment';
-import {mergeMap} from 'rxjs/operators';
+import {mergeMap, catchError} from 'rxjs/operators';
 import {forkJoin, Observable, of} from 'rxjs';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
@@ -102,6 +102,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public invoiceFormGroup: FormGroup;
   public attachmentFormGroup: FormGroup;
   public validAmount = true;
+  public duplicateInvoice = false;
   public file = null;
   public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
   public attachments: Array<Attachment> = [];
@@ -134,7 +135,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public ngOnChanges(change: SimpleChanges): void {
     const readOnlyChange: SimpleChange = change['readOnly'];
-    console.log(readOnlyChange);
     if (readOnlyChange.currentValue === false) {
       this.enableFormFields();
     }
@@ -176,7 +176,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
         // Attachments
         for (const attachment of invoice.attachments) {
-          console.log(attachment.fileName);
           this.attachments.push({
             file: new File([], attachment.fileName),
             type: attachment.type,
@@ -218,8 +217,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateFreeTextRegex(event: any): boolean {
     const char = String.fromCharCode(event.keyCode);
-    console.log(char);
-    console.log(event.keyCode);
 
     if (this.freeTextRegex.test(char)) {
       return true;
@@ -320,9 +317,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public onSubmit(): void {
     this.validateInvoiceAmount();
     if (this.validAmount) {
-      const invoice = this.invoiceFormGroup.getRawValue();
+      const invoice = this.invoiceFormGroup.getRawValue() as any;
+      let httpRequestObs: Observable<any>;
 
-      this.webService.httpPost(
+      httpRequestObs = this.webService.httpPost(
         `${environment.baseServiceUrl}/v1/invoice/is-valid`,
         {
           companyCode: invoice.companyCode,
@@ -330,14 +328,20 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
           externalInvoiceNumber: invoice.externalInvoiceNumber,
           invoiceDate: invoice.invoiceDate
         }
-      ).subscribe(() => {
-        this.displayDuplicateInvoiceError();
-      },
-        () => {
+      );
+
+      httpRequestObs.pipe(
+        mergeMap(result => this.checkDuplicateInvoice(result))
+      ).pipe(
+        catchError(() => {
+          this.duplicateInvoice = false;
+          return of({});
+        })
+      ).subscribe(res => {
+        if (!this.duplicateInvoice) {
           invoice.createdBy = 'Falcon User';
 
-          /* TODO: Ensuring invoice amount values are valid when sent to the API.
-           *  Will address the dependency around this in a different card. */
+          // TODO: Ensuring invoice amount values are valid when sent to the API. Will address the dependency around this in a different card.
           invoice.amountOfInvoice = this.getValue(invoice.amountOfInvoice);
           invoice.lineItems.forEach((lineItem: any) => {
             if (!lineItem.companyCode) {
@@ -346,7 +350,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             lineItem.lineItemNetAmount = this.getValue(lineItem.lineItemNetAmount);
           });
           let invoiceNumber: any;
-          let httpRequestObs: Observable<any>;
+
           if (this.falconInvoiceNumber) {
             httpRequestObs = this.webService.httpPut(
               `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
@@ -382,18 +386,27 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
               return of({});
             })
           ).subscribe(() => {
-            this.resetForm();
-            // @ts-ignore
-            this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
-          },
+              this.resetForm();
+              // @ts-ignore
+              this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
+            },
             () => this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`)
           );
-        });
+        }
+      });
     }
   }
 
   public openSnackBar(message: string): void {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
+  }
+
+  private async checkDuplicateInvoice(res: any): Promise<void> {
+    this.duplicateInvoice = !!(res && res.falconInvoiceNumber !== this.falconInvoiceNumber);
+
+    if (this.duplicateInvoice) {
+      this.displayDuplicateInvoiceError();
+    }
   }
 
   addAttachment(): void {
