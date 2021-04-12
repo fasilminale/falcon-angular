@@ -17,8 +17,11 @@ export class WebServices {
     return this.http.get<T>(url);
   }
 
-  public httpPut(url: string, body: any): Observable<any> {
-    return this.http.put(url, body);
+  public httpPut<T>(url: string, body: any): Observable<T> {
+    return this.http.put<T>(url, body);
   }
 
+  public httpDelete<T>(url: string): Observable<T> {
+    return this.http.delete<T>(url);
+  }
 }

@@ -13,7 +13,8 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="readOnly">
+                  [isDisabled]="readOnly"
+                  (buttonClick)="deleteInvoice()">
         Delete
       </elm-button>
     </div>
