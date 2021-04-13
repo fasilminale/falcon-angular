@@ -18,6 +18,11 @@ describe('InvoiceDetailPageComponent', () => {
     close: null
   });
 
+  const MOCK_DENY_DIALOG = jasmine.createSpyObj({
+    afterClosed: of(false),
+    close: null
+  });
+
   const falconInvoiceNumber = 'F0000000001';
 
   let component: InvoiceDetailPageComponent;
@@ -76,6 +81,13 @@ describe('InvoiceDetailPageComponent', () => {
     component.deleteInvoice();
     expect(dialog.open).toHaveBeenCalled();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`).flush(new HttpResponse<never>());
+  });
+
+  it('should cancel deleting an invoice', () => {
+    spyOn(component, 'deleteInvoice').and.callThrough();
+    spyOn(dialog, 'open').and.returnValue(MOCK_DENY_DIALOG);
+    component.deleteInvoice();
+    expect(dialog.open).toHaveBeenCalled();
   });
 
   it('should fail to delete an invoice', () => {
