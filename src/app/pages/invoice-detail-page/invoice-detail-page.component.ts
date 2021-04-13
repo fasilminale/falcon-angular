@@ -62,12 +62,14 @@ export class InvoiceDetailPageComponent implements OnInit {
         }
       })
       .afterClosed()
-      .subscribe(() => {
-        this.webService.httpDelete(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
-          .subscribe(() => {
-            return this.router.navigate([`/invoices`], { queryParams: { falconInvoiceNumber: this.falconInvoiceNumber } });
-          },
-          () => this.snackBar.open(`Failure, invoice was not deleted.`, 'close', {duration: 5 * 1000}));
+      .subscribe(result => {
+        if (result) {
+          this.webService.httpDelete(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
+            .subscribe(() => {
+                return this.router.navigate([`/invoices`], {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}});
+              },
+              () => this.snackBar.open(`Failure, invoice was not deleted.`, 'close', {duration: 5 * 1000}));
+        }
       });
   }
 }
