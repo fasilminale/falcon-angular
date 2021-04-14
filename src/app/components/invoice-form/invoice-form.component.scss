@@ -28,6 +28,7 @@ label {
   background-color: $cardinal-grey;
   border-radius: 0.25rem;
   font-size: small;
+  word-break: break-all;
 }
 
 .btn-remove-attachment {
