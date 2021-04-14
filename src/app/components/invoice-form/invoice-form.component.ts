@@ -8,7 +8,7 @@ import {environment} from '../../../environments/environment';
 import {mergeMap, catchError} from 'rxjs/operators';
 import {forkJoin, Observable, of} from 'rxjs';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
+import {ActivatedRoute, ParamMap} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {ConfirmationModalComponent, ErrorModalComponent} from '@elm/elm-styleguide-ui';
 
@@ -36,7 +36,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
                      private snackBar: MatSnackBar,
                      private route: ActivatedRoute,
                      private dialog: MatDialog,
-                     private router: Router,
                      private loadingService: LoadingService) {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
