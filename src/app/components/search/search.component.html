@@ -1,0 +1,17 @@
+<div>
+  <form class="needs-validation" [formGroup]="controlGroup" (submit)="submit()" novalidate>
+    <label for="searchInput" class="form-label">Find an Invoice</label>
+    <div class="input-group has-validation" style="width: 387px">
+      <input id="searchInput"
+             type="text"
+             formControlName="control"
+             class="form-control"
+             autocomplete="off">
+      <button type="submit"
+              class="input-group-button">
+        <span class="material-icons" [attr.aria-label]="label">search</span>
+      </button>
+    </div>
+    <span class="fieldHelperText">{{label}}</span>
+  </form>
+</div>

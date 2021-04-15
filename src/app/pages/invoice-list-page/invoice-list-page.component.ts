@@ -18,6 +18,7 @@ export class InvoiceListPageComponent implements OnInit {
   headers = InvoiceDataModel.invoiceTableHeaders;
   invoices: Array<InvoiceDataModel> = [];
   sortField = '';
+  searchValue = '';
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
@@ -45,6 +46,7 @@ export class InvoiceListPageComponent implements OnInit {
       page: this.paginationModel.pageIndex,
       sortField: this.sortField,
       sortOrder: this.paginationModel.sortOrder,
+      searchValue: this.searchValue,
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
@@ -64,11 +66,7 @@ export class InvoiceListPageComponent implements OnInit {
   sortChanged(sort: any): void {
     this.paginationModel.sortOrder = sort.direction;
     this.sortField = sort.active;
-    if (this.paginationModel.pageIndex !== 1) {
-      this.dataTable.goToFirstPage();
-    } else {
-      this.getTableData(this.paginationModel.numberPerPage);
-    }
+    this.resetTable();
   }
 
   pageChanged(page: any): void {
@@ -77,4 +75,16 @@ export class InvoiceListPageComponent implements OnInit {
     this.getTableData(this.paginationModel.numberPerPage);
   }
 
+  searchInvoices(searchValue: any): void {
+    this.searchValue = searchValue;
+    this.resetTable();
+  }
+
+  private resetTable(): void {
+    if (this.paginationModel.pageIndex !== 1) {
+      this.dataTable.goToFirstPage();
+    } else {
+      this.getTableData(this.paginationModel.numberPerPage);
+    }
+  }
 }
