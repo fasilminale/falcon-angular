@@ -441,7 +441,7 @@ describe('InvoiceFormComponent', () => {
   it('should called changeLineItemNetAmount and totallineItemNetAmount value changed', () => {
     // @ts-ignore
     component.invoiceFormGroup.controls.lineItems.get('0').controls.lineItemNetAmount.setValue('1');
-    component.changeLineItemNetAmount();
+    component.calculateLineItemNetAmount();
     expect(component.totallineItemNetAmount).toEqual(1);
   });
 });

@@ -320,7 +320,7 @@
                        class="form-control"
                        [ngClass]="lineItemNetAmountFormControl(i).errors && lineItemNetAmountFormControl(i).hasError('required') ? 'error' : ''"
                        formControlName="lineItemNetAmount"
-                       (keyup)="changeLineItemNetAmount()"
+                       (keyup)="calculateLineItemNetAmount()"
                 />
               </div>
 

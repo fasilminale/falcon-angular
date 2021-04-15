@@ -186,7 +186,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
         this.updateMilestones.emit(invoice.milestones);
         this.loadingService.hideLoading();
-        this.changeLineItemNetAmount();
+        this.calculateLineItemNetAmount();
       });
   }
 
@@ -203,7 +203,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
     }
     this.invoiceFormGroup.controls.companyCode.setValue('');
-    this.changeLineItemNetAmount();
+    this.calculateLineItemNetAmount();
   }
 
   public validateRegex(event: any): boolean {
@@ -473,7 +473,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public changeLineItemNetAmount() {
+  public calculateLineItemNetAmount() {
     this.totallineItemNetAmount = 0;
     for(let control of this.lineItemsFormArray.controls) {
       this.totallineItemNetAmount += parseInt((<FormGroup> control).controls.lineItemNetAmount.value, 10);
