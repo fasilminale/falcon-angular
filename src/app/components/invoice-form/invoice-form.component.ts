@@ -106,6 +106,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
   public attachments: Array<Attachment> = [];
   private invoice = new InvoiceDataModel();
+  public totallineItemNetAmount = 0;
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @Input() enableMilestones = false;
   @Input() readOnly = false;
@@ -185,6 +186,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
         this.updateMilestones.emit(invoice.milestones);
         this.loadingService.hideLoading();
+        this.changeLineItemNetAmount();
       });
   }
 
@@ -201,6 +203,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
     }
     this.invoiceFormGroup.controls.companyCode.setValue('');
+    this.changeLineItemNetAmount();
   }
 
   public validateRegex(event: any): boolean {
@@ -467,6 +470,13 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       return Number(value.replace(',', ''));
     } else {
       return Number(value);
+    }
+  }
+
+  public changeLineItemNetAmount() {
+    this.totallineItemNetAmount = 0;
+    for(let control of this.lineItemsFormArray.controls) {
+      this.totallineItemNetAmount += parseInt((<FormGroup> control).controls.lineItemNetAmount.value, 10);
     }
   }
 }

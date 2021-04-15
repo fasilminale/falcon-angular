@@ -12,6 +12,7 @@ import {environment} from '../../../environments/environment';
 import {HttpResponse} from '@angular/common/http';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 describe('InvoiceFormComponent', () => {
   let component: InvoiceFormComponent;
@@ -436,4 +437,11 @@ describe('InvoiceFormComponent', () => {
     expect(component.lineItemRemoveButtonDisable).toBeTrue();
   });
 
+
+  it('should called changeLineItemNetAmount and totallineItemNetAmount value changed', () => {
+    // @ts-ignore
+    component.invoiceFormGroup.controls.lineItems.get('0').controls.lineItemNetAmount.setValue('1');
+    component.changeLineItemNetAmount();
+    expect(component.totallineItemNetAmount).toEqual(1);
+  });
 });
