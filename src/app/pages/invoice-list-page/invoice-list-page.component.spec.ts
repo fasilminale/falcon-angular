@@ -12,8 +12,6 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {InvoiceDetailPageComponent} from '../invoice-detail-page/invoice-detail-page.component';
 import {of} from 'rxjs';
 
 class MockActivatedRoute extends ActivatedRoute {
@@ -112,6 +110,18 @@ describe('InvoiceListPageComponent', () => {
     expect(component.getTableData).toHaveBeenCalled();
     expect(component.sortField).toEqual(sortEvent.active);
     expect(component.paginationModel.sortOrder).toEqual(sortEvent.direction);
+  }));
+
+  it('should Search Invoices', fakeAsync( () => {
+    spyOn(component, 'searchInvoices').and.callThrough();
+    spyOn(component, 'getTableData').and.callThrough();
+    component.searchInvoices('1');
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
+    tick(150);
+    fixture.detectChanges();
+    expect(component.searchInvoices).toHaveBeenCalled();
+    expect(component.getTableData).toHaveBeenCalled();
+    expect(component.searchValue).toEqual('1');
   }));
 
   it('should init with invoices from api', () => {
