@@ -21,7 +21,7 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.controlGroup = this.fb.group({
-        control: [Validators.pattern('^[A-Za-z0-9]*$'), Validators.required]
+        control: [null, [Validators.pattern('^[A-Za-z0-9]*$'), Validators.required]]
       }, {updateOn: 'submit'}
     );
   }
