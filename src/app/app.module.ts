@@ -23,6 +23,7 @@ import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-inp
 import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
 import { FalFileInputComponent } from './components/fal-file-input/fal-file-input.component';
 import { InvoiceFormComponent } from './components/invoice-form/invoice-form.component';
+import { SearchComponent } from './components/search/search.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { InvoiceFormComponent } from './components/invoice-form/invoice-form.com
     FalRadioInputComponent,
     InvoiceDetailPageComponent,
     FalFileInputComponent,
-    InvoiceFormComponent
+    InvoiceFormComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,
