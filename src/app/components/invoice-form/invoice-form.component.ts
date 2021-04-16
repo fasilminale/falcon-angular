@@ -1,16 +1,14 @@
 import {Component, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChange, SimpleChanges, ViewChild} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatDialog} from '@angular/material/dialog';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {environment} from '../../../environments/environment';
-import {mergeMap, catchError} from 'rxjs/operators';
-import {forkJoin, Observable, of} from 'rxjs';
+import {filter} from 'rxjs/operators';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
-import {ConfirmationModalComponent, ErrorModalComponent} from '@elm/elm-styleguide-ui';
+import {ApiService} from '../../services/api-service';
+import {UtilService} from '../../services/util-service';
 
 interface Attachment {
   file: File;
@@ -32,11 +30,38 @@ interface Attachment {
 })
 export class InvoiceFormComponent implements OnInit, OnChanges {
 
+  /* STATIC FIELDS*/
+
+
+  /* FIELDS */
+
+  public readonly regex = /[a-zA-Z0-9_\\-]/;
+  public readonly freeTextRegex = /[\w\-\s]/;
+  public workTypeOptions = ['Indirect Non-PO Invoice'];
+  public erpTypeOptions = ['Pharma Corp', 'TPM'];
+  public currencyOptions = ['USD', 'CAD'];
+  public lineItemRemoveButtonDisable = true;
+  public invoiceFormGroup: FormGroup;
+  public attachmentFormGroup: FormGroup;
+  public validAmount = true;
+  public file = null;
+  public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
+  public attachments: Array<Attachment> = [];
+  private invoice = new InvoiceDataModel();
+  @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
+  @Input() enableMilestones = false;
+  @Input() readOnly = false;
+  @Input() falconInvoiceNumber = '';
+  @Output() updateMilestones: EventEmitter<any> = new EventEmitter<any>();
+  @Output() toggleMilestones: EventEmitter<any> = new EventEmitter<any>();
+
+  /* CONSTRUCTORS */
+
   public constructor(private webService: WebServices,
-                     private snackBar: MatSnackBar,
                      private route: ActivatedRoute,
-                     private dialog: MatDialog,
-                     private loadingService: LoadingService) {
+                     private loadingService: LoadingService,
+                     private api: ApiService,
+                     private util: UtilService) {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
       workType: new FormControl({value: null, disabled: this.readOnly}, [required]),
@@ -55,6 +80,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       file: new FormControl({value: null, disabled: this.readOnly}, [required])
     });
   }
+
+  /* PROPERTY FUNCTIONS */
 
   get erpType(): AbstractControl {
     return this.invoiceFormGroup.controls.erpType;
@@ -96,25 +123,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     return !!this.falconInvoiceNumber;
   }
 
-  public readonly regex = /[a-zA-Z0-9_\\-]/;
-  public readonly freeTextRegex = /[\w\-\s]/;
-  public workTypeOptions = ['Indirect Non-PO Invoice'];
-  public erpTypeOptions = ['Pharma Corp', 'TPM'];
-  public currencyOptions = ['USD', 'CAD'];
-  public lineItemRemoveButtonDisable = true;
-  public invoiceFormGroup: FormGroup;
-  public attachmentFormGroup: FormGroup;
-  public validAmount = true;
-  public file = null;
-  public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
-  public attachments: Array<Attachment> = [];
-  private invoice = new InvoiceDataModel();
-  @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
-  @Input() enableMilestones = false;
-  @Input() readOnly = false;
-  @Input() falconInvoiceNumber = '';
-  @Output() updateMilestones: EventEmitter<any> = new EventEmitter<any>();
-  @Output() toggleMilestones: EventEmitter<any> = new EventEmitter<any>();
+  /* STATIC FUNCTIONS */
 
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
@@ -125,6 +134,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       notes: new FormControl(null)
     });
   }
+
+  /* METHODS */
 
   public ngOnInit(): void {
     this.getInvoiceId();
@@ -208,7 +219,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateRegex(event: any): boolean {
     const char = String.fromCharCode(event.keyCode);
-
     if (this.regex.test(char)) {
       return true;
     } else {
@@ -219,7 +229,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateFreeTextRegex(event: any): boolean {
     const char = String.fromCharCode(event.keyCode);
-
     if (this.freeTextRegex.test(char)) {
       return true;
     } else {
@@ -257,208 +266,129 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-
   public onCancel(): void {
-    this.dialog.open(ConfirmationModalComponent,
-      {
-        autoFocus: false,
-        data: {
-          title: 'Cancel',
-          innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
+    this.util.openConfirmationModal({
+      title: 'Cancel',
+      innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
                  <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
-          confirmButtonText: 'Yes, cancel',
-          cancelButtonText: 'No, go back'
-        }
-      })
-      .afterClosed()
-      .subscribe((result: any) => {
-        if (result) {
-          this.resetForm();
-        }
-      });
+      confirmButtonText: 'Yes, cancel',
+      cancelButtonText: 'No, go back'
+    })
+      .pipe(filter(result => result === 'confirm'))
+      .subscribe(() => this.resetForm());
   }
 
   public async onSubmit(): Promise<void> {
-    if (this.validateInvoiceAmount()) {
-      // don't continue if we found an invalid invoice amount
-      return;
-    }
-    const invoice = this.invoiceFormGroup.getRawValue();
-    if (await this.checkForDuplicateInvoice(invoice)) {
-      // don't continue if we found a duplicate in the database
-      return;
-    }
-    this.processInvoice(invoice);
-    const savedInvoiceNumber = await this.saveInvoice(invoice);
-    if (savedInvoiceNumber) {
-      this.onSaveSuccess(savedInvoiceNumber);
-      this.joinAttachDocumentRequests(savedInvoiceNumber)
-        .subscribe(
-          () => {
-            this.onAttachSuccess(savedInvoiceNumber);
+    this.loadingService.showLoading();
+    try {
+      if (this.validateInvoiceAmount()) {
+        // IS VALID
+        const invoice = this.invoiceFormGroup.getRawValue();
+        const isDuplicate = await this.api.checkInvoiceIsDuplicate(invoice).toPromise();
+        if (isDuplicate) {
+          // IS DUPLICATE
+          this.onInvoiceIsDuplicate();
+        } else {
+          // IS NOT DUPLICATE
+          this.processInvoice(invoice);
+          let shouldReset = false;
+          const savedInvoice = await this.api.saveInvoice(invoice).toPromise();
+          if (savedInvoice.falconInvoiceNumber) {
+            // INVOICE SAVED
+            shouldReset = true;
+            this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
+            if (!this.isOnEditPage) {
+              // NOT ON EDIT PAGE
+              const attachedDocuments = await this.api.saveAllAttachments(
+                savedInvoice.falconInvoiceNumber,
+                this.attachments
+              ).toPromise();
+              if (attachedDocuments.length === this.attachments.length) {
+                // ATTACH SUCCESS
+                this.onAttachSuccess(savedInvoice.falconInvoiceNumber);
+              } else {
+                // ATTACH FAILURE
+                shouldReset = false;
+                this.onAttachFailure();
+              }
+            }
+          } else {
+            // INVOICE NOT SAVED
+            this.onSaveFailure();
+          }
+          if (shouldReset) {
+            // RESET FORM
             this.resetForm();
-          },
-          () => this.onAttachFailure()
-        );
-    } else {
-      this.onSaveFailure();
+          }
+        }
+      } else {
+        this.onInvoiceInvalidated();
+      }
+    } finally {
+      this.loadingService.hideLoading();
     }
   }
 
   private validateInvoiceAmount(): boolean {
     let sum = 0;
-    const invoiceAmount = this.toNumber(this.amountOfInvoiceFormControl.value).toFixed(2);
+    const invoiceAmount = this.util
+      .toNumber(this.amountOfInvoiceFormControl.value)
+      .toFixed(2);
     for (let i = 0; i < this.lineItemsFormArray.controls.length; i++) {
       const lineItem = this.lineItemsFormArray.at(i) as FormGroup;
       const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
-      sum += this.toNumber(lineItemAmount.value);
+      sum += this.util.toNumber(lineItemAmount.value);
     }
     this.validAmount = sum.toFixed(2) === invoiceAmount;
-    if (!this.validAmount) {
-      this.displayInvalidAmountError();
-    }
     return this.validAmount;
   }
 
-  private toNumber(value: any): number {
-    if (isNaN(value)) {
-      return Number(value.replace(',', ''));
-    } else {
-      return Number(value);
-    }
+  private onInvoiceInvalidated(): void {
+    this.util.openErrorModal({
+      title: 'Invalid Amount(s)',
+      innerHtmlMessage: `Total of Line Net Amount(s) must equal Invoice Net Amount.`
+    });
   }
 
-  private displayInvalidAmountError(): void {
-    this.dialog.open(ErrorModalComponent,
-      {
-        autoFocus: false,
-        data: {
-          title: 'Invalid Amount(s)',
-          innerHtmlMessage: `Total of Line Net Amount(s) must equal Invoice Net Amount.`
-        }
-      })
-      .afterClosed();
-  }
-
-  private async checkForDuplicateInvoice(invoice: any): Promise<boolean> {
-    let duplicateInvoice = false;
-    await this.webService.httpPost(
-      `${environment.baseServiceUrl}/v1/invoice/is-valid`,
-      {
-        companyCode: invoice.companyCode,
-        vendorNumber: invoice.vendorNumber,
-        externalInvoiceNumber: invoice.externalInvoiceNumber,
-        invoiceDate: invoice.invoiceDate
-      }
-    ).pipe(
-      mergeMap((result: any) => {
-        duplicateInvoice = !!(result && result.falconInvoiceNumber !== this.falconInvoiceNumber);
-        if (duplicateInvoice) {
-          this.displayDuplicateInvoiceError();
-        }
-        return of();
-      })
-    ).pipe(
-      catchError(() => {
-        duplicateInvoice = false;
-        return of({});
-      })
-    ).toPromise();
-    return duplicateInvoice;
-  }
-
-  private displayDuplicateInvoiceError(): void {
-    this.dialog.open(ErrorModalComponent,
-      {
-        autoFocus: false,
-        data: {
-          title: 'Duplicate Invoice',
-          innerHtmlMessage: `An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.
+  private onInvoiceIsDuplicate(): void {
+    this.util.openErrorModal({
+      title: 'Duplicate Invoice',
+      innerHtmlMessage: `An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.
             <br/><br/><strong>Please update these fields and try again.</strong>`
-        }
-      })
-      .afterClosed();
+    });
   }
 
   private processInvoice(invoice: any): void {
+    if (this.isOnEditPage) {
+      invoice.falconInvoiceNumber = this.falconInvoiceNumber;
+    }
     invoice.createdBy = 'Falcon User';
     /* TODO: Ensuring invoice amount values are valid when sent to the API.
      *  Will address the dependency around this in a different card.
      */
-    invoice.amountOfInvoice = this.toNumber(invoice.amountOfInvoice);
+    invoice.amountOfInvoice = this.util.toNumber(invoice.amountOfInvoice);
     invoice.lineItems.forEach((lineItem: any) => {
       if (!lineItem.companyCode) {
         lineItem.companyCode = invoice.companyCode;
       }
-      lineItem.lineItemNetAmount = this.toNumber(lineItem.lineItemNetAmount);
+      lineItem.lineItemNetAmount = this.util.toNumber(lineItem.lineItemNetAmount);
     });
   }
 
-  private async saveInvoice(invoice: any): Promise<string | undefined> {
-    let invoiceNumber: string | undefined;
-    await this.generateSaveRequest(invoice)
-      .pipe(mergeMap((result: any) => {
-        invoiceNumber = result.falconInvoiceNumber;
-        return of();
-      })).toPromise();
-    return invoiceNumber;
-  }
-
-  private generateSaveRequest(invoice: any): Observable<any> {
-    if (this.falconInvoiceNumber) {
-      return this.webService.httpPut(
-        `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`,
-        invoice
-      );
-    } else {
-      return this.webService.httpPost(
-        `${environment.baseServiceUrl}/v1/invoice`,
-        invoice
-      );
-    }
-  }
-
-  private joinAttachDocumentRequests(invoiceNumber: string): Observable<any> {
-    /* Checking to see if we are on the edit page first.
-     * If we are, then don't attach documents.
-     * That functionality isn't supported yet.
-     */
-    if (!this.isOnEditPage && this.attachments.length > 0) {
-      const attachmentCalls: Array<any> = [];
-      for (const attachment of this.attachments) {
-        const formData = new FormData();
-        formData.append('file', attachment.file, attachment.file.name);
-        formData.append('attachmentType', attachment.type);
-        formData.append('fileName', attachment.file.name);
-        const attachmentCall = this.webService.httpPost(
-          `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
-          formData
-        );
-        attachmentCalls.push(attachmentCall);
-      }
-      return forkJoin(attachmentCalls);
-    }
-    return of({});
-  }
-
   private onSaveSuccess(invoiceNumber: string): void {
-    this.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.falconInvoiceNumber ? 'updated' : 'created'}.`);
+    this.util.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.isOnEditPage ? 'updated' : 'created'}.`);
   }
 
   private onSaveFailure(): void {
-    this.openSnackBar(`Failure, invoice was not ${this.falconInvoiceNumber ? 'updated' : 'created'}!`);
+    this.util.openSnackBar(`Failure, invoice was not ${this.isOnEditPage ? 'updated' : 'created'}!`);
   }
 
   private onAttachSuccess(invoiceNumber: string): void {
-    this.openSnackBar(`All documents were successfully attached to Falcon Invoice ${invoiceNumber}.`);
+    this.util.openSnackBar(`All documents were successfully attached to Falcon Invoice ${invoiceNumber}.`);
   }
 
   private onAttachFailure(): void {
-    this.openSnackBar(`One or more documents failed to attach!`);
-  }
-
-  private openSnackBar(message: string): void {
-    this.snackBar.open(message, 'close', {duration: 5 * 1000});
+    this.util.openSnackBar(`One or more documents failed to attach!`);
   }
 
   public addAttachment(): void {
@@ -479,23 +409,15 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public removeAttachment(index: number): void {
-    this.dialog.open(ConfirmationModalComponent,
-      {
-        autoFocus: false,
-        data: {
-          title: 'Remove Attachment',
-          innerHtmlMessage: `Are you sure you want to remove this attachment?
+    this.util.openConfirmationModal({
+      title: 'Remove Attachment',
+      innerHtmlMessage: `Are you sure you want to remove this attachment?
             <br/><br/><strong>This action cannot be undone.</strong>`,
-          confirmButtonText: 'Remove Attachment',
-          cancelButtonText: 'Cancel'
-        }
-      })
-      .afterClosed()
-      .subscribe((result: any) => {
-        if (result) {
-          this.attachments.splice(index, 1);
-        }
-      });
+      confirmButtonText: 'Remove Attachment',
+      cancelButtonText: 'Cancel'
+    })
+      .pipe(filter(result => result === 'confirm'))
+      .subscribe(() => this.attachments.splice(index, 1));
   }
 
   public toggleSidenav(): void {
