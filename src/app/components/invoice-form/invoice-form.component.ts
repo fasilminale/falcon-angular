@@ -329,7 +329,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  private validateInvoiceAmount(): boolean {
+  public validateInvoiceAmount(): boolean {
     let sum = 0;
     const invoiceAmount = this.util
       .toNumber(this.amountOfInvoiceFormControl.value)
@@ -343,7 +343,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     return this.validAmount;
   }
 
-  private onInvoiceInvalidated(): void {
+  public onInvoiceInvalidated(): void {
     this.util.openErrorModal({
       title: 'Invalid Amount(s)',
       innerHtmlMessage: `Total of Line Net Amount(s) must equal Invoice Net Amount.`

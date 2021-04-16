@@ -1,6 +1,6 @@
-import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { InvoiceFormComponent } from './invoice-form.component';
+import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
@@ -12,8 +12,10 @@ import {environment} from '../../../environments/environment';
 import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
+import {ApiService} from '../../services/api-service';
+import {UtilService} from '../../services/util-service';
 
-describe('InvoiceFormComponent', () => {
+describe('InvoiceFormComponent ROUTING', () => {
   let component: InvoiceFormComponent;
   let fixture: ComponentFixture<InvoiceFormComponent>;
 
@@ -46,10 +48,23 @@ describe('InvoiceFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
+      imports: [
+        RouterTestingModule,
+        HttpClientTestingModule,
+        MatSnackBarModule,
+        NoopAnimationsModule,
+        MatDialogModule
+      ],
       declarations: [InvoiceFormComponent],
-      providers: [WebServices, MatSnackBar, MatDialog, LoadingService, MatSnackBar,
-        { provide: ActivatedRoute, useValue: route }
+      providers: [
+        WebServices,
+        MatSnackBar,
+        MatDialog,
+        LoadingService,
+        MatSnackBar,
+        ApiService,
+        UtilService,
+        {provide: ActivatedRoute, useValue: route}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
