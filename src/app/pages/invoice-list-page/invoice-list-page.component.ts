@@ -79,6 +79,7 @@ export class InvoiceListPageComponent implements OnInit {
 
   searchInvoices(searchValue: any): void {
     this.searchValue = searchValue;
+    this.sortField = '';
     this.resetTable();
   }
 
