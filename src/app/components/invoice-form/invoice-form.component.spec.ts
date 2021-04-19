@@ -145,10 +145,12 @@ describe('InvoiceFormComponent', () => {
   it('should show failure snackbar on failed post', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.returnValue(of(new ErrorEvent('test error event'), {
-      status: 123,
-      statusText: 'test status text'
-    }));
+    spyOn(api, 'saveInvoice').and.returnValue(
+      of(new ErrorEvent('test error event'), {
+        status: 123,
+        statusText: 'test status text'
+      })
+    );
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     fixture.detectChanges();
