@@ -14,7 +14,8 @@ export class UtilService {
 
   public toNumber(value: any): number {
     if (isNaN(value)) {
-      return Number(value.replace(',', ''));
+      const stringValue = value as string;
+      return Number(stringValue.split(',').join(''));
     } else {
       return Number(value);
     }

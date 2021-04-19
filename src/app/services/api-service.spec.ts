@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {ApiService} from './api-service';
 import {of, throwError} from 'rxjs';
