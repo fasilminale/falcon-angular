@@ -3,7 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 @Injectable()
-
 export class WebServices {
 
   constructor(private http: HttpClient) {

@@ -24,6 +24,8 @@ import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-de
 import { FalFileInputComponent } from './components/fal-file-input/fal-file-input.component';
 import { InvoiceFormComponent } from './components/invoice-form/invoice-form.component';
 import { SearchComponent } from './components/search/search.component';
+import {ApiService} from './services/api-service';
+import {UtilService} from './services/util-service';
 
 @NgModule({
   declarations: [
@@ -62,7 +64,9 @@ import { SearchComponent } from './components/search/search.component';
     WebServices,
     MatSnackBar,
     LoadingService,
-    MatDialog
+    MatDialog,
+    ApiService,
+    UtilService
   ],
   bootstrap: [
     AppComponent
