@@ -387,7 +387,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   private onAttachSuccess(invoiceNumber: string): void {
-    this.util.openSnackBar(`All documents were successfully attached to Falcon Invoice ${invoiceNumber}.`);
+    // do nothing
   }
 
   private onAttachFailure(): void {
