@@ -320,6 +320,7 @@
                        class="form-control"
                        [ngClass]="lineItemNetAmountFormControl(i).errors && lineItemNetAmountFormControl(i).hasError('required') ? 'error' : ''"
                        formControlName="lineItemNetAmount"
+                       (keyup)="calculateLineItemNetAmount()"
                 />
               </div>
 
@@ -352,14 +353,30 @@
             </div>
           </div>
 
-          <!-- LINE ITEMS - ADD NEW -->
-          <elm-button *ngIf="!readOnly"
-                      buttonType="button"
-                      buttonStyle="text"
-                      id="add-new-line-item-button"
-                      (buttonClick)="addNewEmptyLineItem()">
-            <u>+ Add New Line Item</u>
-          </elm-button>
+          <div class="row">
+            <!-- LINE ITEMS - ADD NEW -->
+            <div class="col-4">
+              <elm-button *ngIf="!readOnly"
+                buttonType="button"
+                buttonStyle="text"
+                id="add-new-line-item-button"
+                (buttonClick)="addNewEmptyLineItem()">
+                <u>+ Add New Line Item</u>
+              </elm-button>
+            </div>
+            <div class="col-1">
+              <label class="form-label fieldLabel1 total-line-item-amt">
+                ${{totallineItemNetAmount | number : '1.2-2'}}
+              </label>
+              </div>
+              <div class="col-2">
+              <label class="form-label fieldLabel1 total-line-item-amt-lbl">
+                Line Net Amount Total
+              </label>
+            </div>
+          </div>
+          
+
         </cardinal-card>
 
         <!-- FORM FOOTER -->

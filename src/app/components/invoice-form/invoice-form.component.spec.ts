@@ -10,9 +10,9 @@ import {WebServices} from '../../services/web-services';
 import {CUSTOM_ELEMENTS_SCHEMA, SimpleChange} from '@angular/core';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
+import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {ApiService} from '../../services/api-service';
-import {FormGroup} from '@angular/forms';
 
 describe('InvoiceFormComponent', () => {
 
@@ -406,6 +406,14 @@ describe('InvoiceFormComponent', () => {
     component.lineItemRemoveButtonDisable = false;
     component.resetForm();
     expect(component.lineItemRemoveButtonDisable).toBeTrue();
+  });
+
+
+  it('should called changeLineItemNetAmount and totalLineItemNetAmount value changed', () => {
+    (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+      .controls.lineItemNetAmount.setValue('1');
+    component.calculateLineItemNetAmount();
+    expect(component.totallineItemNetAmount).toEqual(1);
   });
 
 });
