@@ -322,6 +322,22 @@ describe('InvoiceFormComponent', () => {
     expect(component.onSubmit).toHaveBeenCalled();
   });
 
+  it('should not reset on failed attachments', async () => {
+    spyOn(component, 'validateInvoiceAmount').and.callThrough();
+    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(api, 'saveAllAttachments').and.returnValue(of([]));
+    spyOn(component, 'resetForm').and.stub();
+    component.falconInvoiceNumber = '';
+    const testFile = new File([], 'test file');
+    const testType = 'test type';
+    component.attachmentFormGroup.controls.file.setValue(testFile);
+    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
+    component.addAttachment();
+    await component.onSubmit();
+    expect(component.resetForm).not.toHaveBeenCalled();
+  });
+
   it('should reset form when cancel dialog is confirmed', () => {
     spyOn(component, 'resetForm').and.stub();
     spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));

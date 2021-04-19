@@ -10,6 +10,12 @@ describe('ApiService Tests', () => {
   let web: WebServices;
   let invoice: any;
 
+  const testAttachment = {
+    file: new File([], 'TestFileBlobName'),
+    attachmentType: 'TestAttachmentType',
+    fileName: 'TestFileName'
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -81,12 +87,7 @@ describe('ApiService Tests', () => {
   it('should save attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
     const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber,
-      [{
-        file: new File([], 'TestFileBlobName'),
-        attachmentType: 'TestAttachmentType',
-        fileName: 'TestFileName'
-      }]
+      invoice.falconInvoiceNumber, [testAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
     expect(successes.length).toEqual(1);
@@ -95,12 +96,7 @@ describe('ApiService Tests', () => {
   it('should fail unaccepted attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
     const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber,
-      [{
-        file: new File([], 'TestFileBlobName'),
-        attachmentType: 'TestAttachmentType',
-        fileName: 'TestFileName'
-      }]
+      invoice.falconInvoiceNumber, [testAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
     expect(successes.length).toEqual(0);
@@ -109,12 +105,7 @@ describe('ApiService Tests', () => {
   it('should fail saving attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
     const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber,
-      [{
-        file: new File([], 'TestFileBlobName'),
-        attachmentType: 'TestAttachmentType',
-        fileName: 'TestFileName'
-      }]
+      invoice.falconInvoiceNumber, [testAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
     expect(successes.length).toEqual(0);
