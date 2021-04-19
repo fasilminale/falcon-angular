@@ -1,5 +1,5 @@
 import {Component, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChange, SimpleChanges, ViewChild} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, ValidationErrors, Validators} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
@@ -44,7 +44,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       erpType: new FormControl({value: null, disabled: this.readOnly}, [required]),
       vendorNumber: new FormControl({value: null, disabled: this.readOnly}, [required]),
       externalInvoiceNumber: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      invoiceDate: new FormControl({value: null, disabled: this.readOnly}, [required]),
+      invoiceDate: new FormControl({value: null, disabled: this.readOnly}, [required, this.validateDate]),
       amountOfInvoice: new FormControl({value: '0', disabled: this.readOnly}, [required]),
       currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
       lineItems: new FormArray([])
@@ -478,5 +478,13 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     for(let control of this.lineItemsFormArray.controls) {
       this.totallineItemNetAmount += parseInt((<FormGroup> control).controls.lineItemNetAmount.value, 10);
     }
+  }
+
+  public validateDate(control: AbstractControl): ValidationErrors | null {
+    const dateString = control.value;
+    if(dateString && !(dateString instanceof Date)) {
+      return {'validateDate': true};
+    }
+    return null;
   }
 }

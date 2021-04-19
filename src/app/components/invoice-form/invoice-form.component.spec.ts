@@ -444,4 +444,11 @@ describe('InvoiceFormComponent', () => {
     component.calculateLineItemNetAmount();
     expect(component.totallineItemNetAmount).toEqual(1);
   });
+
+  it('should failed validation of invoiceDate formcontrol', () => {
+    // @ts-ignore
+    const control: AbstractControl = component.invoiceFormGroup.controls.invoiceDate;
+    control.setValue('test');
+    expect(component.validateDate(control)).toEqual({'validateDate': true});
+  });
 });

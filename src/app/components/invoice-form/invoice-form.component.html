@@ -113,11 +113,15 @@
             <app-fal-date-input id="external-invoice-date-input"
                                 formControlName="invoiceDate"
                                 [isDisabled]="readOnly"
-                                [isError]="!!(invoiceDate.errors && invoiceDate.hasError('required'))">
+                                [isError]="!!(invoiceDate.errors && (invoiceDate.hasError('required') || invoiceDate.hasError('validateDate')))">
             </app-fal-date-input>
             <small class="error-text"
                    *ngIf="invoiceDate.hasError('required')">
               External Invoice Date is required
+            </small>
+            <small class="error-text"
+                   *ngIf="invoiceDate.hasError('validateDate')">
+              Invoice Date is invalid
             </small>
           </div>
 
@@ -370,7 +374,7 @@
               </label>
               </div>
               <div class="col-2">
-              <label class="form-label fieldLabel1 total-line-item-amt-lbl">
+              <label class="form-label fieldLabel1 total-line-item-amt-l">
                 Line Net Amount Total
               </label>
             </div>
