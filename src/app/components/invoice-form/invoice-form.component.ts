@@ -112,12 +112,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     return this.invoiceFormGroup.controls.currency;
   }
 
-  get lineItemsFormArray(): FormArray {
-    return this.invoiceFormGroup.get('lineItems') as FormArray;
+  get amountOfInvoiceFormControl(): AbstractControl {
+    return this.invoiceFormGroup.controls.amountOfInvoice;
   }
 
-  get amountOfInvoiceFormControl(): FormControl {
-    return this.invoiceFormGroup.get('amountOfInvoice') as FormControl;
+  get lineItemsFormArray(): FormArray {
+    return this.invoiceFormGroup.get('lineItems') as FormArray;
   }
 
   get isOnEditPage(): boolean {
@@ -217,6 +217,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
     }
     this.invoiceFormGroup.controls.companyCode.setValue('');
+    this.invoiceFormGroup.controls.amountOfInvoice.setValue('0');
     this.calculateLineItemNetAmount();
   }
 
@@ -240,9 +241,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public lineItemNetAmountFormControl(index: number): FormControl {
+  public lineItemNetAmountFormControl(index: number): AbstractControl {
     const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItemFormGroup.get('lineItemNetAmount') as FormControl;
+    return lineItemFormGroup.controls.lineItemNetAmount;
   }
 
   public lineItemCostCenter(index: number): AbstractControl {
