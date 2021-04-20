@@ -43,6 +43,20 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "assets": [
+                {
+                  "glob": "nginx.conf",
+                  "input": "",
+                  "output": ""
+                },
+                {
+                  "glob": "mime.types",
+                  "input": "",
+                  "output": ""
+                },
+                "src/favicon.ico",
+                "src/assets"
+              ],
               "baseHref": "/falcon/",
               "deployUrl": "/",
               "optimization": true,
