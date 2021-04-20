@@ -13,4 +13,4 @@ RUN if [ -n "$env" ] ; then npm run build -- --configuration=$env ; else npm run
 FROM nginx:latest
 COPY nginx-docker.conf /etc/nginx/nginx.conf
 
-COPY dist/elm-chile-ui /usr/share/nginx/html
+COPY dist/elm-falcon-ui /usr/share/nginx/html
