@@ -43,6 +43,8 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "baseHref": "/falcon/",
+              "deployUrl": "/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
