@@ -16,7 +16,6 @@ import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {MatCurrencyFormatModule} from 'mat-currency-format';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-input.component';
@@ -24,6 +23,10 @@ import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-de
 import { FalFileInputComponent } from './components/fal-file-input/fal-file-input.component';
 import { InvoiceFormComponent } from './components/invoice-form/invoice-form.component';
 import { SearchComponent } from './components/search/search.component';
+import {NgxCurrencyModule} from 'ngx-currency';
+import { FalCurrencyInputComponent } from './components/fal-currency-input/fal-currency-input.component';
+import {ApiService} from './services/api-service';
+import {UtilService} from './services/util-service';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,8 @@ import { SearchComponent } from './components/search/search.component';
     InvoiceDetailPageComponent,
     FalFileInputComponent,
     InvoiceFormComponent,
-    SearchComponent
+    SearchComponent,
+    FalCurrencyInputComponent
   ],
   imports: [
     BrowserModule,
@@ -53,16 +57,18 @@ import { SearchComponent } from './components/search/search.component';
     NgbDatepickerModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatCurrencyFormatModule,
     MatSidenavModule,
     MatListModule,
-    NgbModule
+    NgbModule,
+    NgxCurrencyModule
   ],
   providers: [
     WebServices,
     MatSnackBar,
     LoadingService,
-    MatDialog
+    MatDialog,
+    ApiService,
+    UtilService
   ],
   bootstrap: [
     AppComponent
