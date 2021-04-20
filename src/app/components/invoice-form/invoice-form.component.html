@@ -130,8 +130,7 @@
             <app-fal-currency-input id="invoice-amount-input"
                                  formControlName="amountOfInvoice"
                                  [isDisabled]="readOnly"
-                                 [isError]="!!(amountOfInvoiceFormControl.errors && amountOfInvoiceFormControl.hasError('required'))"
-                                 (keyup)="calculateLineItemNetAmount()">
+                                 [isError]="!!(amountOfInvoiceFormControl.errors && amountOfInvoiceFormControl.hasError('required'))">
             </app-fal-currency-input>
             <small class="error-text"
                    *ngIf="amountOfInvoiceFormControl.hasError('required')">
