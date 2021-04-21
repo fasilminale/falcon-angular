@@ -444,7 +444,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public calculateLineItemNetAmount(): void {
     this.totallineItemNetAmount = 0;
     for (const control of this.lineItemsFormArray.controls) {
-      this.totallineItemNetAmount += parseInt((<FormGroup> control).controls.lineItemNetAmount.value, 10);
+      this.totallineItemNetAmount += parseFloat((<FormGroup> control).controls.lineItemNetAmount.value);
     }
   }
 

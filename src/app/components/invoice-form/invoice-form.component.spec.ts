@@ -13,6 +13,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {ApiService} from '../../services/api-service';
+import { InvoiceListPageComponent } from 'src/app/pages/invoice-list-page/invoice-list-page.component';
 
 describe('InvoiceFormComponent', () => {
 
@@ -407,23 +408,18 @@ describe('InvoiceFormComponent', () => {
     component.resetForm();
     expect(component.lineItemRemoveButtonDisable).toBeTrue();
   });
-
-
-  it('should called changeLineItemNetAmount and totalLineItemNetAmount value changed', () => {
+  
+  it('should called changeLineItemNetAmount and totalLineItemNetAmount value changed and validate invoiceDate date', () => {
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('1');
     component.calculateLineItemNetAmount();
     expect(component.totallineItemNetAmount).toEqual(1);
-  });
-
-  it('should failed validation of invoiceDate formcontrol', () => {
-    // @ts-ignore
-    const control: AbstractControl = component.invoiceFormGroup.controls.invoiceDate;
+    const control = component.invoiceFormGroup.controls.invoiceDate
     control.setValue('test');
-    expect(component.validateDate(control)).toEqual({'validateDate': true});
-
-   // control.setValue('01-01-1899');
-   // expect(component.validateDate(control)).toEqual({'validateDate': true});
+    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
+    control.setValue('1-1-11');
+    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
+    control.setValue('1-1-11111');
+    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
   });
-
 });
