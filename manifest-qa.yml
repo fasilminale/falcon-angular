@@ -6,7 +6,7 @@ applications:
       baseServiceUrl: https://elm-falcon-noisy-wolverine.apps.cf.np.gc.cahcloud.net
     disk_quota: 256M
     memory: 128M
-    buildpack: staticfile_buildpack
+    buildpack: nginx_buildpack
     path: ./elm-falcon-ui.zip
     metadata:
       annotations:
