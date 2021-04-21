@@ -1,6 +1,7 @@
 import {Component, forwardRef, Input, OnInit} from '@angular/core';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
-import {NgbDateNativeAdapter, NgbDateAdapter} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateNativeAdapter, NgbDateParserFormatter, NgbDateAdapter} from '@ng-bootstrap/ng-bootstrap';
+import { DateParserFormatter } from 'src/app/utils/date-parser-formatter';
 import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fal-control-value-accessor.component';
 
 @Component({
@@ -11,9 +12,9 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
         <input class="form-control"
                [ngClass]="isError ? 'error' : ''"
                [disabled]="isDisabled"
-               placeholder="yyyy-mm-dd"
+               placeholder="mm-dd-yyyy"
                ngbDatepicker #d="ngbDatepicker"
-               [readOnly]="true"
+               [readOnly]="false"
                navigation="select"
                container="body"
                [(ngModel)]="value"
@@ -36,7 +37,8 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
       useExisting: forwardRef(() => FalDateInputComponent),
       multi: true
     },
-    {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}
+    {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter},
+    {provide: NgbDateParserFormatter, useClass: DateParserFormatter}
   ]
 })
 export class FalDateInputComponent extends FalControlValueAccessorComponent<string>
