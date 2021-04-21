@@ -450,8 +450,13 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateDate(control: AbstractControl): ValidationErrors | null {
     const dateString = control.value;
-    if(dateString && !(dateString instanceof Date)) {
-      return {'validateDate': true};
+    if(dateString ) {
+      if(!(dateString instanceof Date)) {
+        return {'validateDate': true};
+      }
+      else if((dateString instanceof Date) && (dateString.getFullYear() < 1000 || dateString.getFullYear() > 9999) ) {
+        return {'validateDate': true};
+      }
     }
     return null;
   }

@@ -421,6 +421,9 @@ describe('InvoiceFormComponent', () => {
     const control: AbstractControl = component.invoiceFormGroup.controls.invoiceDate;
     control.setValue('test');
     expect(component.validateDate(control)).toEqual({'validateDate': true});
+
+   // control.setValue('01-01-1899');
+   // expect(component.validateDate(control)).toEqual({'validateDate': true});
   });
 
 });
