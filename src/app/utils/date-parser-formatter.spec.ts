@@ -20,7 +20,7 @@ describe('DateParserFormatter Tests', () => {
     expect(dateParserFormatter).toBeTruthy();
   });
 
-  it('Should parse method work', () => {
+  it('Should parse the date', () => {
     let date = dateParserFormatter.parse('');
     expect(date.year).toEqual(0);
 
@@ -31,7 +31,7 @@ describe('DateParserFormatter Tests', () => {
     expect(date.year).toEqual(2021);
   });
 
-  it('Should format method work', () => {
+  it('Should format the date', () => {
     let date: NgbDateStruct = { year: 0, month: 0, day: 0 };
     let dateString = dateParserFormatter.format(date);
     expect(dateString).toEqual('');
