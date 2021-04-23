@@ -13,10 +13,13 @@ export class ApiService {
   public checkInvoiceIsDuplicate(invoice: any): Observable<boolean> {
     return this.checkInvoiceIsValid(invoice)
       .pipe(
-        mergeMap((response: any) =>
-          response && invoice.falconInvoiceNumber
-            ? of(response.falconInvoiceNumber !== invoice.falconInvoiceNumber)
-            : of(true)
+        mergeMap((response: any) => {
+            console.log(invoice);
+            console.log(response);
+            return response && invoice.falconInvoiceNumber
+              ? of(response.falconInvoiceNumber !== invoice.falconInvoiceNumber)
+              : of(true);
+          }
         ),
         catchError(() =>
           of(false)
@@ -61,38 +64,28 @@ export class ApiService {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/invoice`, invoice);
   }
 
-  public saveAllAttachments(invoiceNumber: string, attachments: Array<any>): Observable<Array<any>> {
-    if (attachments.length > 0) {
-      const attachmentCalls: Array<any> = [];
-      const successfulAttachments: Array<any> = [];
-      for (const attachment of attachments) {
-        const attachmentCall =
-          this.saveAttachment(invoiceNumber, attachment)
-            .pipe(
-              mergeMap(response => {
-                if ('ACCEPTED' === response) {
-                  successfulAttachments.push(attachment);
-                }
-                return of(response);
-              }),
-              catchError(of)
-            );
-        attachmentCalls.push(attachmentCall);
+  public saveAttachments(invoiceNumber: string, attachments: Array<any>): Observable<boolean> {
+    const files: Array<File> = [];
+    const filesMeta: Array<any> = [];
+    attachments.forEach(a => {
+      if (a.action !== 'NONE') {
+        files.push(a.file);
+        filesMeta.push({
+          fileName: a.file.name,
+          attachmentType: a.type,
+          action: a.action
+        });
       }
-      return forkJoin(attachmentCalls)
-        .pipe(mergeMap(() => of(successfulAttachments)));
-    }
-    return of([]);
-  }
-
-  public saveAttachment(invoiceNumber: string, attachment: any): Observable<any> {
+    });
     const formData = new FormData();
-    formData.append('file', attachment.file, attachment.file.name);
-    formData.append('attachmentType', attachment.type);
-    formData.append('fileName', attachment.file.name);
+    files.forEach(f => formData.append('files', f, f.name));
+    formData.append('filesMeta', JSON.stringify(filesMeta));
     return this.web.httpPost(
-      `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}`,
+      `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}/batch`,
       formData
+    ).pipe(
+      mergeMap(result => of(result === 'ACCEPTED')),
+      catchError(() => of(false))
     );
   }
 

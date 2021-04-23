@@ -14,6 +14,7 @@ interface Attachment {
   file: File;
   type: string;
   uploadError: boolean;
+  action: 'UPLOAD' | 'DELETE' | 'NONE';
 }
 
 @Component({
@@ -193,7 +194,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
           this.attachments.push({
             file: new File([], attachment.fileName),
             type: attachment.type,
-            uploadError: false
+            uploadError: false,
+            action: 'NONE'
           });
         }
         this.attachmentFormGroup.disable();
@@ -288,6 +290,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       if (this.validateInvoiceAmount()) {
         // IS VALID
         const invoice = this.invoiceFormGroup.getRawValue();
+        invoice.falconInvoiceNumber = this.falconInvoiceNumber;
         const isDuplicate = await this.api.checkInvoiceIsDuplicate(invoice).toPromise();
         if (isDuplicate) {
           // IS DUPLICATE
@@ -301,20 +304,17 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             // INVOICE SAVED
             shouldReset = true;
             this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
-            if (!this.isOnEditPage) {
-              // NOT ON EDIT PAGE
-              const attachedDocuments = await this.api.saveAllAttachments(
-                savedInvoice.falconInvoiceNumber,
-                this.attachments
-              ).toPromise();
-              if (attachedDocuments.length === this.attachments.length) {
-                // ATTACH SUCCESS
-                this.onAttachSuccess(savedInvoice.falconInvoiceNumber);
-              } else {
-                // ATTACH FAILURE
-                shouldReset = false;
-                this.onAttachFailure();
-              }
+            const attachedSuccess = await this.api.saveAttachments(
+              savedInvoice.falconInvoiceNumber,
+              this.attachments
+            ).toPromise();
+            if (attachedSuccess) {
+              // ATTACH SUCCESS
+              this.onAttachSuccess(savedInvoice.falconInvoiceNumber);
+            } else {
+              // ATTACH FAILURE
+              shouldReset = false;
+              this.onAttachFailure();
             }
           } else {
             // INVOICE NOT SAVED
@@ -367,9 +367,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       invoice.falconInvoiceNumber = this.falconInvoiceNumber;
     }
     invoice.createdBy = 'Falcon User';
-    /* TODO: Ensuring invoice amount values are valid when sent to the API.
-     *  Will address the dependency around this in a different card.
-     */
     invoice.amountOfInvoice = this.util.toNumber(invoice.amountOfInvoice);
     invoice.lineItems.forEach((lineItem: any) => {
       if (!lineItem.companyCode) {
@@ -402,7 +399,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       this.attachments.push({
         uploadError: false,
         file: attachmentFileValue,
-        type: attachmentTypeValue
+        type: attachmentTypeValue,
+        action: 'UPLOAD'
       });
       this.attachmentFormGroup.reset();
       const fileChooserInput = this.fileChooserInput;
@@ -412,16 +410,22 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public removeAttachment(index: number): void {
-    this.util.openConfirmationModal({
+  public async removeAttachment(index: number): Promise<void> {
+    const result = await this.util.openConfirmationModal({
       title: 'Remove Attachment',
       innerHtmlMessage: `Are you sure you want to remove this attachment?
             <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Remove Attachment',
       cancelButtonText: 'Cancel'
-    })
-      .pipe(filter(result => result === 'confirm'))
-      .subscribe(() => this.attachments.splice(index, 1));
+    }).toPromise();
+    if (result === 'confirm' && this.attachments.length < index) {
+      const attachment = this.attachments[index];
+      if (attachment.action === 'NONE') {
+        attachment.action = 'DELETE';
+      } else {
+        this.attachments.splice(index, 1);
+      }
+    }
   }
 
   public toggleSidenav(): void {
@@ -444,18 +448,18 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public calculateLineItemNetAmount(): void {
     this.totallineItemNetAmount = 0;
     for (const control of this.lineItemsFormArray.controls) {
-      this.totallineItemNetAmount += parseFloat((<FormGroup> control).controls.lineItemNetAmount.value);
+      this.totallineItemNetAmount += parseFloat((control as FormGroup).controls.lineItemNetAmount.value);
     }
   }
 
   public validateDate(control: AbstractControl): ValidationErrors | null {
     const dateString = control.value;
-    if(dateString ) {
-      if(!(dateString instanceof Date)) {
-        return {'validateDate': true};
-      }
-      else if((dateString instanceof Date) && (dateString.getFullYear() < 1000 || dateString.getFullYear() > 9999) ) {
-        return {'validateDate': true};
+    if (dateString) {
+      if (!(dateString instanceof Date)) {
+        return {validateDate: true};
+      } else if (dateString.getFullYear() < 1000
+        || dateString.getFullYear() > 9999) {
+        return {validateDate: true};
       }
     }
     return null;

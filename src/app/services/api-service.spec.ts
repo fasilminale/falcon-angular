@@ -77,39 +77,39 @@ describe('ApiService Tests', () => {
     expect(web.httpPost).toHaveBeenCalled();
   });
 
-  it('should not save empty attachments', async () => {
-    spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
-    const successes = await api.saveAllAttachments(invoice.falconInvoiceNumber, []).toPromise();
-    expect(web.httpPost).not.toHaveBeenCalled();
-    expect(successes.length).toEqual(0);
-  });
-
-  it('should save attachments', async () => {
-    spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
-    const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber, [testAttachment]
-    ).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(successes.length).toEqual(1);
-  });
-
-  it('should fail unaccepted attachments', async () => {
-    spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
-    const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber, [testAttachment]
-    ).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(successes.length).toEqual(0);
-  });
-
-  it('should fail saving attachments', async () => {
-    spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
-    const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber, [testAttachment]
-    ).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(successes.length).toEqual(0);
-  });
+  // it('should not save empty attachments', async () => {
+  //   spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
+  //   const successes = await api.saveAllAttachments(invoice.falconInvoiceNumber, []).toPromise();
+  //   expect(web.httpPost).not.toHaveBeenCalled();
+  //   expect(successes.length).toEqual(0);
+  // });
+  //
+  // it('should save attachments', async () => {
+  //   spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
+  //   const successes = await api.saveAllAttachments(
+  //     invoice.falconInvoiceNumber, [testAttachment]
+  //   ).toPromise();
+  //   expect(web.httpPost).toHaveBeenCalled();
+  //   expect(successes.length).toEqual(1);
+  // });
+  //
+  // it('should fail unaccepted attachments', async () => {
+  //   spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
+  //   const successes = await api.saveAllAttachments(
+  //     invoice.falconInvoiceNumber, [testAttachment]
+  //   ).toPromise();
+  //   expect(web.httpPost).toHaveBeenCalled();
+  //   expect(successes.length).toEqual(0);
+  // });
+  //
+  // it('should fail saving attachments', async () => {
+  //   spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
+  //   const successes = await api.saveAllAttachments(
+  //     invoice.falconInvoiceNumber, [testAttachment]
+  //   ).toPromise();
+  //   expect(web.httpPost).toHaveBeenCalled();
+  //   expect(successes.length).toEqual(0);
+  // });
 
 })
 ;
