@@ -4,13 +4,16 @@ import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {Component, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoadingService} from '../../services/loading-service';
 import {of} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {HttpResponse} from '@angular/common/http';
+import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
+import {ApiService} from '../../services/api-service';
+import {UtilService} from '../../services/util-service';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -35,8 +38,8 @@ describe('InvoiceDetailPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
-      declarations: [InvoiceDetailPageComponent],
-      providers: [WebServices, MatDialog, LoadingService, MatSnackBar],
+      declarations: [InvoiceDetailPageComponent, InvoiceFormComponent],
+      providers: [WebServices, ApiService, UtilService, MatDialog, LoadingService, MatSnackBar],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);

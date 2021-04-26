@@ -76,7 +76,8 @@ export class InvoiceDetailPageComponent implements OnInit {
   }
 
   public saveAsTemplate(): void {
-    // @ts-ignore
-    this.invoiceForm?.saveTemplate();
+    if (this.invoiceForm) {
+      this.invoiceForm.saveTemplate();
+    }
   }
 }
