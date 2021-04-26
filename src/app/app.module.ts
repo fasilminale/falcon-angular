@@ -27,6 +27,7 @@ import {NgxCurrencyModule} from 'ngx-currency';
 import { FalCurrencyInputComponent } from './components/fal-currency-input/fal-currency-input.component';
 import {ApiService} from './services/api-service';
 import {UtilService} from './services/util-service';
+import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import {UtilService} from './services/util-service';
     FalFileInputComponent,
     InvoiceFormComponent,
     SearchComponent,
-    FalCurrencyInputComponent
+    FalCurrencyInputComponent,
+    TemplateInputModalComponent
   ],
   imports: [
     BrowserModule,
