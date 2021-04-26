@@ -465,7 +465,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.invoiceFormGroup.controls.erpType.enable();
     this.invoiceFormGroup.controls.vendorNumber.enable();
     this.invoiceFormGroup.controls.externalInvoiceNumber.enable();
-    this.invoiceFormGroup.controls.invoiceDate.disable();
+    this.invoiceFormGroup.controls.invoiceDate.enable();
     this.invoiceFormGroup.controls.amountOfInvoice.enable();
     this.invoiceFormGroup.controls.currency.enable();
     this.invoiceFormGroup.controls.lineItems.enable();
