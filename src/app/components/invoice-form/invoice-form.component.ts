@@ -16,7 +16,7 @@ interface Attachment {
   uploadError: boolean;
 }
 
-interface Template {
+export interface Template {
   falconInvoiceNumber: string;
   name: string;
   description: string;

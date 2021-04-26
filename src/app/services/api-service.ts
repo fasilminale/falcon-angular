@@ -3,6 +3,7 @@ import {catchError, mergeMap} from 'rxjs/operators';
 import {forkJoin, Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
+import {Template} from '../components/invoice-form/invoice-form.component';
 
 @Injectable()
 export class ApiService {
@@ -96,7 +97,7 @@ export class ApiService {
     );
   }
 
-  public createTemplate(template: any): Observable<any> {
+  public createTemplate(template: Template): Observable<any> {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/template`, template);
   }
 }
