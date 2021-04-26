@@ -96,4 +96,7 @@ export class ApiService {
     );
   }
 
+  public createTemplate(template: any): Observable<any> {
+    return this.web.httpPost(`${environment.baseServiceUrl}/v1/template`, template);
+  }
 }

@@ -16,6 +16,12 @@ interface Attachment {
   uploadError: boolean;
 }
 
+interface Template {
+  falconInvoiceNumber: string;
+  name: string;
+  description: string;
+}
+
 @Component({
   selector: 'app-invoice-form',
   templateUrl: './invoice-form.component.html',
@@ -333,6 +339,23 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
+  public saveTemplate(): void {
+    this.util.openTemplateInputModal()
+    .subscribe(async (result) => {
+      if (result) {
+        const template: Template = {
+          falconInvoiceNumber: this.falconInvoiceNumber,
+          name: result.name,
+          description: result.description
+        };
+        const savedTemplate = await this.api.createTemplate(template).toPromise();
+        (savedTemplate && savedTemplate.name)
+          ? this.onSaveTemplateSuccess(savedTemplate.name)
+          : this.onSaveTemplateFailure();
+      }
+    });
+  }
+
   public validateInvoiceAmount(): boolean {
     let sum = 0;
     const invoiceAmount = this.util
@@ -393,6 +416,14 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   private onAttachFailure(): void {
     this.util.openSnackBar(`One or more documents failed to attach!`);
+  }
+
+  private onSaveTemplateSuccess(templateName: string): void {
+    this.util.openSnackBar(`Success! Template saved as ${templateName}.`);
+  }
+
+  private onSaveTemplateFailure(): void {
+    this.util.openSnackBar(`Failure, template was not created.`);
   }
 
   public addAttachment(): void {

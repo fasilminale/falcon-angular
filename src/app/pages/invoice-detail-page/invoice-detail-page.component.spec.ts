@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceDetailPageComponent} from './invoice-detail-page.component';
 import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
@@ -96,5 +96,11 @@ describe('InvoiceDetailPageComponent', () => {
     component.deleteInvoice();
     expect(dialog.open).toHaveBeenCalled();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`).error(new ErrorEvent('Delete Invoice Failed'));
+  });
+
+  it('should call save template', () => {
+    spyOn(component, 'saveAsTemplate').and.callThrough();
+    component.saveAsTemplate();
+    expect(component.saveAsTemplate).toHaveBeenCalled();
   });
 });
