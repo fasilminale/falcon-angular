@@ -17,6 +17,12 @@ interface Attachment {
   action: 'UPLOAD' | 'DELETE' | 'NONE';
 }
 
+export interface Template {
+  falconInvoiceNumber: string;
+  name: string;
+  description: string;
+}
+
 @Component({
   selector: 'app-invoice-form',
   templateUrl: './invoice-form.component.html',
@@ -333,6 +339,23 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
+  public saveTemplate(): void {
+    this.util.openTemplateInputModal()
+    .subscribe(async (result) => {
+      if (result) {
+        const template: Template = {
+          falconInvoiceNumber: this.falconInvoiceNumber,
+          name: result.name,
+          description: result.description
+        };
+        const savedTemplate = await this.api.createTemplate(template).toPromise();
+        (savedTemplate && savedTemplate.name)
+          ? this.onSaveTemplateSuccess(savedTemplate.name)
+          : this.onSaveTemplateFailure();
+      }
+    });
+  }
+
   public validateInvoiceAmount(): boolean {
     let sum = 0;
     const invoiceAmount = this.util
@@ -392,6 +415,14 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.util.openSnackBar(`One or more documents failed to attach!`);
   }
 
+  private onSaveTemplateSuccess(templateName: string): void {
+    this.util.openSnackBar(`Success! Template saved as ${templateName}.`);
+  }
+
+  private onSaveTemplateFailure(): void {
+    this.util.openSnackBar(`Failure, template was not created.`);
+  }
+
   public addAttachment(): void {
     const attachmentFileValue = this.attachmentFormGroup.controls.file.value;
     const attachmentTypeValue = this.attachmentFormGroup.controls.attachmentType.value;
@@ -438,7 +469,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.invoiceFormGroup.controls.erpType.enable();
     this.invoiceFormGroup.controls.vendorNumber.enable();
     this.invoiceFormGroup.controls.externalInvoiceNumber.enable();
-    this.invoiceFormGroup.controls.invoiceDate.disable();
+    this.invoiceFormGroup.controls.invoiceDate.enable();
     this.invoiceFormGroup.controls.amountOfInvoice.enable();
     this.invoiceFormGroup.controls.currency.enable();
     this.invoiceFormGroup.controls.lineItems.enable();

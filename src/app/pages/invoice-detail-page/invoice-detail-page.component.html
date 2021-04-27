@@ -1,6 +1,15 @@
 <cardinal-card>
   <cardinal-section-header [sectionTitle]="'Invoice ' + falconInvoiceNumber">
-    <div class="col-12 d-flex justify-content-end">
+    <div class="col-6 d-flex justify-content-start header-button">
+      <elm-button id="cancel-button"
+                  buttonType="button"
+                  buttonStyle="text"
+                  class="flex-shrink-1"
+                  (buttonClick)="saveAsTemplate()">
+        <u>Save as Template</u>
+      </elm-button>
+    </div>
+    <div class="col-6 d-flex justify-content-end">
       <elm-button id="edit-button"
                   buttonType="button"
                   buttonStyle="secondary"

@@ -6,6 +6,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -17,6 +18,7 @@ export class InvoiceDetailPageComponent implements OnInit {
   public readonly regex = /[a-zA-Z0-9_\\-]/;
 
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
+  @ViewChild(InvoiceFormComponent) invoiceForm?: InvoiceFormComponent;
 
   public readOnly = true;
   public milestonesTabOpen = false;
@@ -71,5 +73,11 @@ export class InvoiceDetailPageComponent implements OnInit {
               () => this.snackBar.open(`Failure, invoice was not deleted.`, 'close', {duration: 5 * 1000}));
         }
       });
+  }
+
+  public saveAsTemplate(): void {
+    if (this.invoiceForm) {
+      this.invoiceForm.saveTemplate();
+    }
   }
 }

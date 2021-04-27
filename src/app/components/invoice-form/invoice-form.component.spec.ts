@@ -13,7 +13,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {ApiService} from '../../services/api-service';
-import { InvoiceListPageComponent } from 'src/app/pages/invoice-list-page/invoice-list-page.component';
 
 describe('InvoiceFormComponent', () => {
 
@@ -82,6 +81,16 @@ describe('InvoiceFormComponent', () => {
     ]
   };
 
+  const template = {
+    name: 'testTemplate',
+    description: 'testDescription'
+  };
+
+  const templateResponse = {
+    name: 'testTemplate',
+    description: 'testDescription',
+    falconInvoiceNumber: 'F0000000001'
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -408,7 +417,7 @@ describe('InvoiceFormComponent', () => {
     component.resetForm();
     expect(component.lineItemRemoveButtonDisable).toBeTrue();
   });
-  
+
   it('should called changeLineItemNetAmount and totalLineItemNetAmount value changed and validate invoiceDate date', () => {
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('1');
@@ -424,5 +433,30 @@ describe('InvoiceFormComponent', () => {
     date.setFullYear(11111);
     control.setValue(date);
     expect(component.validateDate(control)).toEqual({ 'validateDate': true });
+  });
+
+  it('should call save template and confirm save', async () => {
+    spyOn(util, 'openSnackBar').and.stub();
+    spyOn(util, 'openTemplateInputModal').and.returnValue(of(template));
+    spyOn(api, 'createTemplate').and.returnValue(of(templateResponse));
+    await component.saveTemplate();
+    fixture.detectChanges();
+    expect(util.openSnackBar)
+      .toHaveBeenCalledWith(`Success! Template saved as ${templateResponse.name}.`);
+  });
+
+  it('should call save template and fail to save', async () => {
+    spyOn(util, 'openSnackBar').and.stub();
+    spyOn(util, 'openTemplateInputModal').and.returnValue(of(template));
+    spyOn(api, 'createTemplate').and.returnValue(
+      of(new ErrorEvent('test error event'), {
+        status: 123,
+        statusText: 'test status text'
+      })
+    );
+    await component.saveTemplate();
+    fixture.detectChanges();
+    expect(util.openSnackBar)
+      .toHaveBeenCalledWith('Failure, template was not created.');
   });
 });

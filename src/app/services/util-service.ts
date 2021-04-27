@@ -4,6 +4,7 @@ import {ConfirmationModalComponent, ErrorModalComponent} from '@elm/elm-stylegui
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
+import {TemplateInputModalComponent} from '../components/template-input-modal/template-input-modal.component';
 
 @Injectable()
 export class UtilService {
@@ -38,6 +39,17 @@ export class UtilService {
       ));
   }
 
+  public openTemplateInputModal(): Observable<Template> {
+    return this.dialog.open(
+      TemplateInputModalComponent,
+      {autoFocus: false}
+    )
+      .afterClosed()
+      .pipe(mergeMap<any, Observable<Template>>(
+        result => of(result)
+      ));
+  }
+
   public openErrorModal(data: ErrorModalData): Observable<any> {
     return this.dialog.open(
       ErrorModalComponent,
@@ -59,4 +71,9 @@ export type ConfirmationModalData = {
 export type ErrorModalData = {
   title: string,
   innerHtmlMessage: string
+};
+
+type Template = {
+  name: string;
+  description: string;
 };
