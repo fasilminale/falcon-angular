@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
@@ -131,7 +131,7 @@ describe('InvoiceFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should be enabled editable fields', fakeAsync(() => {
+  it('should be enabled editable fields', () => {
     component.readOnly = true;
     fixture.detectChanges();
     component.invoiceFormGroup.controls.workType.disable();
@@ -139,12 +139,13 @@ describe('InvoiceFormComponent', () => {
     component.ngOnChanges({readOnly: new SimpleChange(null, component.readOnly, true)});
     fixture.detectChanges();
     expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
-  }));
+  });
 
   it('should show success snackbar on post', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     fixture.detectChanges();
@@ -172,6 +173,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSubmit();
@@ -214,6 +216,7 @@ describe('InvoiceFormComponent', () => {
       requestInvoice = invoice;
       return of(invoiceResponse);
     });
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
@@ -228,6 +231,7 @@ describe('InvoiceFormComponent', () => {
       requestInvoice = invoice;
       return of(invoiceResponse);
     });
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     component.amountOfInvoiceFormControl.setValue('0');
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
@@ -336,7 +340,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
-    spyOn(api, 'saveAllAttachments').and.returnValue(of([]));
+    spyOn(api, 'saveAttachments').and.returnValue(of(false));
     spyOn(component, 'resetForm').and.stub();
     component.falconInvoiceNumber = '';
     const testFile = new File([], 'test file');
@@ -366,6 +370,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'resetForm').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     expect(component.resetForm).toHaveBeenCalled();
@@ -377,7 +382,7 @@ describe('InvoiceFormComponent', () => {
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false}]);
+    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false, action: 'UPLOAD'}]);
   });
 
   it('should reset form controls on attachment add', () => {
@@ -390,25 +395,38 @@ describe('InvoiceFormComponent', () => {
     expect(component.attachmentFormGroup.controls.attachmentType.value).toBeFalsy();
   });
 
-  it('should remove attachment', () => {
+  it('should remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
     spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    component.removeAttachment(0);
+    await component.removeAttachment(0);
     expect(component.attachments).toEqual([]);
   });
 
-  it('should not remove attachment', () => {
+  it('should not remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
     spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    component.removeAttachment(0);
+    await component.removeAttachment(0);
+    expect(component.attachments).toHaveSize(1);
+  });
+
+  it('should not modify attachment', async () => {
+    const attachment: any = {
+      file: new File([], 'test file'),
+      type: 'test type',
+      uploadError: false,
+      action: 'NONE'
+    };
+    component.attachments.push(attachment);
+    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+    await component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
   });
 
@@ -423,16 +441,16 @@ describe('InvoiceFormComponent', () => {
       .controls.lineItemNetAmount.setValue('1');
     component.calculateLineItemNetAmount();
     expect(component.totallineItemNetAmount).toEqual(1);
-    const control = component.invoiceFormGroup.controls.invoiceDate
+    const control = component.invoiceFormGroup.controls.invoiceDate;
     control.setValue('test');
-    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
-    let date = new Date();
+    expect(component.validateDate(control)).toEqual({validateDate: true});
+    const date = new Date();
     date.setFullYear(111);
     control.setValue(date);
-    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
+    expect(component.validateDate(control)).toEqual({validateDate: true});
     date.setFullYear(11111);
     control.setValue(date);
-    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
+    expect(component.validateDate(control)).toEqual({validateDate: true});
   });
 
   it('should call save template and confirm save', async () => {

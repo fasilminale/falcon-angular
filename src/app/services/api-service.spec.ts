@@ -16,6 +16,13 @@ describe('ApiService Tests', () => {
     fileName: 'TestFileName'
   };
 
+  const unmodifiedAttachment = {
+    file: new File([], 'TestFileBlobName'),
+    attachmentType: 'TestAttachmentType',
+    fileName: 'TestFileName',
+    action: 'NONE'
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -77,38 +84,31 @@ describe('ApiService Tests', () => {
     expect(web.httpPost).toHaveBeenCalled();
   });
 
-  it('should not save empty attachments', async () => {
-    spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
-    const successes = await api.saveAllAttachments(invoice.falconInvoiceNumber, []).toPromise();
-    expect(web.httpPost).not.toHaveBeenCalled();
-    expect(successes.length).toEqual(0);
-  });
-
   it('should save attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
-    const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber, [testAttachment]
+    const successes = await api.saveAttachments(
+      invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
-    expect(successes.length).toEqual(1);
+    expect(successes).toEqual(true);
   });
 
   it('should fail unaccepted attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
-    const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber, [testAttachment]
+    const successes = await api.saveAttachments(
+      invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
-    expect(successes.length).toEqual(0);
+    expect(successes).toEqual(false);
   });
 
   it('should fail saving attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
-    const successes = await api.saveAllAttachments(
-      invoice.falconInvoiceNumber, [testAttachment]
+    const successes = await api.saveAttachments(
+      invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
-    expect(successes.length).toEqual(0);
+    expect(successes).toEqual(false);
   });
 
 })
