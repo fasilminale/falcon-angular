@@ -20,7 +20,7 @@ import {MatDialogRef} from '@angular/material/dialog';
         />
       </div>
       <div class="col-12">
-        <label for="description-input" class="form-label fieldLabel1">
+        <label for="description-input" class="form-label fieldLabel1 label">
           Description (optional)
         </label>
         <input type="text"
