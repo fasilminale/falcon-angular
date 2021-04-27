@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
@@ -131,7 +131,7 @@ describe('InvoiceFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should be enabled editable fields', fakeAsync(() => {
+  it('should be enabled editable fields', () => {
     component.readOnly = true;
     fixture.detectChanges();
     component.invoiceFormGroup.controls.workType.disable();
@@ -139,7 +139,7 @@ describe('InvoiceFormComponent', () => {
     component.ngOnChanges({readOnly: new SimpleChange(null, component.readOnly, true)});
     fixture.detectChanges();
     expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
-  }));
+  });
 
   it('should show success snackbar on post', async () => {
     spyOn(util, 'openSnackBar').and.stub();
@@ -395,30 +395,29 @@ describe('InvoiceFormComponent', () => {
     expect(component.attachmentFormGroup.controls.attachmentType.value).toBeFalsy();
   });
 
-  it('should remove attachment', fakeAsync(() => {
+  it('should remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
     spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    component.removeAttachment(0);
-    tick(150);
+    await component.removeAttachment(0);
     expect(component.attachments).toEqual([]);
-  }));
+  });
 
-  it('should not remove attachment', () => {
+  it('should not remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
     spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    component.removeAttachment(0);
+    await component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
   });
 
-  it('should not modify attachment', fakeAsync(() => {
+  it('should not modify attachment', async () => {
     const attachment: any = {
       file: new File([], 'test file'),
       type: 'test type',
@@ -427,10 +426,9 @@ describe('InvoiceFormComponent', () => {
     };
     component.attachments.push(attachment);
     spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
-    component.removeAttachment(0);
-    tick(150);
+    await component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
-  }));
+  });
 
   it('should disable line item remove button on form reset', () => {
     component.lineItemRemoveButtonDisable = false;
@@ -443,16 +441,16 @@ describe('InvoiceFormComponent', () => {
       .controls.lineItemNetAmount.setValue('1');
     component.calculateLineItemNetAmount();
     expect(component.totallineItemNetAmount).toEqual(1);
-    const control = component.invoiceFormGroup.controls.invoiceDate
+    const control = component.invoiceFormGroup.controls.invoiceDate;
     control.setValue('test');
-    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
-    let date = new Date();
+    expect(component.validateDate(control)).toEqual({validateDate: true});
+    const date = new Date();
     date.setFullYear(111);
     control.setValue(date);
-    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
+    expect(component.validateDate(control)).toEqual({validateDate: true});
     date.setFullYear(11111);
     control.setValue(date);
-    expect(component.validateDate(control)).toEqual({ 'validateDate': true });
+    expect(component.validateDate(control)).toEqual({validateDate: true});
   });
 
   it('should call save template and confirm save', async () => {

@@ -67,11 +67,11 @@ export class ApiService {
 
   public saveAttachments(invoiceNumber: string, attachments: Array<any>): Observable<boolean> {
     const files: Array<File> = [];
-    const filesMeta: Array<any> = [];
+    const instructions: Array<any> = [];
     attachments.forEach(a => {
       if (a.action !== 'NONE') {
         files.push(a.file);
-        filesMeta.push({
+        instructions.push({
           fileName: a.file.name,
           attachmentType: a.type,
           action: a.action
@@ -80,7 +80,7 @@ export class ApiService {
     });
     const formData = new FormData();
     files.forEach(f => formData.append('files', f, f.name));
-    formData.append('filesMeta', JSON.stringify(filesMeta));
+    formData.append('instructionsJson', JSON.stringify(instructions));
     return this.web.httpPost(
       `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}/batch`,
       formData
