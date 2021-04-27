@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
@@ -145,6 +145,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     fixture.detectChanges();
@@ -172,6 +173,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSubmit();
@@ -214,6 +216,7 @@ describe('InvoiceFormComponent', () => {
       requestInvoice = invoice;
       return of(invoiceResponse);
     });
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
@@ -228,6 +231,7 @@ describe('InvoiceFormComponent', () => {
       requestInvoice = invoice;
       return of(invoiceResponse);
     });
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     component.amountOfInvoiceFormControl.setValue('0');
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
@@ -336,7 +340,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
-    spyOn(api, 'saveAllAttachments').and.returnValue(of([]));
+    spyOn(api, 'saveAttachments').and.returnValue(of(false));
     spyOn(component, 'resetForm').and.stub();
     component.falconInvoiceNumber = '';
     const testFile = new File([], 'test file');
@@ -366,6 +370,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'resetForm').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     expect(component.resetForm).toHaveBeenCalled();
@@ -377,7 +382,7 @@ describe('InvoiceFormComponent', () => {
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false}]);
+    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false, action: 'UPLOAD'}]);
   });
 
   it('should reset form controls on attachment add', () => {
@@ -390,7 +395,7 @@ describe('InvoiceFormComponent', () => {
     expect(component.attachmentFormGroup.controls.attachmentType.value).toBeFalsy();
   });
 
-  it('should remove attachment', () => {
+  it('should remove attachment', fakeAsync(() => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
     spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
@@ -398,8 +403,9 @@ describe('InvoiceFormComponent', () => {
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
     component.removeAttachment(0);
+    tick(150);
     expect(component.attachments).toEqual([]);
-  });
+  }));
 
   it('should not remove attachment', () => {
     const testFile = new File([], 'test file');
@@ -411,6 +417,20 @@ describe('InvoiceFormComponent', () => {
     component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
   });
+
+  it('should not modify attachment', fakeAsync(() => {
+    const attachment: any = {
+      file: new File([], 'test file'),
+      type: 'test type',
+      uploadError: false,
+      action: 'NONE'
+    };
+    component.attachments.push(attachment);
+    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+    component.removeAttachment(0);
+    tick(150);
+    expect(component.attachments).toHaveSize(1);
+  }));
 
   it('should disable line item remove button on form reset', () => {
     component.lineItemRemoveButtonDisable = false;

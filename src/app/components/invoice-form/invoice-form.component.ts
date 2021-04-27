@@ -449,7 +449,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       confirmButtonText: 'Remove Attachment',
       cancelButtonText: 'Cancel'
     }).toPromise();
-    if (result === 'confirm' && this.attachments.length < index) {
+    if (result === 'confirm' && this.attachments.length > index) {
       const attachment = this.attachments[index];
       if (attachment.action === 'NONE') {
         attachment.action = 'DELETE';
