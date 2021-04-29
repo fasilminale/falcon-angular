@@ -9,6 +9,7 @@ import {ActivatedRoute, ParamMap} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {ApiService} from '../../services/api-service';
 import {UtilService} from '../../services/util-service';
+import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
 
 interface Attachment {
   file: File;
@@ -47,9 +48,14 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public workTypeOptions = ['Indirect Non-PO Invoice'];
   public erpTypeOptions = ['Pharma Corp', 'TPM'];
   public currencyOptions = ['USD', 'CAD'];
+  public paymentTermOptions: Array<FalRadioOption> = [
+    {value: 'Z000', display: 'Pay Immediately'},
+    {value: 'ZN14', display: 'Pay in 14 days'}
+  ];
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
   public attachmentFormGroup: FormGroup;
+  public osptFormGroup: FormGroup;
   public validAmount = true;
   public file = null;
   public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
@@ -86,6 +92,17 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.attachmentFormGroup = new FormGroup({
       attachmentType: new FormControl({value: null, disabled: this.readOnly}, [required]),
       file: new FormControl({value: null, disabled: this.readOnly}, [required])
+    });
+
+    this.osptFormGroup = new FormGroup({
+      shouldOverride: new FormControl({value: false, disabled: this.readOnly}),
+      paymentTerms: new FormControl({value: null, disabled: this.readOnly})
+    });
+
+    this.osptFormGroup.controls.shouldOverride.valueChanges.subscribe(value => {
+      if (!value) {
+        this.osptFormGroup.controls.paymentTerms.reset();
+      }
     });
   }
 
@@ -181,8 +198,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         this.invoiceFormGroup.controls.invoiceDate.setValue(new Date(invoice.invoiceDate));
         this.invoiceFormGroup.controls.amountOfInvoice.setValue(invoice.amountOfInvoice);
         this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
-
         this.invoiceFormGroup.disable();
+
+        this.osptFormGroup.controls.shouldOverride.setValue(!!invoice.standardPaymentTermsOverride);
+        this.osptFormGroup.controls.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
+        this.osptFormGroup.disable();
 
         // Line Items
         for (const lineItem of invoice.lineItems) {
@@ -341,19 +361,19 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public saveTemplate(): void {
     this.util.openTemplateInputModal()
-    .subscribe(async (result) => {
-      if (result) {
-        const template: Template = {
-          falconInvoiceNumber: this.falconInvoiceNumber,
-          name: result.name,
-          description: result.description
-        };
-        const savedTemplate = await this.api.createTemplate(template).toPromise();
-        (savedTemplate && savedTemplate.name)
-          ? this.onSaveTemplateSuccess(savedTemplate.name)
-          : this.onSaveTemplateFailure();
-      }
-    });
+      .subscribe(async (result) => {
+        if (result) {
+          const template: Template = {
+            falconInvoiceNumber: this.falconInvoiceNumber,
+            name: result.name,
+            description: result.description
+          };
+          const savedTemplate = await this.api.createTemplate(template).toPromise();
+          (savedTemplate && savedTemplate.name)
+            ? this.onSaveTemplateSuccess(savedTemplate.name)
+            : this.onSaveTemplateFailure();
+        }
+      });
   }
 
   public validateInvoiceAmount(): boolean {
@@ -391,6 +411,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
     invoice.createdBy = 'Falcon User';
     invoice.amountOfInvoice = this.util.toNumber(invoice.amountOfInvoice);
+    invoice.standardPaymentTermsOverride = this.osptFormGroup.controls.paymentTerms.value
+      ? this.osptFormGroup.controls.paymentTerms.value
+      : null;
     invoice.lineItems.forEach((lineItem: any) => {
       if (!lineItem.companyCode) {
         lineItem.companyCode = invoice.companyCode;
