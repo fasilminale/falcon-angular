@@ -234,6 +234,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public resetForm(): void {
     this.invoiceFormGroup.reset();
+    this.osptFormGroup.reset();
     this.lineItemsFormArray.clear();
     this.attachments = [];
     this.addNewEmptyLineItem();
