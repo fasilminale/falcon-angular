@@ -68,16 +68,19 @@ export class ApiService {
   public saveAttachments(invoiceNumber: string, attachments: Array<any>): Observable<boolean> {
     const files: Array<File> = [];
     const instructions: Array<any> = [];
-    attachments.forEach(a => {
-      if (a.action !== 'NONE') {
+    attachments
+      .filter(a => a.action !== 'NONE')
+      .forEach(a => {
         files.push(a.file);
         instructions.push({
           fileName: a.file.name,
           attachmentType: a.type,
           action: a.action
         });
-      }
-    });
+      });
+    if (files.length <= 0 || instructions.length <= 0) {
+      return of(true);
+    }
     const formData = new FormData();
     files.forEach(f => formData.append('files', f, f.name));
     formData.append('instructionsJson', JSON.stringify(instructions));

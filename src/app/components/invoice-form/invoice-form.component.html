@@ -159,6 +159,23 @@
               Currency is required
             </small>
           </div>
+
+          <!-- OVERRIDE STANDARD PAYMENT TERMS -->
+          <div [formGroup]="osptFormGroup">
+            <label for="override-stp-checkbox"
+                   class="form-label fieldLabel1">
+              <input id="override-stp-checkbox"
+                     type="checkbox"
+                     formControlName="shouldOverride"
+                     [attr.disabled]="readOnly ? true : null"
+              />
+              Override Standard Payment Terms
+            </label>
+            <app-fal-radio-input formControlName="paymentTerms"
+                                 [options]="paymentTermOptions"
+                                 [isDisabled]="readOnly || !osptFormGroup.controls.shouldOverride.value">
+            </app-fal-radio-input>
+          </div>
         </div>
 
         <!-- UPLOAD DOCUMENT SECTION -->
