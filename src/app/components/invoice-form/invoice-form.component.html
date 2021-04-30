@@ -132,9 +132,9 @@
               Invoice Net Amount
             </label>
             <app-fal-currency-input id="invoice-amount-input"
-                                 formControlName="amountOfInvoice"
-                                 [isDisabled]="readOnly"
-                                 [isError]="!!(amountOfInvoiceFormControl.errors && amountOfInvoiceFormControl.hasError('required'))">
+                                    formControlName="amountOfInvoice"
+                                    [isDisabled]="readOnly"
+                                    [isError]="!!(amountOfInvoiceFormControl.errors && amountOfInvoiceFormControl.hasError('required'))">
             </app-fal-currency-input>
             <small class="error-text"
                    *ngIf="amountOfInvoiceFormControl.hasError('required')">
@@ -158,6 +158,23 @@
                    *ngIf="currency.hasError('required')">
               Currency is required
             </small>
+          </div>
+
+          <!-- OVERRIDE STANDARD PAYMENT TERMS -->
+          <div [formGroup]="osptFormGroup">
+            <label for="override-stp-checkbox"
+                   class="form-label fieldLabel1">
+              <input id="override-stp-checkbox"
+                     type="checkbox"
+                     formControlName="shouldOverride"
+                     [attr.disabled]="readOnly ? true : null"
+              />
+              Override Standard Payment Terms
+            </label>
+            <app-fal-radio-input formControlName="paymentTerms"
+                                 [options]="paymentTermOptions"
+                                 [isDisabled]="readOnly || !osptFormGroup.controls.shouldOverride.value">
+            </app-fal-radio-input>
           </div>
         </div>
 
@@ -258,36 +275,35 @@
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
             <div *ngFor="let _ of lineItemsFormArray.controls; index as i"
-                 class="line-item-row d-flex flex-nowrap justify-content-between align-items-end"
+                 class="line-item-row row align-items-end"
                  [formGroupName]="i">
 
-              <!-- LINE ITEM - NUMBER -->
-              <div class="flex-shrink-1">
-                <label class="form-label fieldLabel1">
-                  &nbsp;
-                </label>
-                <div class="fake-form-control">
-                  {{i + 1}}
+              <div class="d-flex col-2 align-items-end">
+                <!-- LINE ITEM - NUMBER -->
+                <div class="flex-shrink-1">
+                  <div class="fake-form-control">
+                    {{i + 1}}
+                  </div>
+                </div>
+
+                <!-- LINE ITEM - COMPANY CODE -->
+                <div class="flex-grow-1">
+                  <label *ngIf="i === 0" class="form-label fieldLabel1">
+                    Company Code
+                  </label>
+                  <input type="text"
+                         class="form-control"
+                         formControlName="companyCode"
+                         [placeholder]="invoiceFormGroup.controls.companyCode.value"
+                         (keypress)="validateRegex($event)"
+                         maxlength="4"
+                  />
                 </div>
               </div>
 
-              <!-- LINE ITEM - COMPANY CODE -->
-              <div>
-                <label class="form-label fieldLabel1">
-                  Company Code
-                </label>
-                <input type="text"
-                       class="form-control"
-                       formControlName="companyCode"
-                       [placeholder]="invoiceFormGroup.controls.companyCode.value"
-                       (keypress)="validateRegex($event)"
-                       maxlength="4"
-                />
-              </div>
-
               <!-- LINE ITEM - COST CENTER -->
-              <div>
-                <label class="form-label fieldLabel1">
+              <div class="col-2">
+                <label *ngIf="i === 0" class="form-label fieldLabel1">
                   Cost Center
                 </label>
                 <input type="text"
@@ -300,8 +316,8 @@
               </div>
 
               <!-- LINE ITEM - GL ACCOUNT -->
-              <div>
-                <label class="form-label fieldLabel1">
+              <div class="col-2">
+                <label *ngIf="i === 0" class="form-label fieldLabel1">
                   GL Account
                 </label>
                 <input type="text"
@@ -314,41 +330,40 @@
               </div>
 
               <!-- LINE ITEM - NET AMOUNT -->
-              <div>
-                <label class="form-label fieldLabel1">
+              <div class="col-2">
+                <label *ngIf="i === 0" class="form-label fieldLabel1">
                   Line Net Amount
                 </label>
                 <app-fal-currency-input formControlName="lineItemNetAmount"
                                         [isDisabled]="readOnly"
                                         [isError]="!!(lineItemNetAmountFormControl(i).errors && lineItemNetAmountFormControl(i).hasError('required'))"
-                                        (keyup)="calculateLineItemNetAmount()" >
+                                        (keyup)="calculateLineItemNetAmount()">
                 </app-fal-currency-input>
               </div>
 
-              <!-- LINE ITEM - NOTES -->
-              <div class="w-50">
-                <label class="form-label fieldLabel1">
-                  Notes (optional)
-                </label>
-                <input type="text"
-                       class="form-control"
-                       formControlName="notes"
-                       (keypress)="validateFreeTextRegex($event)"
-                       maxlength="50"
-                />
-              </div>
+              <div class="d-flex col-4 align-items-end">
+                <!-- LINE ITEM - NOTES -->
+                <div class="flex-grow-1">
+                  <label *ngIf="i === 0" class="form-label fieldLabel1">
+                    Notes (optional)
+                  </label>
+                  <input type="text"
+                         class="form-control"
+                         formControlName="notes"
+                         (keypress)="validateFreeTextRegex($event)"
+                         maxlength="50"
+                  />
+                </div>
 
-              <!-- LINE ITEM - REMOVE -->
-              <div class="flex-shrink-1">
-                <label class="form-label fieldLabel1">
-                  &nbsp;
-                </label>
-                <input type="button"
-                       value="remove_circle"
-                       class="material-icons btn line-item-remove-button"
-                       [disabled]="lineItemRemoveButtonDisable || readOnly"
-                       (click)="removeLineItem(i)"
-                />
+                <!-- LINE ITEM - REMOVE -->
+                <div class="flex-shrink-1">
+                  <input type="button"
+                         value="remove_circle"
+                         class="material-icons btn line-item-remove-button"
+                         [disabled]="lineItemRemoveButtonDisable || readOnly"
+                         (click)="removeLineItem(i)"
+                  />
+                </div>
               </div>
 
             </div>
@@ -356,24 +371,20 @@
 
           <div class="row">
             <!-- LINE ITEMS - ADD NEW -->
-            <div class="col-4">
+            <div class="col-6">
               <elm-button *ngIf="!readOnly"
-                buttonType="button"
-                buttonStyle="text"
-                id="add-new-line-item-button"
-                (buttonClick)="addNewEmptyLineItem()">
+                          buttonType="button"
+                          buttonStyle="text"
+                          id="add-new-line-item-button"
+                          (buttonClick)="addNewEmptyLineItem()">
                 <u>+ Add New Line Item</u>
               </elm-button>
             </div>
-            <div class="col-1">
-              <label class="form-label fieldLabel1 total-line-item-amt">
-                ${{totallineItemNetAmount | number : '1.2-2'}}
-              </label>
-              </div>
-              <div class="col-2">
-              <label class="form-label fieldLabel1 total-line-item-amt-lbl">
-                Line Net Amount Total
-              </label>
+            <div class="col-2 line-item-total-amount">
+              ${{totallineItemNetAmount | number : '1.2-2'}}
+            </div>
+            <div class="col-4 form-label fieldLabel1">
+              Line Net Amount Total
             </div>
           </div>
 
