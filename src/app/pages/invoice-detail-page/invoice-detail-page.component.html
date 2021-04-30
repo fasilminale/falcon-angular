@@ -14,7 +14,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="!readOnly"
+                  [isDisabled]="!readOnly || isDeletedInvoice"
                   (buttonClick)="editInvoice()">
         Edit
       </elm-button>
@@ -22,7 +22,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="readOnly"
+                  [isDisabled]="readOnly|| isDeletedInvoice"
                   (buttonClick)="deleteInvoice()">
         Delete
       </elm-button>
@@ -47,7 +47,8 @@
       <app-invoice-form [enableMilestones]="true"
                         [readOnly]="readOnly"
                         (updateMilestones)="updateMilestones($event)"
-                        (toggleMilestones)="toggleMilestones()">
+                        (toggleMilestones)="toggleMilestones()"
+                        (isDeletedInvoice)="disableInvoice($event)">
       </app-invoice-form>
     </mat-sidenav-content>
   </mat-sidenav-container>
