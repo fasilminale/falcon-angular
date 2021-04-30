@@ -5,7 +5,7 @@ import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component'
 import {environment} from '../../../environments/environment';
 import {filter} from 'rxjs/operators';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {ActivatedRoute, ParamMap} from '@angular/router';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {ApiService} from '../../services/api-service';
 import {UtilService} from '../../services/util-service';
@@ -75,7 +75,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
                      private route: ActivatedRoute,
                      private loadingService: LoadingService,
                      private api: ApiService,
-                     private util: UtilService) {
+                     private util: UtilService,
+                     private router: Router) {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
       workType: new FormControl({value: null, disabled: this.readOnly}, [required]),
@@ -300,15 +301,19 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public onCancel(): void {
-    this.util.openConfirmationModal({
-      title: 'Cancel',
-      innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
-                 <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
-      confirmButtonText: 'Yes, cancel',
-      cancelButtonText: 'No, go back'
-    })
-      .pipe(filter(result => result === 'confirm'))
-      .subscribe(() => this.resetForm());
+    if (this.readOnly) {
+      this.router.navigate(['/invoices'])
+    } else {
+      this.util.openConfirmationModal({
+        title: 'Cancel',
+        innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
+                   <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
+        confirmButtonText: 'Yes, cancel',
+        cancelButtonText: 'No, go back'
+      })
+        .pipe(filter(result => result === 'confirm'))
+        .subscribe(() => this.resetForm());
+    }
   }
 
   public async onSubmit(): Promise<void> {
