@@ -303,7 +303,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public onCancel(): void {
     if (this.readOnly) {
-      this.router.navigate(['/invoices'])
+      this.router.navigate(['/invoices']);
     } else {
       this.util.openConfirmationModal({
         title: 'Cancel',
@@ -517,6 +517,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.invoiceFormGroup.controls.currency.enable();
     this.invoiceFormGroup.controls.lineItems.enable();
     this.attachmentFormGroup.controls.attachmentType.enable();
+    this.externalAttachment = this.validateExternalAttachment();
   }
 
   public calculateLineItemNetAmount(): void {

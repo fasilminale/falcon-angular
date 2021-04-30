@@ -13,7 +13,6 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {ApiService} from '../../services/api-service';
-import { Router } from '@angular/router';
 
 describe('InvoiceFormComponent', () => {
 
@@ -27,7 +26,6 @@ describe('InvoiceFormComponent', () => {
   let util: UtilService;
   let api: ApiService;
   let snackBar: MatSnackBar;
-  let router: Router;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -119,7 +117,6 @@ describe('InvoiceFormComponent', () => {
     util = TestBed.inject(UtilService);
     api = TestBed.inject(ApiService);
     fixture = TestBed.createComponent(InvoiceFormComponent);
-    router = TestBed.get(Router);
     component = fixture.componentInstance;
     fixture.detectChanges();
     component.companyCode.setValue(companyCode);
@@ -353,13 +350,6 @@ describe('InvoiceFormComponent', () => {
     component.addAttachment();
     await component.onSubmit();
     expect(component.resetForm).not.toHaveBeenCalled();
-  });
-
-  it('should route to invoices list if form is readonly', () => {
-    component.readOnly = true;
-    const routerSpy = spyOn(router, 'navigate');
-    component.onCancel();
-    expect(routerSpy).toHaveBeenCalledWith(['/invoices']);
   });
 
   it('should reset form when cancel dialog is confirmed', () => {
