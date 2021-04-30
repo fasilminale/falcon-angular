@@ -111,5 +111,12 @@ describe('ApiService Tests', () => {
     expect(successes).toEqual(false);
   });
 
+  it('should not call attachments route', async () => {
+    const successes = await api.saveAttachments(
+      invoice.falconInvoiceNumber, []
+    ).toPromise();
+    expect(successes).toEqual(true);
+  });
+
 })
 ;

@@ -187,7 +187,7 @@
             <label class="form-label fieldLabel1">
               Upload Attachments (optional)
             </label>
-            <div class="form-control upload-container">
+            <div class="form-control upload-container" [ngClass]="{ 'error': !externalAttachment }">
               <div class="row">
                 <div class="col-12 fieldLabel3">
                   Supported file types: eml, doc, jpg, pdf, xlsx
@@ -235,28 +235,33 @@
 
                 <div class="col-6 upload-file-div">
                   <!-- ATTACHMENTS LOOP-->
-                  <div *ngFor="let attachment of attachments; index as i"
-                       class="attachment form-control d-flex align-items-center justify-content-between">
+                  <div *ngFor="let attachment of attachments; index as i">
+                    <div *ngIf="attachment.action !== 'DELETE'" class="attachment form-control d-flex align-items-center justify-content-between">
 
-                    <!-- ATTACHMENT - ICON -->
-                    <div class="material-icons">file_present</div>
+                        <!-- ATTACHMENT - ICON -->
+                        <div class="material-icons">file_present</div>
 
-                    <!-- ATTACHMENT - CONTENT -->
-                    <div class=" flex-grow-1 p-1">
-                      {{attachment.file.name}}&nbsp;({{attachment.type}})
+                        <!-- ATTACHMENT - CONTENT -->
+                        <div class=" flex-grow-1 p-1">
+                          {{attachment.file.name}}&nbsp;({{attachment.type}})
+                        </div>
+
+                        <!-- ATTACHMENT - REMOVE -->
+                        <input *ngIf="!readOnly" type="button"
+                               value="close"
+                               class="material-icons btn btn-remove-attachment"
+                               (click)="removeAttachment(i)"
+                        />
                     </div>
-
-                    <!-- ATTACHMENT - REMOVE -->
-                    <input *ngIf="!readOnly" type="button"
-                           value="close"
-                           class="material-icons btn btn-remove-attachment"
-                           (click)="removeAttachment(i)"
-                    />
                   </div>
                 </div>
 
               </div>
             </div>
+            <small class="error-text"
+                   *ngIf="!externalAttachment">
+              External Invoice attachment required
+            </small>
           </form>
         </div>
       </div>
@@ -406,7 +411,7 @@
                       buttonType="submit"
                       buttonStyle="primary"
                       class="flex-shrink-1"
-                      [isDisabled]="invoiceFormGroup.invalid || readOnly">
+                      [isDisabled]="invoiceFormGroup.invalid || readOnly || !externalAttachment">
             {{falconInvoiceNumber ? 'Save' : 'Create'}}
           </elm-button>
         </div>
