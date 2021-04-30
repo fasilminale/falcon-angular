@@ -417,6 +417,26 @@ describe('InvoiceFormComponent', () => {
     expect(component.attachments).toHaveSize(1);
   });
 
+  it('should validate an external attachment exists', () => {
+    const testFile = new File([], 'test file');
+    const testType = 'EXTERNAL';
+    component.attachmentFormGroup.controls.file.setValue(testFile);
+    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
+    component.addAttachment();
+    expect(component.externalAttachment).toBeTrue();
+  });
+
+  it('should fail external attachment validation', async () => {
+    const testFile = new File([], 'test file');
+    const testType = 'EXTERNAL';
+    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+    component.attachmentFormGroup.controls.file.setValue(testFile);
+    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
+    component.addAttachment();
+    await component.removeAttachment(0);
+    expect(component.externalAttachment).toBeFalse();
+  });
+
   it('should not modify attachment', async () => {
     const attachment: any = {
       file: new File([], 'test file'),

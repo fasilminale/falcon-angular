@@ -51,6 +51,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public invoiceFormGroup: FormGroup;
   public attachmentFormGroup: FormGroup;
   public validAmount = true;
+  public externalAttachment = true;
   public file = null;
   public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
   public attachments: Array<Attachment> = [];
@@ -196,7 +197,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         }
 
         // Attachments
-        for (const attachment of invoice.attachments) {
+        for (const attachment of invoice.attachments.filter((a: any) => !a.deleted)) {
           this.attachments.push({
             file: new File([], attachment.fileName),
             type: attachment.type,
@@ -370,6 +371,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     return this.validAmount;
   }
 
+  public validateExternalAttachment(): boolean {
+    return this.attachments.some(attachment =>
+      (attachment.type === 'EXTERNAL' || attachment.type === 'External Invoice') && attachment.action !== 'DELETE'
+    );
+  }
+
   public onInvoiceInvalidated(): void {
     this.util.openErrorModal({
       title: 'Invalid Amount(s)',
@@ -415,6 +422,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.util.openSnackBar(`One or more documents failed to attach!`);
   }
 
+  private onRemoveAttachmentSuccess(fileName: string): void {
+    this.util.openSnackBar(`Success! ${fileName} was removed.`);
+  }
+
   private onSaveTemplateSuccess(templateName: string): void {
     this.util.openSnackBar(`Success! Template saved as ${templateName}.`);
   }
@@ -434,6 +445,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         action: 'UPLOAD'
       });
       this.attachmentFormGroup.reset();
+      this.externalAttachment = this.validateExternalAttachment();
       const fileChooserInput = this.fileChooserInput;
       if (fileChooserInput) {
         fileChooserInput.reset();
@@ -456,6 +468,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       } else {
         this.attachments.splice(index, 1);
       }
+      this.externalAttachment = this.validateExternalAttachment();
+      this.onRemoveAttachmentSuccess(attachment.file.name);
     }
   }
 
