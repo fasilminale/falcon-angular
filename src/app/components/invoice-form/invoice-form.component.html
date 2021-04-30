@@ -147,18 +147,20 @@
             <label for="currency-input" class="form-label fieldLabel1">
               Currency
             </label>
-            <ng-select id="currency-input"
-                       formControlName="currency"
-                       [items]="currencyOptions"
-                       [searchable]="true"
-                       placeholder="Select One...."
-                       [ngClass]="{ 'error': currency.errors && currency.hasError('required'), 'disabled': readOnly }">
-            </ng-select>
+            <app-fal-radio-input id="currency-input"
+                                 formControlName="currency"
+                                 [options]="currencyOptions"
+                                 [isDisabled]="readOnly"
+                                 [isError]="!!(currency.errors && currency.hasError('required'))">
+            </app-fal-radio-input>
             <small class="error-text"
                    *ngIf="currency.hasError('required')">
-              Currency is required
+                   Currency is required
             </small>
           </div>
+
+          
+            
 
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
           <div [formGroup]="osptFormGroup">
