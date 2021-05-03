@@ -228,7 +228,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         }
         this.attachmentFormGroup.disable();
 
-        this.updateMilestones.emit(invoice.milestones);
+        this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
+          return b.timestamp.localeCompare(a.timestamp);
+        }));
         this.loadingService.hideLoading();
         this.calculateLineItemNetAmount();
       });

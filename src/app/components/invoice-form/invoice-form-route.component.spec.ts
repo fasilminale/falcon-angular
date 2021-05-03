@@ -29,7 +29,15 @@ describe('InvoiceFormComponent ROUTING', () => {
         }
       }
     ],
-    milestones: [],
+    milestones: [{
+      status: 'CREATED',
+      timestamp: '2021-04-19T19:58:41.765Z',
+      user: 'Falcon User'
+    }, {
+      status: 'CREATED',
+      timestamp: '2021-04-20T20:58:41.765Z',
+      user: 'Falcon User'
+    }],
     lineItems: [
       {
         lineItemNetAmount: 2999.99
@@ -107,6 +115,14 @@ describe('InvoiceFormComponent ROUTING', () => {
       spyOn(component, 'toggleSidenav').and.callThrough();
       component.toggleSidenav();
       expect(component.toggleSidenav).toHaveBeenCalled();
+    });
+
+    it('should order the milestones from most recent to earliest', () => {
+      spyOn(component.updateMilestones, 'emit').and.callThrough();
+      fixture.detectChanges();
+      component.loadData();
+      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/F0000000001`).flush(invoiceResponse);
+      expect(component.updateMilestones.emit).toHaveBeenCalledWith(invoiceResponse.milestones);
     });
 
   });
