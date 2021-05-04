@@ -1,19 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { InvoiceFormComponent } from './invoice-form.component';
-import { of } from 'rxjs';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { WebServices } from '../../services/web-services';
-import { CUSTOM_ELEMENTS_SCHEMA, SimpleChange } from '@angular/core';
-import { LoadingService } from '../../services/loading-service';
-import { RouterTestingModule } from '@angular/router/testing';
-import { FormGroup } from '@angular/forms';
-import { UtilService } from '../../services/util-service';
-import { ApiService } from '../../services/api-service';
-import { Router } from '@angular/router';
+import {InvoiceFormComponent} from './invoice-form.component';
+import {of} from 'rxjs';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {WebServices} from '../../services/web-services';
+import {CUSTOM_ELEMENTS_SCHEMA, SimpleChange} from '@angular/core';
+import {LoadingService} from '../../services/loading-service';
+import {RouterTestingModule} from '@angular/router/testing';
+import {FormGroup} from '@angular/forms';
+import {UtilService} from '../../services/util-service';
+import {ApiService} from '../../services/api-service';
 
 describe('InvoiceFormComponent', () => {
 
@@ -27,7 +26,6 @@ describe('InvoiceFormComponent', () => {
   let util: UtilService;
   let api: ApiService;
   let snackBar: MatSnackBar;
-  let router: Router;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -123,7 +121,6 @@ describe('InvoiceFormComponent', () => {
     util = TestBed.inject(UtilService);
     api = TestBed.inject(ApiService);
     fixture = TestBed.createComponent(InvoiceFormComponent);
-    router = TestBed.get(Router);
     component = fixture.componentInstance;
     fixture.detectChanges();
     component.companyCode.setValue(companyCode);
@@ -143,7 +140,7 @@ describe('InvoiceFormComponent', () => {
     fixture.detectChanges();
     component.invoiceFormGroup.controls.workType.disable();
     component.readOnly = false;
-    component.ngOnChanges({ readOnly: new SimpleChange(null, component.readOnly, true) });
+    component.ngOnChanges({readOnly: new SimpleChange(null, component.readOnly, true)});
     fixture.detectChanges();
     expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
   });
@@ -359,13 +356,6 @@ describe('InvoiceFormComponent', () => {
     expect(component.resetForm).not.toHaveBeenCalled();
   });
 
-  // it('should route to invoices list if form is readonly', () => {
-  //   component.readOnly = true;
-  //   const routerSpy = spyOn(router, 'navigate');
-  //   component.onCancel();
-  //   expect(routerSpy).toHaveBeenCalledWith(['/invoices']);
-  // });
-
   it('should reset form when cancel dialog is confirmed', () => {
     spyOn(component, 'resetForm').and.stub();
     spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
@@ -396,7 +386,7 @@ describe('InvoiceFormComponent', () => {
     component.attachmentFormGroup.controls.file.setValue(testFile);
     component.attachmentFormGroup.controls.attachmentType.setValue(testType);
     component.addAttachment();
-    expect(component.attachments).toEqual([{ file: testFile, type: testType, uploadError: false, action: 'UPLOAD' }]);
+    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false, action: 'UPLOAD'}]);
   });
 
   it('should reset form controls on attachment add', () => {
@@ -477,14 +467,14 @@ describe('InvoiceFormComponent', () => {
     expect(component.totallineItemNetAmount).toEqual(1);
     const control = component.invoiceFormGroup.controls.invoiceDate;
     control.setValue('test');
-    expect(component.validateDate(control)).toEqual({ validateDate: true });
+    expect(component.validateDate(control)).toEqual({validateDate: true});
     const date = new Date();
     date.setFullYear(111);
     control.setValue(date);
-    expect(component.validateDate(control)).toEqual({ validateDate: true });
+    expect(component.validateDate(control)).toEqual({validateDate: true});
     date.setFullYear(11111);
     control.setValue(date);
-    expect(component.validateDate(control)).toEqual({ validateDate: true });
+    expect(component.validateDate(control)).toEqual({validateDate: true});
   });
 
   it('should call save template and confirm save', async () => {

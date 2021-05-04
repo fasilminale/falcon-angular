@@ -159,8 +159,8 @@
             </small>
           </div>
 
-          
-            
+
+
 
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
           <div [formGroup]="osptFormGroup">
@@ -187,7 +187,7 @@
             <label class="form-label fieldLabel1">
               Upload Attachments (optional)
             </label>
-            <div class="form-control upload-container" [ngClass]="{ 'error': !externalAttachment }">
+            <div class="form-control upload-container" [ngClass]="{ 'error': !externalAttachment && !readOnly }">
               <div class="row">
                 <div class="col-12 fieldLabel3">
                   Supported file types: eml, doc, jpg, pdf, xlsx
@@ -259,7 +259,7 @@
               </div>
             </div>
             <small class="error-text"
-                   *ngIf="!externalAttachment">
+                   *ngIf="!externalAttachment && !readOnly">
               External Invoice attachment required
             </small>
           </form>

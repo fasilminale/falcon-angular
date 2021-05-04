@@ -15,8 +15,6 @@ export class ApiService {
     return this.checkInvoiceIsValid(invoice)
       .pipe(
         mergeMap((response: any) => {
-            console.log(invoice);
-            console.log(response);
             return response && invoice.falconInvoiceNumber
               ? of(response.falconInvoiceNumber !== invoice.falconInvoiceNumber)
               : of(true);
