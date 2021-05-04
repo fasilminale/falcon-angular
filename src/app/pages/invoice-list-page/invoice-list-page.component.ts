@@ -42,7 +42,7 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   getTableData(numberPerPage: number): void {
-    this.loadingService.showLoading();
+    this.loadingService.showLoading('Loading');
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
       sortField: this.sortField,

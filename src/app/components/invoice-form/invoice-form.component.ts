@@ -188,7 +188,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public loadData(): void {
-    this.loadingService.showLoading();
+    this.loadingService.showLoading('Loading');
     this.webService.httpGet(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
       .subscribe((invoice: any) => {
         this.invoice = new InvoiceDataModel(invoice);
@@ -318,7 +318,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public async onSubmit(): Promise<void> {
-    this.loadingService.showLoading();
+    this.loadingService.showLoading(this.isOnEditPage ? 'Saving' : 'Submitting');
     try {
       if (this.validateInvoiceAmount()) {
         // IS VALID
