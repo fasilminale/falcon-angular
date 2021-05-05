@@ -2,19 +2,20 @@ import {StatusModel} from './status-model';
 import * as moment from 'moment';
 import {LineItem} from '../line-item/line-item-model';
 import {formatCurrency} from '@angular/common';
+import {ElmDataTableHeader} from '@elm/elm-styleguide-ui';
 
 export class InvoiceDataModel {
 
-  static invoiceTableHeaders = [
+  static invoiceTableHeaders: Array<ElmDataTableHeader> =[
     {header: 'statusLabel', label: 'Status'},
-    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number'},
-    {header: 'externalInvoiceNumber', label: 'External Invoice Number'},
-    {header: 'amountOfInvoice', label: 'Invoice Amount'},
+    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end'},
+    {header: 'externalInvoiceNumber', label: 'External Invoice Number', alignment: 'end'},
+    {header: 'amountOfInvoice', label: 'Invoice Amount', alignment: 'end'},
     {header: 'currency', label: 'Currency'},
-    {header: 'vendorNumber', label: 'Vendor Number'},
+    {header: 'vendorNumber', label: 'Vendor Number', alignment: 'end'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'createdBy', label: 'Created By'},
-    {header: 'companyCode', label: 'Company Code'}
+    {header: 'companyCode', label: 'Company Code', alignment: 'end'}
   ];
 
   static dateFormat = 'MM/DD/YYYY';
