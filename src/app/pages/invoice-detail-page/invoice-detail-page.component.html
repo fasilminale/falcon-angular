@@ -44,7 +44,8 @@
     </mat-sidenav>
 
     <mat-sidenav-content class="side-nav-content">
-      <app-invoice-form [enableMilestones]="true"
+      <app-invoice-form [falconInvoiceNumber]="falconInvoiceNumber"
+                        [enableMilestones]="true"
                         [readOnly]="readOnly"
                         (updateMilestones)="updateMilestones($event)"
                         (toggleMilestones)="toggleMilestones()">

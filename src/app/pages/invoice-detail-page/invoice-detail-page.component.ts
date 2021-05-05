@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
@@ -7,13 +7,14 @@ import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-detail-create-page',
   templateUrl: './invoice-detail-page.component.html',
   styleUrls: ['./invoice-detail-page.component.scss']
 })
-export class InvoiceDetailPageComponent implements OnInit {
+export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
 
   public readonly regex = /[a-zA-Z0-9_\\-]/;
 
@@ -25,6 +26,8 @@ export class InvoiceDetailPageComponent implements OnInit {
   public falconInvoiceNumber = '';
   public milestones: Array<any> = [];
 
+  private subscriptions: Array<Subscription> = [];
+
   public constructor(private webService: WebServices,
                      private router: Router,
                      private route: ActivatedRoute,
@@ -33,10 +36,16 @@ export class InvoiceDetailPageComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const falconInvoiceNumber = params.get('falconInvoiceNumber');
-      falconInvoiceNumber ? this.falconInvoiceNumber = falconInvoiceNumber : this.falconInvoiceNumber = '';
-    });
+    this.subscriptions.push(
+      this.route.paramMap.subscribe(params => {
+        const newFalconInvoiceNumber = params.get('falconInvoiceNumber');
+        this.falconInvoiceNumber = newFalconInvoiceNumber ? newFalconInvoiceNumber : '';
+      })
+    );
+  }
+
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   public updateMilestones(milestones: any): void {
@@ -67,10 +76,17 @@ export class InvoiceDetailPageComponent implements OnInit {
       .subscribe(result => {
         if (result) {
           this.webService.httpDelete(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
-            .subscribe(() => {
-                return this.router.navigate([`/invoices`], {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}});
-              },
-              () => this.snackBar.open(`Failure, invoice was not deleted.`, 'close', {duration: 5 * 1000}));
+            .subscribe(
+              () => this.router.navigate(
+                [`/invoices`],
+                {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}}
+              ),
+              () => this.snackBar.open(
+                `Failure, invoice was not deleted.`,
+                'close',
+                {duration: 5 * 1000}
+              )
+            );
         }
       });
   }
@@ -80,4 +96,5 @@ export class InvoiceDetailPageComponent implements OnInit {
       this.invoiceForm.saveTemplate();
     }
   }
+
 }

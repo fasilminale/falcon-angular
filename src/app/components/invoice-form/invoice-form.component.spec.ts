@@ -126,8 +126,6 @@ describe('InvoiceFormComponent', () => {
     component.vendorNumber.setValue(vendorNumber);
     component.externalInvoiceNumber.setValue(externalInvoiceNumber);
     component.invoiceDate.setValue(invoiceDate);
-    spyOn(component, 'getInvoiceId').and.callFake(() => {
-    });
   });
 
   it('should create', () => {
