@@ -106,4 +106,10 @@ describe('InvoiceDetailPageComponent', () => {
     component.saveAsTemplate();
     expect(component.saveAsTemplate).toHaveBeenCalled();
   });
+
+  it('should call disableInvoice', () => {
+    spyOn(component, 'disableInvoice').and.callThrough();
+    component.disableInvoice(true);
+    expect(component.isDeletedInvoice).toBeTruthy();
+  });
 });

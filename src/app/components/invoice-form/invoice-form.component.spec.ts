@@ -78,7 +78,11 @@ describe('InvoiceFormComponent', () => {
       {
         lineItemNetAmount: 2999.99
       }
-    ]
+    ],
+    status: {
+      key: 'DELETED',
+      label: 'Invoice Deleted'
+    }
   };
 
   const template = {

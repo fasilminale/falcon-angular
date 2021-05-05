@@ -22,6 +22,7 @@ export class InvoiceDetailPageComponent implements OnInit {
 
   public readOnly = true;
   public milestonesTabOpen = false;
+  public isDeletedInvoice = false;
   public falconInvoiceNumber = '';
   public milestones: Array<any> = [];
 
@@ -79,5 +80,9 @@ export class InvoiceDetailPageComponent implements OnInit {
     if (this.invoiceForm) {
       this.invoiceForm.saveTemplate();
     }
+  }
+
+  public disableInvoice(value: boolean): void {
+    this.isDeletedInvoice = value;
   }
 }

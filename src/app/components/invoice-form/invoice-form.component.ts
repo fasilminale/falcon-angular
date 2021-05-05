@@ -69,6 +69,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   @Input() falconInvoiceNumber = '';
   @Output() updateMilestones: EventEmitter<any> = new EventEmitter<any>();
   @Output() toggleMilestones: EventEmitter<any> = new EventEmitter<any>();
+  @Output() isDeletedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   /* CONSTRUCTORS */
 
@@ -231,6 +232,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
           return b.timestamp.localeCompare(a.timestamp);
         }));
+        if(this.invoice.status.key==='DELETED') {
+          this.isDeletedInvoice.emit(true);
+        }
         this.loadingService.hideLoading();
         this.calculateLineItemNetAmount();
       });
