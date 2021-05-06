@@ -100,7 +100,7 @@ describe('InvoiceDetailPageComponent', () => {
 
   it('should create', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
     expect(component).toBeTruthy();
   });
 
@@ -121,7 +121,7 @@ describe('InvoiceDetailPageComponent', () => {
 
   it('should update the readOnly flag', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
     spyOn(component, 'editInvoice').and.callThrough();
     component.editInvoice();
     expect(component.readOnly).toBeFalsy();
@@ -129,18 +129,18 @@ describe('InvoiceDetailPageComponent', () => {
 
   it('should call delete invoice route after confirming delete invoice', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
     spyOn(component, 'deleteInvoice').and.callThrough();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.deleteInvoice();
     expect(dialog.open).toHaveBeenCalled();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
   });
 
   it('should cancel deleting an invoice', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
     spyOn(component, 'deleteInvoice').and.callThrough();
     spyOn(dialog, 'open').and.returnValue(MOCK_DENY_DIALOG);
     component.deleteInvoice();
@@ -149,7 +149,7 @@ describe('InvoiceDetailPageComponent', () => {
 
   it('should fail to delete an invoice', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
     spyOn(component, 'deleteInvoice').and.callThrough();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.deleteInvoice();
@@ -160,7 +160,7 @@ describe('InvoiceDetailPageComponent', () => {
 
   it('should call save template', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
     spyOn(component, 'saveAsTemplate').and.callThrough();
     component.saveAsTemplate();
     expect(component.saveAsTemplate).toHaveBeenCalled();
@@ -168,9 +168,10 @@ describe('InvoiceDetailPageComponent', () => {
 
   it('should call disableInvoice', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(new HttpResponse<never>());
+      .flush(invoiceResponse);
     spyOn(component, 'disableInvoice').and.callThrough();
     component.disableInvoice(true);
     expect(component.isDeletedInvoice).toBeTruthy();
   });
+
 });
