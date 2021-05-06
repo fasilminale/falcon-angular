@@ -28,6 +28,7 @@ import { FalCurrencyInputComponent } from './components/fal-currency-input/fal-c
 import {ApiService} from './services/api-service';
 import {UtilService} from './services/util-service';
 import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
+import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { TemplateInputModalComponent } from './components/template-input-modal/t
     InvoiceFormComponent,
     SearchComponent,
     FalCurrencyInputComponent,
-    TemplateInputModalComponent
+    TemplateInputModalComponent,
+    ManageMyTemplatesComponent,
   ],
   imports: [
     BrowserModule,
