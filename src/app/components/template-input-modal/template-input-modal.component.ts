@@ -1,5 +1,6 @@
 import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
+import {ApiService} from '../../services/api-service';
 
 @Component({
   selector: 'app-template-input-modal',
@@ -17,7 +18,13 @@ import {MatDialogRef} from '@angular/material/dialog';
                id="template-name-input"
                class="form-control"
                [(ngModel)]="template.name"
+               [ngClass]="this.isTemplateDuplicate?'error':''"
         />
+        <small class="error-text"
+               *ngIf="this.isTemplateDuplicate">
+          Template Name already exists
+        </small>
+
       </div>
       <div class="col-12">
         <label for="description-input" class="form-label fieldLabel1 label">
@@ -56,9 +63,12 @@ export class TemplateInputModalComponent implements OnInit {
     name: '',
     description: ''
   };
+
+  isTemplateDuplicate: boolean = false;
+
   @Output() createTemplate: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private dialogRef: MatDialogRef<TemplateInputModalComponent>) {}
+  constructor(private dialogRef: MatDialogRef<TemplateInputModalComponent>,  private api: ApiService) {}
 
   ngOnInit(): void {
   }
@@ -70,8 +80,12 @@ export class TemplateInputModalComponent implements OnInit {
     }
   }
 
-  confirm(): void {
-    this.dialogRef.close(this.template);
+  async  confirm(): Promise<void>  {
+    this.isTemplateDuplicate  = await this.api.checkTemplateIsDuplicate(this.template.name).toPromise();
+
+    if(!this.isTemplateDuplicate) {
+      this.dialogRef.close(this.template);
+    }
   }
 }
 
