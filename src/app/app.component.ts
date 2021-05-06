@@ -11,6 +11,7 @@ import {MenuItem, NavbarItem} from '@elm/elm-styleguide-ui';
 export class AppComponent implements OnInit {
   title = 'elm-falcon-ui';
   dataLoading = true;
+  label = '';
   userMenuItems: Array<MenuItem> = [];
   navBarItems = [
     {
@@ -31,8 +32,9 @@ export class AppComponent implements OnInit {
 
   constructor(private loadingService: LoadingService,
               private router: Router) {
-    this.loadingService.loadingSubject.subscribe(isLoading => {
-      this.dataLoading = isLoading;
+    this.loadingService.loadingSubject.subscribe((args) => {
+      this.dataLoading = args[0] as boolean;
+      this.label = args[1] as string;
     });
   }
 

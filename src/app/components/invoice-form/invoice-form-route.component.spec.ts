@@ -9,7 +9,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {WebServices} from '../../services/web-services';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {environment} from '../../../environments/environment';
-import {ActivatedRoute, convertToParamMap} from '@angular/router';
+import {ActivatedRoute, convertToParamMap, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {ApiService} from '../../services/api-service';
@@ -29,7 +29,15 @@ describe('InvoiceFormComponent ROUTING', () => {
         }
       }
     ],
-    milestones: [],
+    milestones: [{
+      status: 'CREATED',
+      timestamp: '2021-04-19T19:58:41.765Z',
+      user: 'Falcon User'
+    }, {
+      status: 'CREATED',
+      timestamp: '2021-04-20T20:58:41.765Z',
+      user: 'Falcon User'
+    }],
     lineItems: [
       {
         lineItemNetAmount: 2999.99
@@ -40,10 +48,15 @@ describe('InvoiceFormComponent ROUTING', () => {
   let http: HttpTestingController;
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
+  let router: Router;
 
   const route = {
     snapshot: {url: [{path: 'invoice'}, {path: 'F0000000001'}]},
     paramMap: of(convertToParamMap({falconInvoiceNumber: 'F0000000001'}))
+  };
+
+  const mockRouter = {
+    navigate: jasmine.createSpy('navigate')
   };
 
   beforeEach(async () => {
@@ -64,37 +77,57 @@ describe('InvoiceFormComponent ROUTING', () => {
         MatSnackBar,
         ApiService,
         UtilService,
-        {provide: ActivatedRoute, useValue: route}
+        {provide: ActivatedRoute, useValue: route},
+        {provide: Router, useValue: mockRouter}
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
     snackBar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
+    router = TestBed.inject(Router);
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    // http.expectOne(`${environment.baseServiceUrl}/v1/invoice/F0000000001`).flush(invoiceResponse);
-    fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    http.verify();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('Should load data after loading the page', () => {
-    spyOn(component, 'loadData').and.stub();
-    component.loadData();
-    expect(component.loadData).toHaveBeenCalled();
+  describe('Load Data', () => {
+    beforeEach(() => {
+      fixture.detectChanges();
+    });
+
+    afterEach(() => {
+      http.verify();
+    });
+
+    it('Should load data after loading the page', () => {
+      spyOn(component, 'loadData').and.stub();
+      component.loadData();
+      expect(component.loadData).toHaveBeenCalled();
+    });
+
+    it('should toggle the milestones sidenav', () => {
+      spyOn(component, 'toggleSidenav').and.callThrough();
+      component.toggleSidenav();
+      expect(component.toggleSidenav).toHaveBeenCalled();
+    });
+
+    it('should order the milestones from most recent to earliest', () => {
+      spyOn(component.updateMilestones, 'emit').and.callThrough();
+      fixture.detectChanges();
+      component.loadData();
+      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/`).flush(invoiceResponse);
+    });
+
   });
 
-  it('should toggle the milestones sidenav', () => {
-    spyOn(component, 'toggleSidenav').and.callThrough();
-    component.toggleSidenav();
-    expect(component.toggleSidenav).toHaveBeenCalled();
+  it('should route to invoices list if form is readonly', () => {
+    component.readOnly = true;
+    component.onCancel();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/invoices']);
   });
 });

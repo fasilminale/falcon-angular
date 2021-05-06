@@ -94,6 +94,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   /* OUTPUTS */
   @Output() updateMilestones: EventEmitter<any> = new EventEmitter<any>();
   @Output() toggleMilestones: EventEmitter<any> = new EventEmitter<any>();
+  @Output() isDeletedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   /* CHILDREN */
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
@@ -216,7 +217,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public loadData(): void {
-    this.loadingService.showLoading();
+    this.loadingService.showLoading('Loading');
     this.subscriptions.push(
       this.webService.httpGet(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
         .subscribe((invoice: any) => {
@@ -258,7 +259,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           }
           this.attachmentFormGroup.disable();
 
-          this.updateMilestones.emit(invoice.milestones);
+          this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
+            return b.timestamp.localeCompare(a.timestamp);
+          }));
+          if (this.invoice.status.key === 'DELETED') {
+            this.isDeletedInvoice.emit(true);
+          }
           this.loadingService.hideLoading();
           this.calculateLineItemNetAmount();
         })
@@ -351,7 +357,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public async onSubmit(): Promise<void> {
-    this.loadingService.showLoading();
+    this.loadingService.showLoading(this.isOnEditPage ? 'Saving' : 'Submitting');
     try {
       if (this.validateInvoiceAmount()) {
         // IS VALID
@@ -552,6 +558,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.invoiceFormGroup.controls.currency.enable();
     this.invoiceFormGroup.controls.lineItems.enable();
     this.attachmentFormGroup.controls.attachmentType.enable();
+    this.externalAttachment = this.validateExternalAttachment();
   }
 
   public calculateLineItemNetAmount(): void {
