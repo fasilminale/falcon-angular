@@ -21,6 +21,10 @@ export class AppComponent implements OnInit {
     {
       label: 'Invoice List',
       click: () => this.router.navigate(['/invoices'])
+    },
+    {
+      label: 'Manage My Templates',
+      click: () => this.router.navigate(['/templates'])
     }
   ];
 
