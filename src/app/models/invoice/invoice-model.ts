@@ -6,7 +6,7 @@ import {ElmDataTableHeader} from '@elm/elm-styleguide-ui';
 
 export class InvoiceDataModel {
 
-  static invoiceTableHeaders: Array<ElmDataTableHeader> =[
+  static invoiceTableHeaders: Array<ElmDataTableHeader> = [
     {header: 'statusLabel', label: 'Status'},
     {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end'},
     {header: 'externalInvoiceNumber', label: 'External Invoice Number', alignment: 'end'},
@@ -15,7 +15,8 @@ export class InvoiceDataModel {
     {header: 'vendorNumber', label: 'Vendor Number', alignment: 'end'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'createdBy', label: 'Created By'},
-    {header: 'companyCode', label: 'Company Code', alignment: 'end'}
+    {header: 'companyCode', label: 'Company Code', alignment: 'end'},
+    {header: 'standardPaymentTermsOverride', label: 'Override'}
   ];
 
   static dateFormat = 'MM/DD/YYYY';
@@ -33,6 +34,7 @@ export class InvoiceDataModel {
   workType = '';
   erpType = '';
   currency = '';
+  standardPaymentTermsOverride = '';
   lineItems: Array<LineItem> = [];
 
   constructor(json?: any) {
@@ -74,6 +76,9 @@ export class InvoiceDataModel {
     }
     if (json?.currency) {
       this.currency = json.currency;
+    }
+    if (json?.standardPaymentTermsOverride) {
+      this.standardPaymentTermsOverride = json.standardPaymentTermsOverride === 'Z000' ? 'Immediately' : '14 Day';
     }
     if (json?.lineItems) {
       this.lineItems = json.lineItems;
