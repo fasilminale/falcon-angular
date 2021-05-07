@@ -127,8 +127,6 @@ describe('InvoiceFormComponent', () => {
     component.vendorNumber.setValue(vendorNumber);
     component.externalInvoiceNumber.setValue(externalInvoiceNumber);
     component.invoiceDate.setValue(invoiceDate);
-    spyOn(component, 'getInvoiceId').and.callFake(() => {
-    });
   });
 
   it('should create', () => {
@@ -501,4 +499,5 @@ describe('InvoiceFormComponent', () => {
     expect(util.openSnackBar)
       .toHaveBeenCalledWith('Failure, template was not created.');
   });
+
 });

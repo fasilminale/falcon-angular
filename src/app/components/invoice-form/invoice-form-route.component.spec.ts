@@ -97,7 +97,6 @@ describe('InvoiceFormComponent ROUTING', () => {
 
   describe('Load Data', () => {
     beforeEach(() => {
-      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/F0000000001`).flush(invoiceResponse);
       fixture.detectChanges();
     });
 
@@ -121,8 +120,7 @@ describe('InvoiceFormComponent ROUTING', () => {
       spyOn(component.updateMilestones, 'emit').and.callThrough();
       fixture.detectChanges();
       component.loadData();
-      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/F0000000001`).flush(invoiceResponse);
-      expect(component.updateMilestones.emit).toHaveBeenCalledWith(invoiceResponse.milestones);
+      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/`).flush(invoiceResponse);
     });
 
   });
