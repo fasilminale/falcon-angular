@@ -9,6 +9,7 @@ describe('ApiService Tests', () => {
   let api: ApiService;
   let web: WebServices;
   let invoice: any;
+  let template: any;
 
   const testAttachment = {
     file: new File([], 'TestFileBlobName'),
@@ -43,10 +44,29 @@ describe('ApiService Tests', () => {
       externalInvoiceNumber: '3456',
       invoiceDate: new Date()
     };
+
+    template = {
+      name: 'testTemplate',
+      description: 'testDescription'
+    };
   });
 
   it('should create', () => {
     expect(api).toBeTruthy();
+  });
+
+  it('template should be duplicate from matching template name', async () => {
+    spyOn(web, 'httpGet').and.returnValue(of(template));
+    const isDuplicate = await api.checkTemplateIsDuplicate(template.name).toPromise();
+    expect(web.httpGet).toHaveBeenCalled();
+    expect(isDuplicate).toBeTrue();
+  });
+
+  it('template should NOT be duplicate from non-matching template name', async () => {
+    spyOn(web, 'httpGet').and.returnValue(throwError('test error'));
+    const isDuplicate = await api.checkTemplateIsDuplicate("some other name").toPromise();
+    expect(web.httpGet).toHaveBeenCalled();
+    expect(isDuplicate).toBeFalse();
   });
 
   it('should NOT be duplicate from matching falconInvoiceNumber', async () => {
