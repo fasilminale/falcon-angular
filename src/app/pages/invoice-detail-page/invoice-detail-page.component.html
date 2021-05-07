@@ -22,7 +22,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="!readOnly|| isDeletedInvoice"
+                  [isDisabled]="isDeletedInvoice"
                   (buttonClick)="deleteInvoice()">
         Delete
       </elm-button>

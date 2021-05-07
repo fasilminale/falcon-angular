@@ -20,6 +20,7 @@ describe('Invoice Model Tests', () => {
     workType: '',
     erpType: '',
     currency: '',
+    standardPaymentTermsOverride: '',
     lineItems: []
   };
 
@@ -37,6 +38,7 @@ describe('Invoice Model Tests', () => {
     workType: 'Indirect Non-PO Invoice',
     erpType: 'Pharma Corp',
     currency: 'USD',
+    standardPaymentTermsOverride: '',
     lineItems: []
   };
 
@@ -54,6 +56,7 @@ describe('Invoice Model Tests', () => {
     workType: 'Indirect Non-PO Invoice',
     erpType: 'Pharma Corp',
     currency: 'USD',
+    standardPaymentTermsOverride: '',
     lineItems: []
   };
 
@@ -81,15 +84,30 @@ describe('Invoice Model Tests', () => {
     expect(data1.createdDate).toEqual(data2.createdDate);
     expect(data1.workType).toEqual(data2.workType);
     expect(data1.erpType).toEqual(data2.erpType);
+    expect(data1.standardPaymentTermsOverride).toEqual(data2.standardPaymentTermsOverride);
   }
 
-  it('empty CarrierShippingPoint should equal test model', () => {
+  it('empty Invoice should equal test model', () => {
     expect(prototypeEmptyInvoice).not.toBeNull();
     compareInvoice(prototypeEmptyInvoice, expectedEmptyInvoice);
   });
 
-  it('CarrierShippingPoint should equal test model', () => {
+  it('Invoice should equal test model', () => {
     expect(prototypeInvoice).not.toBeNull();
     compareInvoice(prototypeInvoice, expectedInvoice);
+  });
+
+  it('Should validate payment terms immediate value', () => {
+    invoice.standardPaymentTermsOverride = 'Z000';
+    const termsInvoiceTest = new InvoiceDataModel(invoice);
+    expect(termsInvoiceTest).not.toBeNull();
+    expect(termsInvoiceTest.standardPaymentTermsOverride).toEqual('Immediately');
+  });
+
+  it('Should validate payment terms 14 day value', () => {
+    invoice.standardPaymentTermsOverride = 'ZN14';
+    const termsInvoiceTest = new InvoiceDataModel(invoice);
+    expect(termsInvoiceTest).not.toBeNull();
+    expect(termsInvoiceTest.standardPaymentTermsOverride).toEqual('14 Day');
   });
 });
