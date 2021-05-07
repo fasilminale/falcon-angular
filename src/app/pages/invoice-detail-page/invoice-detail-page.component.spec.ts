@@ -27,6 +27,31 @@ describe('InvoiceDetailPageComponent', () => {
   });
 
   const falconInvoiceNumber = 'F0000000001';
+  const invoiceResponse = {
+    falconInvoiceNumber: 'F0000000001',
+    amountOfInvoice: 2999.99,
+    attachments: [
+      {
+        file: {
+          name: 'test'
+        }
+      }
+    ],
+    milestones: [{
+      status: 'CREATED',
+      timestamp: '2021-04-19T19:58:41.765Z',
+      user: 'Falcon User'
+    }, {
+      status: 'CREATED',
+      timestamp: '2021-04-20T20:58:41.765Z',
+      user: 'Falcon User'
+    }],
+    lineItems: [
+      {
+        lineItemNetAmount: 2999.99
+      }
+    ]
+  };
 
   let component: InvoiceDetailPageComponent;
   let fixture: ComponentFixture<InvoiceDetailPageComponent>;
@@ -37,9 +62,25 @@ describe('InvoiceDetailPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
-      declarations: [InvoiceDetailPageComponent, InvoiceFormComponent],
-      providers: [WebServices, ApiService, UtilService, MatDialog, LoadingService, MatSnackBar],
+      imports: [
+        RouterTestingModule,
+        HttpClientTestingModule,
+        MatSnackBarModule,
+        NoopAnimationsModule,
+        MatDialogModule
+      ],
+      declarations: [
+        InvoiceDetailPageComponent,
+        InvoiceFormComponent
+      ],
+      providers: [
+        WebServices,
+        ApiService,
+        UtilService,
+        MatDialog,
+        LoadingService,
+        MatSnackBar
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
@@ -58,35 +99,48 @@ describe('InvoiceDetailPageComponent', () => {
   });
 
   it('should create', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     expect(component).toBeTruthy();
   });
 
   it('should toggle the milestones sidenav', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     component.toggleMilestones();
     expect(component.milestonesTabOpen).toBeTrue();
   });
 
   it('should update the milestones sidenav', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     spyOn(component, 'updateMilestones').and.callThrough();
     component.updateMilestones({});
     expect(component.updateMilestones).toHaveBeenCalled();
   });
 
   it('should update the readOnly flag', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     spyOn(component, 'editInvoice').and.callThrough();
     component.editInvoice();
     expect(component.readOnly).toBeFalsy();
   });
 
   it('should call delete invoice route after confirming delete invoice', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     spyOn(component, 'deleteInvoice').and.callThrough();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.deleteInvoice();
     expect(dialog.open).toHaveBeenCalled();
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`).flush(new HttpResponse<never>());
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
   });
 
   it('should cancel deleting an invoice', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     spyOn(component, 'deleteInvoice').and.callThrough();
     spyOn(dialog, 'open').and.returnValue(MOCK_DENY_DIALOG);
     component.deleteInvoice();
@@ -94,22 +148,30 @@ describe('InvoiceDetailPageComponent', () => {
   });
 
   it('should fail to delete an invoice', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     spyOn(component, 'deleteInvoice').and.callThrough();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.deleteInvoice();
     expect(dialog.open).toHaveBeenCalled();
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`).error(new ErrorEvent('Delete Invoice Failed'));
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .error(new ErrorEvent('Delete Invoice Failed'));
   });
 
   it('should call save template', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     spyOn(component, 'saveAsTemplate').and.callThrough();
     component.saveAsTemplate();
     expect(component.saveAsTemplate).toHaveBeenCalled();
   });
 
   it('should call disableInvoice', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
     spyOn(component, 'disableInvoice').and.callThrough();
     component.disableInvoice(true);
     expect(component.isDeletedInvoice).toBeTruthy();
   });
+
 });
