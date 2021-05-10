@@ -20,7 +20,6 @@ export class ManageMyTemplatesComponent implements OnInit {
   ngOnInit() {
     this.apiService.getTemplates().subscribe(
       (templates) => {
-        console.log(templates);
         templates.map((template: any) => {
           this.templates.push(new Template(template));
         });;
@@ -42,11 +41,9 @@ export class ManageMyTemplatesComponent implements OnInit {
       }
     }
 
-    updateTemplate(template: Template) {
+    private updateTemplate(template: Template) {
       this.apiService.updateTemplate(template.name, template).subscribe(
-        (data) => {
-          template.description = data.description;
-          template.createdDate = data.createdDate;
+        () => {
           this.onSaveSuccess();
         }
       )
