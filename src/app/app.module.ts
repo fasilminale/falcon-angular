@@ -29,6 +29,7 @@ import {ApiService} from './services/api-service';
 import {UtilService} from './services/util-service';
 import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
 import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-m
     MatDialogModule,
     MatSidenavModule,
     MatListModule,
+    MatTableModule,
     NgbModule,
     NgxCurrencyModule
   ],

@@ -5,3 +5,89 @@
     </div>
   </div>
 </div>
+<cardinal-card>
+  <cardinal-section-header [sectionTitle]="'My Templates'">
+  </cardinal-section-header>
+
+  <!--
+    <table class="table" *ngIf="templates">
+    <thead>
+      <tr>
+        <th scope="col">Created Date</th>
+        <th scope="col">Template Name</th>
+        <th scope="col">Description<em>(optional)</em></th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let template of templates">
+        <td class="col-1">{{template.createdDate | date : 'MM/dd/yyyy'}}</td>
+        <td class="col-4"><input type="text=" [value]="template.name" [disabled]="template.isDisable" class="col-12"></td>
+        <td class="col-5"><input type="text=" [value]="template.description" [disabled]="template.isDisable" class="col-12"></td>
+        <td class="col-2">
+          <a>
+            <i (click)="editTemplate(template)">
+            {{template.isDisable ? 'edit' : 'submit' }}
+          </i>
+        </a>
+          <a [style.visibility]="template.isDisable ? 'hidden' : 'visible'"><i (click)="cancelTemplate(template)">cancel</i></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+-->
+  <table *ngIf="templates && templates.length > 0; else noData" mat-table [dataSource]="templates" class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+    <!-- Position Column -->
+    <ng-container matColumnDef="createdDate">
+      <th mat-header-cell *matHeaderCellDef> Created Date </th>
+      <td mat-cell *matCellDef="let template"> {{template.createdDate | date : 'MM/dd/yyyy'}}</td>
+    </ng-container>
+  
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let template">
+        <input type="text=" [value]="template.name" [disabled]="template.isDisable" class="col-11 form-control">
+      </td>
+    </ng-container>
+  
+    <!-- Weight Column -->
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef> Description </th>
+      <td mat-cell *matCellDef="let template">
+        <input type="text=" [value]="template.description" [disabled]="template.isDisable" class="form-control col-11">
+      </td>
+    </ng-container>
+  
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let template"> 
+       
+        <span *ngIf="template.isDisable ; else submit" role="button" class="material-icons material-icons-outlined" (click)="editTemplate(template)">
+          edit
+         </span>
+         <ng-template #submit>
+          <span role="button" class="material-icons material-icons-outlined" (click)="editTemplate(template)">
+            done
+           </span>
+           <span role="button" class="material-icons material-icons-outlined" (click)="cancelTemplate(template)">
+            block
+           </span>
+         </ng-template>
+         
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  
+  <ng-template #noData>
+    <p>You have no templates available</p>
+  </ng-template>
+</cardinal-card>

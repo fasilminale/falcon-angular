@@ -10,3 +10,45 @@
   padding: 0 24px 16px;
   min-height: 120px;
 }
+
+table {
+  width: 100%;
+  box-shadow: none;
+  td, th {
+    padding: 0 10px;
+
+    span {
+      margin-right: 10px;
+    }
+  }
+  tr.mat-header-row {
+    height: unset;
+  }
+}
+.mat-header-cell {
+  font-size: inherit;
+  font-weight: bolder;
+  color: inherit;
+
+}
+.mat-cell.mat-column-createdDate{
+  flex: 0 0 8%;
+  width: 8%;
+  text-align: center;
+}
+.mat-column-name{
+  flex: 0 0 30%;
+  width: 30%;
+}
+.mat-column-description{
+  flex: 0 0 50%;
+  width: 50%;
+}
+.mat-column-action{
+  flex: 0 0 10%;
+  width: 10%;
+}
+
+th.mat-header-cell, td.mat-cell {
+  border-bottom-color: #dedcd5;
+}
