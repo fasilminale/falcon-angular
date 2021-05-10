@@ -26,6 +26,21 @@ export class ApiService {
       );
   }
 
+  public checkTemplateIsDuplicate(templateName: any): Observable<boolean> {
+    return this.checkTemplateExists(templateName)
+      .pipe(
+        mergeMap((response: any) => {
+            return response
+              ? of(response.name === templateName)
+              : of(true);
+          }
+        ),
+        catchError(() =>
+          of(false)
+        )
+      );
+  }
+
   /**
    * Returns the invoice if it is valid,
    *   a 404 if the invoice is not found,
@@ -42,6 +57,14 @@ export class ApiService {
       }
     );
   }
+
+  public checkTemplateExists(templateName: any): Observable<any> {
+    return this.web.httpGet(
+      `${environment.baseServiceUrl}/v1/template/${templateName}`
+    );
+  }
+
+
 
   /**
    * Calls either updateInvoice(invoice) or createInvoice(invoice) depending.
