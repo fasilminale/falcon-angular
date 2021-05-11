@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Template } from 'src/app/models/template/template-model';
+import { ApiService } from 'src/app/services/api-service';
+import { UtilService } from 'src/app/services/util-service';
 
 @Component({
   selector: 'app-manage-my-templates',
@@ -7,9 +10,58 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ManageMyTemplatesComponent implements OnInit {
 
-  constructor() { }
+  templates: Array<Template> = [];
+  displayedColumns: string[] = ['createdDate', 'name', 'description', 'action'];
+
+  constructor(
+    private apiService: ApiService,
+    private util: UtilService,
+  ) { }
 
   ngOnInit() {
-  }
+    this.apiService.getTemplates().subscribe(
+      (templates) => {
+        templates.map((template: any) => {
+          this.templates.push(new Template(template));
+        });;
+      });
+    }
 
+    editTemplate(template: Template) {
+      if (template.isDisable ) {
+        template.isDisable = false;
+        template.tempDescription = template.description;
+        template.tempName = template.name;
+      } else {
+        template.isDisable = true;
+        this.updateTemplate(template);
+      }
+    }
+
+    cancelTemplate(template: Template) {
+      if (!template.isDisable ) {
+        template.isDisable = true;
+        template.description = template.tempDescription ? template.tempDescription : '';
+        template.name = template.tempName ? template.tempName : '';
+      }
+    }
+
+    private updateTemplate(template: Template) {
+      this.apiService.updateTemplate(template.name, template).subscribe(
+        (data) => {
+          template.createdDate = data.createdDate;
+          this.onSaveSuccess();
+        },
+        (error: any) => {
+          this.onSaveFail();
+        }
+      )
+    }
+
+    private onSaveSuccess(): void {
+      this.util.openSnackBar(`Success! Template has been updated.`);
+    }
+    private onSaveFail(): void {
+      this.util.openSnackBar(`Failure! Template has been failed.`);
+    }
 }
