@@ -30,8 +30,6 @@ export class ManageMyTemplatesComponent implements OnInit {
     editTemplate(template: Template) {
       if (template.isDisable ) {
         template.isDisable = false;
-        template.tempDescription = template.description;
-        template.tempName = template.name;
       } else {
         template.isDisable = true;
         this.updateTemplate(template);
@@ -41,8 +39,6 @@ export class ManageMyTemplatesComponent implements OnInit {
     cancelTemplate(template: Template) {
       if (!template.isDisable ) {
         template.isDisable = true;
-        template.description = template.tempDescription ? template.tempDescription : '';
-        template.name = template.tempName ? template.tempName : '';
       }
     }
 
