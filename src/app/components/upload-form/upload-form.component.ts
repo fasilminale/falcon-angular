@@ -17,7 +17,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
   ];
 
   @Input() isDisabled = false;
-  @Output() componentChange?: EventEmitter<UploadFormComponent>;
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
 
   /* FORM CONTROLS */
@@ -47,7 +46,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
     if (changes?.isDisabled) {
       this.syncControlState();
     }
-    this.componentChange?.emit(this);
   }
 
   /* OTHER METHODS */
@@ -55,20 +53,18 @@ export class UploadFormComponent implements OnInit, OnChanges {
     this.reset();
     attachmentData.filter(a => !a.deleted)
       .forEach(a => this.attachments.push({
-        file: new File([], a?.fileName ? a?.fileName : ''),
+        file: new File([], a.fileName ?? ''),
         type: a.type,
         uploadError: false,
         action: 'NONE'
       }));
     this.externalAttachment = this.validateExternalAttachment();
-    this.componentChange?.emit(this);
   }
 
   public reset(): void {
     this.attachments = [];
     [this.formGroup, this.attachmentType, this.file]
       .forEach(c => c.reset());
-    this.componentChange?.emit(this);
   }
 
   private syncControlState(): void {
@@ -90,7 +86,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
       this.externalAttachment = this.validateExternalAttachment();
       this.fileChooserInput?.reset();
     }
-    this.componentChange?.emit(this);
   }
 
   public async removeAttachment(index: number): Promise<void> {
@@ -104,7 +99,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
       }
       this.externalAttachment = this.validateExternalAttachment();
       this.util.openSnackBar(`Success! ${attachment.file.name} was removed.`);
-      this.componentChange?.emit(this);
     }
   }
 
@@ -129,7 +123,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
 
 export interface Attachment {
   file: File;
-  fileName?: string;
   type: string;
   uploadError: boolean;
   action: 'UPLOAD' | 'DELETE' | 'NONE';

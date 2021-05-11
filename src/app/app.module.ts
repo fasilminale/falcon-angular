@@ -29,6 +29,7 @@ import {ApiService} from './services/api-service';
 import {UtilService} from './services/util-service';
 import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
 import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
+import { MatTableModule } from '@angular/material/table';
 import { UploadFormComponent } from './components/upload-form/upload-form.component';
 
 @NgModule({
@@ -65,6 +66,7 @@ import { UploadFormComponent } from './components/upload-form/upload-form.compon
     MatDialogModule,
     MatSidenavModule,
     MatListModule,
+    MatTableModule,
     NgbModule,
     NgxCurrencyModule
   ],

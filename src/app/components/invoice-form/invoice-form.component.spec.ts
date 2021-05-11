@@ -111,7 +111,6 @@ describe('InvoiceFormComponent', () => {
         MatSnackBar,
         MatDialog,
         LoadingService,
-        MatSnackBar,
         ApiService,
         UtilService
       ],
@@ -347,9 +346,12 @@ describe('InvoiceFormComponent', () => {
     component.falconInvoiceNumber = '';
     const testFile = new File([], 'test file');
     const testType = 'test type';
-    component.attachmentFormGroup.controls.file.setValue(testFile);
-    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
-    component.addAttachment();
+    component.uploadFormComponent?.attachments?.push({
+      file: testFile,
+      type: testType,
+      uploadError: false,
+      action: 'NONE'
+    });
     await component.onSubmit();
     expect(component.resetForm).not.toHaveBeenCalled();
   });
@@ -376,80 +378,6 @@ describe('InvoiceFormComponent', () => {
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     expect(component.resetForm).toHaveBeenCalled();
-  });
-
-  it('should add attachment', () => {
-    const testFile = new File([], 'test file');
-    const testType = 'test type';
-    component.attachmentFormGroup.controls.file.setValue(testFile);
-    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
-    component.addAttachment();
-    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false, action: 'UPLOAD'}]);
-  });
-
-  it('should reset form controls on attachment add', () => {
-    const testFile = new File([], 'test file');
-    const testType = 'test type';
-    component.attachmentFormGroup.controls.file.setValue(testFile);
-    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
-    component.addAttachment();
-    expect(component.attachmentFormGroup.controls.file.value).toBeFalsy();
-    expect(component.attachmentFormGroup.controls.attachmentType.value).toBeFalsy();
-  });
-
-  it('should remove attachment', async () => {
-    const testFile = new File([], 'test file');
-    const testType = 'test type';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
-    component.attachmentFormGroup.controls.file.setValue(testFile);
-    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
-    component.addAttachment();
-    await component.removeAttachment(0);
-    expect(component.attachments).toEqual([]);
-  });
-
-  it('should not remove attachment', async () => {
-    const testFile = new File([], 'test file');
-    const testType = 'test type';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
-    component.attachmentFormGroup.controls.file.setValue(testFile);
-    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
-    component.addAttachment();
-    await component.removeAttachment(0);
-    expect(component.attachments).toHaveSize(1);
-  });
-
-  it('should validate an external attachment exists', () => {
-    const testFile = new File([], 'test file');
-    const testType = 'EXTERNAL';
-    component.attachmentFormGroup.controls.file.setValue(testFile);
-    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
-    component.addAttachment();
-    expect(component.externalAttachment).toBeTrue();
-  });
-
-  it('should fail external attachment validation', async () => {
-    const testFile = new File([], 'test file');
-    const testType = 'EXTERNAL';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
-    component.attachmentFormGroup.controls.file.setValue(testFile);
-    component.attachmentFormGroup.controls.attachmentType.setValue(testType);
-    component.addAttachment();
-    await component.removeAttachment(0);
-    expect(component.externalAttachment).toBeFalse();
-  });
-
-  it('should not modify attachment', async () => {
-    const attachment: any = {
-      file: new File([], 'test file'),
-      type: 'test type',
-      uploadError: false,
-      action: 'NONE'
-    };
-    component.attachments.push(attachment);
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
-    await component.removeAttachment(0);
-    expect(component.attachments).toHaveSize(1);
   });
 
   it('should disable line item remove button on form reset', () => {

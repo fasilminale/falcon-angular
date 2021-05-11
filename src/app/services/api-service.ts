@@ -1,6 +1,6 @@
 import {WebServices} from './web-services';
 import {catchError, mergeMap} from 'rxjs/operators';
-import {forkJoin, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
 import {Template} from '../components/invoice-form/invoice-form.component';
@@ -116,5 +116,13 @@ export class ApiService {
 
   public createTemplate(template: Template): Observable<any> {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/template`, template);
+  }
+
+  public getTemplates(): Observable<any> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/templates`);
+  }
+
+  public updateTemplate(name: string, template: Template): Observable<any> {
+    return this.web.httpPut(`${environment.baseServiceUrl}/v1/template/${name}`, template);
   }
 }
