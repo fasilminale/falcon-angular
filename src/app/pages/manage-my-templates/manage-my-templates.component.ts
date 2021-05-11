@@ -12,6 +12,7 @@ export class ManageMyTemplatesComponent implements OnInit {
 
   templates: Array<Template> = [];
   displayedColumns: string[] = ['createdDate', 'name', 'description', 'action'];
+
   constructor(
     private apiService: ApiService,
     private util: UtilService,
@@ -29,6 +30,8 @@ export class ManageMyTemplatesComponent implements OnInit {
     editTemplate(template: Template) {
       if (template.isDisable ) {
         template.isDisable = false;
+        template.tempDescription = template.description;
+        template.tempName = template.name;
       } else {
         template.isDisable = true;
         this.updateTemplate(template);
@@ -38,18 +41,27 @@ export class ManageMyTemplatesComponent implements OnInit {
     cancelTemplate(template: Template) {
       if (!template.isDisable ) {
         template.isDisable = true;
+        template.description = template.tempDescription ? template.tempDescription : '';
+        template.name = template.tempName ? template.tempName : '';
       }
     }
 
     private updateTemplate(template: Template) {
       this.apiService.updateTemplate(template.name, template).subscribe(
-        () => {
+        (data) => {
+          template.createdDate = data.createdDate;
           this.onSaveSuccess();
+        },
+        (error: any) => {
+          this.onSaveFail();
         }
       )
     }
 
     private onSaveSuccess(): void {
       this.util.openSnackBar(`Success! Template has been updated.`);
+    }
+    private onSaveFail(): void {
+      this.util.openSnackBar(`Failure! Template has been failed.`);
     }
 }

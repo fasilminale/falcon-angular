@@ -14,12 +14,15 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { UtilService } from 'src/app/services/util-service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { Template } from 'src/app/models/template/template-model';
+import { of, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 describe('ManageMyTemplatesComponent', () => {
   let component: ManageMyTemplatesComponent;
   let fixture: ComponentFixture<ManageMyTemplatesComponent>;
   let apiService: ApiService;
   let webservice: WebServices;
+  let util: UtilService;
   let http: HttpTestingController;
 
   let template: Template = new Template({
@@ -44,7 +47,12 @@ describe('ManageMyTemplatesComponent', () => {
       createdDate: '',
     }
   ]
-
+  let updatedTemplate: Template = new Template({
+    description: 'test',
+    name:'test',
+    isDisable: true,
+    createdDate: '2021-01-01'
+  });
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
@@ -61,6 +69,7 @@ describe('ManageMyTemplatesComponent', () => {
     http = TestBed.inject(HttpTestingController);
     webservice = TestBed.inject(WebServices);
     apiService = TestBed.inject(ApiService);
+    util = TestBed.inject(UtilService);
     fixture.detectChanges();
   });
 
@@ -75,15 +84,30 @@ describe('ManageMyTemplatesComponent', () => {
     expect(component.templates.length).toEqual(1);
   }));
 
-  it('should edit template',  fakeAsync(() => {
+  it('should enable edit template',  fakeAsync(() => {
     component.editTemplate(template);
     const isDisable = template.isDisable;
     expect(isDisable).toBeFalse();
-    tick(1500);
-    component.editTemplate(template);
-    const req = http.expectOne(`${environment.baseServiceUrl}/v1/template/${template.name}`);
-    expect(req.request.method).toBe('PUT');
+
   }));
+
+  it('should edit template',  () => {
+    template.isDisable = false;
+    spyOn(util, 'openSnackBar').and.stub();
+    const spy = spyOn(apiService, 'updateTemplate').and.returnValue(of(updatedTemplate));
+    component.editTemplate(template);
+    const createdDate = template.createdDate;
+    expect(createdDate).toEqual(updatedTemplate.createdDate);
+    expect(util.openSnackBar).toHaveBeenCalledWith(`Success! Template has been updated.`);
+  });
+
+  it('should edit template failed',  () => {
+    template.isDisable = false;
+    spyOn(util, 'openSnackBar').and.stub();
+    spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 404}));
+    component.editTemplate(template);
+    expect(util.openSnackBar).toHaveBeenCalledWith(`Failure! Template has been failed.`);
+  });
 
   it('should cancel edit template',  fakeAsync(() => {
     template.isDisable = false;
