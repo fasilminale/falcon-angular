@@ -29,6 +29,7 @@ import {ApiService} from './services/api-service';
 import {UtilService} from './services/util-service';
 import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
 import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
+import { UploadFormComponent } from './components/upload-form/upload-form.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-m
     FalCurrencyInputComponent,
     TemplateInputModalComponent,
     ManageMyTemplatesComponent,
+    UploadFormComponent,
   ],
   imports: [
     BrowserModule,
