@@ -242,7 +242,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           }
 
           // Attachments
-          this.uploadFormComponent?.load(invoice.attachments);
+          if (this.uploadFormComponent) {
+            this.uploadFormComponent.load(invoice.attachments);
+          }
 
           this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
             return b.timestamp.localeCompare(a.timestamp);
@@ -260,7 +262,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.invoiceFormGroup.reset();
     this.osptFormGroup.reset();
     this.lineItemsFormArray.clear();
-    this.uploadFormComponent?.reset();
+    if (this.uploadFormComponent) {
+      this.uploadFormComponent.reset();
+    }
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
     // set default currency to USD
