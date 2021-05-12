@@ -30,6 +30,7 @@ import {UtilService} from './services/util-service';
 import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
 import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
 import { MatTableModule } from '@angular/material/table';
+import { UploadFormComponent } from './components/upload-form/upload-form.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { MatTableModule } from '@angular/material/table';
     FalCurrencyInputComponent,
     TemplateInputModalComponent,
     ManageMyTemplatesComponent,
+    UploadFormComponent,
   ],
   imports: [
     BrowserModule,

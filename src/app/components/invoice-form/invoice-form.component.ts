@@ -30,6 +30,7 @@ import {ApiService} from '../../services/api-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
 import {Subscription} from 'rxjs';
+import {UploadFormComponent} from '../upload-form/upload-form.component';
 
 interface Attachment {
   file: File;
@@ -73,13 +74,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   ];
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
-  public attachmentFormGroup: FormGroup;
   public osptFormGroup: FormGroup;
   public validAmount = true;
-  public externalAttachment = true;
   public file = null;
-  public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
-  public attachments: Array<Attachment> = [];
   public totallineItemNetAmount = 0;
 
   /* PRIVATE FIELDS */
@@ -98,6 +95,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   /* CHILDREN */
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
+  @ViewChild(UploadFormComponent) uploadFormComponent?: UploadFormComponent;
 
   /* CONSTRUCTORS */
   public constructor(private webService: WebServices,
@@ -117,11 +115,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
       amountOfInvoice: new FormControl({value: '0', disabled: this.readOnly}, [required]),
       currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
       lineItems: new FormArray([])
-    });
-
-    this.attachmentFormGroup = new FormGroup({
-      attachmentType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      file: new FormControl({value: null, disabled: this.readOnly}, [required])
     });
 
     this.osptFormGroup = new FormGroup({
@@ -249,15 +242,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           }
 
           // Attachments
-          for (const attachment of invoice.attachments.filter((a: any) => !a.deleted)) {
-            this.attachments.push({
-              file: new File([], attachment.fileName),
-              type: attachment.type,
-              uploadError: false,
-              action: 'NONE'
-            });
-          }
-          this.attachmentFormGroup.disable();
+          this.uploadFormComponent?.load(invoice.attachments);
 
           this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
             return b.timestamp.localeCompare(a.timestamp);
@@ -275,7 +260,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.invoiceFormGroup.reset();
     this.osptFormGroup.reset();
     this.lineItemsFormArray.clear();
-    this.attachments = [];
+    this.uploadFormComponent?.reset();
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
     // set default currency to USD
@@ -378,7 +363,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
             this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
             const attachedSuccess = await this.api.saveAttachments(
               savedInvoice.falconInvoiceNumber,
-              this.attachments
+              this.uploadFormComponent?.attachments ?? []
             ).toPromise();
             if (attachedSuccess) {
               // ATTACH SUCCESS
@@ -436,12 +421,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     }
     this.validAmount = sum.toFixed(2) === invoiceAmount;
     return this.validAmount;
-  }
-
-  public validateExternalAttachment(): boolean {
-    return this.attachments.some(attachment =>
-      (attachment.type === 'EXTERNAL' || attachment.type === 'External Invoice') && attachment.action !== 'DELETE'
-    );
   }
 
   public onInvoiceInvalidated(): void {
@@ -504,45 +483,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.util.openSnackBar(`Failure, template was not created.`);
   }
 
-  public addAttachment(): void {
-    const attachmentFileValue = this.attachmentFormGroup.controls.file.value;
-    const attachmentTypeValue = this.attachmentFormGroup.controls.attachmentType.value;
-    if (attachmentFileValue && attachmentTypeValue) {
-      this.attachments.push({
-        uploadError: false,
-        file: attachmentFileValue,
-        type: attachmentTypeValue,
-        action: 'UPLOAD'
-      });
-      this.attachmentFormGroup.reset();
-      this.externalAttachment = this.validateExternalAttachment();
-      const fileChooserInput = this.fileChooserInput;
-      if (fileChooserInput) {
-        fileChooserInput.reset();
-      }
-    }
-  }
-
-  public async removeAttachment(index: number): Promise<void> {
-    const result = await this.util.openConfirmationModal({
-      title: 'Remove Attachment',
-      innerHtmlMessage: `Are you sure you want to remove this attachment?
-            <br/><br/><strong>This action cannot be undone.</strong>`,
-      confirmButtonText: 'Remove Attachment',
-      cancelButtonText: 'Cancel'
-    }).toPromise();
-    if (result === 'confirm' && this.attachments.length > index) {
-      const attachment = this.attachments[index];
-      if (attachment.action === 'NONE') {
-        attachment.action = 'DELETE';
-      } else {
-        this.attachments.splice(index, 1);
-      }
-      this.externalAttachment = this.validateExternalAttachment();
-      this.onRemoveAttachmentSuccess(attachment.file.name);
-    }
-  }
-
   public toggleSidenav(): void {
     this.toggleMilestones.emit();
   }
@@ -557,8 +497,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.invoiceFormGroup.controls.amountOfInvoice.enable();
     this.invoiceFormGroup.controls.currency.enable();
     this.invoiceFormGroup.controls.lineItems.enable();
-    this.attachmentFormGroup.controls.attachmentType.enable();
-    this.externalAttachment = this.validateExternalAttachment();
   }
 
   public calculateLineItemNetAmount(): void {

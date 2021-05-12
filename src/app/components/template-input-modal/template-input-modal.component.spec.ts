@@ -1,10 +1,9 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { TemplateInputModalComponent } from './template-input-modal.component';
+import {TemplateInputModalComponent} from './template-input-modal.component';
 import {MatDialogRef} from '@angular/material/dialog';
-import {By} from '@angular/platform-browser';
-import {ApiService} from "../../services/api-service";
-import {Observable, of} from 'rxjs';
+import {ApiService} from '../../services/api-service';
+import {of} from 'rxjs';
 
 describe('InputModalComponent', () => {
   let component: TemplateInputModalComponent;
@@ -13,22 +12,24 @@ describe('InputModalComponent', () => {
   let api: ApiService;
 
   const dialogMock = {
-    close: () => { }
+    close: () => {
+    }
   };
 
   const apiMock = {
-    checkTemplateIsDuplicate: () => { }
+    checkTemplateIsDuplicate: () => {
+    }
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TemplateInputModalComponent ],
+      declarations: [TemplateInputModalComponent],
       providers: [
-        { provide: MatDialogRef, useValue: dialogMock },
-        { provide: ApiService, useValue: apiMock }
+        {provide: MatDialogRef, useValue: dialogMock},
+        {provide: ApiService, useValue: apiMock}
       ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -43,14 +44,14 @@ describe('InputModalComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('dialog should be closed after confirm()', async() => {
+  it('dialog should be closed after confirm()', async () => {
     spyOn(dialogRef, 'close').and.callThrough();
     spyOn(api, 'checkTemplateIsDuplicate').and.returnValue(of(false));
     await component.confirm();
     expect(dialogRef.close).toHaveBeenCalled();
   });
 
-  it('dialog should NOT be closed after confirm() with duplicate template name', async() => {
+  it('dialog should NOT be closed after confirm() with duplicate template name', async () => {
     spyOn(api, 'checkTemplateIsDuplicate').and.returnValue(of(true));
     spyOn(dialogRef, 'close').and.callThrough();
     await component.confirm();

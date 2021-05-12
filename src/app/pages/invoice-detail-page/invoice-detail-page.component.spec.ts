@@ -14,6 +14,7 @@ import {HttpResponse} from '@angular/common/http';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
 import {ApiService} from '../../services/api-service';
 import {UtilService} from '../../services/util-service';
+import {Router} from '@angular/router';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -59,6 +60,7 @@ describe('InvoiceDetailPageComponent', () => {
   let snackBar: MatSnackBar;
   let loadingService: LoadingService;
   let dialog: MatDialog;
+  let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -84,6 +86,7 @@ describe('InvoiceDetailPageComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
     snackBar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
     loadingService = TestBed.inject(LoadingService);
@@ -130,12 +133,13 @@ describe('InvoiceDetailPageComponent', () => {
   it('should call delete invoice route after confirming delete invoice', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
       .flush(invoiceResponse);
-    spyOn(component, 'deleteInvoice').and.callThrough();
+    spyOn(router, 'navigate').and.stub();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.deleteInvoice();
     expect(dialog.open).toHaveBeenCalled();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
       .flush(invoiceResponse);
+    expect(router.navigate).toHaveBeenCalled();
   });
 
   it('should cancel deleting an invoice', () => {

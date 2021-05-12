@@ -1,21 +1,19 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
-import { ManageMyTemplatesComponent } from './manage-my-templates.component';
-import { ApiService } from 'src/app/services/api-service';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { environment } from 'src/environments/environment';
-import { WebServices } from 'src/app/services/web-services';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '@angular/router/testing';
-import { UtilService } from 'src/app/services/util-service';
-import { MatDialogModule } from '@angular/material/dialog';
-import { Template } from 'src/app/models/template/template-model';
-import { of, throwError } from 'rxjs';
-import { Observable } from 'rxjs';
+import {ManageMyTemplatesComponent} from './manage-my-templates.component';
+import {ApiService} from 'src/app/services/api-service';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {environment} from 'src/environments/environment';
+import {WebServices} from 'src/app/services/web-services';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {RouterTestingModule} from '@angular/router/testing';
+import {UtilService} from 'src/app/services/util-service';
+import {MatDialogModule} from '@angular/material/dialog';
+import {Template} from 'src/app/models/template/template-model';
+import {of, throwError} from 'rxjs';
 
 describe('ManageMyTemplatesComponent', () => {
   let component: ManageMyTemplatesComponent;
@@ -27,7 +25,7 @@ describe('ManageMyTemplatesComponent', () => {
 
   let template: Template = new Template({
     description: '',
-    name:'test',
+    name: 'test',
     isDisable: true,
     createdDate: '',
     lineItems: [
@@ -42,25 +40,25 @@ describe('ManageMyTemplatesComponent', () => {
   let templateData = [
     {
       description: '',
-      name:'',
+      name: '',
       isDisable: true,
       createdDate: '',
     }
-  ]
+  ];
   let updatedTemplate: Template = new Template({
     description: 'test',
-    name:'test',
+    name: 'test',
     isDisable: true,
     createdDate: '2021-01-01'
   });
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
-      declarations: [ ManageMyTemplatesComponent ],
+      declarations: [ManageMyTemplatesComponent],
       providers: [ApiService, WebServices, UtilService],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -77,21 +75,21 @@ describe('ManageMyTemplatesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get table data',  fakeAsync(() => {
+  it('should get table data', fakeAsync(() => {
     //component.ngOnInit();
     http.expectOne(`${environment.baseServiceUrl}/v1/templates`).flush(templateData);
     tick();
     expect(component.templates.length).toEqual(1);
   }));
 
-  it('should enable edit template',  fakeAsync(() => {
+  it('should enable edit template', fakeAsync(() => {
     component.editTemplate(template);
     const isDisable = template.isDisable;
     expect(isDisable).toBeFalse();
 
   }));
 
-  it('should edit template',  () => {
+  it('should edit template', () => {
     template.isDisable = false;
     spyOn(util, 'openSnackBar').and.stub();
     const spy = spyOn(apiService, 'updateTemplate').and.returnValue(of(updatedTemplate));
@@ -101,7 +99,7 @@ describe('ManageMyTemplatesComponent', () => {
     expect(util.openSnackBar).toHaveBeenCalledWith(`Success! Template has been updated.`);
   });
 
-  it('should edit template failed',  () => {
+  it('should edit template failed', () => {
     template.isDisable = false;
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 404}));
@@ -109,7 +107,7 @@ describe('ManageMyTemplatesComponent', () => {
     expect(util.openSnackBar).toHaveBeenCalledWith(`Failure! Template has been failed.`);
   });
 
-  it('should cancel edit template',  fakeAsync(() => {
+  it('should cancel edit template', fakeAsync(() => {
     template.isDisable = false;
     component.cancelTemplate(template);
     const isDisable = template.isDisable;

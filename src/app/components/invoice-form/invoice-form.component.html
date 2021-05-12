@@ -155,11 +155,9 @@
             </app-fal-radio-input>
             <small class="error-text"
                    *ngIf="currency.hasError('required')">
-                   Currency is required
+              Currency is required
             </small>
           </div>
-
-
 
 
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
@@ -181,89 +179,10 @@
         </div>
 
         <!-- UPLOAD DOCUMENT SECTION -->
-        <div class="row col-12 col-lg-6">
-          <form [formGroup]="attachmentFormGroup"
-                (ngSubmit)="addAttachment()">
-            <label class="form-label fieldLabel1">
-              Upload Attachments (optional)
-            </label>
-            <div class="form-control upload-container" [ngClass]="{ 'error': !externalAttachment && !readOnly }">
-              <div class="row">
-                <div class="col-12 fieldLabel3">
-                  Supported file types: eml, doc, jpg, pdf, xlsx
-                </div>
+        <app-upload-form class="row col-12 col-lg-6"
+                         [isDisabled]="readOnly">
+        </app-upload-form>
 
-              </div>
-              <div class="row">
-                <div class="col-6">
-                  <!-- FILE CHOOSER -->
-                  <label for="file-chooser-input"
-                         class="form-label fieldLabel1">
-                    File
-                  </label>
-                  <app-fal-file-input id="file-chooser-input"
-                                      formControlName="file"
-                                      accept=".eml, .doc, .jpg, .pdf, .xlsx"
-                                      [isDisabled]="readOnly">
-                  </app-fal-file-input>
-                  <div class="form-label fieldLabel1 p-1">
-                    Maximum file size ???MB
-                  </div>
-
-                  <!-- ATTACHMENT TYPE -->
-                  <label for="attachment-type-input"
-                         class="form-label fieldLabel1">
-                    Document Type
-                  </label>
-                  <ng-select id="attachment-type-input"
-                             formControlName="attachmentType"
-                             [items]="attachmentTypeOptions"
-                             [searchable]="true"
-                             placeholder="Select One...."
-                             [ngClass]="{ 'disabled': readOnly }">
-                  </ng-select>
-
-                  <!-- UPLOAD BUTTON -->
-                  <div id="upload-button-container">
-                    <elm-button buttonType="submit"
-                                buttonStyle="primary"
-                                [isDisabled]="!(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value)">
-                      Upload
-                    </elm-button>
-                  </div>
-                </div>
-
-                <div class="col-6 upload-file-div">
-                  <!-- ATTACHMENTS LOOP-->
-                  <div *ngFor="let attachment of attachments; index as i">
-                    <div *ngIf="attachment.action !== 'DELETE'" class="attachment form-control d-flex align-items-center justify-content-between">
-
-                        <!-- ATTACHMENT - ICON -->
-                        <div class="material-icons">file_present</div>
-
-                        <!-- ATTACHMENT - CONTENT -->
-                        <div class=" flex-grow-1 p-1">
-                          {{attachment.file.name}}&nbsp;({{attachment.type}})
-                        </div>
-
-                        <!-- ATTACHMENT - REMOVE -->
-                        <input *ngIf="!readOnly" type="button"
-                               value="close"
-                               class="material-icons btn btn-remove-attachment"
-                               (click)="removeAttachment(i)"
-                        />
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <small class="error-text"
-                   *ngIf="!externalAttachment && !readOnly">
-              External Invoice attachment required
-            </small>
-          </form>
-        </div>
       </div>
 
       <div class="row">
@@ -411,7 +330,7 @@
                       buttonType="submit"
                       buttonStyle="primary"
                       class="flex-shrink-1"
-                      [isDisabled]="invoiceFormGroup.invalid || readOnly || !externalAttachment">
+                      [isDisabled]="invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment">
             {{falconInvoiceNumber ? 'Save' : 'Create'}}
           </elm-button>
         </div>

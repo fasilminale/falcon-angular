@@ -10,44 +10,19 @@
 
 #cancel-button {
   text-align: left;
-  padding-left: 0em;
-  padding-right: 0em;
+  padding-left: 0;
+  padding-right: 0;
 }
 
-#upload-button-container {
-  padding-top: 2em;
-}
-
-label {
+::ng-deep label {
   margin-top: 1em;
 }
 
-.attachment {
-  padding: 0.5em;
-  margin-bottom: 0.5em;
-  background-color: $cardinal-grey;
-  border-radius: 0.25rem;
-  font-size: small;
-  word-break: break-all;
-}
-
-.btn-remove-attachment {
-  padding: 0em;
-}
-
-.btn-remove-attachment:hover {
-  background-color: $cardinal-white;
-}
-
-.upload-container {
-  padding: 1em;
-}
-
-.fake-form-control {
+::ng-deep .fake-form-control {
   padding: 0.375rem 0.75rem;
 }
 
-.cardinal-card {
+::ng-deep .cardinal-card {
   margin-top: 1em;
 }
 
@@ -80,11 +55,11 @@ label {
   padding-left: 0em;
 }
 
-.error {
+::ng-deep .error {
   border-color: $cardinal-red;
 }
 
-.form-control.error {
+::ng-deep .form-control.error {
   border-color: $cardinal-red;
 }
 
@@ -92,7 +67,7 @@ label {
   border-color: red;
 }
 
-.error-text {
+::ng-deep .error-text {
   color: $cardinal-red;
 }
 
@@ -127,12 +102,8 @@ label {
   transform: rotate(270deg) translateY(-95%) translateX(-50%);
 }
 
-.upload-file-div {
-  height: 300px;
-  overflow: auto;
-}
 
-.vertical-spacer {
+::ng-deep .vertical-spacer {
   width: 100%;
 }
 
@@ -146,6 +117,6 @@ label {
   margin-bottom: 0.5rem;
 }
 
-.nodisplay {
+::ng-deep .nodisplay {
   display: none;
 }
