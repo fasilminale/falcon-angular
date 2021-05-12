@@ -264,7 +264,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.lineItemsFormArray.clear();
     if (this.uploadFormComponent) {
       this.uploadFormComponent.reset();
-      this.uploadFormComponent.validateExternalAttachment();
     }
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
