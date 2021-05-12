@@ -261,6 +261,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.osptFormGroup.reset();
     this.lineItemsFormArray.clear();
     this.uploadFormComponent?.reset();
+    this.uploadFormComponent?.validateExternalAttachment();
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
     // set default currency to USD
