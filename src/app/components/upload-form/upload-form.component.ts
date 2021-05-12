@@ -21,8 +21,8 @@ export class UploadFormComponent implements OnInit, OnChanges {
 
   /* FORM CONTROLS */
   public readonly formGroup: FormGroup;
-  private readonly attachmentType: FormControl;
-  private readonly file: FormControl;
+  public readonly attachmentType: FormControl;
+  public readonly file: FormControl;
 
   /* FIELDS */
   public externalAttachment = false;
@@ -48,6 +48,13 @@ export class UploadFormComponent implements OnInit, OnChanges {
     }
   }
 
+  public syncControlState(): void {
+    // build list of controls
+    [this.formGroup, this.attachmentType, this.file]
+      // perform the same action on each
+      .forEach(c => this.isDisabled ? c.disable() : c.enable());
+  }
+
   /* OTHER METHODS */
   public load(attachmentData: Array<any>): void {
     this.reset();
@@ -66,13 +73,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
     this.externalAttachment = false;
     [this.formGroup, this.attachmentType, this.file]
       .forEach(c => c.reset());
-  }
-
-  private syncControlState(): void {
-    // build list of controls
-    [this.formGroup, this.attachmentType, this.file]
-      // perform the same action on each
-      .forEach(c => this.isDisabled ? c.disable() : c.enable());
   }
 
   public addAttachment(): void {

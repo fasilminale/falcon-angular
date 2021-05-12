@@ -472,10 +472,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.util.openSnackBar(`One or more documents failed to attach!`);
   }
 
-  private onRemoveAttachmentSuccess(fileName: string): void {
-    this.util.openSnackBar(`Success! ${fileName} was removed.`);
-  }
-
   private onSaveTemplateSuccess(templateName: string): void {
     this.util.openSnackBar(`Success! Template saved as ${templateName}.`);
   }
