@@ -83,6 +83,7 @@ describe('UploadFormComponent', () => {
     expect(component.attachments).toHaveSize(0);
     expect(component.attachmentType.value).toBeNull();
     expect(component.file.value).toBeNull();
+    expect(component.externalAttachment).toBeFalse();
   });
 
   it('should load attachment data', () => {
