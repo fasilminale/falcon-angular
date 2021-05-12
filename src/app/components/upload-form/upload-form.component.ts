@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ConfirmationResult, UtilService} from '../../services/util-service';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
@@ -85,7 +85,9 @@ export class UploadFormComponent implements OnInit, OnChanges {
       });
       this.formGroup.reset();
       this.externalAttachment = this.validateExternalAttachment();
-      this.fileChooserInput?.reset();
+      if (this.fileChooserInput) {
+        this.fileChooserInput.reset();
+      }
     }
   }
 
