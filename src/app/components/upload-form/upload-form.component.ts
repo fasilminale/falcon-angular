@@ -115,7 +115,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
     }).toPromise();
   }
 
-  public validateExternalAttachment(): boolean {
+  private validateExternalAttachment(): boolean {
     return this.attachments.some(attachment =>
       (attachment.type === 'EXTERNAL' || attachment.type === 'External Invoice')
       && attachment.action !== 'DELETE'
