@@ -25,7 +25,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
   public readonly file: FormControl;
 
   /* FIELDS */
-  public externalAttachment = true;
+  public externalAttachment = false;
   public attachments: Array<Attachment> = [];
 
   constructor(private util: UtilService) {
@@ -70,6 +70,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
 
   public reset(): void {
     this.attachments = [];
+    this.externalAttachment = false;
     [this.formGroup, this.attachmentType, this.file]
       .forEach(c => c.reset());
   }
