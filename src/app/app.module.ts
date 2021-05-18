@@ -31,6 +31,7 @@ import { TemplateInputModalComponent } from './components/template-input-modal/t
 import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
 import { MatTableModule } from '@angular/material/table';
 import { UploadFormComponent } from './components/upload-form/upload-form.component';
+import {TimeService} from './services/time-service';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { UploadFormComponent } from './components/upload-form/upload-form.compon
     LoadingService,
     MatDialog,
     ApiService,
-    UtilService
+    UtilService,
+    TimeService
   ],
   bootstrap: [
     AppComponent

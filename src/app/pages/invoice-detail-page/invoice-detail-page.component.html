@@ -38,7 +38,7 @@
       <mat-nav-list>
         <div class="milestone"
              *ngFor="let milestone of this.milestones; index as i">
-          {{milestone.status.label}} in Falcon at {{milestone.timestamp | date: 'short'}} by {{milestone.user}}
+          {{milestone.status.label}} in Falcon at {{formatTimestamp(milestone.timestamp)}} by {{milestone.user}}
         </div>
       </mat-nav-list>
     </mat-sidenav>

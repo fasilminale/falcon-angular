@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {InvoiceCreatePageComponent} from './invoice-create-page.component';
 import {WebServices} from '../../services/web-services';
@@ -10,21 +10,24 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {RouterTestingModule} from '@angular/router/testing';
 import {InvoiceDetailPageComponent} from '../invoice-detail-page/invoice-detail-page.component';
 import {LoadingService} from '../../services/loading-service';
+import {TimeService} from '../../services/time-service';
 
 describe('InvoiceCreatePageComponent', () => {
 
   let component: InvoiceCreatePageComponent;
   let fixture: ComponentFixture<InvoiceCreatePageComponent>;
   let http: HttpTestingController;
+  let time: TimeService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
       declarations: [InvoiceDetailPageComponent],
-      providers: [WebServices, LoadingService, MatSnackBar],
+      providers: [WebServices, LoadingService, MatSnackBar, TimeService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
+    time = TestBed.inject(TimeService);
     fixture = TestBed.createComponent(InvoiceDetailPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
