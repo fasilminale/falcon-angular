@@ -53,13 +53,14 @@
         <!-- ATTACHMENTS LOOP-->
         <div *ngFor="let attachment of attachments; index as i">
           <div *ngIf="attachment.action !== 'DELETE'"
-               class="attachment form-control d-flex align-items-center justify-content-between">
+               class="attachment form-control d-flex align-items-center justify-content-between"
+               [ngClass]="{ 'attachment-download': attachment.url }">
 
             <!-- ATTACHMENT - ICON -->
             <div class="material-icons">file_present</div>
 
             <!-- ATTACHMENT - CONTENT -->
-            <div class=" flex-grow-1 p-1">
+            <div class=" flex-grow-1 p-1" (click)="downloadAttachment(i)">
               {{attachment.file.name}}&nbsp;({{attachment.type}})
             </div>
 
