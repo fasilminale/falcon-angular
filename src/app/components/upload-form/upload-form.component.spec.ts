@@ -75,7 +75,7 @@ describe('UploadFormComponent', () => {
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
     component.addAttachment();
-    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false, action: 'UPLOAD'}]);
+    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false, action: 'UPLOAD', url: undefined}]);
   });
 
   it('should reset', () => {
@@ -177,12 +177,41 @@ describe('UploadFormComponent', () => {
       file: new File([], 'test file'),
       type: 'test type',
       uploadError: false,
-      action: 'NONE'
+      action: 'NONE',
+      url: 'url'
     };
     component.attachments.push(attachment);
     spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
     await component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
+  });
+
+  it('should not modify attachment', async () => {
+    const attachment: any = {
+      file: new File([], 'test file'),
+      type: 'test type',
+      uploadError: false,
+      action: 'NONE',
+      url: 'url'
+    };
+    component.attachments.push(attachment);
+    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+    await component.removeAttachment(0);
+    expect(component.attachments).toHaveSize(1);
+  });
+
+  it('should download attachment',  () => {
+    const attachment: any = {
+      file: new File([], 'test file'),
+      type: 'test type',
+      uploadError: false,
+      action: 'NONE',
+      url: 'url'
+    };
+    component.attachments.push(attachment);
+    spyOn(component, 'downloadAttachment').and.callThrough();
+    component.downloadAttachment(0);
+    expect(component.downloadAttachment).toHaveBeenCalled();
   });
 
 });
