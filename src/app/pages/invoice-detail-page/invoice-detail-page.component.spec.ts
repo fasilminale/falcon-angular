@@ -4,17 +4,17 @@ import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {Component, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoadingService} from '../../services/loading-service';
 import {of} from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {HttpResponse} from '@angular/common/http';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
 import {ApiService} from '../../services/api-service';
 import {UtilService} from '../../services/util-service';
 import {Router} from '@angular/router';
+import {TimeService} from '../../services/time-service';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -61,6 +61,7 @@ describe('InvoiceDetailPageComponent', () => {
   let loadingService: LoadingService;
   let dialog: MatDialog;
   let router: Router;
+  let time: TimeService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -81,7 +82,8 @@ describe('InvoiceDetailPageComponent', () => {
         UtilService,
         MatDialog,
         LoadingService,
-        MatSnackBar
+        MatSnackBar,
+        TimeService
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -90,6 +92,7 @@ describe('InvoiceDetailPageComponent', () => {
     snackBar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
     loadingService = TestBed.inject(LoadingService);
+    time = TestBed.inject(TimeService);
     fixture = TestBed.createComponent(InvoiceDetailPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -176,6 +179,14 @@ describe('InvoiceDetailPageComponent', () => {
     spyOn(component, 'disableInvoice').and.callThrough();
     component.disableInvoice(true);
     expect(component.isDeletedInvoice).toBeTruthy();
+  });
+
+  it('should call formatTimestamp', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(component, 'formatTimestamp').and.callThrough();
+    component.formatTimestamp('2021-05-14T11:01:58.135Z');
+    expect(component.formatTimestamp).toHaveBeenCalled();
   });
 
 });

@@ -8,6 +8,7 @@ import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
 import {Subscription} from 'rxjs';
+import {TimeService} from '../../services/time-service';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -33,7 +34,8 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
                      private router: Router,
                      private route: ActivatedRoute,
                      private dialog: MatDialog,
-                     private snackBar: MatSnackBar) {
+                     private snackBar: MatSnackBar,
+                     private timeService: TimeService) {
   }
 
   public ngOnInit(): void {
@@ -100,6 +102,10 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
 
   public disableInvoice(value: boolean): void {
     this.isDeletedInvoice = value;
+  }
+
+  public formatTimestamp(value: string): string | undefined {
+    return this.timeService.formatTimestamp(value, 'hh:mm A z');
   }
 
 }
