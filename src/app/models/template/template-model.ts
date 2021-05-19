@@ -1,6 +1,7 @@
 import { LineItem } from "./linItem-model";
 
 export class Template {
+    templateId = '';
     companyCode = '';
     createdBy = '';
     currency = '';
@@ -12,9 +13,12 @@ export class Template {
     vendorNumber = '';
     workType = '';
     isDisable = true;
+    isError = false;
     createdDate = '';
-
+    tempDesc = '';
+    tempName = '';
     constructor(json?: any) {
+        this.templateId = json?.templateId;
         this.companyCode = json?.companyCode;
         this.createdBy = json?.createdBy;
         this.currency = json?.currency;

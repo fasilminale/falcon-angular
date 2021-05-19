@@ -27,6 +27,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   public isDeletedInvoice = false;
   public falconInvoiceNumber = '';
   public milestones: Array<any> = [];
+  public invoiceStatus = '';
 
   private subscriptions: Array<Subscription> = [];
 
@@ -53,6 +54,10 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
 
   public updateMilestones(milestones: any): void {
     this.milestones = milestones;
+    this.milestones.sort((a: any, b: any) => {
+      return b.timestamp.localeCompare(a.timestamp);
+    });
+    this.invoiceStatus = this.milestones[0].status.label;
   }
 
   public toggleMilestones(): void {
@@ -105,7 +110,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   }
 
   public formatTimestamp(value: string): string | undefined {
-    return this.timeService.formatTimestamp(value, 'hh:mm A z');
+    return this.timeService.formatTimestamp(value, 'MM/DD/YY, HH:mm z');
   }
 
 }

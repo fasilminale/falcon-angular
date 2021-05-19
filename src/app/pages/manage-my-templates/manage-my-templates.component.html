@@ -9,8 +9,8 @@
   <cardinal-section-header [sectionTitle]="'My Templates'">
   </cardinal-section-header>
 
-  <table summary="templates" *ngIf="templates && templates.length > 0; else noData" mat-table [dataSource]="templates"
-    class="mat-elevation-z8">
+  <table #templateTable summary="templates" mat-table [dataSource]="templates"
+    class="mat-elevation-z8" >
 
     <ng-container matColumnDef="createdDate">
       <th id="createdDate" mat-header-cell *matHeaderCellDef> Created Date </th>
@@ -20,14 +20,20 @@
     <ng-container matColumnDef="name">
       <th id="name" mat-header-cell *matHeaderCellDef> Name </th>
       <td mat-cell *matCellDef="let template">
-        <input type="text=" [value]="template.name" [disabled]="template.isDisable" class="col-11 form-control">
+        <input type="text=" [value]="template.name" [disabled]="template.isDisable"
+        [ngClass]="template.isError || template.name === ''? 'error' : ''"
+        class="col-11 form-control"
+        matInput [(ngModel)]="template.name" >
+        <small class="error-text" *ngIf="template.isError">Template Name already exists</small>
+        <small class="error-text" *ngIf="template.name === ''">Template Name is required</small>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="description">
       <th id="description" mat-header-cell *matHeaderCellDef> Description </th>
       <td mat-cell *matCellDef="let template">
-        <input type="text=" [value]="template.description" [disabled]="template.isDisable" class="form-control col-11">
+        <input type="text=" [value]="template.description" [disabled]="template.isDisable" class="form-control col-11" matInput [(ngModel)]="template.description" >
+         <small class="error-text" *ngIf="template.isError || template.name === ''"> &nbsp;</small>
       </td>
     </ng-container>
 
@@ -39,7 +45,7 @@
           edit
         </span>
         <ng-template #submit>
-          <span role="button" class="material-icons material-icons-outlined" (click)="editTemplate(template)">
+          <span role="button" class="material-icons material-icons-outlined" (click)="updateTemplate(template)">
             done
           </span>
           <span role="button" class="material-icons material-icons-outlined" (click)="cancelTemplate(template)">
@@ -50,7 +56,7 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
   </table>
 
   <ng-template #noData>

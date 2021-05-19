@@ -63,7 +63,8 @@ export class UploadFormComponent implements OnInit, OnChanges {
         file: new File([], a.fileName ?? ''),
         type: a.type,
         uploadError: false,
-        action: 'NONE'
+        action: 'NONE',
+        url: a.url
       }));
     this.externalAttachment = this.validateExternalAttachment();
   }
@@ -81,7 +82,8 @@ export class UploadFormComponent implements OnInit, OnChanges {
         uploadError: false,
         file: this.file.value,
         type: this.attachmentType.value,
-        action: 'UPLOAD'
+        action: 'UPLOAD',
+        url: undefined
       });
       this.formGroup.reset();
       this.externalAttachment = this.validateExternalAttachment();
@@ -102,6 +104,12 @@ export class UploadFormComponent implements OnInit, OnChanges {
       }
       this.externalAttachment = this.validateExternalAttachment();
       this.util.openSnackBar(`Success! ${attachment.file.name} was removed.`);
+    }
+  }
+
+  public downloadAttachment(index: number): void {
+    if (this.attachments[index].url) {
+      window.open(this.attachments[index].url);
     }
   }
 
@@ -129,4 +137,5 @@ export interface Attachment {
   type: string;
   uploadError: boolean;
   action: 'UPLOAD' | 'DELETE' | 'NONE';
+  url?: string;
 }

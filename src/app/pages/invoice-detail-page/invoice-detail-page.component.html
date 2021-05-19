@@ -1,6 +1,7 @@
-<cardinal-card>
-  <cardinal-section-header [sectionTitle]="'Invoice ' + falconInvoiceNumber">
-    <div class="col-6 d-flex justify-content-start header-button">
+<div class="page-header">
+  <div>
+    <div class="headline1">
+      <span>Invoice {{falconInvoiceNumber}}</span>
       <elm-button id="cancel-button"
                   buttonType="button"
                   buttonStyle="text"
@@ -9,6 +10,9 @@
         <u>Save as Template</u>
       </elm-button>
     </div>
+    <div class="headline3">Status: {{invoiceStatus}}</div>
+  </div>
+  <div class="d-flex justify-content-end header-button">
     <div class="col-6 d-flex justify-content-end">
       <elm-button id="edit-button"
                   buttonType="button"
@@ -27,8 +31,10 @@
         Delete
       </elm-button>
     </div>
-  </cardinal-section-header>
+  </div>
+</div>
 
+<cardinal-card>
   <mat-sidenav-container class="side-nav-container"
                          [hasBackdrop]="false">
     <mat-sidenav class="side-nav"
