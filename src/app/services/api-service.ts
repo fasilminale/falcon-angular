@@ -122,7 +122,7 @@ export class ApiService {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/templates`);
   }
 
-  public updateTemplate(templateId: string, template: Template): Observable<any> {
+  public updateTemplate(templateId: number, template: Template): Observable<any> {
     return this.web.httpPut(`${environment.baseServiceUrl}/v1/template/${templateId}`, template);
   }
 }

@@ -54,7 +54,7 @@ export class ManageMyTemplatesComponent implements OnInit {
       
       if (!template.isDisable ) {
         
-        this.apiService.updateTemplate(template.templateId, template).subscribe(
+        this.apiService.updateTemplate(parseInt(template.templateId), template).subscribe(
           (data) => {
             template.createdDate = data.createdDate;
             template.isError = false;
