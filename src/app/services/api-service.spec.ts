@@ -4,12 +4,14 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {ApiService} from './api-service';
 import {of, throwError} from 'rxjs';
+import { Template } from '../models/template/template-model';
 
 describe('ApiService Tests', () => {
   let api: ApiService;
   let web: WebServices;
   let invoice: any;
   let template: any;
+  let manageTemplate: Template;
 
   const testAttachment = {
     file: new File([], 'TestFileBlobName'),
@@ -49,6 +51,21 @@ describe('ApiService Tests', () => {
       name: 'testTemplate',
       description: 'testDescription'
     };
+    manageTemplate = new Template({
+      templateId: '1',
+      description: '',
+      name: 'test',
+      isDisable: true,
+      createdDate: '',
+      lineItems: [
+        {
+          companyCode: '',
+          costCenter: '',
+          glAccount: '',
+          lineItemNumber: '',
+        }
+      ]
+    });
   });
 
   it('should create', () => {
@@ -138,5 +155,17 @@ describe('ApiService Tests', () => {
     expect(successes).toEqual(true);
   });
 
+
+  it('should create template', async () => {
+    spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
+    const successes = await api.createTemplate(manageTemplate).toPromise();
+    expect(web.httpPost).toHaveBeenCalled();
+  });
+
+  it('should update template', async () => {
+    spyOn(web, 'httpPut').and.returnValue(of('SOME RESPONSE BODY'));
+    const successes = await api.updateTemplate(parseInt(manageTemplate.templateId), manageTemplate).toPromise();
+    expect(web.httpPut).toHaveBeenCalled();
+  });
 })
 ;
