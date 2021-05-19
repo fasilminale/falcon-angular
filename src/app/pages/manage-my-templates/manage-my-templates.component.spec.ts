@@ -14,6 +14,7 @@ import {UtilService} from 'src/app/services/util-service';
 import {MatDialogModule} from '@angular/material/dialog';
 import {Template} from 'src/app/models/template/template-model';
 import {of, throwError} from 'rxjs';
+import { MatTableModule } from '@angular/material/table';
 
 describe('ManageMyTemplatesComponent', () => {
   let component: ManageMyTemplatesComponent;
@@ -53,7 +54,7 @@ describe('ManageMyTemplatesComponent', () => {
   });
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule],
+      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule, MatTableModule],
       declarations: [ManageMyTemplatesComponent],
       providers: [ApiService, WebServices, UtilService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -89,24 +90,41 @@ describe('ManageMyTemplatesComponent', () => {
 
   }));
 
-  it('should edit template', () => {
+  it('should update template', () => {
     template.isDisable = false;
     spyOn(util, 'openSnackBar').and.stub();
     const spy = spyOn(apiService, 'updateTemplate').and.returnValue(of(updatedTemplate));
-    component.editTemplate(template);
+    component.updateTemplate(template);
     const createdDate = template.createdDate;
     expect(createdDate).toEqual(updatedTemplate.createdDate);
     expect(util.openSnackBar).toHaveBeenCalledWith(`Success! Template has been updated.`);
   });
 
-  it('should edit template failed', () => {
+
+  it('should update template failed', () => {
     template.isDisable = false;
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 404}));
-    component.editTemplate(template);
+    component.updateTemplate(template);
     expect(util.openSnackBar).toHaveBeenCalledWith(`Failure! Template has been failed.`);
   });
 
+  it('should update template failed with error code 422', () => {
+    template.isDisable = false;
+    spyOn(util, 'openSnackBar').and.stub();
+    spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 422}));
+    component.updateTemplate(template);
+    const isError = template.isError;
+    expect(isError).toBeTruthy();
+  });
+  it('should not update for invalid name', () => {
+    template.isDisable = false;
+    template.name = '';
+    spyOn(util, 'openSnackBar').and.stub();
+    spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 404}));
+    component.updateTemplate(template);
+    expect(util.openSnackBar).toHaveBeenCalledTimes(0);
+  });
   it('should cancel edit template', fakeAsync(() => {
     template.isDisable = false;
     component.cancelTemplate(template);

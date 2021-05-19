@@ -56,3 +56,19 @@ th.mat-header-cell, td.mat-cell {
 .p-align {
   text-align: center;
 }
+
+::ng-deep .error {
+  border-color: $cardinal-red;
+}
+
+::ng-deep .form-control.error {
+  border-color: $cardinal-red;
+}
+
+.app-fal-date-input.error ::ng-deep .form-control {
+  border-color: red;
+}
+
+::ng-deep .error-text {
+  color: $cardinal-red;
+}
