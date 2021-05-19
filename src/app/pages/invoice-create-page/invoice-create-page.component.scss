@@ -1,0 +1,12 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  background-color: $cardinal-white;
+  margin: 0 -24px 24px;
+  padding: 0 24px 16px;
+  min-height: 120px;
+}
