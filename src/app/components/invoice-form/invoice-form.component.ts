@@ -379,11 +379,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
             } else {
               // ATTACH FAILURE
               shouldReset = false;
-              this.onAttachFailure();
+              await this.onAttachFailure();
             }
           } else {
             // INVOICE NOT SAVED
-            this.onSaveFailure();
+            await this.onSaveFailure();
           }
           if (shouldReset) {
             // RESET FORM
@@ -467,7 +467,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     // do nothing
   }
 
-  private onSaveFailure(): void {
+  private async onSaveFailure(): Promise<void> {
     if (this.isOnEditPage) {
       this.util.openSnackBar(`Failure, invoice was not updated!`);
     } else {
@@ -479,11 +479,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.util.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.isOnEditPage ? 'updated' : 'created'}.`);
   }
 
-  private onAttachFailure(): void {
+  private async onAttachFailure(): Promise<void> {
     if (this.isOnEditPage) {
       this.util.openSnackBar(`One or more documents failed to attach!`);
     } else {
-      this.showSystemErrorModal();
+      await this.showSystemErrorModal();
     }
   }
 
