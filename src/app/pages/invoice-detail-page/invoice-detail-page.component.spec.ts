@@ -121,7 +121,7 @@ describe('InvoiceDetailPageComponent', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
       .flush(invoiceResponse);
     spyOn(component, 'updateMilestones').and.callThrough();
-    component.updateMilestones({});
+    component.updateMilestones(invoiceResponse.milestones);
     expect(component.updateMilestones).toHaveBeenCalled();
   });
 
