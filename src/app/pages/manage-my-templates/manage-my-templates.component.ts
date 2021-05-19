@@ -41,6 +41,7 @@ export class ManageMyTemplatesComponent implements OnInit {
 
     cancelTemplate(template: Template) {
       if (!template.isDisable ) {
+        template.isError = false;
         template.isDisable = true;
         template.name = template.tempName;
         template.description = template.tempDesc;
