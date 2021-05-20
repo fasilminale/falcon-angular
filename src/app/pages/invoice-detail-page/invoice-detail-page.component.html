@@ -2,6 +2,11 @@
   <div>
     <div class="headline1">
       <span>Invoice {{falconInvoiceNumber}}</span>
+    </div>
+    <div class="headline3">Status: {{invoiceStatus}}</div>
+  </div>
+  <div class="d-flex justify-content-end header-button">
+    <div class="col-12 d-flex justify-content-end">
       <elm-button id="cancel-button"
                   buttonType="button"
                   buttonStyle="text"
@@ -9,11 +14,6 @@
                   (buttonClick)="saveAsTemplate()">
         <u>Save as Template</u>
       </elm-button>
-    </div>
-    <div class="headline3">Status: {{invoiceStatus}}</div>
-  </div>
-  <div class="d-flex justify-content-end header-button">
-    <div class="col-6 d-flex justify-content-end">
       <elm-button id="edit-button"
                   buttonType="button"
                   buttonStyle="secondary"
