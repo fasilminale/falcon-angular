@@ -20,6 +20,11 @@ describe('InvoiceFormComponent', () => {
   const vendorNumber = '1';
   const externalInvoiceNumber = '1';
   const invoiceDate = new Date(2021, 4, 7);
+  const workType = 'Indirect Non-PO Invoice';
+  const erpType = 'TPM';
+  const glAccount = '1234';
+  const costCenter = '2345';
+  const currency = 'USD';
 
   let component: InvoiceFormComponent;
   let fixture: ComponentFixture<InvoiceFormComponent>;
@@ -122,10 +127,23 @@ describe('InvoiceFormComponent', () => {
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    component.companyCode.setValue(companyCode);
-    component.vendorNumber.setValue(vendorNumber);
-    component.externalInvoiceNumber.setValue(externalInvoiceNumber);
-    component.invoiceDate.setValue(invoiceDate);
+    component.invoiceFormGroup.controls.companyCode.setValue(companyCode);
+    component.invoiceFormGroup.controls.vendorNumber.setValue(vendorNumber);
+    component.invoiceFormGroup.controls.externalInvoiceNumber.setValue(externalInvoiceNumber);
+    component.invoiceFormGroup.controls.invoiceDate.setValue(invoiceDate);
+    component.invoiceFormGroup.controls.amountOfInvoice.setValue('0');
+    component.invoiceFormGroup.controls.workType.setValue(workType);
+    component.invoiceFormGroup.controls.erpType.setValue(erpType);
+    component.invoiceFormGroup.controls.currency.setValue(currency);
+    (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+      .controls.companyCode.setValue(companyCode);
+    (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+      .controls.glAccount.setValue(glAccount);
+    (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+      .controls.costCenter.setValue(costCenter);
+    (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+      .controls.lineItemNetAmount.setValue('0');
+    component.externalAttachment = true;
   });
 
   it('should create', () => {
@@ -142,12 +160,29 @@ describe('InvoiceFormComponent', () => {
     expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
   });
 
+  it('should not submit with missing fields', async () => {
+    spyOn(component, 'onSubmit').and.callThrough();
+    component.companyCode.setValue(null);
+    await component.onSubmit();
+    fixture.detectChanges();
+    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.submitted).toBeTrue();
+  });
+
+  it('should not submit with no external attachment', async () => {
+    spyOn(component, 'onSubmit').and.callThrough();
+    component.externalAttachment = false;
+    await component.onSubmit();
+    fixture.detectChanges();
+    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.submitted).toBeTrue();
+  });
+
   it('should show success snackbar on post', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(api, 'saveAttachments').and.returnValue(of(true));
-    component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     fixture.detectChanges();
     expect(util.openSnackBar)
@@ -163,7 +198,6 @@ describe('InvoiceFormComponent', () => {
         statusText: 'test status text'
       })
     );
-    component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     fixture.detectChanges();
     expect(util.openSnackBar)
@@ -175,7 +209,6 @@ describe('InvoiceFormComponent', () => {
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(api, 'saveAttachments').and.returnValue(of(true));
-    component.amountOfInvoiceFormControl.setValue('0');
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSubmit();
     fixture.detectChanges();
@@ -190,7 +223,6 @@ describe('InvoiceFormComponent', () => {
       status: 123,
       statusText: 'test status text'
     }));
-    component.amountOfInvoiceFormControl.setValue('0');
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSubmit();
     fixture.detectChanges();
@@ -205,7 +237,6 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should enable remove button after going up to more than one line item', () => {
-    component.amountOfInvoiceFormControl.setValue('0');
     component.addNewEmptyLineItem();
     expect(component.lineItemRemoveButtonDisable).toBeFalse();
   });
@@ -219,7 +250,6 @@ describe('InvoiceFormComponent', () => {
     });
     spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
-    component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
@@ -234,7 +264,6 @@ describe('InvoiceFormComponent', () => {
     });
     spyOn(api, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
-    component.amountOfInvoiceFormControl.setValue('0');
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.companyCode.setValue('CODE');
     await component.onSubmit();
@@ -320,7 +349,6 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(component, 'onSubmit').and.callThrough();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
-    component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
     expect(component.onSubmit).toHaveBeenCalled();
