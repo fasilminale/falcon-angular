@@ -13,6 +13,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {ApiService} from '../../services/api-service';
+import {Router} from '@angular/router';
 
 describe('InvoiceFormComponent', () => {
 
@@ -31,6 +32,7 @@ describe('InvoiceFormComponent', () => {
   let util: UtilService;
   let api: ApiService;
   let snackBar: MatSnackBar;
+  let router: Router;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -121,6 +123,7 @@ describe('InvoiceFormComponent', () => {
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
+    router = TestBed.inject(Router);
     snackBar = TestBed.inject(MatSnackBar);
     util = TestBed.inject(UtilService);
     api = TestBed.inject(ApiService);
@@ -190,7 +193,9 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should show failure snackbar on failed post', async () => {
+    spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
     spyOn(util, 'openSnackBar').and.stub();
+    spyOn(util, 'openErrorModal').and.returnValue(of());
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(
       of(new ErrorEvent('test error event'), {
@@ -200,8 +205,7 @@ describe('InvoiceFormComponent', () => {
     );
     await component.onSubmit();
     fixture.detectChanges();
-    expect(util.openSnackBar)
-      .toHaveBeenCalledWith('Failure, invoice was not created!');
+    expect(util.openErrorModal).toHaveBeenCalledTimes(1);
   });
 
   it('should show success snackbar on put', async () => {
@@ -366,6 +370,8 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should not reset on failed attachments', async () => {
+    spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
+    spyOn(util, 'openErrorModal').and.returnValue(of(true));
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
