@@ -9,8 +9,8 @@
   <cardinal-section-header [sectionTitle]="'My Templates'">
   </cardinal-section-header>
 
-  <table #templateTable summary="templates" mat-table [dataSource]="templates"
-    class="mat-elevation-z8" >
+  <table #templateTable summary="templates" mat-table [dataSource]="templates" 
+    class="mat-elevation-z8" [ngClass]="templates && templates.length > 0 ? '' : 'hide'">
 
     <ng-container matColumnDef="createdDate">
       <th id="createdDate" mat-header-cell *matHeaderCellDef> Created Date </th>
@@ -30,7 +30,7 @@
     </ng-container>
 
     <ng-container matColumnDef="description">
-      <th id="description" mat-header-cell *matHeaderCellDef> Description </th>
+      <th id="description" mat-header-cell *matHeaderCellDef> Description (optional)</th>
       <td mat-cell *matCellDef="let template">
         <input type="text=" [value]="template.description" [disabled]="template.isDisable" class="form-control col-11" matInput [(ngModel)]="template.description" >
          <small class="error-text" *ngIf="template.isError || template.name === ''"> &nbsp;</small>
@@ -41,7 +41,7 @@
       <th id="action" mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let template">
         <span *ngIf="template.isDisable ; else submit" role="button" class="material-icons material-icons-outlined"
-          (click)="editTemplate(template)">
+          (click)="editTemplate(template)" [ngClass]="isEditDisabled ? 'cursor-not-allowd' : ''">
           edit
         </span>
         <ng-template #submit>
@@ -59,7 +59,5 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
   </table>
 
-  <ng-template #noData>
-    <p class="p-align">You have no templates available</p>
-  </ng-template>
+  <p class="p-align" [ngClass]="templates && templates.length > 0 ? 'hide' : ''">You have no templates available</p>
 </cardinal-card>
