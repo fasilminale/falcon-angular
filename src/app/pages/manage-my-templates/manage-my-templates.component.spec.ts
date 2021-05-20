@@ -24,20 +24,7 @@ describe('ManageMyTemplatesComponent', () => {
   let util: UtilService;
   let http: HttpTestingController;
 
-  let template: Template = new Template({
-    description: '',
-    name: 'test',
-    isDisable: true,
-    createdDate: '',
-    lineItems: [
-      {
-        companyCode: '',
-        costCenter: '',
-        glAccount: '',
-        lineItemNumber: '',
-      }
-    ]
-  });
+  let template: Template;
   let templateData = [
     {
       description: '',
@@ -70,6 +57,28 @@ describe('ManageMyTemplatesComponent', () => {
     apiService = TestBed.inject(ApiService);
     util = TestBed.inject(UtilService);
     fixture.detectChanges();
+    template = new Template({
+      description: '',
+      name: 'test',
+      isDisable: true,
+      createdDate: '',
+      lineItems: [
+        {
+          companyCode: '',
+          costCenter: '',
+          glAccount: '',
+          lineItemNumber: '',
+        }
+      ]
+    });
+    let templateData = [
+      {
+        description: '',
+        name: '',
+        isDisable: true,
+        createdDate: '',
+      }
+    ];
   });
 
   it('should create', () => {
@@ -87,8 +96,15 @@ describe('ManageMyTemplatesComponent', () => {
     component.editTemplate(template);
     const isDisable = template.isDisable;
     expect(isDisable).toBeFalse();
-
   }));
+
+  it('should not enable edit template, if another template is already editing', fakeAsync(() => {
+    component.isEditDisabled = true;
+    component.editTemplate(template);
+    const isDisable = template.isDisable;
+    expect(isDisable).toBeTruthy();
+  }));
+
 
   it('should update template', () => {
     template.isDisable = false;
