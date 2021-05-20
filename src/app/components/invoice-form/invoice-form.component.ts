@@ -329,7 +329,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   public onCancel(): void {
     if (this.readOnly) {
-      this.router.navigate(['/invoices']);
+      this.gotoInvoiceList();
     } else {
       this.subscriptions.push(
         this.util.openConfirmationModal({
@@ -343,6 +343,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           .subscribe(() => this.resetForm())
       );
     }
+  }
+
+  private async gotoInvoiceList(): Promise<boolean> {
+    return this.router.navigate(['/invoices']);
   }
 
   public async onSubmit(): Promise<void> {
@@ -375,11 +379,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
             } else {
               // ATTACH FAILURE
               shouldReset = false;
-              this.onAttachFailure();
+              await this.onAttachFailure();
             }
           } else {
             // INVOICE NOT SAVED
-            this.onSaveFailure();
+            await this.onSaveFailure();
           }
           if (shouldReset) {
             // RESET FORM
@@ -460,19 +464,36 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private onSaveSuccess(invoiceNumber: string): void {
-    this.util.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.isOnEditPage ? 'updated' : 'created'}.`);
-  }
-
-  private onSaveFailure(): void {
-    this.util.openSnackBar(`Failure, invoice was not ${this.isOnEditPage ? 'updated' : 'created'}!`);
-  }
-
-  private onAttachSuccess(invoiceNumber: string): void {
     // do nothing
   }
 
-  private onAttachFailure(): void {
-    this.util.openSnackBar(`One or more documents failed to attach!`);
+  private async onSaveFailure(): Promise<void> {
+    if (this.isOnEditPage) {
+      this.util.openSnackBar(`Failure, invoice was not updated!`);
+    } else {
+      this.showSystemErrorModal();
+    }
+  }
+
+  private onAttachSuccess(invoiceNumber: string): void {
+    this.util.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.isOnEditPage ? 'updated' : 'created'}.`);
+  }
+
+  private async onAttachFailure(): Promise<void> {
+    if (this.isOnEditPage) {
+      this.util.openSnackBar(`One or more documents failed to attach!`);
+    } else {
+      await this.showSystemErrorModal();
+    }
+  }
+
+  private async showSystemErrorModal(): Promise<void> {
+    await this.util.openErrorModal({
+      title: 'System Error',
+      innerHtmlMessage: `Invoice creation failed.<br/><br/>
+         <strong>Please contact your administrator.</strong>`,
+    }).toPromise();
+    await this.gotoInvoiceList();
   }
 
   private onSaveTemplateSuccess(templateName: string): void {
