@@ -41,7 +41,7 @@
       <th id="action" mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let template">
         <span *ngIf="template.isDisable ; else submit" role="button" class="material-icons material-icons-outlined"
-          (click)="editTemplate(template)">
+          (click)="editTemplate(template)" [ngClass]="isEditDisabled ? 'cursor-not-allowd' : ''">
           edit
         </span>
         <ng-template #submit>
