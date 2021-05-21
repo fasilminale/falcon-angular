@@ -22,7 +22,6 @@ import {
 import {WebServices} from '../../services/web-services';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {environment} from '../../../environments/environment';
-import {filter} from 'rxjs/operators';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
@@ -324,7 +323,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public async onCancel(): Promise<void> {
-    if (this.readOnly) {
+    if ((this.isOnEditPage && this.readOnly)
+      || this.invoiceFormGroup.pristine) {
       await this.gotoInvoiceList();
     } else {
       const result = await this.util.openConfirmationModal({
@@ -335,7 +335,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
         cancelButtonText: 'No, go back'
       }).toPromise();
       if (result === 'confirm') {
-        this.resetForm();
+        await this.gotoInvoiceList();
       }
     }
   }
