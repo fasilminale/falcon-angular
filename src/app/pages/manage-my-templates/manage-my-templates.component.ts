@@ -17,7 +17,8 @@ export class ManageMyTemplatesComponent implements OnInit {
   templateTable!: MatTable<Template>;
   templates: Array<Template> = [];
   displayedColumns: string[] = ['createdDate', 'name', 'description', 'action'];
-  isEditDisabled = false;
+  editedTemplate: Template | undefined;
+
   constructor(
     private apiService: ApiService,
     private util: UtilService,
@@ -35,14 +36,14 @@ export class ManageMyTemplatesComponent implements OnInit {
     }
 
     editTemplate(template: Template) {
-      if(this.isEditDisabled) {
-        return;
-      }
       if (template.isDisable) {
+        if(this.editedTemplate){
+          this.cancelTemplate(this.editedTemplate);
+        }
         template.isDisable = false;
         template.tempName = template.name;
         template.tempDesc = template.description;
-        this.isEditDisabled = true;
+        this.editedTemplate = template;
       } 
     }
 
@@ -52,7 +53,6 @@ export class ManageMyTemplatesComponent implements OnInit {
         template.isDisable = true;
         template.name = template.tempName;
         template.description = template.tempDesc;
-        this.isEditDisabled = false;
       }
     }
 
@@ -78,7 +78,6 @@ export class ManageMyTemplatesComponent implements OnInit {
           },
           () => {
             template.isDisable = true;
-            this.isEditDisabled = false;
           }
         )
       }

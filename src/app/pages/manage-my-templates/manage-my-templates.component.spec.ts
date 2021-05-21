@@ -100,10 +100,10 @@ describe('ManageMyTemplatesComponent', () => {
   }));
 
   it('should not enable edit template, if another template is already editing', fakeAsync(() => {
-    component.isEditDisabled = true;
+    component.editedTemplate = templateData[1];
     component.editTemplate(template);
-    const isDisable = template.isDisable;
-    expect(isDisable).toBeTruthy();
+    const temp = component.editedTemplate;
+    expect(temp).toEqual(templateData[0]);
   }));
 
 
