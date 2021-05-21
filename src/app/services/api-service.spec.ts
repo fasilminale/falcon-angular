@@ -167,5 +167,11 @@ describe('ApiService Tests', () => {
     const successes = await api.updateTemplate(parseInt(manageTemplate.templateId), manageTemplate).toPromise();
     expect(web.httpPut).toHaveBeenCalled();
   });
+
+  it('should update template', async () => {
+    spyOn(web, 'httpDelete').and.returnValue(of('SOME RESPONSE BODY'));
+    const successes = await api.deleteTemplate(parseInt(manageTemplate.templateId)).toPromise();
+    expect(web.httpDelete).toHaveBeenCalled();
+  });
 })
 ;
