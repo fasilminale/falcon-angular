@@ -23,10 +23,10 @@
                        [items]="workTypeOptions"
                        [searchable]="true"
                        placeholder="Select One...."
-                       [ngClass]="{ 'error': workType.errors && workType.hasError('required'), 'disabled': readOnly }">
+                       [ngClass]="{ 'error': workType.errors && workType.hasError('required') && submitted, 'disabled': readOnly }">
             </ng-select>
             <small class="error-text"
-                   *ngIf="workType.hasError('required')">
+                   *ngIf="workType.hasError('required') && submitted">
               Work Type is required
             </small>
           </div>
@@ -42,10 +42,10 @@
                    class="form-control"
                    (keypress)="validateRegex($event)"
                    maxlength="4"
-                   [ngClass]="companyCode.errors && companyCode.hasError('required') ? 'error' : ''"
+                   [ngClass]="companyCode.errors && companyCode.hasError('required') && submitted ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="companyCode.hasError('required')">
+                   *ngIf="companyCode.hasError('required') && submitted">
               Company Code is required
             </small>
           </div>
@@ -59,10 +59,10 @@
                                  formControlName="erpType"
                                  [options]="erpTypeOptions"
                                  [isDisabled]="readOnly"
-                                 [isError]="!!(erpType.errors && erpType.hasError('required'))">
+                                 [isError]="!!(erpType.errors && erpType.hasError('required') && submitted)">
             </app-fal-radio-input>
             <small class="error-text"
-                   *ngIf="erpType.hasError('required')">
+                   *ngIf="erpType.hasError('required') && submitted">
               ERP Type is required
             </small>
           </div>
@@ -78,10 +78,12 @@
                    formControlName="vendorNumber"
                    (keypress)="validateRegex($event)"
                    maxlength="10"
-                   [ngClass]="vendorNumber.errors && vendorNumber.hasError('required')? 'error' : ''"
+                   [ngClass]="vendorNumber.errors
+                      && vendorNumber.hasError('required')
+                      && submitted ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="vendorNumber.hasError('required')">
+                   *ngIf="vendorNumber.hasError('required') && submitted">
               Vendor Number is required
             </small>
           </div>
@@ -97,10 +99,11 @@
                    formControlName="externalInvoiceNumber"
                    (keypress)="validateRegex($event)"
                    maxlength="16"
-                   [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')? 'error' : ''"
+                   [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')
+                      && submitted ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="externalInvoiceNumber.hasError('required')">
+                   *ngIf="externalInvoiceNumber.hasError('required') && submitted">
               External Invoice Number is required
             </small>
           </div>
@@ -113,10 +116,10 @@
             <app-fal-date-input id="external-invoice-date-input"
                                 formControlName="invoiceDate"
                                 [isDisabled]="readOnly"
-                                [isError]="!!(invoiceDate.errors && (invoiceDate.hasError('required') || invoiceDate.hasError('validateDate')))">
+                                [isError]="!!(invoiceDate.errors && (invoiceDate.hasError('required') && submitted || invoiceDate.hasError('validateDate')))">
             </app-fal-date-input>
             <small class="error-text"
-                   *ngIf="invoiceDate.hasError('required')">
+                   *ngIf="invoiceDate.hasError('required') && submitted">
               External Invoice Date is required
             </small>
             <small class="error-text"
@@ -134,10 +137,12 @@
             <app-fal-currency-input id="invoice-amount-input"
                                     formControlName="amountOfInvoice"
                                     [isDisabled]="readOnly"
-                                    [isError]="!!(amountOfInvoiceFormControl.errors && amountOfInvoiceFormControl.hasError('required'))">
+                                    [isError]="!!(amountOfInvoiceFormControl.errors
+                                      && amountOfInvoiceFormControl.hasError('required')
+                                      && submitted)">
             </app-fal-currency-input>
             <small class="error-text"
-                   *ngIf="amountOfInvoiceFormControl.hasError('required')">
+                   *ngIf="amountOfInvoiceFormControl.hasError('required') && submitted">
               Invoice Net Amount is required
             </small>
           </div>
@@ -151,10 +156,10 @@
                                  formControlName="currency"
                                  [options]="currencyOptions"
                                  [isDisabled]="readOnly"
-                                 [isError]="!!(currency.errors && currency.hasError('required'))">
+                                 [isError]="!!(currency.errors && currency.hasError('required') && submitted)">
             </app-fal-radio-input>
             <small class="error-text"
-                   *ngIf="currency.hasError('required')">
+                   *ngIf="currency.hasError('required') && submitted">
               Currency is required
             </small>
           </div>
@@ -180,7 +185,8 @@
 
         <!-- UPLOAD DOCUMENT SECTION -->
         <app-upload-form class="row col-12 col-lg-6"
-                         [isDisabled]="readOnly">
+                         [isDisabled]="readOnly"
+                         [submitted]="submitted">
         </app-upload-form>
 
       </div>
@@ -232,7 +238,9 @@
                        formControlName="costCenter"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       [ngClass]="lineItemCostCenter(i).errors && lineItemCostCenter(i).hasError('required') ? 'error' : ''"
+                       [ngClass]="lineItemCostCenter(i).errors
+                          && lineItemCostCenter(i).hasError('required')
+                          && submitted ? 'error' : ''"
                 />
               </div>
 
@@ -246,7 +254,9 @@
                        formControlName="glAccount"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       [ngClass]="lineItemGlAccount(i).errors && lineItemGlAccount(i).hasError('required') ? 'error' : ''"
+                       [ngClass]="lineItemGlAccount(i).errors
+                          && lineItemGlAccount(i).hasError('required')
+                          && submitted ? 'error' : ''"
                 />
               </div>
 
@@ -257,7 +267,9 @@
                 </label>
                 <app-fal-currency-input formControlName="lineItemNetAmount"
                                         [isDisabled]="readOnly"
-                                        [isError]="!!(lineItemNetAmountFormControl(i).errors && lineItemNetAmountFormControl(i).hasError('required'))"
+                                        [isError]="!!(lineItemNetAmountFormControl(i).errors
+                                          && lineItemNetAmountFormControl(i).hasError('required')
+                                          && submitted)"
                                         (keyup)="calculateLineItemNetAmount()">
                 </app-fal-currency-input>
               </div>
@@ -330,7 +342,7 @@
                       buttonType="submit"
                       buttonStyle="primary"
                       class="flex-shrink-1"
-                      [isDisabled]="invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment">
+                      [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment) && submitted">
             {{falconInvoiceNumber ? 'Save' : 'Create'}}
           </elm-button>
         </div>

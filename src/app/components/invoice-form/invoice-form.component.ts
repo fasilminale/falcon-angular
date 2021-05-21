@@ -69,6 +69,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   public invoiceFormGroup: FormGroup;
   public osptFormGroup: FormGroup;
   public validAmount = true;
+  public externalAttachment = false;
+  public submitted = false;
   public file = null;
   public totallineItemNetAmount = 0;
 
@@ -252,6 +254,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public resetForm(): void {
+    this.submitted = false;
     this.invoiceFormGroup.reset();
     this.osptFormGroup.reset();
     this.lineItemsFormArray.clear();
@@ -342,6 +345,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public async onSubmit(): Promise<void> {
+    if (this.uploadFormComponent) {
+      this.externalAttachment = this.uploadFormComponent.externalAttachment;
+    }
+    if (this.invoiceFormGroup.invalid || !this.externalAttachment) {
+      this.submitted = true;
+      return;
+    }
     this.loadingService.showLoading(this.isOnEditPage ? 'Saving' : 'Submitting');
     try {
       if (this.validateInvoiceAmount()) {
