@@ -125,4 +125,8 @@ export class ApiService {
   public updateTemplate(templateId: number, template: Template): Observable<any> {
     return this.web.httpPut(`${environment.baseServiceUrl}/v1/template/${templateId}`, template);
   }
+
+  public deleteTemplate(templateId: number): Observable<any> {
+    return this.web.httpDelete(`${environment.baseServiceUrl}/v1/template/${templateId}`);
+  }
 }
