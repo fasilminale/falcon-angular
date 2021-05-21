@@ -44,6 +44,10 @@
           (click)="editTemplate(template)" [ngClass]="isEditDisabled ? 'cursor-not-allowd' : ''">
           edit
         </span>
+        <span *ngIf="template.isDisable ; else submit" role="button" class="material-icons material-icons-outlined"
+          (click)="deleteTemplate(template)" [ngClass]="isEditDisabled ? 'cursor-not-allowd' : ''">
+          delete
+        </span>
         <ng-template #submit>
           <span role="button" class="material-icons material-icons-outlined" (click)="updateTemplate(template)">
             done

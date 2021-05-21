@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
+import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
 import { Template } from 'src/app/models/template/template-model';
 import { ApiService } from 'src/app/services/api-service';
 import { UtilService } from 'src/app/services/util-service';
@@ -19,6 +21,7 @@ export class ManageMyTemplatesComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private util: UtilService,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit() {
@@ -64,13 +67,13 @@ export class ManageMyTemplatesComponent implements OnInit {
           (data) => {
             template.createdDate = data.createdDate;
             template.isError = false;
-            this.onSaveSuccess();
+            this.onSuccess(`Success! Template has been updated.`);
           },
           (error: any) => {
             if(error.status === 422) {
               template.isError = true;
             } else {
-              this.onSaveFail();
+              this.onFail(`Failure! Template has been failed.`);
             }
           },
           () => {
@@ -81,10 +84,39 @@ export class ManageMyTemplatesComponent implements OnInit {
       }
     }
 
-    private onSaveSuccess(): void {
-      this.util.openSnackBar(`Success! Template has been updated.`);
+    deleteTemplate(template: Template) {
+      this.dialog.open(ConfirmationModalComponent,
+        {
+          autoFocus: false,
+          data: {
+            title: 'Delete Template',
+            innerHtmlMessage: `Are you sure you want to delete ${template.name}?
+                   <br/><br/><strong>This action cannot be undone.</strong>`,
+            confirmButtonText: 'Delete Template',
+            cancelButtonText: 'Cancel'
+          }
+        })
+        .afterClosed()
+        .subscribe(result => {
+          if (result) {
+            this.apiService.deleteTemplate(parseInt(template.templateId))
+              .subscribe(
+                () => {
+                  this.templates.splice(this.templates.findIndex(temp => temp.templateId === template.templateId), 1);
+                  this.templateTable.renderRows();
+                  this.onSuccess(`Success! ${template.name} has been deleted.`);
+                }, 
+                (error) => {
+                  this.onFail(`Failure! ${template.name} failed to delete.`);
+                }
+              );
+          }
+        });
     }
-    private onSaveFail(): void {
-      this.util.openSnackBar(`Failure! Template has been failed.`);
+    private onSuccess(msg: string): void {
+      this.util.openSnackBar(msg);
+    }
+    private onFail(msg: string): void {
+      this.util.openSnackBar(msg);
     }
 }
