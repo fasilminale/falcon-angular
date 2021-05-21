@@ -390,19 +390,33 @@ describe('InvoiceFormComponent', () => {
     expect(component.resetForm).not.toHaveBeenCalled();
   });
 
-  it('should reset form when cancel dialog is confirmed', () => {
-    spyOn(component, 'resetForm').and.stub();
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
-    component.onCancel();
-    expect(component.resetForm).toHaveBeenCalled();
+  describe('on create page', () => {
+    beforeEach(() => {
+      component.falconInvoiceNumber = '';
+    });
+
+    describe('and the form has been changed', () => {
+      beforeEach(() => {
+        component.invoiceFormGroup.markAsDirty();
+      });
+
+      it('should leave form when cancel dialog is confirmed', async () => {
+        spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
+        spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+        await component.onCancel();
+        expect(router.navigate).toHaveBeenCalled();
+      });
+
+      it('should not leave form when cancel dialog is denied', async () => {
+        spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
+        spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
+        await component.onCancel();
+        expect(router.navigate).not.toHaveBeenCalled();
+      });
+    });
+
   });
 
-  it('should not reset form when cancel dialog is denied', () => {
-    spyOn(component, 'resetForm').and.stub();
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
-    component.onCancel();
-    expect(component.resetForm).not.toHaveBeenCalled();
-  });
 
   it('should reset form when invoice is successfully created', async () => {
     spyOn(component, 'resetForm').and.stub();
