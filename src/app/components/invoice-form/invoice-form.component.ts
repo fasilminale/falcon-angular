@@ -287,7 +287,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   private markFormAsPristine(): void {
     this.invoiceFormGroup.markAsPristine();
     this.osptFormGroup.markAsPristine();
-    this.uploadFormComponent?.formGroup.markAsPristine();
+    if (this.uploadFormComponent) {
+      this.uploadFormComponent.formGroup.markAsPristine();
+    }
     this.lineItemsFormArray.markAsPristine();
   }
 
