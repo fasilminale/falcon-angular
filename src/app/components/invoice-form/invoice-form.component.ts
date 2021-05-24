@@ -167,6 +167,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     return !!this.falconInvoiceNumber;
   }
 
+  get isFormPristine(): boolean {
+    return this.invoiceFormGroup.pristine
+      && this.osptFormGroup.pristine
+      && (this.uploadFormComponent?.formGroup.pristine ?? true)
+      && this.lineItemsFormArray.pristine;
+  }
+
+
   /* STATIC FUNCTIONS */
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
@@ -248,6 +256,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           }
           this.loadingService.hideLoading();
           this.calculateLineItemNetAmount();
+
+          this.markFormAsPristine();
         })
     );
   }
@@ -271,6 +281,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.invoiceFormGroup.controls.companyCode.setValue('');
     this.invoiceFormGroup.controls.amountOfInvoice.setValue('0');
     this.calculateLineItemNetAmount();
+    this.markFormAsPristine();
+  }
+
+  private markFormAsPristine(): void {
+    this.invoiceFormGroup.markAsPristine();
+    this.osptFormGroup.markAsPristine();
+    this.uploadFormComponent?.formGroup.markAsPristine();
+    this.lineItemsFormArray.markAsPristine();
   }
 
   public validateRegex(event: any): boolean {
@@ -310,6 +328,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   public addNewEmptyLineItem(): void {
     this.lineItemsFormArray.push(InvoiceFormComponent.createEmptyLineItemForm());
+    this.lineItemsFormArray.markAsDirty();
     if (this.lineItemsFormArray.length > 1) {
       this.lineItemRemoveButtonDisable = false;
     }
@@ -323,21 +342,19 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public async onCancel(): Promise<void> {
-    if ((this.isOnEditPage && this.readOnly)
-      || this.invoiceFormGroup.pristine) {
+    if (this.isFormPristine || await this.askForCancelConfirmation()) {
       await this.gotoInvoiceList();
-    } else {
-      const result = await this.util.openConfirmationModal({
-        title: 'Cancel',
-        innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
-                   <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
-        confirmButtonText: 'Yes, cancel',
-        cancelButtonText: 'No, go back'
-      }).toPromise();
-      if (result === 'confirm') {
-        await this.gotoInvoiceList();
-      }
     }
+  }
+
+  private askForCancelConfirmation(): Promise<boolean> {
+    return this.util.openConfirmationModal({
+      title: 'Cancel',
+      innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
+                   <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
+      confirmButtonText: 'Yes, cancel',
+      cancelButtonText: 'No, go back'
+    }).toPromise();
   }
 
   private async gotoInvoiceList(): Promise<boolean> {

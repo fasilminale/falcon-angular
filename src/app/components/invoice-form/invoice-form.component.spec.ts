@@ -401,12 +401,12 @@ describe('InvoiceFormComponent', () => {
 
       describe('when the cancel button is pressed', () => {
         it('should leave page when cancel dialog is CONFIRMED', async () => {
-          spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+          spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
           await component.onCancel();
           expect(router.navigate).toHaveBeenCalled();
         });
         it('should NOT leave page when cancel dialog is DENIED', async () => {
-          spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
+          spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
           await component.onCancel();
           expect(router.navigate).not.toHaveBeenCalled();
         });
