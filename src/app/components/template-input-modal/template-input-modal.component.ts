@@ -2,7 +2,7 @@ import {Component, EventEmitter, HostListener, Inject, OnInit, Output} from '@an
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {ApiService} from '../../services/api-service';
 export interface TemplateInputModalComponentData {
-  shouldOverride: boolean;
+  isPaymentOverrideSelected: boolean;
 }
 @Component({
   selector: 'app-template-input-modal',
@@ -38,7 +38,7 @@ export interface TemplateInputModalComponentData {
                [(ngModel)]="template.description"
         />
       </div>
-      <div *ngIf="data.shouldOverride">
+      <div *ngIf="data.isPaymentOverrideSelected">
         <label for="description-input" class="form-label fieldLabel1 label">
           <strong>Selected Override of Standard Payment Terms will NOT be
           included in template</strong>

@@ -39,11 +39,11 @@ export class UtilService {
       ));
   }
 
-  public openTemplateInputModal(shouldOverride?: boolean): Observable<Template> {
+  public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {
     return this.dialog.open(
       TemplateInputModalComponent,
       {autoFocus: false, data: {
-        shouldOverride: shouldOverride? shouldOverride: false
+        isPaymentOverrideSelected: isPaymentOverrideSelected? isPaymentOverrideSelected: false
       }}
     )
       .afterClosed()

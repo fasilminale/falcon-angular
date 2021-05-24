@@ -171,15 +171,14 @@
                    class="form-label fieldLabel1">
               <input id="override-stp-checkbox"
                      type="checkbox"
-                     formControlName="shouldOverride"
+                     formControlName="isPaymentOverrideSelected"
                      [attr.disabled]="readOnly ? true : null"
-                     (change)="shouldOverrideSelected()"
               />
               Override Standard Payment Terms
             </label>
             <app-fal-radio-input formControlName="paymentTerms"
                                  [options]="paymentTermOptions"
-                                 [isDisabled]="readOnly || !osptFormGroup.controls.shouldOverride.value">
+                                 [isDisabled]="readOnly || !osptFormGroup.controls.isPaymentOverrideSelected.value">
             </app-fal-radio-input>
           </div>
         </div>

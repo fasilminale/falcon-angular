@@ -17,7 +17,7 @@ describe('InputModalComponent', () => {
   };
 
   const diaogData: TemplateInputModalComponentData = {
-    shouldOverride: false
+    isPaymentOverrideSelected: false
   }
   const apiMock = {
     checkTemplateIsDuplicate: () => {
