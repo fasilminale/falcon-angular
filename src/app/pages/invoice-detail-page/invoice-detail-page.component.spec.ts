@@ -11,7 +11,9 @@ import {LoadingService} from '../../services/loading-service';
 import {of} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
-import {ApiService} from '../../services/api-service';
+import {InvoiceService} from '../../services/invoice-service';
+import {AttachmentService} from '../../services/attachment-service';
+import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {Router} from '@angular/router';
 import {TimeService} from '../../services/time-service';
@@ -78,7 +80,9 @@ describe('InvoiceDetailPageComponent', () => {
       ],
       providers: [
         WebServices,
-        ApiService,
+        InvoiceService,
+        AttachmentService,
+        TemplateService,
         UtilService,
         MatDialog,
         LoadingService,

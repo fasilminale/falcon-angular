@@ -3,7 +3,7 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 import {ManageMyTemplatesComponent} from './manage-my-templates.component';
-import {ApiService} from 'src/app/services/api-service';
+import {TemplateService} from 'src/app/services/template-service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {environment} from 'src/environments/environment';
 import {WebServices} from 'src/app/services/web-services';
@@ -19,13 +19,13 @@ import { MatTableModule } from '@angular/material/table';
 describe('ManageMyTemplatesComponent', () => {
   let component: ManageMyTemplatesComponent;
   let fixture: ComponentFixture<ManageMyTemplatesComponent>;
-  let apiService: ApiService;
+  let apiService: TemplateService;
   let util: UtilService;
   let http: HttpTestingController;
   let dialog: MatDialog;
 
   let template: Template;
-  let templateData: Template[]; 
+  let templateData: Template[];
   let updatedTemplate: Template = new Template({
     description: 'test',
     name: 'test',
@@ -36,12 +36,12 @@ describe('ManageMyTemplatesComponent', () => {
     afterClosed: of(true),
     close: null
   });
-  
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule, MatTableModule],
       declarations: [ManageMyTemplatesComponent],
-      providers: [ApiService, WebServices, UtilService],
+      providers: [TemplateService, WebServices, UtilService],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
@@ -51,7 +51,7 @@ describe('ManageMyTemplatesComponent', () => {
     fixture = TestBed.createComponent(ManageMyTemplatesComponent);
     component = fixture.componentInstance;
     http = TestBed.inject(HttpTestingController);
-    apiService = TestBed.inject(ApiService);
+    apiService = TestBed.inject(TemplateService);
     util = TestBed.inject(UtilService);
     dialog = TestBed.inject(MatDialog);
     fixture.detectChanges();
@@ -157,7 +157,7 @@ describe('ManageMyTemplatesComponent', () => {
     spyOn(component.templateTable, 'renderRows');
     component.deleteTemplate(template);
     expect(component.templates.length).toEqual(1);
-    
+
     expect(component.templateTable.renderRows).toHaveBeenCalled();
     expect(util.openSnackBar).toHaveBeenCalledWith(`Success! ${template.name} has been deleted.`);
   });
@@ -167,7 +167,7 @@ describe('ManageMyTemplatesComponent', () => {
     component.templates = templateData;
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     spyOn(apiService, 'deleteTemplate').and.callFake(() => {
-      return throwError({status: 404}); 
+      return throwError({status: 404});
     });
     spyOn(util, 'openSnackBar').and.stub();
     component.deleteTemplate(template);

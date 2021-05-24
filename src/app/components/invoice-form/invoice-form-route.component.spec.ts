@@ -12,7 +12,9 @@ import {environment} from '../../../environments/environment';
 import {ActivatedRoute, convertToParamMap, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
-import {ApiService} from '../../services/api-service';
+import {InvoiceService} from '../../services/invoice-service';
+import {AttachmentService} from '../../services/attachment-service';
+import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 
 describe('InvoiceFormComponent ROUTING', () => {
@@ -75,7 +77,9 @@ describe('InvoiceFormComponent ROUTING', () => {
         MatDialog,
         LoadingService,
         MatSnackBar,
-        ApiService,
+        InvoiceService,
+        AttachmentService,
+        TemplateService,
         UtilService,
         {provide: ActivatedRoute, useValue: route},
         {provide: Router, useValue: mockRouter}
