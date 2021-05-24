@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {TemplateInputModalComponent} from './template-input-modal.component';
-import {MatDialogRef} from '@angular/material/dialog';
+import {TemplateInputModalComponent, TemplateInputModalComponentData} from './template-input-modal.component';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {ApiService} from '../../services/api-service';
 import {of} from 'rxjs';
 
@@ -16,6 +16,9 @@ describe('InputModalComponent', () => {
     }
   };
 
+  const diaogData: TemplateInputModalComponentData = {
+    isPaymentOverrideSelected: false
+  }
   const apiMock = {
     checkTemplateIsDuplicate: () => {
     }
@@ -26,6 +29,7 @@ describe('InputModalComponent', () => {
       declarations: [TemplateInputModalComponent],
       providers: [
         {provide: MatDialogRef, useValue: dialogMock},
+        {provide: MAT_DIALOG_DATA, useValue: diaogData},
         {provide: ApiService, useValue: apiMock}
       ]
     })
