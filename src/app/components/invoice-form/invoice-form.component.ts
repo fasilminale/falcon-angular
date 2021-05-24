@@ -111,12 +111,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     });
 
     this.osptFormGroup = new FormGroup({
-      shouldOverride: new FormControl({value: false, disabled: this.readOnly}),
+      isPaymentOverrideSelected: new FormControl({value: false, disabled: this.readOnly}),
       paymentTerms: new FormControl({value: null, disabled: this.readOnly})
     });
 
     this.subscriptions.push(
-      this.osptFormGroup.controls.shouldOverride.valueChanges
+      this.osptFormGroup.controls.isPaymentOverrideSelected.valueChanges
         .subscribe(value => {
           if (!value) {
             this.osptFormGroup.controls.paymentTerms.reset();
@@ -226,7 +226,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
           this.invoiceFormGroup.disable();
 
-          this.osptFormGroup.controls.shouldOverride.setValue(!!invoice.standardPaymentTermsOverride);
+          this.osptFormGroup.controls.isPaymentOverrideSelected.setValue(!!invoice.standardPaymentTermsOverride);
           this.osptFormGroup.controls.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
           this.osptFormGroup.disable();
 
@@ -412,7 +412,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   public saveTemplate(): void {
     this.subscriptions.push(
-      this.util.openTemplateInputModal()
+      this.util.openTemplateInputModal(this.osptFormGroup.controls.isPaymentOverrideSelected.value)
         .subscribe(async (result) => {
           if (result) {
             const template: Template = {

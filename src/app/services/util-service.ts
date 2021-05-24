@@ -39,10 +39,12 @@ export class UtilService {
       ));
   }
 
-  public openTemplateInputModal(): Observable<Template> {
+  public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {
     return this.dialog.open(
       TemplateInputModalComponent,
-      {autoFocus: false}
+      {autoFocus: false, data: {
+        isPaymentOverrideSelected: isPaymentOverrideSelected? isPaymentOverrideSelected: false
+      }}
     )
       .afterClosed()
       .pipe(mergeMap<any, Observable<Template>>(
