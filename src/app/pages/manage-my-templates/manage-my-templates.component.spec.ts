@@ -11,7 +11,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterTestingModule} from '@angular/router/testing';
 import {UtilService} from 'src/app/services/util-service';
-import {MatDialogModule} from '@angular/material/dialog';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {Template} from 'src/app/models/template/template-model';
 import {of, throwError} from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
@@ -20,25 +20,23 @@ describe('ManageMyTemplatesComponent', () => {
   let component: ManageMyTemplatesComponent;
   let fixture: ComponentFixture<ManageMyTemplatesComponent>;
   let apiService: ApiService;
-  let webservice: WebServices;
   let util: UtilService;
   let http: HttpTestingController;
+  let dialog: MatDialog;
 
   let template: Template;
-  let templateData = [
-    {
-      description: '',
-      name: '',
-      isDisable: true,
-      createdDate: '',
-    }
-  ];
+  let templateData: Template[]; 
   let updatedTemplate: Template = new Template({
     description: 'test',
     name: 'test',
     isDisable: true,
     createdDate: '2021-01-01'
   });
+  const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
+    afterClosed: of(true),
+    close: null
+  });
+  
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule, MatTableModule],
@@ -53,11 +51,12 @@ describe('ManageMyTemplatesComponent', () => {
     fixture = TestBed.createComponent(ManageMyTemplatesComponent);
     component = fixture.componentInstance;
     http = TestBed.inject(HttpTestingController);
-    webservice = TestBed.inject(WebServices);
     apiService = TestBed.inject(ApiService);
     util = TestBed.inject(UtilService);
+    dialog = TestBed.inject(MatDialog);
     fixture.detectChanges();
     template = new Template({
+      templateId: '1',
       description: '',
       name: 'test',
       isDisable: true,
@@ -71,13 +70,15 @@ describe('ManageMyTemplatesComponent', () => {
         }
       ]
     });
-    let templateData = [
-      {
+    templateData = [
+      template,
+      new Template({
+        templateId: '2',
         description: '',
         name: '',
         isDisable: true,
         createdDate: '',
-      }
+      })
     ];
   });
 
@@ -89,7 +90,7 @@ describe('ManageMyTemplatesComponent', () => {
     //component.ngOnInit();
     http.expectOne(`${environment.baseServiceUrl}/v1/templates`).flush(templateData);
     tick();
-    expect(component.templates.length).toEqual(1);
+    expect(component.templates.length).toEqual(2);
   }));
 
   it('should enable edit template', fakeAsync(() => {
@@ -99,10 +100,10 @@ describe('ManageMyTemplatesComponent', () => {
   }));
 
   it('should not enable edit template, if another template is already editing', fakeAsync(() => {
-    component.isEditDisabled = true;
+    component.editedTemplate = templateData[1];
     component.editTemplate(template);
-    const isDisable = template.isDisable;
-    expect(isDisable).toBeTruthy();
+    const temp = component.editedTemplate;
+    expect(temp).toEqual(templateData[0]);
   }));
 
 
@@ -147,4 +148,29 @@ describe('ManageMyTemplatesComponent', () => {
     const isDisable = template.isDisable;
     expect(isDisable).toBeTruthy();
   }));
+
+  it('should delete template from list on confiramtion', () => {
+    component.templates = templateData;
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    spyOn(apiService, 'deleteTemplate').and.returnValue(of({status: 200}));
+    spyOn(util, 'openSnackBar').and.stub();
+    spyOn(component.templateTable, 'renderRows');
+    component.deleteTemplate(template);
+    expect(component.templates.length).toEqual(1);
+    
+    expect(component.templateTable.renderRows).toHaveBeenCalled();
+    expect(util.openSnackBar).toHaveBeenCalledWith(`Success! ${template.name} has been deleted.`);
+  });
+
+
+  it('should not delete template from list on confiramtion', () => {
+    component.templates = templateData;
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    spyOn(apiService, 'deleteTemplate').and.callFake(() => {
+      return throwError({status: 404}); 
+    });
+    spyOn(util, 'openSnackBar').and.stub();
+    component.deleteTemplate(template);
+    expect(util.openSnackBar).toHaveBeenCalledWith(`Failure! ${template.name} failed to delete.`);
+  });
 });
