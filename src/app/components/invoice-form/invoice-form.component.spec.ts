@@ -147,6 +147,7 @@ describe('InvoiceFormComponent', () => {
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('0');
     component.externalAttachment = true;
+    spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
   });
 
   it('should create', () => {
@@ -175,7 +176,6 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should show failure snackbar on failed post', async () => {
-    spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openErrorModal').and.returnValue(of());
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
@@ -352,7 +352,6 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should not reset on failed attachments', async () => {
-    spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
     spyOn(util, 'openErrorModal').and.returnValue(of(true));
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
@@ -382,21 +381,32 @@ describe('InvoiceFormComponent', () => {
         component.invoiceFormGroup.markAsDirty();
       });
 
-      it('should leave form when cancel dialog is confirmed', async () => {
-        spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
-        spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
-        await component.onCancel();
-        expect(router.navigate).toHaveBeenCalled();
-      });
-
-      it('should not leave form when cancel dialog is denied', async () => {
-        spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
-        spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
-        await component.onCancel();
-        expect(router.navigate).not.toHaveBeenCalled();
+      describe('when the cancel button is pressed', () => {
+        it('should leave page when cancel dialog is CONFIRMED', async () => {
+          spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
+          await component.onCancel();
+          expect(router.navigate).toHaveBeenCalled();
+        });
+        it('should NOT leave page when cancel dialog is DENIED', async () => {
+          spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+          await component.onCancel();
+          expect(router.navigate).not.toHaveBeenCalled();
+        });
       });
     });
 
+    describe('and the form has NOT been changed', () => {
+      beforeEach(() => {
+        component.invoiceFormGroup.markAsPristine();
+      });
+
+      describe('when the cancel button is pressed', () => {
+        it('should leave form', async () => {
+          await component.onCancel();
+          expect(router.navigate).toHaveBeenCalled();
+        });
+      });
+    });
   });
 
 

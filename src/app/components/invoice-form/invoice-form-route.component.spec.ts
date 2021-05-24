@@ -125,9 +125,4 @@ describe('InvoiceFormComponent ROUTING', () => {
 
   });
 
-  it('should route to invoices list if form is readonly', () => {
-    component.readOnly = true;
-    component.onCancel();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/invoices']);
-  });
 });

@@ -133,10 +133,9 @@ describe('UploadFormComponent', () => {
   it('should remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+    spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
-    component.addAttachment();
     await component.removeAttachment(0);
     expect(component.attachments).toEqual([]);
   });
@@ -144,7 +143,7 @@ describe('UploadFormComponent', () => {
   it('should not remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
+    spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
     component.addAttachment();
@@ -164,7 +163,7 @@ describe('UploadFormComponent', () => {
   it('should fail external attachment validation', async () => {
     const testFile = new File([], 'test file');
     const testType = 'EXTERNAL';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+    spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
     component.addAttachment();
@@ -181,7 +180,7 @@ describe('UploadFormComponent', () => {
       url: 'url'
     };
     component.attachments.push(attachment);
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+    spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
     await component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
   });
@@ -195,12 +194,12 @@ describe('UploadFormComponent', () => {
       url: 'url'
     };
     component.attachments.push(attachment);
-    spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
+    spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
     await component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
   });
 
-  it('should download attachment',  () => {
+  it('should download attachment', () => {
     const attachment: any = {
       file: new File([], 'test file'),
       type: 'test type',

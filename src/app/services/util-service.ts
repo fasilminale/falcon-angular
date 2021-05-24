@@ -26,16 +26,16 @@ export class UtilService {
     this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
 
-  public openConfirmationModal(data: ConfirmationModalData): Observable<ConfirmationResult> {
+  public openConfirmationModal(data: ConfirmationModalData): Observable<boolean> {
     return this.dialog.open(
       ConfirmationModalComponent,
       {autoFocus: false, data}
     )
       .afterClosed()
-      .pipe(mergeMap<any, Observable<ConfirmationResult>>(
+      .pipe(mergeMap<any, Observable<boolean>>(
         result => result
-          ? of('confirm')
-          : of('cancel')
+          ? of(true)
+          : of(false)
       ));
   }
 
@@ -60,8 +60,6 @@ export class UtilService {
   }
 
 }
-
-export type ConfirmationResult = 'confirm' | 'cancel';
 
 export type ConfirmationModalData = {
   title: string,

@@ -70,14 +70,14 @@ describe('UtilService Tests', () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     const result = await util.openConfirmationModal(testModalData).toPromise();
     expect(dialog.open).toHaveBeenCalled();
-    expect(result).toEqual('confirm');
+    expect(result).toBeTrue();
   });
 
   it('openConfirmationModal should cancel', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CANCEL_DIALOG);
     const result = await util.openConfirmationModal(testModalData).toPromise();
     expect(dialog.open).toHaveBeenCalled();
-    expect(result).toEqual('cancel');
+    expect(result).toBeFalse();
   });
 
   it('openErrorModal should close', async () => {
