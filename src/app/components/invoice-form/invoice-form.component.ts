@@ -21,7 +21,7 @@ import {
 } from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
-import {filter} from 'rxjs/operators';
+import {environment} from '../../../environments/environment';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
@@ -326,21 +326,21 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  public onCancel(): void {
-    if (this.readOnly) {
-      this.gotoInvoiceList();
+  public async onCancel(): Promise<void> {
+    if ((this.isOnEditPage && this.readOnly)
+      || this.invoiceFormGroup.pristine) {
+      await this.gotoInvoiceList();
     } else {
-      this.subscriptions.push(
-        this.util.openConfirmationModal({
-          title: 'Cancel',
-          innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
+      const result = await this.util.openConfirmationModal({
+        title: 'Cancel',
+        innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
                    <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
-          confirmButtonText: 'Yes, cancel',
-          cancelButtonText: 'No, go back'
-        })
-          .pipe(filter(result => result === 'confirm'))
-          .subscribe(() => this.resetForm())
-      );
+        confirmButtonText: 'Yes, cancel',
+        cancelButtonText: 'No, go back'
+      }).toPromise();
+      if (result === 'confirm') {
+        await this.gotoInvoiceList();
+      }
     }
   }
 
@@ -477,7 +477,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     if (this.isOnEditPage) {
       this.util.openSnackBar(`Failure, invoice was not updated!`);
     } else {
-      this.showSystemErrorModal();
+      await this.showSystemErrorModal();
     }
   }
 
