@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {ApiService} from '../../services/api-service';
+import {TemplateService} from '../../services/template-service';
 
 @Component({
   selector: 'app-template-input-modal',
@@ -68,7 +68,7 @@ export class TemplateInputModalComponent implements OnInit {
 
   @Output() createTemplate: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private dialogRef: MatDialogRef<TemplateInputModalComponent>,  private api: ApiService) {}
+  constructor(private dialogRef: MatDialogRef<TemplateInputModalComponent>,  private api: TemplateService) {}
 
   ngOnInit(): void {
   }

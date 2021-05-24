@@ -2,14 +2,14 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TemplateInputModalComponent} from './template-input-modal.component';
 import {MatDialogRef} from '@angular/material/dialog';
-import {ApiService} from '../../services/api-service';
+import {TemplateService} from '../../services/template-service';
 import {of} from 'rxjs';
 
 describe('InputModalComponent', () => {
   let component: TemplateInputModalComponent;
   let fixture: ComponentFixture<TemplateInputModalComponent>;
   let dialogRef: MatDialogRef<any>;
-  let api: ApiService;
+  let api: TemplateService;
 
   const dialogMock = {
     close: () => {
@@ -26,7 +26,7 @@ describe('InputModalComponent', () => {
       declarations: [TemplateInputModalComponent],
       providers: [
         {provide: MatDialogRef, useValue: dialogMock},
-        {provide: ApiService, useValue: apiMock}
+        {provide: TemplateService, useValue: apiMock}
       ]
     })
       .compileComponents();
@@ -34,7 +34,7 @@ describe('InputModalComponent', () => {
 
   beforeEach(() => {
     dialogRef = TestBed.inject(MatDialogRef);
-    api = TestBed.inject(ApiService);
+    api = TestBed.inject(TemplateService);
     fixture = TestBed.createComponent(TemplateInputModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
