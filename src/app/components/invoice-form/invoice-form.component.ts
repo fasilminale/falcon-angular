@@ -75,7 +75,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
   private subscriptions: Array<Subscription> = [];
-  private shouldOverride: boolean = false;
 
   /* INPUTS */
   @Input() enableMilestones = false;
@@ -248,7 +247,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           }
           this.loadingService.hideLoading();
           this.calculateLineItemNetAmount();
-          this.shouldOverrideSelected();
         })
     );
   }
@@ -397,7 +395,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   public saveTemplate(): void {
     this.subscriptions.push(
-      this.util.openTemplateInputModal(this.shouldOverride)
+      this.util.openTemplateInputModal(this.osptFormGroup.controls.shouldOverride.value)
         .subscribe(async (result) => {
           if (result) {
             const template: Template = {
@@ -537,7 +535,4 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     return null;
   }
 
-  shouldOverrideSelected() {
-    this.shouldOverride = this.osptFormGroup.controls.shouldOverride.value;
-  }
 }
