@@ -163,24 +163,6 @@ describe('InvoiceFormComponent', () => {
     expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
   });
 
-  it('should not submit with missing fields', async () => {
-    spyOn(component, 'onSubmit').and.callThrough();
-    component.companyCode.setValue(null);
-    await component.onSubmit();
-    fixture.detectChanges();
-    expect(component.onSubmit).toHaveBeenCalled();
-    expect(component.submitted).toBeTrue();
-  });
-
-  it('should not submit with no external attachment', async () => {
-    spyOn(component, 'onSubmit').and.callThrough();
-    component.externalAttachment = false;
-    await component.onSubmit();
-    fixture.detectChanges();
-    expect(component.onSubmit).toHaveBeenCalled();
-    expect(component.submitted).toBeTrue();
-  });
-
   it('should show success snackbar on post', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));

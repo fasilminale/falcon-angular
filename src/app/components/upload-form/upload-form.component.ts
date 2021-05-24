@@ -17,7 +17,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
   ];
 
   @Input() isDisabled = false;
-  @Input() submitted = false;
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
 
   /* FORM CONTROLS */
