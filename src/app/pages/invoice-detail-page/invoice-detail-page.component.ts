@@ -113,4 +113,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
     return this.timeService.formatTimestamp(value, 'MM/DD/YY, HH:mm z');
   }
 
+  isShouldOverrideSelected(event: boolean) {
+
+  }
 }

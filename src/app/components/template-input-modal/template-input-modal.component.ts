@@ -1,7 +1,9 @@
-import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {Component, EventEmitter, HostListener, Inject, OnInit, Output} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {ApiService} from '../../services/api-service';
-
+export interface TemplateInputModalComponentData {
+  shouldOverride: boolean;
+}
 @Component({
   selector: 'app-template-input-modal',
   template: `
@@ -36,7 +38,14 @@ import {ApiService} from '../../services/api-service';
                [(ngModel)]="template.description"
         />
       </div>
+      <div *ngIf="data.shouldOverride">
+        <label for="description-input" class="form-label fieldLabel1 label">
+          <strong>Selected Override of Standard Payment Terms will NOT be
+          included in template</strong>
+        </label>
+      </div>
     </div>
+    
     <div mat-dialog-actions class="float-right">
       <elm-button buttonStyle="secondary"
                   class="ms-auto"
@@ -68,7 +77,10 @@ export class TemplateInputModalComponent implements OnInit {
 
   @Output() createTemplate: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private dialogRef: MatDialogRef<TemplateInputModalComponent>,  private api: ApiService) {}
+  constructor(
+    private dialogRef: MatDialogRef<TemplateInputModalComponent>,  
+    @Inject(MAT_DIALOG_DATA) public data: TemplateInputModalComponentData,
+    private api: ApiService) {}
 
   ngOnInit(): void {
   }
