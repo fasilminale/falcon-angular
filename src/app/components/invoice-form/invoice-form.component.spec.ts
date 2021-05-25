@@ -14,6 +14,8 @@ import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {ApiService} from '../../services/api-service';
 import {Router} from '@angular/router';
+import {Template, TemplateToSave} from '../../models/template/template-model';
+import {LineItem} from '../../models/template/linItem-model';
 
 describe('InvoiceFormComponent', () => {
 
@@ -92,15 +94,29 @@ describe('InvoiceFormComponent', () => {
     }
   };
 
-  const template = {
-    name: 'testTemplate',
-    description: 'testDescription'
-  };
-
-  const templateResponse = {
+  const template: TemplateToSave = {
     name: 'testTemplate',
     description: 'testDescription',
-    falconInvoiceNumber: 'F0000000001'
+    falconInvoiceNumber: 'F0000000001',
+  };
+
+  const templateResponse: Template = {
+    name: 'testTemplate',
+    description: 'testDescription',
+    falconInvoiceNumber: 'F0000000001',
+    templateId: '',
+    companyCode: '',
+    createdBy: '',
+    currency: '',
+    erpType: '',
+    lineItems: [],
+    vendorNumber: '',
+    workType: '',
+    isDisable: true,
+    isError: false,
+    createdDate: '',
+    tempDesc: '',
+    tempName: '',
   };
 
   beforeEach(async () => {
@@ -430,7 +446,7 @@ describe('InvoiceFormComponent', () => {
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('1');
     component.calculateLineItemNetAmount();
-    expect(component.totallineItemNetAmount).toEqual(1);
+    expect(component.totalLineItemNetAmount).toEqual(1);
     const control = component.invoiceFormGroup.controls.invoiceDate;
     control.setValue('test');
     expect(component.validateDate(control)).toEqual({validateDate: true});
@@ -456,12 +472,8 @@ describe('InvoiceFormComponent', () => {
   it('should call save template and fail to save', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openTemplateInputModal').and.returnValue(of(template));
-    spyOn(api, 'createTemplate').and.returnValue(
-      of(new ErrorEvent('test error event'), {
-        status: 123,
-        statusText: 'test status text'
-      })
-    );
+    api.createTemplate({} as TemplateToSave);
+    spyOn(api, 'createTemplate').and.returnValue(of(null));
     await component.saveTemplate();
     fixture.detectChanges();
     expect(util.openSnackBar)
