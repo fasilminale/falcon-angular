@@ -16,6 +16,8 @@ import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
 import {Router} from '@angular/router';
+import {Template, TemplateToSave} from '../../models/template/template-model';
+import {LineItem} from '../../models/template/linItem-model';
 
 describe('InvoiceFormComponent', () => {
 
@@ -96,15 +98,29 @@ describe('InvoiceFormComponent', () => {
     }
   };
 
-  const template = {
-    name: 'testTemplate',
-    description: 'testDescription'
-  };
-
-  const templateResponse = {
+  const template: TemplateToSave = {
     name: 'testTemplate',
     description: 'testDescription',
-    falconInvoiceNumber: 'F0000000001'
+    falconInvoiceNumber: 'F0000000001',
+  };
+
+  const templateResponse: Template = {
+    name: 'testTemplate',
+    description: 'testDescription',
+    falconInvoiceNumber: 'F0000000001',
+    templateId: '',
+    companyCode: '',
+    createdBy: '',
+    currency: '',
+    erpType: '',
+    lineItems: [],
+    vendorNumber: '',
+    workType: '',
+    isDisable: true,
+    isError: false,
+    createdDate: '',
+    tempDesc: '',
+    tempName: '',
   };
 
   beforeEach(async () => {
@@ -155,6 +171,7 @@ describe('InvoiceFormComponent', () => {
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('0');
     component.externalAttachment = true;
+    spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
   });
 
   it('should create', () => {
@@ -171,24 +188,6 @@ describe('InvoiceFormComponent', () => {
     expect(component.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
   });
 
-  it('should not submit with missing fields', async () => {
-    spyOn(component, 'onSubmit').and.callThrough();
-    component.companyCode.setValue(null);
-    await component.onSubmit();
-    fixture.detectChanges();
-    expect(component.onSubmit).toHaveBeenCalled();
-    expect(component.submitted).toBeTrue();
-  });
-
-  it('should not submit with no external attachment', async () => {
-    spyOn(component, 'onSubmit').and.callThrough();
-    component.externalAttachment = false;
-    await component.onSubmit();
-    fixture.detectChanges();
-    expect(component.onSubmit).toHaveBeenCalled();
-    expect(component.submitted).toBeTrue();
-  });
-
   it('should show success snackbar on post', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
@@ -201,7 +200,6 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should show failure snackbar on failed post', async () => {
-    spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openErrorModal').and.returnValue(of());
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
@@ -378,7 +376,6 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should not reset on failed attachments', async () => {
-    spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
     spyOn(util, 'openErrorModal').and.returnValue(of(true));
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
@@ -408,21 +405,32 @@ describe('InvoiceFormComponent', () => {
         component.invoiceFormGroup.markAsDirty();
       });
 
-      it('should leave form when cancel dialog is confirmed', async () => {
-        spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
-        spyOn(util, 'openConfirmationModal').and.returnValue(of('confirm'));
-        await component.onCancel();
-        expect(router.navigate).toHaveBeenCalled();
-      });
-
-      it('should not leave form when cancel dialog is denied', async () => {
-        spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
-        spyOn(util, 'openConfirmationModal').and.returnValue(of('cancel'));
-        await component.onCancel();
-        expect(router.navigate).not.toHaveBeenCalled();
+      describe('when the cancel button is pressed', () => {
+        it('should leave page when cancel dialog is CONFIRMED', async () => {
+          spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
+          await component.onCancel();
+          expect(router.navigate).toHaveBeenCalled();
+        });
+        it('should NOT leave page when cancel dialog is DENIED', async () => {
+          spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+          await component.onCancel();
+          expect(router.navigate).not.toHaveBeenCalled();
+        });
       });
     });
 
+    describe('and the form has NOT been changed', () => {
+      beforeEach(() => {
+        component.invoiceFormGroup.markAsPristine();
+      });
+
+      describe('when the cancel button is pressed', () => {
+        it('should leave form', async () => {
+          await component.onCancel();
+          expect(router.navigate).toHaveBeenCalled();
+        });
+      });
+    });
   });
 
 
@@ -446,7 +454,7 @@ describe('InvoiceFormComponent', () => {
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('1');
     component.calculateLineItemNetAmount();
-    expect(component.totallineItemNetAmount).toEqual(1);
+    expect(component.totalLineItemNetAmount).toEqual(1);
     const control = component.invoiceFormGroup.controls.invoiceDate;
     control.setValue('test');
     expect(component.validateDate(control)).toEqual({validateDate: true});
@@ -472,12 +480,8 @@ describe('InvoiceFormComponent', () => {
   it('should call save template and fail to save', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openTemplateInputModal').and.returnValue(of(template));
-    spyOn(templateService, 'createTemplate').and.returnValue(
-      of(new ErrorEvent('test error event'), {
-        status: 123,
-        statusText: 'test status text'
-      })
-    );
+    templateService.createTemplate({} as TemplateToSave);
+    spyOn(templateService, 'createTemplate').and.returnValue(of(null));
     await component.saveTemplate();
     fixture.detectChanges();
     expect(util.openSnackBar)

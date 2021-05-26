@@ -17,6 +17,7 @@ import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {Router} from '@angular/router';
 import {TimeService} from '../../services/time-service';
+import {Template} from '../../models/template/template-model';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -64,6 +65,7 @@ describe('InvoiceDetailPageComponent', () => {
   let dialog: MatDialog;
   let router: Router;
   let time: TimeService;
+  let templateService: TemplateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -97,6 +99,9 @@ describe('InvoiceDetailPageComponent', () => {
     dialog = TestBed.inject(MatDialog);
     loadingService = TestBed.inject(LoadingService);
     time = TestBed.inject(TimeService);
+    templateService = TestBed.inject(TemplateService);
+    spyOn(templateService, 'getTemplates').and.returnValue(of([]));
+    spyOn(templateService, 'getTemplateByName').and.returnValue(of({lineItems: []} as unknown as Template));
     fixture = TestBed.createComponent(InvoiceDetailPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

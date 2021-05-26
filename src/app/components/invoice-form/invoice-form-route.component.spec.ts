@@ -51,6 +51,7 @@ describe('InvoiceFormComponent ROUTING', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
   let router: Router;
+  let templateService: TemplateService;
 
   const route = {
     snapshot: {url: [{path: 'invoice'}, {path: 'F0000000001'}]},
@@ -90,6 +91,8 @@ describe('InvoiceFormComponent ROUTING', () => {
     snackBar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
     router = TestBed.inject(Router);
+    templateService = TestBed.inject(TemplateService);
+    spyOn(templateService, 'getTemplates').and.returnValue(of([]));
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -129,9 +132,4 @@ describe('InvoiceFormComponent ROUTING', () => {
 
   });
 
-  it('should route to invoices list if form is readonly', () => {
-    component.readOnly = true;
-    component.onCancel();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/invoices']);
-  });
 });

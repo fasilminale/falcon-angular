@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ConfirmationResult, UtilService} from '../../services/util-service';
+import {UtilService} from '../../services/util-service';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 
 @Component({
@@ -17,7 +17,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
   ];
 
   @Input() isDisabled = false;
-  @Input() submitted = false;
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
 
   /* FORM CONTROLS */
@@ -95,8 +94,8 @@ export class UploadFormComponent implements OnInit, OnChanges {
   }
 
   public async removeAttachment(index: number): Promise<void> {
-    const result = await this.confirmRemoveAttachment();
-    if (result === 'confirm' && this.attachments.length > index) {
+    if (await this.confirmRemoveAttachment()
+      && this.attachments.length > index) {
       const attachment = this.attachments[index];
       if (attachment.action === 'NONE') {
         attachment.action = 'DELETE';
@@ -114,7 +113,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
     }
   }
 
-  private async confirmRemoveAttachment(): Promise<ConfirmationResult> {
+  private async confirmRemoveAttachment(): Promise<boolean> {
     return this.util.openConfirmationModal({
       title: 'Remove Attachment',
       innerHtmlMessage: `Are you sure you want to remove this attachment?
