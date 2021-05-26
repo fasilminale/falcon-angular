@@ -13,6 +13,19 @@
       <div class="row me-0">
 
         <div class="row col-12 col-lg-6 me-1">
+          <!-- MY TEMPLATE SELECT -->
+          <div *ngIf="!isOnEditPage" class="col-12">
+            <label for="my-templates-input" class="form-label fieldLabel1">
+              My Templates (optional)
+            </label>
+            <ng-select id="my-templates-input"
+                       [formControl]="selectedTemplateFormControl"
+                       [items]="myTemplateOptions"
+                       [searchable]="true"
+                       placeholder="Select One...">
+            </ng-select>
+          </div>
+
           <!-- WORK TYPE -->
           <div class="col-12">
             <label for="work-type-input" class="form-label fieldLabel1">
@@ -313,7 +326,7 @@
               </elm-button>
             </div>
             <div class="col-2 line-item-total-amount">
-              ${{totallineItemNetAmount | number : '1.2-2'}}
+              ${{totalLineItemNetAmount | number : '1.2-2'}}
             </div>
             <div class="col-4 form-label fieldLabel1">
               Line Net Amount Total

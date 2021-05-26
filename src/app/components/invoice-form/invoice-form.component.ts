@@ -30,12 +30,7 @@ import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
 import {Subscription} from 'rxjs';
 import {UploadFormComponent} from '../upload-form/upload-form.component';
-
-export interface Template {
-  falconInvoiceNumber: string;
-  name: string;
-  description: string;
-}
+import {Template, TemplateToSave} from '../../models/template/template-model';
 
 @Component({
   selector: 'app-invoice-form',
@@ -51,15 +46,13 @@ export interface Template {
 })
 export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
-  /* STATIC FIELDS*/
-
-
   /* PUBLIC FIELDS */
   public readonly regex = /[a-zA-Z0-9_\\-]/;
   public readonly freeTextRegex = /[\w\-\s]/;
   public workTypeOptions = ['Indirect Non-PO Invoice'];
   public erpTypeOptions = ['Pharma Corp', 'TPM'];
   public currencyOptions = ['USD', 'CAD'];
+  public myTemplateOptions = ['TEST_1', 'TEST_2'];
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
     {value: 'ZN14', display: 'Pay in 14 days'}
@@ -67,15 +60,53 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
   public osptFormGroup: FormGroup;
+  public selectedTemplateFormControl: FormControl;
   public validAmount = true;
   public externalAttachment = false;
   public file = null;
-  public totallineItemNetAmount = 0;
+  public totalLineItemNetAmount = 0;
 
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
   private subscriptions: Array<Subscription> = [];
-
+  private testTemplateMap: { [index: string]: Template } = {
+    TEST_1: {
+      name: 'TEST_1',
+      templateId: '1',
+      falconInvoiceNumber: '',
+      createdBy: 'TEST PERSON',
+      createdDate: 'somedate',
+      description: 'TEST',
+      isDisable: false,
+      tempDesc: '???',
+      tempName: '???',
+      isError: false,
+      workType: 'Indirect Non-PO Invoice',
+      companyCode: 'AAA1',
+      vendorNumber: 'AAA2',
+      erpType: 'Pharma Corp',
+      currency: 'USD',
+      lineItems: [{lineItemNumber: '', companyCode: '', costCenter: 'CCAA', glAccount: 'GLAA'}]
+    },
+    TEST_2: {
+      name: 'TEST_2',
+      templateId: '2',
+      falconInvoiceNumber: '',
+      createdBy: 'TEST GUY',
+      createdDate: 'someotherdate',
+      description: 'TEST 2',
+      isDisable: false,
+      tempDesc: 'B1',
+      tempName: 'B2',
+      isError: false,
+      workType: 'Indirect Non-PO Invoice',
+      companyCode: 'BBB1',
+      vendorNumber: 'BBB2',
+      erpType: 'TPM',
+      currency: 'CAD',
+      lineItems: []
+    }
+  };
   /* INPUTS */
   @Input() enableMilestones = false;
   @Input() readOnly = false;
@@ -113,6 +144,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.osptFormGroup = new FormGroup({
       isPaymentOverrideSelected: new FormControl({value: false, disabled: this.readOnly}),
       paymentTerms: new FormControl({value: null, disabled: this.readOnly})
+    });
+
+    this.selectedTemplateFormControl = new FormControl({
+      value: null,
+      disabled: (this.myTemplateOptions.length === 0)
     });
 
     this.subscriptions.push(
@@ -210,6 +246,35 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  private async loadTemplate(templateName: string): Promise<void> {
+    this.loadingService.showLoading('Loading Template');
+    try {
+      const template = await this.api.getTemplateByName(templateName).toPromise();
+      if (template) {
+        this.invoiceFormGroup.controls.workType.setValue(template.workType);
+        this.invoiceFormGroup.controls.companyCode.setValue(template.companyCode);
+        this.invoiceFormGroup.controls.erpType.setValue(template.erpType);
+        this.invoiceFormGroup.controls.vendorNumber.setValue(template.vendorNumber);
+        this.invoiceFormGroup.controls.currency.setValue(template.currency);
+        this.lineItemsFormArray.clear();
+        for (const lineItem of template.lineItems) {
+          this.lineItemsFormArray.push(new FormGroup({
+            glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
+            costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
+            companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
+            lineItemNetAmount: new FormControl({value: 0, disabled: this.readOnly}, [Validators.required]),
+            notes: new FormControl({value: '', disabled: this.readOnly})
+          }));
+        }
+        if (this.lineItemsFormArray.length === 0) {
+          this.addNewEmptyLineItem();
+        }
+      }
+    } finally {
+      this.loadingService.hideLoading();
+    }
+  }
+
   public loadData(): void {
     this.loadingService.showLoading('Loading');
     this.subscriptions.push(
@@ -262,8 +327,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public resetForm(): void {
+    this.resetTemplateOptions().finally();
     this.invoiceFormGroup.reset();
     this.osptFormGroup.reset();
+    this.selectedTemplateFormControl.reset();
     this.lineItemsFormArray.clear();
     if (this.uploadFormComponent) {
       this.uploadFormComponent.reset();
@@ -282,6 +349,19 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.invoiceFormGroup.controls.amountOfInvoice.setValue('0');
     this.calculateLineItemNetAmount();
     this.markFormAsPristine();
+    this.subscriptions.push(
+      this.selectedTemplateFormControl.valueChanges
+        .subscribe(v => this.loadTemplate(v))
+    );
+  }
+
+  private async resetTemplateOptions(): Promise<void> {
+    const newTemplateOptions: Array<string> = [];
+    (await this.api.getTemplates().toPromise())
+      .forEach((template: Template) => {
+        newTemplateOptions.push(template.name);
+      });
+    this.myTemplateOptions = newTemplateOptions;
   }
 
   private markFormAsPristine(): void {
@@ -417,7 +497,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
       this.util.openTemplateInputModal(this.osptFormGroup.controls.isPaymentOverrideSelected.value)
         .subscribe(async (result) => {
           if (result) {
-            const template: Template = {
+            const template: TemplateToSave = {
               falconInvoiceNumber: this.falconInvoiceNumber,
               name: result.name,
               description: result.description
@@ -535,9 +615,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public calculateLineItemNetAmount(): void {
-    this.totallineItemNetAmount = 0;
+    this.totalLineItemNetAmount = 0;
     for (const control of this.lineItemsFormArray.controls) {
-      this.totallineItemNetAmount += parseFloat((control as FormGroup).controls.lineItemNetAmount.value);
+      this.totalLineItemNetAmount += parseFloat((control as FormGroup).controls.lineItemNetAmount.value);
     }
   }
 

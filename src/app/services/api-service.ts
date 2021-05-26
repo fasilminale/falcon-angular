@@ -3,7 +3,7 @@ import {catchError, mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {Template} from '../components/invoice-form/invoice-form.component';
+import {Template, TemplateToSave} from '../models/template/template-model';
 
 @Injectable()
 export class ApiService {
@@ -65,7 +65,6 @@ export class ApiService {
   }
 
 
-
   /**
    * Calls either updateInvoice(invoice) or createInvoice(invoice) depending.
    */
@@ -114,12 +113,20 @@ export class ApiService {
     );
   }
 
-  public createTemplate(template: Template): Observable<any> {
+  public createTemplate(template: TemplateToSave): Observable<any> {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/template`, template);
   }
 
   public getTemplates(): Observable<any> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/templates`);
+  }
+
+  public getTemplateByName(name: string): Observable<Template | null> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/template/${name}`)
+      .pipe(
+        mergeMap(t => of(t as Template)),
+        catchError(t => of(null))
+      );
   }
 
   public updateTemplate(templateId: number, template: Template): Observable<any> {

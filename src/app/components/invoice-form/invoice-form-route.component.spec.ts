@@ -49,6 +49,7 @@ describe('InvoiceFormComponent ROUTING', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
   let router: Router;
+  let api: ApiService;
 
   const route = {
     snapshot: {url: [{path: 'invoice'}, {path: 'F0000000001'}]},
@@ -86,6 +87,8 @@ describe('InvoiceFormComponent ROUTING', () => {
     snackBar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
     router = TestBed.inject(Router);
+    api = TestBed.inject(ApiService);
+    spyOn(api, 'getTemplates').and.returnValue(of([]));
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
