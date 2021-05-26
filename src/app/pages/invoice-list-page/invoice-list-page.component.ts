@@ -45,8 +45,8 @@ export class InvoiceListPageComponent implements OnInit {
     this.loadingService.showLoading('Loading');
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
-      sortField: this.sortField,
-      sortOrder: this.paginationModel.sortOrder,
+      sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
+      sortOrder: this.sortField ? this.paginationModel.sortOrder : 'desc',
       searchValue: this.searchValue,
       numberPerPage
     }).subscribe((invoiceData: any) => {
