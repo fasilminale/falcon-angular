@@ -421,6 +421,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     if (this.lineItemsFormArray.length <= 1) {
       this.lineItemRemoveButtonDisable = true;
     }
+    this.calculateLineItemNetAmount();
   }
 
   public async onCancel(): Promise<void> {
