@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {InvoiceDetailPageComponent} from './invoice-detail-page.component';
 import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
@@ -18,6 +18,8 @@ import {UtilService} from '../../services/util-service';
 import {Router} from '@angular/router';
 import {TimeService} from '../../services/time-service';
 import {Template} from '../../models/template/template-model';
+import {By } from '@angular/platform-browser';
+import {ButtonModule, ElmButtonComponent } from '@elm/elm-styleguide-ui';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -74,7 +76,8 @@ describe('InvoiceDetailPageComponent', () => {
         HttpClientTestingModule,
         MatSnackBarModule,
         NoopAnimationsModule,
-        MatDialogModule
+        MatDialogModule,
+        ButtonModule
       ],
       declarations: [
         InvoiceDetailPageComponent,
@@ -196,6 +199,24 @@ describe('InvoiceDetailPageComponent', () => {
     spyOn(component, 'formatTimestamp').and.callThrough();
     component.formatTimestamp('2021-05-14T11:01:58.135Z');
     expect(component.formatTimestamp).toHaveBeenCalled();
+  });
+
+  it('should click delete button', async () => {
+    component.isDeletedInvoice = false;
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(router, 'navigate').and.stub();
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    const deleteInvoiceSpy = spyOn(component, 'deleteInvoice');
+
+    const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
+    deleteBtn.buttonClick.emit();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(deleteInvoiceSpy).toHaveBeenCalled();
+      spyOn(router, 'navigate').and.stub();
+      spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    });
   });
 
 });
