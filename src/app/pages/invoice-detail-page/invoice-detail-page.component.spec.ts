@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceDetailPageComponent} from './invoice-detail-page.component';
 import {WebServices} from '../../services/web-services';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
