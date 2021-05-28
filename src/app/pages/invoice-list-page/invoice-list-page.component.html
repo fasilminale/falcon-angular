@@ -6,18 +6,18 @@
   </div>
   <app-search (submitEvent)="searchInvoices($event)"></app-search>
 </div>
-<cardinal-card>
-  <cardinal-section-header [sectionTitle]="this.invoiceCountLabel">
-  </cardinal-section-header>
+<elm-card>
+  <elm-section-header [sectionTitle]="this.invoiceCountLabel">
+  </elm-section-header>
   <elm-data-table
     tableType="clickable"
     [data]="invoices"
     [headers]="headers"
     (pageChangedEvent)="pageChanged($event)"
-    (rowClick)="rowClicked($event)"
+    (dataSelectedEvent)="rowClicked($event[0])"
     (sortEvent)="sortChanged($event)"
     [shouldSort]=true
     [totalResults]="paginationModel.total"
     [pageSizes]="paginationModel.pageSizes">
   </elm-data-table>
-</cardinal-card>
+</elm-card>

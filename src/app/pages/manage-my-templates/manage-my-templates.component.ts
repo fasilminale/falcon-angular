@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
 import { Template } from 'src/app/models/template/template-model';
-import { ApiService } from 'src/app/services/api-service';
+import { TemplateService } from 'src/app/services/template-service';
 import { UtilService } from 'src/app/services/util-service';
 
 @Component({
@@ -20,7 +20,7 @@ export class ManageMyTemplatesComponent implements OnInit {
   editedTemplate: Template | undefined;
 
   constructor(
-    private apiService: ApiService,
+    private apiService: TemplateService,
     private util: UtilService,
     private dialog: MatDialog,
   ) { }
@@ -44,7 +44,7 @@ export class ManageMyTemplatesComponent implements OnInit {
         template.tempName = template.name;
         template.tempDesc = template.description;
         this.editedTemplate = template;
-      } 
+      }
     }
 
     cancelTemplate(template: Template) {
@@ -60,9 +60,9 @@ export class ManageMyTemplatesComponent implements OnInit {
       if(!template.name) {
         return;
       }
-      
+
       if (!template.isDisable ) {
-        
+
         this.apiService.updateTemplate(parseInt(template.templateId), template).subscribe(
           (data) => {
             template.createdDate = data.createdDate;
@@ -104,7 +104,7 @@ export class ManageMyTemplatesComponent implements OnInit {
                   this.templates.splice(this.templates.findIndex(temp => temp.templateId === template.templateId), 1);
                   this.templateTable.renderRows();
                   this.onSuccess(`Success! ${template.name} has been deleted.`);
-                }, 
+                },
                 (error) => {
                   this.onFail(`Failure! ${template.name} failed to delete.`);
                 }

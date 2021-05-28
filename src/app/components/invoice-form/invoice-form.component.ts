@@ -25,12 +25,14 @@ import {environment} from '../../../environments/environment';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
-import {ApiService} from '../../services/api-service';
+import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
 import {Subscription} from 'rxjs';
 import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
+import {InvoiceService} from '../../services/invoice-service';
+import {AttachmentService} from '../../services/attachment-service';
 
 @Component({
   selector: 'app-invoice-form',
@@ -125,7 +127,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   public constructor(private webService: WebServices,
                      private route: ActivatedRoute,
                      private loadingService: LoadingService,
-                     private api: ApiService,
+                     private invoiceService: InvoiceService,
+                     private attachmentService: AttachmentService,
+                     private templateService: TemplateService,
                      private util: UtilService,
                      private router: Router) {
     const {required} = Validators;
@@ -249,7 +253,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   private async loadTemplate(templateName: string): Promise<void> {
     this.loadingService.showLoading('Loading Template');
     try {
-      const template = await this.api.getTemplateByName(templateName).toPromise();
+      const template = await this.templateService.getTemplateByName(templateName).toPromise();
       if (template) {
         this.invoiceFormGroup.controls.workType.setValue(template.workType);
         this.invoiceFormGroup.controls.companyCode.setValue(template.companyCode);
@@ -278,7 +282,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   public loadData(): void {
     this.loadingService.showLoading('Loading');
     this.subscriptions.push(
-      this.webService.httpGet(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
+      this.invoiceService.getInvoice(this.falconInvoiceNumber)
         .subscribe((invoice: any) => {
           this.invoice = new InvoiceDataModel(invoice);
           this.invoiceFormGroup.controls.workType.setValue(invoice.workType);
@@ -357,7 +361,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   private async resetTemplateOptions(): Promise<void> {
     const newTemplateOptions: Array<string> = [];
-    (await this.api.getTemplates().toPromise())
+    (await this.templateService.getTemplates().toPromise())
       .forEach((template: Template) => {
         newTemplateOptions.push(template.name);
       });
@@ -451,7 +455,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
         // IS VALID
         const invoice = this.invoiceFormGroup.getRawValue();
         invoice.falconInvoiceNumber = this.falconInvoiceNumber;
-        const isDuplicate = await this.api.checkInvoiceIsDuplicate(invoice).toPromise();
+        const isDuplicate = await this.invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
         if (isDuplicate) {
           // IS DUPLICATE
           this.onInvoiceIsDuplicate();
@@ -459,12 +463,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           // IS NOT DUPLICATE
           this.processInvoice(invoice);
           let shouldReset = false;
-          const savedInvoice = await this.api.saveInvoice(invoice).toPromise();
+          const savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
           if (savedInvoice.falconInvoiceNumber) {
             // INVOICE SAVED
             shouldReset = true;
             this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
-            const attachedSuccess = await this.api.saveAttachments(
+            const attachedSuccess = await this.attachmentService.saveAttachments(
               savedInvoice.falconInvoiceNumber,
               this.uploadFormComponent?.attachments ?? []
             ).toPromise();
@@ -503,7 +507,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
               name: result.name,
               description: result.description
             };
-            const savedTemplate = await this.api.createTemplate(template).toPromise();
+            const savedTemplate = await this.templateService.createTemplate(template).toPromise();
             (savedTemplate && savedTemplate.name)
               ? this.onSaveTemplateSuccess(savedTemplate.name)
               : this.onSaveTemplateFailure();

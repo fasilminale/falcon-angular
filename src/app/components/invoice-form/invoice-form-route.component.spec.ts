@@ -12,7 +12,9 @@ import {environment} from '../../../environments/environment';
 import {ActivatedRoute, convertToParamMap, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
-import {ApiService} from '../../services/api-service';
+import {InvoiceService} from '../../services/invoice-service';
+import {AttachmentService} from '../../services/attachment-service';
+import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 
 describe('InvoiceFormComponent ROUTING', () => {
@@ -49,7 +51,7 @@ describe('InvoiceFormComponent ROUTING', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
   let router: Router;
-  let api: ApiService;
+  let templateService: TemplateService;
 
   const route = {
     snapshot: {url: [{path: 'invoice'}, {path: 'F0000000001'}]},
@@ -76,7 +78,9 @@ describe('InvoiceFormComponent ROUTING', () => {
         MatDialog,
         LoadingService,
         MatSnackBar,
-        ApiService,
+        InvoiceService,
+        AttachmentService,
+        TemplateService,
         UtilService,
         {provide: ActivatedRoute, useValue: route},
         {provide: Router, useValue: mockRouter}
@@ -87,8 +91,8 @@ describe('InvoiceFormComponent ROUTING', () => {
     snackBar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
     router = TestBed.inject(Router);
-    api = TestBed.inject(ApiService);
-    spyOn(api, 'getTemplates').and.returnValue(of([]));
+    templateService = TestBed.inject(TemplateService);
+    spyOn(templateService, 'getTemplates').and.returnValue(of([]));
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

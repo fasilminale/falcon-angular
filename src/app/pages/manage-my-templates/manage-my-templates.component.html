@@ -5,11 +5,11 @@
     </div>
   </div>
 </div>
-<cardinal-card>
-  <cardinal-section-header [sectionTitle]="'My Templates'">
-  </cardinal-section-header>
+<elm-card>
+  <elm-section-header [sectionTitle]="'My Templates'">
+  </elm-section-header>
 
-  <table #templateTable summary="templates" mat-table [dataSource]="templates" 
+  <table #templateTable summary="templates" mat-table [dataSource]="templates"
     class="mat-elevation-z8" [ngClass]="templates && templates.length > 0 ? '' : 'hide'">
 
     <ng-container matColumnDef="createdDate">
@@ -64,4 +64,4 @@
   </table>
 
   <p class="p-align" [ngClass]="templates && templates.length > 0 ? 'hide' : ''">You have no templates available</p>
-</cardinal-card>
+</elm-card>

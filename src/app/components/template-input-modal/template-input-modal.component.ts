@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, Inject, OnInit, Output} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {ApiService} from '../../services/api-service';
+import {TemplateService} from '../../services/template-service';
 export interface TemplateInputModalComponentData {
   isPaymentOverrideSelected: boolean;
 }
@@ -45,7 +45,7 @@ export interface TemplateInputModalComponentData {
         </label>
       </div>
     </div>
-    
+
     <div mat-dialog-actions class="float-right">
       <elm-button buttonStyle="secondary"
                   class="ms-auto"
@@ -78,9 +78,9 @@ export class TemplateInputModalComponent implements OnInit {
   @Output() createTemplate: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
-    private dialogRef: MatDialogRef<TemplateInputModalComponent>,  
+    private dialogRef: MatDialogRef<TemplateInputModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TemplateInputModalComponentData,
-    private api: ApiService) {}
+    private templateService: TemplateService) {}
 
   ngOnInit(): void {
   }
@@ -93,7 +93,7 @@ export class TemplateInputModalComponent implements OnInit {
   }
 
   async  confirm(): Promise<void>  {
-    this.isTemplateDuplicate  = await this.api.checkTemplateIsDuplicate(this.template.name).toPromise();
+    this.isTemplateDuplicate  = await this.templateService.checkTemplateIsDuplicate(this.template.name).toPromise();
 
     if(!this.isTemplateDuplicate) {
       this.dialogRef.close(this.template);

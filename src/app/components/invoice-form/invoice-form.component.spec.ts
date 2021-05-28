@@ -12,7 +12,9 @@ import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
-import {ApiService} from '../../services/api-service';
+import {InvoiceService} from '../../services/invoice-service';
+import {AttachmentService} from '../../services/attachment-service';
+import {TemplateService} from '../../services/template-service';
 import {Router} from '@angular/router';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {LineItem} from '../../models/template/linItem-model';
@@ -32,7 +34,9 @@ describe('InvoiceFormComponent', () => {
   let component: InvoiceFormComponent;
   let fixture: ComponentFixture<InvoiceFormComponent>;
   let util: UtilService;
-  let api: ApiService;
+  let invoiceService: InvoiceService;
+  let attachmentService: AttachmentService;
+  let templateService: TemplateService;
   let snackBar: MatSnackBar;
   let router: Router;
 
@@ -134,7 +138,9 @@ describe('InvoiceFormComponent', () => {
         MatSnackBar,
         MatDialog,
         LoadingService,
-        ApiService,
+        InvoiceService,
+        AttachmentService,
+        TemplateService,
         UtilService
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -142,7 +148,9 @@ describe('InvoiceFormComponent', () => {
     router = TestBed.inject(Router);
     snackBar = TestBed.inject(MatSnackBar);
     util = TestBed.inject(UtilService);
-    api = TestBed.inject(ApiService);
+    invoiceService = TestBed.inject(InvoiceService);
+    attachmentService = TestBed.inject(AttachmentService);
+    templateService = TestBed.inject(TemplateService);
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -182,9 +190,9 @@ describe('InvoiceFormComponent', () => {
 
   it('should show success snackbar on post', async () => {
     spyOn(util, 'openSnackBar').and.stub();
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
-    spyOn(api, 'saveAttachments').and.returnValue(of(true));
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     await component.onSubmit();
     fixture.detectChanges();
     expect(util.openSnackBar)
@@ -194,8 +202,8 @@ describe('InvoiceFormComponent', () => {
   it('should show failure snackbar on failed post', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openErrorModal').and.returnValue(of());
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.returnValue(
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.returnValue(
       of(new ErrorEvent('test error event'), {
         status: 123,
         statusText: 'test status text'
@@ -208,9 +216,9 @@ describe('InvoiceFormComponent', () => {
 
   it('should show success snackbar on put', async () => {
     spyOn(util, 'openSnackBar').and.stub();
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
-    spyOn(api, 'saveAttachments').and.returnValue(of(true));
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSubmit();
     fixture.detectChanges();
@@ -220,8 +228,8 @@ describe('InvoiceFormComponent', () => {
 
   it('should show failure snackbar on failed put', async () => {
     spyOn(util, 'openSnackBar').and.stub();
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.returnValue(of(new ErrorEvent('test error event'), {
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.returnValue(of(new ErrorEvent('test error event'), {
       status: 123,
       statusText: 'test status text'
     }));
@@ -245,12 +253,12 @@ describe('InvoiceFormComponent', () => {
 
   it('should copy head companyCode to line item companyCode', async () => {
     let requestInvoice: any;
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.callFake(invoice => {
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.callFake(invoice => {
       requestInvoice = invoice;
       return of(invoiceResponse);
     });
-    spyOn(api, 'saveAttachments').and.returnValue(of(true));
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     await component.onSubmit();
     expect(requestInvoice.lineItems.length).toEqual(1);
@@ -259,12 +267,12 @@ describe('InvoiceFormComponent', () => {
 
   it('should not copy head companyCode to populated line item companyCode', async () => {
     let requestInvoice: any;
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.callFake(invoice => {
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.callFake(invoice => {
       requestInvoice = invoice;
       return of(invoiceResponse);
     });
-    spyOn(api, 'saveAttachments').and.returnValue(of(true));
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.companyCode.setValue('CODE');
@@ -350,7 +358,7 @@ describe('InvoiceFormComponent', () => {
   it('should display an error indicating a duplicate invoice', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(component, 'onSubmit').and.callThrough();
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
     await component.onSubmit();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
     expect(component.onSubmit).toHaveBeenCalled();
@@ -359,7 +367,7 @@ describe('InvoiceFormComponent', () => {
   it('should recognized the invoice being edited and not display a duplicate invoice error', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(component, 'onSubmit').and.callThrough();
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
     component.falconInvoiceNumber = 'F0000000010';
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
@@ -370,9 +378,9 @@ describe('InvoiceFormComponent', () => {
   it('should not reset on failed attachments', async () => {
     spyOn(util, 'openErrorModal').and.returnValue(of(true));
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
-    spyOn(api, 'saveAttachments').and.returnValue(of(false));
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(false));
     spyOn(component, 'resetForm').and.stub();
     component.falconInvoiceNumber = '';
     const testFile = new File([], 'test file');
@@ -428,9 +436,9 @@ describe('InvoiceFormComponent', () => {
 
   it('should reset form when invoice is successfully created', async () => {
     spyOn(component, 'resetForm').and.stub();
-    spyOn(api, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
-    spyOn(api, 'saveInvoice').and.returnValue(of(invoiceResponse));
-    spyOn(api, 'saveAttachments').and.returnValue(of(true));
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSubmit();
     expect(component.resetForm).toHaveBeenCalled();
@@ -462,7 +470,7 @@ describe('InvoiceFormComponent', () => {
   it('should call save template and confirm save', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openTemplateInputModal').and.returnValue(of(template));
-    spyOn(api, 'createTemplate').and.returnValue(of(templateResponse));
+    spyOn(templateService, 'createTemplate').and.returnValue(of(templateResponse));
     await component.saveTemplate();
     fixture.detectChanges();
     expect(util.openSnackBar)
@@ -472,8 +480,8 @@ describe('InvoiceFormComponent', () => {
   it('should call save template and fail to save', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openTemplateInputModal').and.returnValue(of(template));
-    api.createTemplate({} as TemplateToSave);
-    spyOn(api, 'createTemplate').and.returnValue(of(null));
+    templateService.createTemplate({} as TemplateToSave);
+    spyOn(templateService, 'createTemplate').and.returnValue(of(null));
     await component.saveTemplate();
     fixture.detectChanges();
     expect(util.openSnackBar)

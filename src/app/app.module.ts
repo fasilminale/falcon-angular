@@ -25,13 +25,15 @@ import { InvoiceFormComponent } from './components/invoice-form/invoice-form.com
 import { SearchComponent } from './components/search/search.component';
 import {NgxCurrencyModule} from 'ngx-currency';
 import { FalCurrencyInputComponent } from './components/fal-currency-input/fal-currency-input.component';
-import {ApiService} from './services/api-service';
+import {TemplateService} from './services/template-service';
 import {UtilService} from './services/util-service';
 import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
 import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
 import { MatTableModule } from '@angular/material/table';
 import { UploadFormComponent } from './components/upload-form/upload-form.component';
 import {TimeService} from './services/time-service';
+import {InvoiceService} from './services/invoice-service';
+import {AttachmentService} from './services/attachment-service';
 
 @NgModule({
   declarations: [
@@ -76,7 +78,9 @@ import {TimeService} from './services/time-service';
     MatSnackBar,
     LoadingService,
     MatDialog,
-    ApiService,
+    InvoiceService,
+    AttachmentService,
+    TemplateService,
     UtilService,
     TimeService
   ],
