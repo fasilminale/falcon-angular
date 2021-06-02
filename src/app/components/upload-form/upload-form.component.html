@@ -1,0 +1,79 @@
+<form [formGroup]="formGroup"
+      (ngSubmit)="addAttachment()">
+  <label class="form-label fieldLabel1">
+    Upload Attachments
+  </label>
+  <div class="form-control upload-container">
+    <div class="row">
+      <div class="col-12 fieldLabel3">
+        Supported file types: eml, doc, jpg, pdf, xlsx
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <!-- FILE CHOOSER -->
+        <label for="file-chooser-input"
+               class="form-label fieldLabel1">
+          File
+        </label>
+        <app-fal-file-input id="file-chooser-input"
+                            formControlName="file"
+                            accept=".eml, .doc, .jpg, .pdf, .xlsx"
+                            [isDisabled]="isDisabled">
+        </app-fal-file-input>
+        <div class="form-label fieldLabel1 p-1">
+          Maximum file size ???MB
+        </div>
+
+        <!-- ATTACHMENT TYPE -->
+        <label for="attachment-type-input"
+               class="form-label fieldLabel1">
+          Document Type
+        </label>
+        <ng-select id="attachment-type-input"
+                   formControlName="attachmentType"
+                   [items]="DOCUMENT_TYPE_OPTIONS"
+                   [searchable]="true"
+                   placeholder="Select One...."
+                   [ngClass]="{ 'disabled': isDisabled }">
+        </ng-select>
+
+        <!-- UPLOAD BUTTON -->
+        <div id="upload-button-container">
+          <elm-button buttonType="submit"
+                      buttonStyle="primary"
+                      [isDisabled]="!(formGroup.controls.file.value && formGroup.controls.attachmentType.value)">
+            Upload
+          </elm-button>
+        </div>
+      </div>
+
+      <div class="col-6 upload-file-div">
+        <!-- ATTACHMENTS LOOP-->
+        <div *ngFor="let attachment of attachments; index as i">
+          <div *ngIf="attachment.action !== 'DELETE'"
+               class="attachment form-control d-flex align-items-center justify-content-between"
+               [ngClass]="{ 'attachment-download': attachment.url }">
+
+            <!-- ATTACHMENT - ICON -->
+            <div class="material-icons">file_present</div>
+
+            <!-- ATTACHMENT - CONTENT -->
+            <div class=" flex-grow-1 p-1" (click)="downloadAttachment(i)">
+              {{attachment.file.name}}&nbsp;({{attachment.type}})
+            </div>
+
+            <!-- ATTACHMENT - REMOVE -->
+            <input *ngIf="!isDisabled" type="button"
+                   value="close"
+                   class="material-icons btn btn-remove-attachment"
+                   (click)="removeAttachment(i)"
+            />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>

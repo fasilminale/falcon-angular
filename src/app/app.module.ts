@@ -20,22 +20,27 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-input.component';
 import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
-import { FalFileInputComponent } from './components/fal-file-input/fal-file-input.component';
-import { InvoiceFormComponent } from './components/invoice-form/invoice-form.component';
-import { SearchComponent } from './components/search/search.component';
+import {FalFileInputComponent} from './components/fal-file-input/fal-file-input.component';
+import {InvoiceFormComponent} from './components/invoice-form/invoice-form.component';
+import {SearchComponent} from './components/search/search.component';
 import {NgxCurrencyModule} from 'ngx-currency';
-import { FalCurrencyInputComponent } from './components/fal-currency-input/fal-currency-input.component';
-import {ApiService} from './services/api-service';
+import {FalCurrencyInputComponent} from './components/fal-currency-input/fal-currency-input.component';
+import {TemplateService} from './services/template-service';
 import {UtilService} from './services/util-service';
-import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
-import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
+import {TemplateInputModalComponent} from './components/template-input-modal/template-input-modal.component';
+import {ManageMyTemplatesComponent} from './pages/manage-my-templates/manage-my-templates.component';
+import {MatTableModule} from '@angular/material/table';
+import {UploadFormComponent} from './components/upload-form/upload-form.component';
+import {TimeService} from './services/time-service';
+import {InvoiceService} from './services/invoice-service';
+import {AttachmentService} from './services/attachment-service';
 import { OktaCallbackComponent } from './components/okta-callback/okta-callback.component';
-import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
-import {AuthService} from './services/auth-service';
-import {ErrorService} from './services/error-service';
-import {FalHttpInterceptor} from './services/fal-http-interceptor';
+ import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
+ import {AuthService} from './services/auth-service';
+ import {ErrorService} from './services/error-service';
+ import {FalHttpInterceptor} from './services/fal-http-interceptor';
 
-const getOktaConfig = () => {
+ const getOktaConfig = () => {
   const fullURL = window.location.origin;
   switch (fullURL) {
     case 'https://elm-dev.cardinalhealth.net': {
@@ -95,7 +100,8 @@ const oktaConfig = {
     FalCurrencyInputComponent,
     TemplateInputModalComponent,
     ManageMyTemplatesComponent,
-    OktaCallbackComponent,
+    UploadFormComponent,
+    OktaCallbackComponent
   ],
   imports: [
     BrowserModule,
@@ -115,6 +121,7 @@ const oktaConfig = {
     MatDialogModule,
     MatSidenavModule,
     MatListModule,
+    MatTableModule,
     NgbModule,
     NgxCurrencyModule
   ],
@@ -123,8 +130,11 @@ const oktaConfig = {
     MatSnackBar,
     LoadingService,
     MatDialog,
-    ApiService,
+    InvoiceService,
+    AttachmentService,
+    TemplateService,
     UtilService,
+    TimeService,
     ErrorService,
     OktaAuthGuard,
     OktaAuthService,

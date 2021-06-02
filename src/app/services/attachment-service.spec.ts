@@ -2,11 +2,11 @@ import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {ApiService} from './api-service';
 import {of, throwError} from 'rxjs';
+import {AttachmentService} from './attachment-service';
 
-describe('ApiService Tests', () => {
-  let api: ApiService;
+describe('AttachmentService Tests', () => {
+  let attachmentService: AttachmentService;
   let web: WebServices;
   let invoice: any;
 
@@ -29,12 +29,12 @@ describe('ApiService Tests', () => {
         HttpClientTestingModule,
       ],
       providers: [
-        ApiService,
+        AttachmentService,
         WebServices,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
-    api = TestBed.inject(ApiService);
+    attachmentService = TestBed.inject(AttachmentService);
     web = TestBed.inject(WebServices);
     invoice = {
       falconInvoiceNumber: 'F0000000001',
@@ -46,47 +46,12 @@ describe('ApiService Tests', () => {
   });
 
   it('should create', () => {
-    expect(api).toBeTruthy();
-  });
-
-  it('should NOT be duplicate from matching falconInvoiceNumber', async () => {
-    spyOn(web, 'httpPost').and.returnValue(of(invoice));
-    const isDuplicate = await api.checkInvoiceIsDuplicate(invoice).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(isDuplicate).toBeFalse();
-  });
-
-  it('should be duplicate if missing falconInvoiceNumber', async () => {
-    invoice.falconInvoiceNumber = undefined;
-    spyOn(web, 'httpPost').and.returnValue(of(invoice));
-    const isDuplicate = await api.checkInvoiceIsDuplicate(invoice).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(isDuplicate).toBeTrue();
-  });
-
-  it('should NOT be duplicate on error', async () => {
-    spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
-    const isDuplicate = await api.checkInvoiceIsDuplicate(invoice).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(isDuplicate).toBeFalse();
-  });
-
-  it('should update if has falconInvoiceNumber', async () => {
-    spyOn(web, 'httpPut').and.returnValue(of(invoice));
-    await api.saveInvoice(invoice).toPromise();
-    expect(web.httpPut).toHaveBeenCalled();
-  });
-
-  it('should create if missing falconInvoiceNumber', async () => {
-    invoice.falconInvoiceNumber = undefined;
-    spyOn(web, 'httpPost').and.returnValue(of(invoice));
-    await api.saveInvoice(invoice).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
+    expect(attachmentService).toBeTruthy();
   });
 
   it('should save attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
-    const successes = await api.saveAttachments(
+    const successes = await attachmentService.saveAttachments(
       invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
@@ -95,7 +60,7 @@ describe('ApiService Tests', () => {
 
   it('should fail unaccepted attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
-    const successes = await api.saveAttachments(
+    const successes = await attachmentService.saveAttachments(
       invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
@@ -104,7 +69,7 @@ describe('ApiService Tests', () => {
 
   it('should fail saving attachments', async () => {
     spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
-    const successes = await api.saveAttachments(
+    const successes = await attachmentService.saveAttachments(
       invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
     ).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
@@ -112,11 +77,10 @@ describe('ApiService Tests', () => {
   });
 
   it('should not call attachments route', async () => {
-    const successes = await api.saveAttachments(
+    const successes = await attachmentService.saveAttachments(
       invoice.falconInvoiceNumber, []
     ).toPromise();
     expect(successes).toEqual(true);
   });
-
 })
 ;

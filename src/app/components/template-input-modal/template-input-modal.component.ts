@@ -1,6 +1,9 @@
-import {Component, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-
+import {Component, EventEmitter, HostListener, Inject, OnInit, Output} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {TemplateService} from '../../services/template-service';
+export interface TemplateInputModalComponentData {
+  isPaymentOverrideSelected: boolean;
+}
 @Component({
   selector: 'app-template-input-modal',
   template: `
@@ -17,7 +20,13 @@ import {MatDialogRef} from '@angular/material/dialog';
                id="template-name-input"
                class="form-control"
                [(ngModel)]="template.name"
+               [ngClass]="this.isTemplateDuplicate?'error':''"
         />
+        <small class="error-text"
+               *ngIf="this.isTemplateDuplicate">
+          Template Name already exists
+        </small>
+
       </div>
       <div class="col-12">
         <label for="description-input" class="form-label fieldLabel1 label">
@@ -29,7 +38,14 @@ import {MatDialogRef} from '@angular/material/dialog';
                [(ngModel)]="template.description"
         />
       </div>
+      <div *ngIf="data.isPaymentOverrideSelected">
+        <label for="description-input" class="form-label fieldLabel1 label">
+          <strong>Selected Override of Standard Payment Terms will NOT be
+          included in template</strong>
+        </label>
+      </div>
     </div>
+
     <div mat-dialog-actions class="float-right">
       <elm-button buttonStyle="secondary"
                   class="ms-auto"
@@ -56,9 +72,15 @@ export class TemplateInputModalComponent implements OnInit {
     name: '',
     description: ''
   };
+
+  isTemplateDuplicate: boolean = false;
+
   @Output() createTemplate: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private dialogRef: MatDialogRef<TemplateInputModalComponent>) {}
+  constructor(
+    private dialogRef: MatDialogRef<TemplateInputModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: TemplateInputModalComponentData,
+    private templateService: TemplateService) {}
 
   ngOnInit(): void {
   }
@@ -70,8 +92,12 @@ export class TemplateInputModalComponent implements OnInit {
     }
   }
 
-  confirm(): void {
-    this.dialogRef.close(this.template);
+  async  confirm(): Promise<void>  {
+    this.isTemplateDuplicate  = await this.templateService.checkTemplateIsDuplicate(this.template.name).toPromise();
+
+    if(!this.isTemplateDuplicate) {
+      this.dialogRef.close(this.template);
+    }
   }
 }
 

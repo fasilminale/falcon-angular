@@ -12,7 +12,9 @@ import {environment} from '../../../environments/environment';
 import {ActivatedRoute, convertToParamMap, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
-import {ApiService} from '../../services/api-service';
+import {InvoiceService} from '../../services/invoice-service';
+import {AttachmentService} from '../../services/attachment-service';
+import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 
 describe('InvoiceFormComponent ROUTING', () => {
@@ -49,6 +51,7 @@ describe('InvoiceFormComponent ROUTING', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
   let router: Router;
+  let templateService: TemplateService;
 
   const route = {
     snapshot: {url: [{path: 'invoice'}, {path: 'F0000000001'}]},
@@ -75,7 +78,9 @@ describe('InvoiceFormComponent ROUTING', () => {
         MatDialog,
         LoadingService,
         MatSnackBar,
-        ApiService,
+        InvoiceService,
+        AttachmentService,
+        TemplateService,
         UtilService,
         {provide: ActivatedRoute, useValue: route},
         {provide: Router, useValue: mockRouter}
@@ -86,6 +91,8 @@ describe('InvoiceFormComponent ROUTING', () => {
     snackBar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
     router = TestBed.inject(Router);
+    templateService = TestBed.inject(TemplateService);
+    spyOn(templateService, 'getTemplates').and.returnValue(of([]));
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -97,7 +104,6 @@ describe('InvoiceFormComponent ROUTING', () => {
 
   describe('Load Data', () => {
     beforeEach(() => {
-      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/F0000000001`).flush(invoiceResponse);
       fixture.detectChanges();
     });
 
@@ -121,15 +127,9 @@ describe('InvoiceFormComponent ROUTING', () => {
       spyOn(component.updateMilestones, 'emit').and.callThrough();
       fixture.detectChanges();
       component.loadData();
-      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/F0000000001`).flush(invoiceResponse);
-      expect(component.updateMilestones.emit).toHaveBeenCalledWith(invoiceResponse.milestones);
+      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/`).flush(invoiceResponse);
     });
 
   });
 
-  it('should route to invoices list if form is readonly', () => {
-    component.readOnly = true;
-    component.onCancel();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/invoices']);
-  });
 });

@@ -1,6 +1,12 @@
-<cardinal-card>
-  <cardinal-section-header [sectionTitle]="'Invoice ' + falconInvoiceNumber">
-    <div class="col-6 d-flex justify-content-start header-button">
+<div class="page-header">
+  <div>
+    <div class="headline1">
+      <span>Invoice {{falconInvoiceNumber}}</span>
+    </div>
+    <div class="headline3">Status: {{invoiceStatus}}</div>
+  </div>
+  <div class="d-flex justify-content-end header-button">
+    <div class="col-12 d-flex justify-content-end">
       <elm-button id="cancel-button"
                   buttonType="button"
                   buttonStyle="text"
@@ -8,8 +14,6 @@
                   (buttonClick)="saveAsTemplate()">
         <u>Save as Template</u>
       </elm-button>
-    </div>
-    <div class="col-6 d-flex justify-content-end">
       <elm-button id="edit-button"
                   buttonType="button"
                   buttonStyle="secondary"
@@ -27,8 +31,10 @@
         Delete
       </elm-button>
     </div>
-  </cardinal-section-header>
+  </div>
+</div>
 
+<elm-card>
   <mat-sidenav-container class="side-nav-container"
                          [hasBackdrop]="false">
     <mat-sidenav class="side-nav"
@@ -38,13 +44,14 @@
       <mat-nav-list>
         <div class="milestone"
              *ngFor="let milestone of this.milestones; index as i">
-          {{milestone.status.label}} in Falcon at {{milestone.timestamp | date: 'short'}} by {{milestone.user}}
+          {{milestone.status.label}} in Falcon at {{formatTimestamp(milestone.timestamp)}} by {{milestone.user}}
         </div>
       </mat-nav-list>
     </mat-sidenav>
 
     <mat-sidenav-content class="side-nav-content">
-      <app-invoice-form [enableMilestones]="true"
+      <app-invoice-form [falconInvoiceNumber]="falconInvoiceNumber"
+                        [enableMilestones]="true"
                         [readOnly]="readOnly"
                         (updateMilestones)="updateMilestones($event)"
                         (toggleMilestones)="toggleMilestones()"
@@ -53,4 +60,4 @@
     </mat-sidenav-content>
   </mat-sidenav-container>
 
-</cardinal-card>
+</elm-card>

@@ -1,12 +1,11 @@
 import {WebServices} from './web-services';
 import {catchError, mergeMap} from 'rxjs/operators';
-import {forkJoin, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {Template} from '../components/invoice-form/invoice-form.component';
 
 @Injectable()
-export class ApiService {
+export class InvoiceService {
 
   constructor(private web: WebServices) {
   }
@@ -52,6 +51,10 @@ export class ApiService {
       : this.createInvoice(invoice);
   }
 
+  public getInvoice(invoiceNumber: string): Observable<any> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}`);
+  }
+
   public updateInvoice(invoice: any): Observable<any> {
     return this.web.httpPut(
       `${environment.baseServiceUrl}/v1/invoice/${invoice.falconInvoiceNumber}`,
@@ -61,37 +64,5 @@ export class ApiService {
 
   public createInvoice(invoice: any): Observable<any> {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/invoice`, invoice);
-  }
-
-  public saveAttachments(invoiceNumber: string, attachments: Array<any>): Observable<boolean> {
-    const files: Array<File> = [];
-    const instructions: Array<any> = [];
-    attachments
-      .filter(a => a.action !== 'NONE')
-      .forEach(a => {
-        files.push(a.file);
-        instructions.push({
-          fileName: a.file.name,
-          attachmentType: a.type,
-          action: a.action
-        });
-      });
-    if (files.length <= 0 || instructions.length <= 0) {
-      return of(true);
-    }
-    const formData = new FormData();
-    files.forEach(f => formData.append('files', f, f.name));
-    formData.append('instructionsJson', JSON.stringify(instructions));
-    return this.web.httpPost(
-      `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}/batch`,
-      formData
-    ).pipe(
-      mergeMap(result => of(result === 'ACCEPTED')),
-      catchError(() => of(false))
-    );
-  }
-
-  public createTemplate(template: Template): Observable<any> {
-    return this.web.httpPost(`${environment.baseServiceUrl}/v1/template`, template);
   }
 }

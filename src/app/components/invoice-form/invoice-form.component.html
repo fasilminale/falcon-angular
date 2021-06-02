@@ -13,6 +13,19 @@
       <div class="row me-0">
 
         <div class="row col-12 col-lg-6 me-1">
+          <!-- MY TEMPLATE SELECT -->
+          <div *ngIf="!isOnEditPage" class="col-12">
+            <label for="my-templates-input" class="form-label fieldLabel1">
+              My Templates (optional)
+            </label>
+            <ng-select id="my-templates-input"
+                       [formControl]="selectedTemplateFormControl"
+                       [items]="myTemplateOptions"
+                       [searchable]="true"
+                       placeholder="Select One...">
+            </ng-select>
+          </div>
+
           <!-- WORK TYPE -->
           <div class="col-12">
             <label for="work-type-input" class="form-label fieldLabel1">
@@ -23,10 +36,10 @@
                        [items]="workTypeOptions"
                        [searchable]="true"
                        placeholder="Select One...."
-                       [ngClass]="{ 'error': workType.errors && workType.hasError('required'), 'disabled': readOnly }">
+                       [ngClass]="{ 'error': workType.errors && workType.hasError('required') && !workType.pristine, 'disabled': readOnly }">
             </ng-select>
             <small class="error-text"
-                   *ngIf="workType.hasError('required')">
+                   *ngIf="workType.hasError('required') && !workType.pristine">
               Work Type is required
             </small>
           </div>
@@ -42,10 +55,10 @@
                    class="form-control"
                    (keypress)="validateRegex($event)"
                    maxlength="4"
-                   [ngClass]="companyCode.errors && companyCode.hasError('required') ? 'error' : ''"
+                   [ngClass]="companyCode.errors && companyCode.hasError('required') && !companyCode.pristine ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="companyCode.hasError('required')">
+                   *ngIf="companyCode.hasError('required') && !companyCode.pristine">
               Company Code is required
             </small>
           </div>
@@ -59,10 +72,10 @@
                                  formControlName="erpType"
                                  [options]="erpTypeOptions"
                                  [isDisabled]="readOnly"
-                                 [isError]="!!(erpType.errors && erpType.hasError('required'))">
+                                 [isError]="!!(erpType.errors && erpType.hasError('required') && !erpType.pristine)">
             </app-fal-radio-input>
             <small class="error-text"
-                   *ngIf="erpType.hasError('required')">
+                   *ngIf="erpType.hasError('required') && !erpType.pristine">
               ERP Type is required
             </small>
           </div>
@@ -78,10 +91,12 @@
                    formControlName="vendorNumber"
                    (keypress)="validateRegex($event)"
                    maxlength="10"
-                   [ngClass]="vendorNumber.errors && vendorNumber.hasError('required')? 'error' : ''"
+                   [ngClass]="vendorNumber.errors
+                      && vendorNumber.hasError('required')
+                      && !vendorNumber.pristine ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="vendorNumber.hasError('required')">
+                   *ngIf="vendorNumber.hasError('required') && !vendorNumber.pristine">
               Vendor Number is required
             </small>
           </div>
@@ -97,10 +112,11 @@
                    formControlName="externalInvoiceNumber"
                    (keypress)="validateRegex($event)"
                    maxlength="16"
-                   [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')? 'error' : ''"
+                   [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')
+                      && !externalInvoiceNumber.pristine ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="externalInvoiceNumber.hasError('required')">
+                   *ngIf="externalInvoiceNumber.hasError('required') && !externalInvoiceNumber.pristine">
               External Invoice Number is required
             </small>
           </div>
@@ -113,10 +129,10 @@
             <app-fal-date-input id="external-invoice-date-input"
                                 formControlName="invoiceDate"
                                 [isDisabled]="readOnly"
-                                [isError]="!!(invoiceDate.errors && (invoiceDate.hasError('required') || invoiceDate.hasError('validateDate')))">
+                                [isError]="!!(invoiceDate.errors && (invoiceDate.hasError('required') && !invoiceDate.pristine || invoiceDate.hasError('validateDate')))">
             </app-fal-date-input>
             <small class="error-text"
-                   *ngIf="invoiceDate.hasError('required')">
+                   *ngIf="invoiceDate.hasError('required') && !invoiceDate.pristine">
               External Invoice Date is required
             </small>
             <small class="error-text"
@@ -134,10 +150,12 @@
             <app-fal-currency-input id="invoice-amount-input"
                                     formControlName="amountOfInvoice"
                                     [isDisabled]="readOnly"
-                                    [isError]="!!(amountOfInvoiceFormControl.errors && amountOfInvoiceFormControl.hasError('required'))">
+                                    [isError]="!!(amountOfInvoiceFormControl.errors
+                                      && amountOfInvoiceFormControl.hasError('required')
+                                      && !amountOfInvoiceFormControl.pristine)">
             </app-fal-currency-input>
             <small class="error-text"
-                   *ngIf="amountOfInvoiceFormControl.hasError('required')">
+                   *ngIf="amountOfInvoiceFormControl.hasError('required') && !amountOfInvoiceFormControl.pristine">
               Invoice Net Amount is required
             </small>
           </div>
@@ -151,15 +169,13 @@
                                  formControlName="currency"
                                  [options]="currencyOptions"
                                  [isDisabled]="readOnly"
-                                 [isError]="!!(currency.errors && currency.hasError('required'))">
+                                 [isError]="!!(currency.errors && currency.hasError('required') && !currency.pristine)">
             </app-fal-radio-input>
             <small class="error-text"
-                   *ngIf="currency.hasError('required')">
-                   Currency is required
+                   *ngIf="currency.hasError('required') && !currency.pristine">
+              Currency is required
             </small>
           </div>
-
-
 
 
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
@@ -168,111 +184,32 @@
                    class="form-label fieldLabel1">
               <input id="override-stp-checkbox"
                      type="checkbox"
-                     formControlName="shouldOverride"
+                     formControlName="isPaymentOverrideSelected"
                      [attr.disabled]="readOnly ? true : null"
               />
               Override Standard Payment Terms
             </label>
             <app-fal-radio-input formControlName="paymentTerms"
                                  [options]="paymentTermOptions"
-                                 [isDisabled]="readOnly || !osptFormGroup.controls.shouldOverride.value">
+                                 [isDisabled]="readOnly || !osptFormGroup.controls.isPaymentOverrideSelected.value">
             </app-fal-radio-input>
           </div>
         </div>
 
         <!-- UPLOAD DOCUMENT SECTION -->
-        <div class="row col-12 col-lg-6">
-          <form [formGroup]="attachmentFormGroup"
-                (ngSubmit)="addAttachment()">
-            <label class="form-label fieldLabel1">
-              Upload Attachments (optional)
-            </label>
-            <div class="form-control upload-container" [ngClass]="{ 'error': !externalAttachment && !readOnly }">
-              <div class="row">
-                <div class="col-12 fieldLabel3">
-                  Supported file types: eml, doc, jpg, pdf, xlsx
-                </div>
+        <app-upload-form class="row col-12 col-lg-6"
+                         [isDisabled]="readOnly">
+        </app-upload-form>
 
-              </div>
-              <div class="row">
-                <div class="col-6">
-                  <!-- FILE CHOOSER -->
-                  <label for="file-chooser-input"
-                         class="form-label fieldLabel1">
-                    File
-                  </label>
-                  <app-fal-file-input id="file-chooser-input"
-                                      formControlName="file"
-                                      accept=".eml, .doc, .jpg, .pdf, .xlsx"
-                                      [isDisabled]="readOnly">
-                  </app-fal-file-input>
-                  <div class="form-label fieldLabel1 p-1">
-                    Maximum file size ???MB
-                  </div>
-
-                  <!-- ATTACHMENT TYPE -->
-                  <label for="attachment-type-input"
-                         class="form-label fieldLabel1">
-                    Document Type
-                  </label>
-                  <ng-select id="attachment-type-input"
-                             formControlName="attachmentType"
-                             [items]="attachmentTypeOptions"
-                             [searchable]="true"
-                             placeholder="Select One...."
-                             [ngClass]="{ 'disabled': readOnly }">
-                  </ng-select>
-
-                  <!-- UPLOAD BUTTON -->
-                  <div id="upload-button-container">
-                    <elm-button buttonType="submit"
-                                buttonStyle="primary"
-                                [isDisabled]="!(attachmentFormGroup.controls.file.value && attachmentFormGroup.controls.attachmentType.value)">
-                      Upload
-                    </elm-button>
-                  </div>
-                </div>
-
-                <div class="col-6 upload-file-div">
-                  <!-- ATTACHMENTS LOOP-->
-                  <div *ngFor="let attachment of attachments; index as i">
-                    <div *ngIf="attachment.action !== 'DELETE'" class="attachment form-control d-flex align-items-center justify-content-between">
-
-                        <!-- ATTACHMENT - ICON -->
-                        <div class="material-icons">file_present</div>
-
-                        <!-- ATTACHMENT - CONTENT -->
-                        <div class=" flex-grow-1 p-1">
-                          {{attachment.file.name}}&nbsp;({{attachment.type}})
-                        </div>
-
-                        <!-- ATTACHMENT - REMOVE -->
-                        <input *ngIf="!readOnly" type="button"
-                               value="close"
-                               class="material-icons btn btn-remove-attachment"
-                               (click)="removeAttachment(i)"
-                        />
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <small class="error-text"
-                   *ngIf="!externalAttachment && !readOnly">
-              External Invoice attachment required
-            </small>
-          </form>
-        </div>
       </div>
 
       <div class="row">
 
         <!-- LINE ITEMS -->
-        <cardinal-card id="line-items-card"
+        <elm-card id="line-items-card"
                        formArrayName="lineItems">
-          <cardinal-section-header [sectionTitle]="'Line Items'">
-          </cardinal-section-header>
+          <elm-section-header [sectionTitle]="'Line Items'">
+          </elm-section-header>
 
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
@@ -313,7 +250,9 @@
                        formControlName="costCenter"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       [ngClass]="lineItemCostCenter(i).errors && lineItemCostCenter(i).hasError('required') ? 'error' : ''"
+                       [ngClass]="lineItemCostCenter(i).errors
+                          && lineItemCostCenter(i).hasError('required')
+                          && !lineItemCostCenter(i).pristine ? 'error' : ''"
                 />
               </div>
 
@@ -327,7 +266,9 @@
                        formControlName="glAccount"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       [ngClass]="lineItemGlAccount(i).errors && lineItemGlAccount(i).hasError('required') ? 'error' : ''"
+                       [ngClass]="lineItemGlAccount(i).errors
+                          && lineItemGlAccount(i).hasError('required')
+                          && !lineItemGlAccount(i).pristine ? 'error' : ''"
                 />
               </div>
 
@@ -338,7 +279,9 @@
                 </label>
                 <app-fal-currency-input formControlName="lineItemNetAmount"
                                         [isDisabled]="readOnly"
-                                        [isError]="!!(lineItemNetAmountFormControl(i).errors && lineItemNetAmountFormControl(i).hasError('required'))"
+                                        [isError]="!!(lineItemNetAmountFormControl(i).errors
+                                          && lineItemNetAmountFormControl(i).hasError('required')
+                                          && !lineItemNetAmountFormControl(i).pristine)"
                                         (keyup)="calculateLineItemNetAmount()">
                 </app-fal-currency-input>
               </div>
@@ -383,7 +326,7 @@
               </elm-button>
             </div>
             <div class="col-2 line-item-total-amount">
-              ${{totallineItemNetAmount | number : '1.2-2'}}
+              ${{totalLineItemNetAmount | number : '1.2-2'}}
             </div>
             <div class="col-4 form-label fieldLabel1">
               Line Net Amount Total
@@ -391,7 +334,7 @@
           </div>
 
 
-        </cardinal-card>
+        </elm-card>
 
         <!-- FORM FOOTER -->
         <div id="form-footer"
@@ -411,7 +354,7 @@
                       buttonType="submit"
                       buttonStyle="primary"
                       class="flex-shrink-1"
-                      [isDisabled]="invoiceFormGroup.invalid || readOnly || !externalAttachment">
+                      [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)">
             {{falconInvoiceNumber ? 'Save' : 'Create'}}
           </elm-button>
         </div>

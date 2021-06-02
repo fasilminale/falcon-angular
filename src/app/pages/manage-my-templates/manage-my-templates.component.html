@@ -5,3 +5,63 @@
     </div>
   </div>
 </div>
+<elm-card>
+  <elm-section-header [sectionTitle]="'My Templates'">
+  </elm-section-header>
+
+  <table #templateTable summary="templates" mat-table [dataSource]="templates"
+    class="mat-elevation-z8" [ngClass]="templates && templates.length > 0 ? '' : 'hide'">
+
+    <ng-container matColumnDef="createdDate">
+      <th id="createdDate" mat-header-cell *matHeaderCellDef> Created Date </th>
+      <td mat-cell *matCellDef="let template"> {{template.createdDate | date : 'MM/dd/yyyy'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th id="name" mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let template">
+        <input type="text=" [value]="template.name" [disabled]="template.isDisable"
+        [ngClass]="template.isError || template.name === ''? 'error' : ''"
+        class="col-11 form-control"
+        matInput [(ngModel)]="template.name" >
+        <small class="error-text" *ngIf="template.isError">Template Name already exists</small>
+        <small class="error-text" *ngIf="template.name === ''">Template Name is required</small>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th id="description" mat-header-cell *matHeaderCellDef> Description (optional)</th>
+      <td mat-cell *matCellDef="let template">
+        <input type="text=" [value]="template.description" [disabled]="template.isDisable" class="form-control col-11" matInput [(ngModel)]="template.description" >
+         <small class="error-text" *ngIf="template.isError || template.name === ''"> &nbsp;</small>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <th id="action" mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let template">
+        <span *ngIf="template.isDisable ; else submit" role="button" class="material-icons material-icons-outlined"
+          (click)="editTemplate(template)">
+          edit
+        </span>
+        <span *ngIf="template.isDisable ; " role="button" class="material-icons material-icons-outlined"
+          (click)="deleteTemplate(template)">
+          delete
+        </span>
+        <ng-template #submit>
+          <span role="button" class="material-icons material-icons-outlined" (click)="updateTemplate(template)">
+            done
+          </span>
+          <span role="button" class="material-icons material-icons-outlined" (click)="cancelTemplate(template)">
+            block
+          </span>
+        </ng-template>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
+  </table>
+
+  <p class="p-align" [ngClass]="templates && templates.length > 0 ? 'hide' : ''">You have no templates available</p>
+</elm-card>

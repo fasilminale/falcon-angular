@@ -1,28 +1,38 @@
-import {Component, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChange, SimpleChanges, ViewChild} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, ValidationErrors, Validators} from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  forwardRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  NG_VALUE_ACCESSOR,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {environment} from '../../../environments/environment';
-import {filter} from 'rxjs/operators';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
-import {ApiService} from '../../services/api-service';
+import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-
-interface Attachment {
-  file: File;
-  type: string;
-  uploadError: boolean;
-  action: 'UPLOAD' | 'DELETE' | 'NONE';
-}
-
-export interface Template {
-  falconInvoiceNumber: string;
-  name: string;
-  description: string;
-}
+import {Subscription} from 'rxjs';
+import {UploadFormComponent} from '../upload-form/upload-form.component';
+import {Template, TemplateToSave} from '../../models/template/template-model';
+import {InvoiceService} from '../../services/invoice-service';
+import {AttachmentService} from '../../services/attachment-service';
 
 @Component({
   selector: 'app-invoice-form',
@@ -36,47 +46,90 @@ export interface Template {
     },
   ]
 })
-export class InvoiceFormComponent implements OnInit, OnChanges {
+export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
-  /* STATIC FIELDS*/
-
-
-  /* FIELDS */
-
+  /* PUBLIC FIELDS */
   public readonly regex = /[a-zA-Z0-9_\\-]/;
   public readonly freeTextRegex = /[\w\-\s]/;
   public workTypeOptions = ['Indirect Non-PO Invoice'];
   public erpTypeOptions = ['Pharma Corp', 'TPM'];
   public currencyOptions = ['USD', 'CAD'];
+  public myTemplateOptions = ['TEST_1', 'TEST_2'];
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
     {value: 'ZN14', display: 'Pay in 14 days'}
   ];
   public lineItemRemoveButtonDisable = true;
   public invoiceFormGroup: FormGroup;
-  public attachmentFormGroup: FormGroup;
   public osptFormGroup: FormGroup;
+  public selectedTemplateFormControl: FormControl;
   public validAmount = true;
-  public externalAttachment = true;
+  public externalAttachment = false;
   public file = null;
-  public attachmentTypeOptions = ['External Invoice', 'Supporting Documentation', 'Operational Approval'];
-  public attachments: Array<Attachment> = [];
-  public totallineItemNetAmount = 0;
+  public totalLineItemNetAmount = 0;
+
+  /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
-  @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
+  private subscriptions: Array<Subscription> = [];
+  private testTemplateMap: { [index: string]: Template } = {
+    TEST_1: {
+      name: 'TEST_1',
+      templateId: '1',
+      falconInvoiceNumber: '',
+      createdBy: 'TEST PERSON',
+      createdDate: 'somedate',
+      description: 'TEST',
+      isDisable: false,
+      tempDesc: '???',
+      tempName: '???',
+      isError: false,
+      workType: 'Indirect Non-PO Invoice',
+      companyCode: 'AAA1',
+      vendorNumber: 'AAA2',
+      erpType: 'Pharma Corp',
+      currency: 'USD',
+      lineItems: [{lineItemNumber: '', companyCode: '', costCenter: 'CCAA', glAccount: 'GLAA'}]
+    },
+    TEST_2: {
+      name: 'TEST_2',
+      templateId: '2',
+      falconInvoiceNumber: '',
+      createdBy: 'TEST GUY',
+      createdDate: 'someotherdate',
+      description: 'TEST 2',
+      isDisable: false,
+      tempDesc: 'B1',
+      tempName: 'B2',
+      isError: false,
+      workType: 'Indirect Non-PO Invoice',
+      companyCode: 'BBB1',
+      vendorNumber: 'BBB2',
+      erpType: 'TPM',
+      currency: 'CAD',
+      lineItems: []
+    }
+  };
+  /* INPUTS */
   @Input() enableMilestones = false;
   @Input() readOnly = false;
   @Input() falconInvoiceNumber = '';
+
+  /* OUTPUTS */
   @Output() updateMilestones: EventEmitter<any> = new EventEmitter<any>();
   @Output() toggleMilestones: EventEmitter<any> = new EventEmitter<any>();
   @Output() isDeletedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  /* CONSTRUCTORS */
+  /* CHILDREN */
+  @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
+  @ViewChild(UploadFormComponent) uploadFormComponent?: UploadFormComponent;
 
+  /* CONSTRUCTORS */
   public constructor(private webService: WebServices,
                      private route: ActivatedRoute,
                      private loadingService: LoadingService,
-                     private api: ApiService,
+                     private invoiceService: InvoiceService,
+                     private attachmentService: AttachmentService,
+                     private templateService: TemplateService,
                      private util: UtilService,
                      private router: Router) {
     const {required} = Validators;
@@ -92,25 +145,27 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       lineItems: new FormArray([])
     });
 
-    this.attachmentFormGroup = new FormGroup({
-      attachmentType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      file: new FormControl({value: null, disabled: this.readOnly}, [required])
-    });
-
     this.osptFormGroup = new FormGroup({
-      shouldOverride: new FormControl({value: false, disabled: this.readOnly}),
+      isPaymentOverrideSelected: new FormControl({value: false, disabled: this.readOnly}),
       paymentTerms: new FormControl({value: null, disabled: this.readOnly})
     });
 
-    this.osptFormGroup.controls.shouldOverride.valueChanges.subscribe(value => {
-      if (!value) {
-        this.osptFormGroup.controls.paymentTerms.reset();
-      }
+    this.selectedTemplateFormControl = new FormControl({
+      value: null,
+      disabled: (this.myTemplateOptions.length === 0)
     });
+
+    this.subscriptions.push(
+      this.osptFormGroup.controls.isPaymentOverrideSelected.valueChanges
+        .subscribe(value => {
+          if (!value) {
+            this.osptFormGroup.controls.paymentTerms.reset();
+          }
+        })
+    );
   }
 
   /* PROPERTY FUNCTIONS */
-
   get erpType(): AbstractControl {
     return this.invoiceFormGroup.controls.erpType;
   }
@@ -151,8 +206,15 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     return !!this.falconInvoiceNumber;
   }
 
-  /* STATIC FUNCTIONS */
+  get isFormPristine(): boolean {
+    return this.invoiceFormGroup.pristine
+      && this.osptFormGroup.pristine
+      && (this.uploadFormComponent?.formGroup.pristine ?? true)
+      && this.lineItemsFormArray.pristine;
+  }
 
+
+  /* STATIC FUNCTIONS */
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
       glAccount: new FormControl(null, [Validators.required]),
@@ -164,87 +226,119 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   /* METHODS */
-
   public ngOnInit(): void {
-    this.getInvoiceId();
+    this.initForm();
+  }
+
+  public initForm(): void {
+    this.resetForm();
     if (this.falconInvoiceNumber) {
       this.loadData();
-    } else {
-      this.resetForm();
     }
+  }
+
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   public ngOnChanges(change: SimpleChanges): void {
-    const readOnlyChange: SimpleChange = change.readOnly;
-    if (readOnlyChange.currentValue === false) {
+    if (change?.readOnly?.currentValue === false) {
       this.enableFormFields();
+    }
+    if (change?.falconInvoiceNumber) {
+      this.initForm();
     }
   }
 
-  public getInvoiceId(): void {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      const falconInvoiceNumber = params.get('falconInvoiceNumber');
-      falconInvoiceNumber ? this.falconInvoiceNumber = falconInvoiceNumber : this.falconInvoiceNumber = '';
-    });
-  }
-
-  public loadData(): void {
-    this.loadingService.showLoading('Loading');
-    this.webService.httpGet(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
-      .subscribe((invoice: any) => {
-        this.invoice = new InvoiceDataModel(invoice);
-        this.invoiceFormGroup.controls.workType.setValue(invoice.workType);
-        this.invoiceFormGroup.controls.companyCode.setValue(invoice.companyCode);
-        this.invoiceFormGroup.controls.erpType.setValue(invoice.erpType);
-        this.invoiceFormGroup.controls.vendorNumber.setValue(invoice.vendorNumber);
-        this.invoiceFormGroup.controls.externalInvoiceNumber.setValue(invoice.externalInvoiceNumber);
-        this.invoiceFormGroup.controls.invoiceDate.setValue(new Date(invoice.invoiceDate));
-        this.invoiceFormGroup.controls.amountOfInvoice.setValue(invoice.amountOfInvoice);
-        this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
-        this.invoiceFormGroup.disable();
-
-        this.osptFormGroup.controls.shouldOverride.setValue(!!invoice.standardPaymentTermsOverride);
-        this.osptFormGroup.controls.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
-        this.osptFormGroup.disable();
-
-        // Line Items
-        for (const lineItem of invoice.lineItems) {
+  private async loadTemplate(templateName: string): Promise<void> {
+    this.loadingService.showLoading('Loading Template');
+    try {
+      const template = await this.templateService.getTemplateByName(templateName).toPromise();
+      if (template) {
+        this.invoiceFormGroup.controls.workType.setValue(template.workType);
+        this.invoiceFormGroup.controls.companyCode.setValue(template.companyCode);
+        this.invoiceFormGroup.controls.erpType.setValue(template.erpType);
+        this.invoiceFormGroup.controls.vendorNumber.setValue(template.vendorNumber);
+        this.invoiceFormGroup.controls.currency.setValue(template.currency);
+        this.lineItemsFormArray.clear();
+        for (const lineItem of template.lineItems) {
           this.lineItemsFormArray.push(new FormGroup({
             glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
             costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
             companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
-            lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
-            notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
+            lineItemNetAmount: new FormControl({value: 0, disabled: this.readOnly}, [Validators.required]),
+            notes: new FormControl({value: '', disabled: this.readOnly})
           }));
         }
-
-        // Attachments
-        for (const attachment of invoice.attachments.filter((a: any) => !a.deleted)) {
-          this.attachments.push({
-            file: new File([], attachment.fileName),
-            type: attachment.type,
-            uploadError: false,
-            action: 'NONE'
-          });
+        if (this.lineItemsFormArray.length === 0) {
+          this.addNewEmptyLineItem();
         }
-        this.attachmentFormGroup.disable();
+      }
+    } finally {
+      this.loadingService.hideLoading();
+    }
+  }
 
-        this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
-          return b.timestamp.localeCompare(a.timestamp);
-        }));
-        if(this.invoice.status.key==='DELETED') {
-          this.isDeletedInvoice.emit(true);
-        }
-        this.loadingService.hideLoading();
-        this.calculateLineItemNetAmount();
-      });
+  public loadData(): void {
+    this.loadingService.showLoading('Loading');
+    this.subscriptions.push(
+      this.invoiceService.getInvoice(this.falconInvoiceNumber)
+        .subscribe((invoice: any) => {
+          this.invoice = new InvoiceDataModel(invoice);
+          this.invoiceFormGroup.controls.workType.setValue(invoice.workType);
+          this.invoiceFormGroup.controls.companyCode.setValue(invoice.companyCode);
+          this.invoiceFormGroup.controls.erpType.setValue(invoice.erpType);
+          this.invoiceFormGroup.controls.vendorNumber.setValue(invoice.vendorNumber);
+          this.invoiceFormGroup.controls.externalInvoiceNumber.setValue(invoice.externalInvoiceNumber);
+          this.invoiceFormGroup.controls.invoiceDate.setValue(new Date(invoice.invoiceDate));
+          this.invoiceFormGroup.controls.amountOfInvoice.setValue(invoice.amountOfInvoice);
+          this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
+          this.invoiceFormGroup.disable();
+
+          this.osptFormGroup.controls.isPaymentOverrideSelected.setValue(!!invoice.standardPaymentTermsOverride);
+          this.osptFormGroup.controls.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
+          this.osptFormGroup.disable();
+
+          // Line Items
+          this.lineItemsFormArray.clear();
+          for (const lineItem of invoice.lineItems) {
+            this.lineItemsFormArray.push(new FormGroup({
+              glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
+              costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
+              companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
+              lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
+              notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
+            }));
+          }
+
+          // Attachments
+          if (this.uploadFormComponent) {
+            this.uploadFormComponent.load(invoice.attachments);
+          }
+
+          this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
+            return b.timestamp.localeCompare(a.timestamp);
+          }));
+          if (this.invoice.status.key === 'DELETED') {
+            this.isDeletedInvoice.emit(true);
+          }
+          this.loadingService.hideLoading();
+          this.calculateLineItemNetAmount();
+
+          this.markFormAsPristine();
+        })
+    );
   }
 
   public resetForm(): void {
+    this.resetTemplateOptions().finally();
     this.invoiceFormGroup.reset();
     this.osptFormGroup.reset();
+    this.selectedTemplateFormControl.reset();
     this.lineItemsFormArray.clear();
-    this.attachments = [];
+    if (this.uploadFormComponent) {
+      this.uploadFormComponent.reset();
+    }
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
     // set default currency to USD
@@ -253,9 +347,34 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     if (this.workTypeOptions.length === 1) {
       this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
     }
+    this.erpType.markAsPristine();
+    this.invoiceDate.markAsPristine();
     this.invoiceFormGroup.controls.companyCode.setValue('');
     this.invoiceFormGroup.controls.amountOfInvoice.setValue('0');
     this.calculateLineItemNetAmount();
+    this.markFormAsPristine();
+    this.subscriptions.push(
+      this.selectedTemplateFormControl.valueChanges
+        .subscribe(v => this.loadTemplate(v))
+    );
+  }
+
+  private async resetTemplateOptions(): Promise<void> {
+    const newTemplateOptions: Array<string> = [];
+    (await this.templateService.getTemplates().toPromise())
+      .forEach((template: Template) => {
+        newTemplateOptions.push(template.name);
+      });
+    this.myTemplateOptions = newTemplateOptions;
+  }
+
+  private markFormAsPristine(): void {
+    this.invoiceFormGroup.markAsPristine();
+    this.osptFormGroup.markAsPristine();
+    if (this.uploadFormComponent) {
+      this.uploadFormComponent.formGroup.markAsPristine();
+    }
+    this.lineItemsFormArray.markAsPristine();
   }
 
   public validateRegex(event: any): boolean {
@@ -295,6 +414,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public addNewEmptyLineItem(): void {
     this.lineItemsFormArray.push(InvoiceFormComponent.createEmptyLineItemForm());
+    this.lineItemsFormArray.markAsDirty();
     if (this.lineItemsFormArray.length > 1) {
       this.lineItemRemoveButtonDisable = false;
     }
@@ -305,22 +425,27 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     if (this.lineItemsFormArray.length <= 1) {
       this.lineItemRemoveButtonDisable = true;
     }
+    this.calculateLineItemNetAmount();
   }
 
-  public onCancel(): void {
-    if (this.readOnly) {
-      this.router.navigate(['/invoices']);
-    } else {
-      this.util.openConfirmationModal({
-        title: 'Cancel',
-        innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
-                   <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
-        confirmButtonText: 'Yes, cancel',
-        cancelButtonText: 'No, go back'
-      })
-        .pipe(filter(result => result === 'confirm'))
-        .subscribe(() => this.resetForm());
+  public async onCancel(): Promise<void> {
+    if (this.isFormPristine || await this.askForCancelConfirmation()) {
+      await this.gotoInvoiceList();
     }
+  }
+
+  private askForCancelConfirmation(): Promise<boolean> {
+    return this.util.openConfirmationModal({
+      title: 'Cancel',
+      innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
+                   <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
+      confirmButtonText: 'Yes, cancel',
+      cancelButtonText: 'No, go back'
+    }).toPromise();
+  }
+
+  private async gotoInvoiceList(): Promise<boolean> {
+    return this.router.navigate(['/invoices']);
   }
 
   public async onSubmit(): Promise<void> {
@@ -330,7 +455,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         // IS VALID
         const invoice = this.invoiceFormGroup.getRawValue();
         invoice.falconInvoiceNumber = this.falconInvoiceNumber;
-        const isDuplicate = await this.api.checkInvoiceIsDuplicate(invoice).toPromise();
+        const isDuplicate = await this.invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
         if (isDuplicate) {
           // IS DUPLICATE
           this.onInvoiceIsDuplicate();
@@ -338,14 +463,14 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
           // IS NOT DUPLICATE
           this.processInvoice(invoice);
           let shouldReset = false;
-          const savedInvoice = await this.api.saveInvoice(invoice).toPromise();
+          const savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
           if (savedInvoice.falconInvoiceNumber) {
             // INVOICE SAVED
             shouldReset = true;
             this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
-            const attachedSuccess = await this.api.saveAttachments(
+            const attachedSuccess = await this.attachmentService.saveAttachments(
               savedInvoice.falconInvoiceNumber,
-              this.attachments
+              this.uploadFormComponent?.attachments ?? []
             ).toPromise();
             if (attachedSuccess) {
               // ATTACH SUCCESS
@@ -353,11 +478,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             } else {
               // ATTACH FAILURE
               shouldReset = false;
-              this.onAttachFailure();
+              await this.onAttachFailure();
             }
           } else {
             // INVOICE NOT SAVED
-            this.onSaveFailure();
+            await this.onSaveFailure();
           }
           if (shouldReset) {
             // RESET FORM
@@ -373,20 +498,22 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public saveTemplate(): void {
-    this.util.openTemplateInputModal()
-      .subscribe(async (result) => {
-        if (result) {
-          const template: Template = {
-            falconInvoiceNumber: this.falconInvoiceNumber,
-            name: result.name,
-            description: result.description
-          };
-          const savedTemplate = await this.api.createTemplate(template).toPromise();
-          (savedTemplate && savedTemplate.name)
-            ? this.onSaveTemplateSuccess(savedTemplate.name)
-            : this.onSaveTemplateFailure();
-        }
-      });
+    this.subscriptions.push(
+      this.util.openTemplateInputModal(this.osptFormGroup.controls.isPaymentOverrideSelected.value)
+        .subscribe(async (result) => {
+          if (result) {
+            const template: TemplateToSave = {
+              falconInvoiceNumber: this.falconInvoiceNumber,
+              name: result.name,
+              description: result.description
+            };
+            const savedTemplate = await this.templateService.createTemplate(template).toPromise();
+            (savedTemplate && savedTemplate.name)
+              ? this.onSaveTemplateSuccess(savedTemplate.name)
+              : this.onSaveTemplateFailure();
+          }
+        })
+    );
   }
 
   public validateInvoiceAmount(): boolean {
@@ -401,12 +528,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
     this.validAmount = sum.toFixed(2) === invoiceAmount;
     return this.validAmount;
-  }
-
-  public validateExternalAttachment(): boolean {
-    return this.attachments.some(attachment =>
-      (attachment.type === 'EXTERNAL' || attachment.type === 'External Invoice') && attachment.action !== 'DELETE'
-    );
   }
 
   public onInvoiceInvalidated(): void {
@@ -442,23 +563,36 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   private onSaveSuccess(invoiceNumber: string): void {
-    this.util.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.isOnEditPage ? 'updated' : 'created'}.`);
-  }
-
-  private onSaveFailure(): void {
-    this.util.openSnackBar(`Failure, invoice was not ${this.isOnEditPage ? 'updated' : 'created'}!`);
-  }
-
-  private onAttachSuccess(invoiceNumber: string): void {
     // do nothing
   }
 
-  private onAttachFailure(): void {
-    this.util.openSnackBar(`One or more documents failed to attach!`);
+  private async onSaveFailure(): Promise<void> {
+    if (this.isOnEditPage) {
+      this.util.openSnackBar(`Failure, invoice was not updated!`);
+    } else {
+      await this.showSystemErrorModal();
+    }
   }
 
-  private onRemoveAttachmentSuccess(fileName: string): void {
-    this.util.openSnackBar(`Success! ${fileName} was removed.`);
+  private onAttachSuccess(invoiceNumber: string): void {
+    this.util.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.isOnEditPage ? 'updated' : 'created'}.`);
+  }
+
+  private async onAttachFailure(): Promise<void> {
+    if (this.isOnEditPage) {
+      this.util.openSnackBar(`One or more documents failed to attach!`);
+    } else {
+      await this.showSystemErrorModal();
+    }
+  }
+
+  private async showSystemErrorModal(): Promise<void> {
+    await this.util.openErrorModal({
+      title: 'System Error',
+      innerHtmlMessage: `Invoice creation failed.<br/><br/>
+         <strong>Please contact your administrator.</strong>`,
+    }).toPromise();
+    await this.gotoInvoiceList();
   }
 
   private onSaveTemplateSuccess(templateName: string): void {
@@ -467,45 +601,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   private onSaveTemplateFailure(): void {
     this.util.openSnackBar(`Failure, template was not created.`);
-  }
-
-  public addAttachment(): void {
-    const attachmentFileValue = this.attachmentFormGroup.controls.file.value;
-    const attachmentTypeValue = this.attachmentFormGroup.controls.attachmentType.value;
-    if (attachmentFileValue && attachmentTypeValue) {
-      this.attachments.push({
-        uploadError: false,
-        file: attachmentFileValue,
-        type: attachmentTypeValue,
-        action: 'UPLOAD'
-      });
-      this.attachmentFormGroup.reset();
-      this.externalAttachment = this.validateExternalAttachment();
-      const fileChooserInput = this.fileChooserInput;
-      if (fileChooserInput) {
-        fileChooserInput.reset();
-      }
-    }
-  }
-
-  public async removeAttachment(index: number): Promise<void> {
-    const result = await this.util.openConfirmationModal({
-      title: 'Remove Attachment',
-      innerHtmlMessage: `Are you sure you want to remove this attachment?
-            <br/><br/><strong>This action cannot be undone.</strong>`,
-      confirmButtonText: 'Remove Attachment',
-      cancelButtonText: 'Cancel'
-    }).toPromise();
-    if (result === 'confirm' && this.attachments.length > index) {
-      const attachment = this.attachments[index];
-      if (attachment.action === 'NONE') {
-        attachment.action = 'DELETE';
-      } else {
-        this.attachments.splice(index, 1);
-      }
-      this.externalAttachment = this.validateExternalAttachment();
-      this.onRemoveAttachmentSuccess(attachment.file.name);
-    }
   }
 
   public toggleSidenav(): void {
@@ -522,14 +617,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.invoiceFormGroup.controls.amountOfInvoice.enable();
     this.invoiceFormGroup.controls.currency.enable();
     this.invoiceFormGroup.controls.lineItems.enable();
-    this.attachmentFormGroup.controls.attachmentType.enable();
-    this.externalAttachment = this.validateExternalAttachment();
   }
 
   public calculateLineItemNetAmount(): void {
-    this.totallineItemNetAmount = 0;
+    this.totalLineItemNetAmount = 0;
     for (const control of this.lineItemsFormArray.controls) {
-      this.totallineItemNetAmount += parseFloat((control as FormGroup).controls.lineItemNetAmount.value);
+      this.totalLineItemNetAmount += parseFloat((control as FormGroup).controls.lineItemNetAmount.value);
     }
   }
 
