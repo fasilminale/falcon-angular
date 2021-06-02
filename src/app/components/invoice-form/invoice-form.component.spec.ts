@@ -193,7 +193,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been created.`);
@@ -209,7 +209,7 @@ describe('InvoiceFormComponent', () => {
         statusText: 'test status text'
       })
     );
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openErrorModal).toHaveBeenCalledTimes(1);
   });
@@ -220,7 +220,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.falconInvoiceNumber = 'F0000000010';
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been updated.`);
@@ -234,7 +234,7 @@ describe('InvoiceFormComponent', () => {
       statusText: 'test status text'
     }));
     component.falconInvoiceNumber = 'F0000000010';
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith('Failure, invoice was not updated!');
@@ -260,7 +260,7 @@ describe('InvoiceFormComponent', () => {
     });
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
   });
@@ -276,7 +276,7 @@ describe('InvoiceFormComponent', () => {
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.companyCode.setValue('CODE');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
   });
@@ -347,32 +347,32 @@ describe('InvoiceFormComponent', () => {
 
   it('should not create a new invoice with invalid invoice amounts', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     component.amountOfInvoiceFormControl.setValue('1');
     component.validateInvoiceAmount();
-    component.onSubmit();
+    component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should display an error indicating a duplicate invoice', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should recognized the invoice being edited and not display a duplicate invoice error', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
     component.falconInvoiceNumber = 'F0000000010';
     component.amountOfInvoiceFormControl.setValue('0');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should not reset on failed attachments', async () => {
@@ -391,7 +391,7 @@ describe('InvoiceFormComponent', () => {
       uploadError: false,
       action: 'NONE'
     });
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.resetForm).not.toHaveBeenCalled();
   });
 
@@ -440,7 +440,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.resetForm).toHaveBeenCalled();
   });
 

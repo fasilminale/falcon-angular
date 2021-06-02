@@ -448,7 +448,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     return this.router.navigate(['/invoices']);
   }
 
-  public async onSubmit(): Promise<void> {
+  public async onSubmitForApprovalButtonClick(): Promise<void> {
+
+  }
+
+  public async onSaveButtonClick(): Promise<void> {
     this.loadingService.showLoading(this.isOnEditPage ? 'Saving' : 'Submitting');
     try {
       if (this.validateInvoiceAmount()) {
