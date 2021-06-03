@@ -31,14 +31,4 @@ describe('FalDateInputComponent', () => {
   it('should default to empty value', () => {
     expect(component.value).toEqual('');
   });
-
-  it('should format the input value', () => {
-    let target = {value: '11'};
-    component.formatText(target);
-    expect(target.value).toEqual('11-');
-
-    target = {value: '11-11'};
-    component.formatText(target);
-    expect(target.value).toEqual('11-11-');
-  });
 });
