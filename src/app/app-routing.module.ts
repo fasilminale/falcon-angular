@@ -3,9 +3,10 @@ import {RouterModule, Routes} from '@angular/router';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-create-page.component';
 import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
-import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
+import {ManageMyTemplatesComponent} from './pages/manage-my-templates/manage-my-templates.component';
 import {OktaAuthGuard} from '@okta/okta-angular';
 import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
+import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 
 const routes: Routes = [
   {path: 'invoices', component: InvoiceListPageComponent, canActivate: [OktaAuthGuard]},
@@ -13,6 +14,7 @@ const routes: Routes = [
   {path: 'invoice/:falconInvoiceNumber', component: InvoiceDetailPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard]},
   {path: 'login/callback', component: OktaCallbackComponent},
+  {path: 'logged-out', component:  LoggedOutPageComponent},
   {path: '', redirectTo: '/invoices', pathMatch: 'full'},
 ];
 

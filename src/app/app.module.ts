@@ -35,10 +35,11 @@ import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
 import {AttachmentService} from './services/attachment-service';
 import { OktaCallbackComponent } from './components/okta-callback/okta-callback.component';
- import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
- import {AuthService} from './services/auth-service';
- import {ErrorService} from './services/error-service';
- import {FalHttpInterceptor} from './services/fal-http-interceptor';
+import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
+import {AuthService} from './services/auth-service';
+import {ErrorService} from './services/error-service';
+import {FalHttpInterceptor} from './services/fal-http-interceptor';
+import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 
  const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -101,7 +102,8 @@ const oktaConfig = {
     TemplateInputModalComponent,
     ManageMyTemplatesComponent,
     UploadFormComponent,
-    OktaCallbackComponent
+    OktaCallbackComponent,
+    LoggedOutPageComponent
   ],
   imports: [
     BrowserModule,

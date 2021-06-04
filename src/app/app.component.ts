@@ -5,6 +5,7 @@ import {ErrorModalComponent, ErrorModalData, MenuItem, NavbarItem} from '@elm/el
 import {AuthService} from './services/auth-service';
 import {ErrorService} from './services/error-service';
 import {MatDialog} from '@angular/material/dialog';
+import {OktaAuthService} from '@okta/okta-angular';
 
 @Component({
   selector: 'app-root',
@@ -41,6 +42,7 @@ export class AppComponent implements OnInit {
               private router: Router,
               public authService: AuthService,
               private errorService: ErrorService,
+              private oktaService: OktaAuthService,
               private dialog: MatDialog) {
     this.loadingService.loadingSubject.subscribe((args) => {
       this.dataLoading = args[0] as boolean;
@@ -70,6 +72,12 @@ export class AppComponent implements OnInit {
           this.router.navigate(['/logged-out']).then();
         }
       });
+    });
+  }
+
+  logout(): void {
+    this.oktaService.signOut().then(() => {
+      this.router.navigate(['/logged-out']).then();
     });
   }
 }
