@@ -19,6 +19,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
                container="body"
                [(ngModel)]="value"
                (ngModelChange)="value"
+               rInputMask="99-99-9999"
         />
         <button [ngClass]="isError ? 'error' : ''"
                 [disabled]="isDisabled"
@@ -57,4 +58,3 @@ export class FalDateInputComponent extends FalControlValueAccessorComponent<stri
   }
 
 }
-

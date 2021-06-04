@@ -34,14 +34,15 @@ import {UploadFormComponent} from './components/upload-form/upload-form.componen
 import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
 import {AttachmentService} from './services/attachment-service';
-import { OktaCallbackComponent } from './components/okta-callback/okta-callback.component';
+import {InputMaskModule} from 'racoon-mask-raw';
+import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
 import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
 import {AuthService} from './services/auth-service';
 import {ErrorService} from './services/error-service';
 import {FalHttpInterceptor} from './services/fal-http-interceptor';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 
- const getOktaConfig = () => {
+const getOktaConfig = () => {
   const fullURL = window.location.origin;
   switch (fullURL) {
     case 'https://elm-dev.cardinalhealth.net': {
@@ -125,7 +126,8 @@ const oktaConfig = {
     MatListModule,
     MatTableModule,
     NgbModule,
-    NgxCurrencyModule
+    NgxCurrencyModule,
+    InputMaskModule
   ],
   providers: [
     WebServices,

@@ -31,5 +31,4 @@ describe('FalDateInputComponent', () => {
   it('should default to empty value', () => {
     expect(component.value).toEqual('');
   });
-
 });
