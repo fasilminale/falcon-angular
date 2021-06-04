@@ -447,61 +447,118 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   public async onSubmitForApprovalButtonClick(): Promise<void> {
     const invoiceNumber = await this.onSaveButtonClick();
-    if (invoiceNumber) {
-      console.log('SUBMITTING FOR APPROVAL');
-      await this.invoiceService.submitForApproval(invoiceNumber).toPromise();
-    }
-  }
-
-  public async onSaveButtonClick(): Promise<string | null> {
-    this.loadingService.showLoading(this.isOnEditPage ? 'Saving' : 'Submitting');
-    let savedInvoice;
+    this.loadingService.showLoading('Submitting');
     try {
-      if (this.validateInvoiceAmount()) {
-        // IS VALID
-        const invoice = this.invoiceFormGroup.getRawValue();
-        invoice.falconInvoiceNumber = this.falconInvoiceNumber;
-        const isDuplicate = await this.invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
-        if (isDuplicate) {
-          // IS DUPLICATE
-          this.onInvoiceIsDuplicate();
-        } else {
-          // IS NOT DUPLICATE
-          this.processInvoice(invoice);
-          let shouldReset = false;
-          savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
-          if (savedInvoice.falconInvoiceNumber) {
-            // INVOICE SAVED
-            shouldReset = true;
-            this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
-            const attachedSuccess = await this.attachmentService.saveAttachments(
-              savedInvoice.falconInvoiceNumber,
-              this.uploadFormComponent?.attachments ?? []
-            ).toPromise();
-            if (attachedSuccess) {
-              // ATTACH SUCCESS
-              this.onAttachSuccess(savedInvoice.falconInvoiceNumber);
-            } else {
-              // ATTACH FAILURE
-              shouldReset = false;
-              await this.onAttachFailure();
-            }
-          } else {
-            // INVOICE NOT SAVED
-            await this.onSaveFailure();
-          }
-          if (shouldReset) {
-            // RESET FORM
-            this.resetForm();
-          }
-        }
-      } else {
-        this.onInvoiceInvalidated();
+      if (invoiceNumber) {
+        console.log('SUBMITTING FOR APPROVAL');
+        await this.invoiceService.submitForApproval(invoiceNumber).toPromise();
       }
     } finally {
       this.loadingService.hideLoading();
     }
-    console.log(savedInvoice);
+  }
+
+  public async onSaveButtonClick(): Promise<string | null> {
+    this.loadingService.showLoading('Saving');
+    try {
+      if (this.isOnEditPage) {
+        return this.updateInvoice();
+      } else {
+        return this.createInvoice();
+      }
+    } finally {
+      this.loadingService.hideLoading();
+    }
+  }
+
+  public async updateInvoice(): Promise<string | null> {
+    let savedInvoice;
+    if (this.validateInvoiceAmount()) {
+      // IS VALID
+      const invoice = this.invoiceFormGroup.getRawValue();
+      invoice.falconInvoiceNumber = this.falconInvoiceNumber;
+      const isDuplicate = await this.invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
+      if (isDuplicate) {
+        // IS DUPLICATE
+        this.onInvoiceIsDuplicate();
+      } else {
+        // IS NOT DUPLICATE
+        this.processInvoice(invoice);
+        let shouldReset = false;
+        const attachedSuccess = await this.attachmentService.saveAttachments(
+          this.falconInvoiceNumber,
+          this.uploadFormComponent?.attachments ?? []
+        ).toPromise();
+        if (attachedSuccess) {
+          // ATTACH SUCCESS
+          this.onAttachSuccess(this.falconInvoiceNumber);
+          shouldReset = true;
+          savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
+          if (savedInvoice.falconInvoiceNumber) {
+            // INVOICE SAVED
+            this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
+          } else {
+            // INVOICE NOT SAVED
+            await this.onSaveFailure();
+          }
+        } else {
+          // ATTACH FAILURE
+          await this.onAttachFailure();
+        }
+        if (shouldReset) {
+          // RESET FORM
+          this.resetForm();
+        }
+      }
+    } else {
+      this.onInvoiceInvalidated();
+    }
+    return savedInvoice?.falconInvoiceNumber ?? null;
+  }
+
+  public async createInvoice(): Promise<string | null> {
+    let savedInvoice;
+    if (this.validateInvoiceAmount()) {
+      // IS VALID
+      const invoice = this.invoiceFormGroup.getRawValue();
+      invoice.falconInvoiceNumber = this.falconInvoiceNumber;
+      const isDuplicate = await this.invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
+      if (isDuplicate) {
+        // IS DUPLICATE
+        this.onInvoiceIsDuplicate();
+      } else {
+        // IS NOT DUPLICATE
+        this.processInvoice(invoice);
+        let shouldReset = false;
+        savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
+        if (savedInvoice.falconInvoiceNumber) {
+          // INVOICE SAVED
+          shouldReset = true;
+          this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
+          const attachedSuccess = await this.attachmentService.saveAttachments(
+            savedInvoice.falconInvoiceNumber,
+            this.uploadFormComponent?.attachments ?? []
+          ).toPromise();
+          if (attachedSuccess) {
+            // ATTACH SUCCESS
+            this.onAttachSuccess(savedInvoice.falconInvoiceNumber);
+          } else {
+            // ATTACH FAILURE
+            shouldReset = false;
+            await this.onAttachFailure();
+          }
+        } else {
+          // INVOICE NOT SAVED
+          await this.onSaveFailure();
+        }
+        if (shouldReset) {
+          // RESET FORM
+          this.resetForm();
+        }
+      }
+    } else {
+      this.onInvoiceInvalidated();
+    }
     return savedInvoice?.falconInvoiceNumber ?? null;
   }
 
