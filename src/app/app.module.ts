@@ -34,6 +34,7 @@ import { UploadFormComponent } from './components/upload-form/upload-form.compon
 import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
 import {AttachmentService} from './services/attachment-service';
+import { InputMaskModule } from 'racoon-mask-raw';
 import { FalContainerComponent } from './components/fal-container/fal-container.component';
 
 @NgModule({
@@ -73,7 +74,8 @@ import { FalContainerComponent } from './components/fal-container/fal-container.
     MatListModule,
     MatTableModule,
     NgbModule,
-    NgxCurrencyModule
+    NgxCurrencyModule,
+    InputMaskModule
   ],
   providers: [
     WebServices,
