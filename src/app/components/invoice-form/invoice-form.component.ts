@@ -450,7 +450,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.loadingService.showLoading('Submitting');
     try {
       if (invoiceNumber) {
-        console.log('SUBMITTING FOR APPROVAL');
         await this.invoiceService.submitForApproval(invoiceNumber).toPromise();
       }
     } finally {
