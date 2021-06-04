@@ -7,12 +7,23 @@
     Milestones
   </elm-button>
   <div class="content">
-    <form [formGroup]="invoiceFormGroup"
-          (ngSubmit)="onSubmit()">
+    <form [formGroup]="invoiceFormGroup">
 
       <div class="row me-0">
 
+        <div *ngIf="hasLatestMilestoneComments"
+             id="comment-container-parent"
+             class="col-12">
+          <fal-container id="comment-container">
+            <strong>
+              {{commentLabelPrefix}} Comments:
+            </strong>
+            {{latestMilestoneComments}}
+          </fal-container>
+        </div>
+
         <div class="row col-12 col-lg-6 me-1">
+
           <!-- MY TEMPLATE SELECT -->
           <div *ngIf="!isOnEditPage" class="col-12">
             <label for="my-templates-input" class="form-label fieldLabel1">
@@ -207,7 +218,8 @@
 
         <!-- LINE ITEMS -->
         <elm-card id="line-items-card"
-                       formArrayName="lineItems">
+                  formArrayName="lineItems"
+                  overflow="visible">
           <elm-section-header [sectionTitle]="'Line Items'">
           </elm-section-header>
 
@@ -332,9 +344,18 @@
               Line Net Amount Total
             </div>
           </div>
-
-
         </elm-card>
+
+        <div class="col-6" style="padding-right: 44px">
+          <!-- COMMENTS -->
+          <label for="comments-input" class="form-label fieldLabel1">
+            General Comments (optional)
+          </label>
+          <textarea id="comments-input"
+                    formControlName="comments"
+                    class="form-control"
+          ></textarea><!-- this formatting is to prevent accidental output to textarea -->
+        </div>
 
         <!-- FORM FOOTER -->
         <div id="form-footer"
@@ -349,16 +370,29 @@
             <u>Cancel</u>
           </elm-button>
 
-          <!-- SUBMIT -->
-          <elm-button id="submit-button"
-                      buttonType="submit"
-                      buttonStyle="primary"
-                      class="flex-shrink-1"
-                      [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)">
-            {{falconInvoiceNumber ? 'Save' : 'Create'}}
-          </elm-button>
-        </div>
+          <div class="flex-shrink-1">
+            <!-- SAVE -->
+            <elm-button id="save-button"
+                        buttonType="button"
+                        buttonStyle="primary"
+                        class="fake-form-control"
+                        [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)"
+                        (buttonClick)="onSaveButtonClick()">
+              Save
+            </elm-button>
 
+            <!-- SUBMIT FOR APPROVAL -->
+            <elm-button *ngIf="!isOnEditPage"
+                        id="submit-for-approval-button"
+                        buttonType="button"
+                        buttonStyle="primary"
+                        class="fake-form-control"
+                        [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)"
+                        (buttonClick)="onSubmitForApprovalButtonClick()">
+              Submit for Approval
+            </elm-button>
+          </div>
+        </div>
       </div>
     </form>
   </div>

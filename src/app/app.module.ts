@@ -35,6 +35,7 @@ import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
 import {AttachmentService} from './services/attachment-service';
 import { InputMaskModule } from 'racoon-mask-raw';
+import { FalContainerComponent } from './components/fal-container/fal-container.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { InputMaskModule } from 'racoon-mask-raw';
     TemplateInputModalComponent,
     ManageMyTemplatesComponent,
     UploadFormComponent,
+    FalContainerComponent,
   ],
   imports: [
     BrowserModule,

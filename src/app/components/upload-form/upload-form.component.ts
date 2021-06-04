@@ -104,6 +104,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
       }
       this.externalAttachment = this.validateExternalAttachment();
       this.util.openSnackBar(`Success! ${attachment.file.name} was removed.`);
+      this.formGroup.markAsDirty();
     }
   }
 

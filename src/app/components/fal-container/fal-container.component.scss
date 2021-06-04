@@ -1,0 +1,25 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-theme";
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-fonts";
+
+.fal-container-body {
+  display: flex;
+  border-style: solid;
+  border-width: thin;
+  background-color: $elm-blue-super-light;
+  color: $elm-blue;
+  border-color: $elm-blue;
+  border-radius: 0.25rem;
+
+  .material-icons {
+    margin: 1rem 0 1rem 1rem;
+  }
+
+  .fal-container-content {
+    @extend .elm-div1;
+    color: $cardinal-black;
+    margin: 1rem;
+    width: auto;
+  }
+
+}
