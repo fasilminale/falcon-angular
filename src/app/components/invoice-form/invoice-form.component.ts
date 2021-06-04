@@ -448,7 +448,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   public async onSubmitForApprovalButtonClick(): Promise<void> {
     const invoiceNumber = await this.onSaveButtonClick();
     if (invoiceNumber) {
-      console.log('SUBMITTING FOR APPROVAL');
       await this.invoiceService.submitForApproval(invoiceNumber).toPromise();
     }
   }
