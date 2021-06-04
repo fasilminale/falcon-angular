@@ -34,6 +34,7 @@ import { UploadFormComponent } from './components/upload-form/upload-form.compon
 import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
 import {AttachmentService} from './services/attachment-service';
+import { FalContainerComponent } from './components/fal-container/fal-container.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import {AttachmentService} from './services/attachment-service';
     TemplateInputModalComponent,
     ManageMyTemplatesComponent,
     UploadFormComponent,
+    FalContainerComponent,
   ],
   imports: [
     BrowserModule,

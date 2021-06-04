@@ -36,6 +36,7 @@ export class InvoiceDataModel {
   currency = '';
   standardPaymentTermsOverride = '';
   lineItems: Array<LineItem> = [];
+  milestones: Array<any> = [];
 
   constructor(json?: any) {
     if (json?.status) {
@@ -82,6 +83,9 @@ export class InvoiceDataModel {
     }
     if (json?.lineItems) {
       this.lineItems = json.lineItems;
+    }
+    if (json?.milestones) {
+      this.milestones = json.milestones;
     }
   }
 

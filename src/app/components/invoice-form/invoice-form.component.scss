@@ -14,6 +14,15 @@
   padding-right: 0;
 }
 
+#comment-container-parent {
+  padding-right: 44px;
+  margin-bottom: -12px;
+}
+
+#comment-container {
+  margin: 1rem;
+}
+
 ::ng-deep label {
   margin-top: 1em;
 }

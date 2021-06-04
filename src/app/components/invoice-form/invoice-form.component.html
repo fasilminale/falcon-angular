@@ -11,7 +11,19 @@
 
       <div class="row me-0">
 
+        <div *ngIf="hasLatestMilestoneComments"
+             id="comment-container-parent"
+             class="col-12">
+          <fal-container id="comment-container">
+            <strong>
+              {{commentLabelPrefix}} Comments:
+            </strong>
+            {{latestMilestoneComments}}
+          </fal-container>
+        </div>
+
         <div class="row col-12 col-lg-6 me-1">
+
           <!-- MY TEMPLATE SELECT -->
           <div *ngIf="!isOnEditPage" class="col-12">
             <label for="my-templates-input" class="form-label fieldLabel1">
@@ -334,14 +346,14 @@
           </div>
         </elm-card>
 
-        <div>
+        <div class="col-6" style="padding-right: 44px">
           <!-- COMMENTS -->
           <label for="comments-input" class="form-label fieldLabel1">
-            Comments (optional)
+            General Comments (optional)
           </label>
           <textarea id="comments-input"
+                    formControlName="comments"
                     class="form-control"
-                    formControlName=""
           ></textarea><!-- this formatting is to prevent accidental output to textarea -->
         </div>
 
