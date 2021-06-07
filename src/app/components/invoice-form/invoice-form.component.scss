@@ -129,3 +129,7 @@
 ::ng-deep .nodisplay {
   display: none;
 }
+
+.invisible {
+  visibility: hidden !important;
+}
