@@ -1,5 +1,4 @@
 @import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-fonts";
 
 .fal-container-body {
   display: flex;
@@ -15,7 +14,6 @@
   }
 
   .fal-container-content {
-    @extend .elm-div1;
     color: $cardinal-black;
     margin: 1rem;
     width: auto;
