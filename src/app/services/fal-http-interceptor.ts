@@ -11,7 +11,6 @@ import {OktaAuthService} from '@okta/okta-angular';
 export class FalHttpInterceptor implements HttpInterceptor{
   constructor(private errorService: ErrorService,
               private oktaAuth: OktaAuthService,
-              private webservice: WebServices,
               private loadingService: LoadingService) {}
 
   intercept(request: HttpRequest<any>,

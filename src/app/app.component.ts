@@ -2,10 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {LoadingService} from './services/loading-service';
 import {Router} from '@angular/router';
 import {ErrorModalComponent, ErrorModalData, MenuItem, NavbarItem} from '@elm/elm-styleguide-ui';
-import {AuthService} from './services/auth-service';
+// import {AuthService} from './services/auth-service';
 import {ErrorService} from './services/error-service';
 import {MatDialog} from '@angular/material/dialog';
 import {OktaAuthService} from '@okta/okta-angular';
+import { AuthService } from './services/auth-service';
 
 @Component({
   selector: 'app-root',
