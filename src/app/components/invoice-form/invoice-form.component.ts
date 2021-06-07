@@ -21,7 +21,6 @@ import {
 } from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
-import {environment} from '../../../environments/environment';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
@@ -71,44 +70,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
   private subscriptions: Array<Subscription> = [];
-  private testTemplateMap: { [index: string]: Template } = {
-    TEST_1: {
-      name: 'TEST_1',
-      templateId: '1',
-      falconInvoiceNumber: '',
-      createdBy: 'TEST PERSON',
-      createdDate: 'somedate',
-      description: 'TEST',
-      isDisable: false,
-      tempDesc: '???',
-      tempName: '???',
-      isError: false,
-      workType: 'Indirect Non-PO Invoice',
-      companyCode: 'AAA1',
-      vendorNumber: 'AAA2',
-      erpType: 'Pharma Corp',
-      currency: 'USD',
-      lineItems: [{lineItemNumber: '', companyCode: '', costCenter: 'CCAA', glAccount: 'GLAA'}]
-    },
-    TEST_2: {
-      name: 'TEST_2',
-      templateId: '2',
-      falconInvoiceNumber: '',
-      createdBy: 'TEST GUY',
-      createdDate: 'someotherdate',
-      description: 'TEST 2',
-      isDisable: false,
-      tempDesc: 'B1',
-      tempName: 'B2',
-      isError: false,
-      workType: 'Indirect Non-PO Invoice',
-      companyCode: 'BBB1',
-      vendorNumber: 'BBB2',
-      erpType: 'TPM',
-      currency: 'CAD',
-      lineItems: []
-    }
-  };
+
   /* INPUTS */
   @Input() enableMilestones = false;
   @Input() readOnly = false;
@@ -142,6 +104,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
       invoiceDate: new FormControl({value: null, disabled: this.readOnly}, [required, this.validateDate]),
       amountOfInvoice: new FormControl({value: '0', disabled: this.readOnly}, [required]),
       currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
+      comments: new FormControl({value: null, disabled: this.readOnly}),
       lineItems: new FormArray([])
     });
 
@@ -213,6 +176,36 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
       && this.lineItemsFormArray.pristine;
   }
 
+  get hasLatestMilestone(): boolean {
+    return this.invoice?.milestones.length > 0;
+  }
+
+  get latestMilestone(): any | undefined {
+    return this.hasLatestMilestone
+      ? this.invoice.milestones[0]
+      : undefined;
+  }
+
+  get hasLatestMilestoneComments(): boolean {
+    return this.latestMilestone?.comments ?? false;
+  }
+
+  get latestMilestoneComments(): string {
+    return this.latestMilestone?.comments ?? '';
+  }
+
+  get commentLabelPrefix(): string {
+    const status = this.latestMilestone?.status;
+    console.log(status);
+    switch (status.label) {
+      case 'Submitted for Approval': {
+        return 'Creator';
+      }
+      default: {
+        return 'General';
+      }
+    }
+  }
 
   /* STATIC FUNCTIONS */
   private static createEmptyLineItemForm(): FormGroup {
@@ -250,7 +243,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private async loadTemplate(templateName: string): Promise<void> {
+  public async loadTemplate(templateName: string): Promise<void> {
+    if (!templateName) {
+      return;
+    }
     this.loadingService.showLoading('Loading Template');
     try {
       const template = await this.templateService.getTemplateByName(templateName).toPromise();
@@ -293,6 +289,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           this.invoiceFormGroup.controls.invoiceDate.setValue(new Date(invoice.invoiceDate));
           this.invoiceFormGroup.controls.amountOfInvoice.setValue(invoice.amountOfInvoice);
           this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
+          this.invoiceFormGroup.controls.comments.setValue(invoice.comments);
           this.invoiceFormGroup.disable();
 
           this.osptFormGroup.controls.isPaymentOverrideSelected.setValue(!!invoice.standardPaymentTermsOverride);
@@ -448,8 +445,16 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     return this.router.navigate(['/invoices']);
   }
 
-  public async onSubmit(): Promise<void> {
+  public async onSubmitForApprovalButtonClick(): Promise<void> {
+    const invoiceNumber = await this.onSaveButtonClick();
+    if (invoiceNumber) {
+      await this.invoiceService.submitForApproval(invoiceNumber).toPromise();
+    }
+  }
+
+  public async onSaveButtonClick(): Promise<string | null> {
     this.loadingService.showLoading(this.isOnEditPage ? 'Saving' : 'Submitting');
+    let savedInvoice;
     try {
       if (this.validateInvoiceAmount()) {
         // IS VALID
@@ -463,7 +468,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           // IS NOT DUPLICATE
           this.processInvoice(invoice);
           let shouldReset = false;
-          const savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
+          savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
           if (savedInvoice.falconInvoiceNumber) {
             // INVOICE SAVED
             shouldReset = true;
@@ -495,6 +500,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     } finally {
       this.loadingService.hideLoading();
     }
+    console.log(savedInvoice);
+    return savedInvoice?.falconInvoiceNumber ?? null;
   }
 
   public saveTemplate(): void {
@@ -617,6 +624,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.invoiceFormGroup.controls.amountOfInvoice.enable();
     this.invoiceFormGroup.controls.currency.enable();
     this.invoiceFormGroup.controls.lineItems.enable();
+    this.invoiceFormGroup.controls.comments.enable();
   }
 
   public calculateLineItemNetAmount(): void {

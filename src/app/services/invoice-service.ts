@@ -65,4 +65,9 @@ export class InvoiceService {
   public createInvoice(invoice: any): Observable<any> {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/invoice`, invoice);
   }
+
+  public submitForApproval(invoiceNumber: string): Observable<any> {
+    return this.web.httpPost(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}/submit-for-approval`);
+  }
+
 }

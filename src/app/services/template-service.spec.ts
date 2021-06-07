@@ -4,7 +4,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {TemplateService} from './template-service';
 import {of, throwError} from 'rxjs';
-import { Template } from '../models/template/template-model';
+import {Template} from '../models/template/template-model';
 
 describe('TemplateService Tests', () => {
   let templateService: TemplateService;
@@ -60,7 +60,7 @@ describe('TemplateService Tests', () => {
 
   it('template should NOT be duplicate from non-matching template name', async () => {
     spyOn(web, 'httpGet').and.returnValue(throwError('test error'));
-    const isDuplicate = await templateService.checkTemplateIsDuplicate("some other name").toPromise();
+    const isDuplicate = await templateService.checkTemplateIsDuplicate('some other name').toPromise();
     expect(web.httpGet).toHaveBeenCalled();
     expect(isDuplicate).toBeFalse();
   });
@@ -69,6 +69,20 @@ describe('TemplateService Tests', () => {
     spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
     const successes = await templateService.createTemplate(manageTemplate).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
+  });
+
+  it('should get template by name', async () => {
+    spyOn(web, 'httpGet').and.returnValue(of(template));
+    const result = await templateService.getTemplateByName('test template name').toPromise();
+    expect(result).toBeTruthy();
+    expect(web.httpGet).toHaveBeenCalled();
+  });
+
+  it('should NOT get template from error', async () => {
+    spyOn(web, 'httpGet').and.returnValue(throwError('test error'));
+    const result = await templateService.getTemplateByName('test template name').toPromise();
+    expect(result).toBeFalsy();
+    expect(web.httpGet).toHaveBeenCalled();
   });
 
   it('should update template', async () => {
@@ -82,5 +96,5 @@ describe('TemplateService Tests', () => {
     const successes = await templateService.deleteTemplate(parseInt(manageTemplate.templateId)).toPromise();
     expect(web.httpDelete).toHaveBeenCalled();
   });
-})
-;
+
+});

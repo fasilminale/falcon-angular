@@ -39,6 +39,7 @@ describe('InvoiceFormComponent', () => {
   let templateService: TemplateService;
   let snackBar: MatSnackBar;
   let router: Router;
+  let loadingService: LoadingService;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -151,6 +152,7 @@ describe('InvoiceFormComponent', () => {
     invoiceService = TestBed.inject(InvoiceService);
     attachmentService = TestBed.inject(AttachmentService);
     templateService = TestBed.inject(TemplateService);
+    loadingService = TestBed.inject(LoadingService);
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -193,7 +195,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been created.`);
@@ -209,7 +211,7 @@ describe('InvoiceFormComponent', () => {
         statusText: 'test status text'
       })
     );
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openErrorModal).toHaveBeenCalledTimes(1);
   });
@@ -220,7 +222,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.falconInvoiceNumber = 'F0000000010';
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been updated.`);
@@ -234,7 +236,7 @@ describe('InvoiceFormComponent', () => {
       statusText: 'test status text'
     }));
     component.falconInvoiceNumber = 'F0000000010';
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith('Failure, invoice was not updated!');
@@ -260,7 +262,7 @@ describe('InvoiceFormComponent', () => {
     });
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
   });
@@ -276,7 +278,7 @@ describe('InvoiceFormComponent', () => {
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.companyCode.setValue('CODE');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
   });
@@ -347,32 +349,32 @@ describe('InvoiceFormComponent', () => {
 
   it('should not create a new invoice with invalid invoice amounts', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     component.amountOfInvoiceFormControl.setValue('1');
     component.validateInvoiceAmount();
-    component.onSubmit();
+    component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should display an error indicating a duplicate invoice', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should recognized the invoice being edited and not display a duplicate invoice error', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
     component.falconInvoiceNumber = 'F0000000010';
     component.amountOfInvoiceFormControl.setValue('0');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should not reset on failed attachments', async () => {
@@ -391,7 +393,7 @@ describe('InvoiceFormComponent', () => {
       uploadError: false,
       action: 'NONE'
     });
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.resetForm).not.toHaveBeenCalled();
   });
 
@@ -440,7 +442,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.resetForm).toHaveBeenCalled();
   });
 
@@ -486,6 +488,49 @@ describe('InvoiceFormComponent', () => {
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith('Failure, template was not created.');
+  });
+
+  it('should load template', async () => {
+    spyOn(loadingService, 'showLoading');
+    spyOn(loadingService, 'hideLoading');
+    spyOn(templateService, 'getTemplateByName').and.returnValue(of({
+      templateId: 'test template id',
+      companyCode: 'test company code',
+      createdBy: 'test created by',
+      currency: 'test currency',
+      description: 'test description',
+      erpType: 'test erp type',
+      falconInvoiceNumber: 'test falcon number',
+      lineItems: [{
+        companyCode: 'test line item company code',
+        costCenter: 'test line item cost center',
+        glAccount: 'test line item gl account',
+        lineItemNumber: 'test line item number',
+      }],
+      name: 'test name',
+      vendorNumber: 'test vendor number',
+      workType: 'test work type',
+      isDisable: false,
+      isError: false,
+      createdDate: 'test created date',
+      tempDesc: 'test temp desc',
+      tempName: 'test temp name'
+    }));
+    await component.loadTemplate('test template name');
+    expect(loadingService.showLoading).toHaveBeenCalledWith('Loading Template');
+    expect(component.invoiceFormGroup.controls.workType.value).toEqual('test work type');
+    expect(component.invoiceFormGroup.controls.companyCode.value).toEqual('test company code');
+    expect(component.invoiceFormGroup.controls.erpType.value).toEqual('test erp type');
+    expect(component.invoiceFormGroup.controls.vendorNumber.value).toEqual('test vendor number');
+    expect(component.invoiceFormGroup.controls.currency.value).toEqual('test currency');
+    expect(component.lineItemsFormArray.length).toEqual(1);
+    const lineItem = component.lineItemsFormArray.at(0) as FormGroup;
+    expect(lineItem.controls.glAccount.value).toEqual('test line item gl account');
+    expect(lineItem.controls.costCenter.value).toEqual('test line item cost center');
+    expect(lineItem.controls.companyCode.value).toEqual('test line item company code');
+    expect(lineItem.controls.lineItemNetAmount.value).toEqual(0);
+    expect(lineItem.controls.notes.value).toEqual('');
+    expect(loadingService.hideLoading).toHaveBeenCalled();
   });
 
 });

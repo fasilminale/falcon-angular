@@ -21,7 +21,8 @@ describe('Invoice Model Tests', () => {
     erpType: '',
     currency: '',
     standardPaymentTermsOverride: '',
-    lineItems: []
+    lineItems: [],
+    milestones: []
   };
 
   const invoice = {
@@ -39,7 +40,8 @@ describe('Invoice Model Tests', () => {
     erpType: 'Pharma Corp',
     currency: 'USD',
     standardPaymentTermsOverride: '',
-    lineItems: []
+    lineItems: [],
+    milestones: []
   };
 
   const expectedInvoice = {
@@ -57,7 +59,8 @@ describe('Invoice Model Tests', () => {
     erpType: 'Pharma Corp',
     currency: 'USD',
     standardPaymentTermsOverride: '',
-    lineItems: []
+    lineItems: [],
+    milestones: []
   };
 
   let prototypeEmptyInvoice: InvoiceDataModel;
@@ -65,7 +68,7 @@ describe('Invoice Model Tests', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [AppModule],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     prototypeEmptyInvoice = new InvoiceDataModel({});
     prototypeInvoice = new InvoiceDataModel(invoice);
