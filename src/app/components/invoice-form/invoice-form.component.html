@@ -226,7 +226,7 @@
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
             <div *ngFor="let _ of lineItemsFormArray.controls; index as i"
-                 class="line-item-row row align-items-end"
+                 class="line-item-row row align-items-center"
                  [formGroupName]="i">
 
               <div class="d-flex col-2 align-items-end">
@@ -235,6 +235,9 @@
                   <div class="fake-form-control">
                     {{i + 1}}
                   </div>
+                  <small class="error-text invisible">
+                    spacer
+                  </small>
                 </div>
 
                 <!-- LINE ITEM - COMPANY CODE -->
@@ -249,6 +252,9 @@
                          (keypress)="validateRegex($event)"
                          maxlength="4"
                   />
+                  <small class="error-text invisible">
+                    spacer
+                  </small>
                 </div>
               </div>
 
@@ -266,6 +272,10 @@
                           && lineItemCostCenter(i).hasError('required')
                           && !lineItemCostCenter(i).pristine ? 'error' : ''"
                 />
+                <small class="error-text"
+                       [ngClass]="{'invisible': !(lineItemCostCenter(i).hasError('required') && lineItemCostCenter(i).dirty)}">
+                  Cost Center is required
+                </small>
               </div>
 
               <!-- LINE ITEM - GL ACCOUNT -->
@@ -282,6 +292,10 @@
                           && lineItemGlAccount(i).hasError('required')
                           && !lineItemGlAccount(i).pristine ? 'error' : ''"
                 />
+                <small class="error-text"
+                       [ngClass]="{'invisible': !(lineItemGlAccount(i).hasError('required') && lineItemGlAccount(i).dirty)}">
+                  GL Account is required
+                </small>
               </div>
 
               <!-- LINE ITEM - NET AMOUNT -->
@@ -296,6 +310,10 @@
                                           && !lineItemNetAmountFormControl(i).pristine)"
                                         (keyup)="calculateLineItemNetAmount()">
                 </app-fal-currency-input>
+                <small class="error-text invisible">
+                  <!-- this will eventually hold real error messages -->
+                  spacer
+                </small>
               </div>
 
               <div class="d-flex col-4 align-items-end">
@@ -310,6 +328,9 @@
                          (keypress)="validateFreeTextRegex($event)"
                          maxlength="50"
                   />
+                  <small class="error-text invisible">
+                    spacer
+                  </small>
                 </div>
 
                 <!-- LINE ITEM - REMOVE -->
@@ -320,7 +341,11 @@
                          [disabled]="lineItemRemoveButtonDisable || readOnly"
                          (click)="removeLineItem(i)"
                   />
+                  <small class="error-text invisible">
+                    spacer
+                  </small>
                 </div>
+
               </div>
 
             </div>
