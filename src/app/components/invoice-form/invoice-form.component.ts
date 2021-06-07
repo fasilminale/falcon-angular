@@ -461,6 +461,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.loadingService.showLoading('Saving');
     try {
       if (this.isOnEditPage) {
+        // consider refactoring update/create invoice methods in the future!
         return this.updateInvoice();
       } else {
         return this.createInvoice();

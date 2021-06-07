@@ -17,7 +17,6 @@ import {AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
 import {Router} from '@angular/router';
 import {Template, TemplateToSave} from '../../models/template/template-model';
-import {LineItem} from '../../models/template/linItem-model';
 
 describe('InvoiceFormComponent', () => {
 
@@ -225,7 +224,7 @@ describe('InvoiceFormComponent', () => {
     await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
-      .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been updated.`);
+      .toHaveBeenCalledWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`);
   });
 
   it('should show failure snackbar on failed put', async () => {
@@ -531,6 +530,18 @@ describe('InvoiceFormComponent', () => {
     expect(lineItem.controls.lineItemNetAmount.value).toEqual(0);
     expect(lineItem.controls.notes.value).toEqual('');
     expect(loadingService.hideLoading).toHaveBeenCalled();
+  });
+
+  it('should NOT submit for approval on failed attachment', async () => {
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(invoiceService, 'submitForApproval').and.returnValue(of(invoiceResponse));
+    component.falconInvoiceNumber = 'F0000000010';
+    await component.onSubmitForApprovalButtonClick();
+    expect(attachmentService.saveAttachments).toHaveBeenCalled();
+    expect(invoiceService.saveInvoice).not.toHaveBeenCalled();
+    expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
   });
 
 });

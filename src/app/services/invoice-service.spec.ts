@@ -70,5 +70,12 @@ describe('InvoiceService Tests', () => {
     await invoiceService.saveInvoice(invoice).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
   });
-})
-;
+
+  it('should submit for approval', async () => {
+    spyOn(web, 'httpPost').and.returnValue(of(invoice));
+    const result = await invoiceService.submitForApproval(invoice.falconInvoiceNumber).toPromise();
+    expect(web.httpPost).toHaveBeenCalled();
+    expect(result).toEqual(invoice);
+  });
+
+});
