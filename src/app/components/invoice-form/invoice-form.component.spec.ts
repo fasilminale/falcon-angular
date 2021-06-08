@@ -17,7 +17,6 @@ import {AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
 import {Router} from '@angular/router';
 import {Template, TemplateToSave} from '../../models/template/template-model';
-import {LineItem} from '../../models/template/linItem-model';
 
 describe('InvoiceFormComponent', () => {
 
@@ -39,6 +38,7 @@ describe('InvoiceFormComponent', () => {
   let templateService: TemplateService;
   let snackBar: MatSnackBar;
   let router: Router;
+  let loadingService: LoadingService;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -86,7 +86,7 @@ describe('InvoiceFormComponent', () => {
         }
       }
     ],
-    milestones: [],
+    milestones: [] as Array<any>,
     lineItems: [
       {
         lineItemNetAmount: 2999.99
@@ -151,6 +151,7 @@ describe('InvoiceFormComponent', () => {
     invoiceService = TestBed.inject(InvoiceService);
     attachmentService = TestBed.inject(AttachmentService);
     templateService = TestBed.inject(TemplateService);
+    loadingService = TestBed.inject(LoadingService);
     fixture = TestBed.createComponent(InvoiceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -171,6 +172,7 @@ describe('InvoiceFormComponent', () => {
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('0');
     component.externalAttachment = true;
+    invoiceResponse.milestones = [];
     spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
   });
 
@@ -193,7 +195,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been created.`);
@@ -209,7 +211,7 @@ describe('InvoiceFormComponent', () => {
         statusText: 'test status text'
       })
     );
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openErrorModal).toHaveBeenCalledTimes(1);
   });
@@ -220,10 +222,10 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.falconInvoiceNumber = 'F0000000010';
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
-      .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been updated.`);
+      .toHaveBeenCalledWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`);
   });
 
   it('should show failure snackbar on failed put', async () => {
@@ -234,7 +236,7 @@ describe('InvoiceFormComponent', () => {
       statusText: 'test status text'
     }));
     component.falconInvoiceNumber = 'F0000000010';
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     fixture.detectChanges();
     expect(util.openSnackBar)
       .toHaveBeenCalledWith('Failure, invoice was not updated!');
@@ -260,7 +262,7 @@ describe('InvoiceFormComponent', () => {
     });
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
   });
@@ -276,7 +278,7 @@ describe('InvoiceFormComponent', () => {
     component.invoiceFormGroup.controls.companyCode.setValue('CODE');
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.companyCode.setValue('CODE');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
   });
@@ -347,32 +349,32 @@ describe('InvoiceFormComponent', () => {
 
   it('should not create a new invoice with invalid invoice amounts', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     component.amountOfInvoiceFormControl.setValue('1');
     component.validateInvoiceAmount();
-    component.onSubmit();
+    component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should display an error indicating a duplicate invoice', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should recognized the invoice being edited and not display a duplicate invoice error', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSubmit').and.callThrough();
+    spyOn(component, 'onSaveButtonClick').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
     component.falconInvoiceNumber = 'F0000000010';
     component.amountOfInvoiceFormControl.setValue('0');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSubmit).toHaveBeenCalled();
+    expect(component.onSaveButtonClick).toHaveBeenCalled();
   });
 
   it('should not reset on failed attachments', async () => {
@@ -391,7 +393,7 @@ describe('InvoiceFormComponent', () => {
       uploadError: false,
       action: 'NONE'
     });
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.resetForm).not.toHaveBeenCalled();
   });
 
@@ -440,7 +442,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.amountOfInvoiceFormControl.setValue('0');
-    await component.onSubmit();
+    await component.onSaveButtonClick();
     expect(component.resetForm).toHaveBeenCalled();
   });
 
@@ -487,5 +489,130 @@ describe('InvoiceFormComponent', () => {
     expect(util.openSnackBar)
       .toHaveBeenCalledWith('Failure, template was not created.');
   });
+
+  it('should load template', async () => {
+    spyOn(loadingService, 'showLoading');
+    spyOn(loadingService, 'hideLoading');
+    spyOn(templateService, 'getTemplateByName').and.returnValue(of({
+      templateId: 'test template id',
+      companyCode: 'test company code',
+      createdBy: 'test created by',
+      currency: 'test currency',
+      description: 'test description',
+      erpType: 'test erp type',
+      falconInvoiceNumber: 'test falcon number',
+      lineItems: [{
+        companyCode: 'test line item company code',
+        costCenter: 'test line item cost center',
+        glAccount: 'test line item gl account',
+        lineItemNumber: 'test line item number',
+      }],
+      name: 'test name',
+      vendorNumber: 'test vendor number',
+      workType: 'test work type',
+      isDisable: false,
+      isError: false,
+      createdDate: 'test created date',
+      tempDesc: 'test temp desc',
+      tempName: 'test temp name'
+    }));
+    await component.loadTemplate('test template name');
+    expect(loadingService.showLoading).toHaveBeenCalledWith('Loading Template');
+    expect(component.invoiceFormGroup.controls.workType.value).toEqual('test work type');
+    expect(component.invoiceFormGroup.controls.companyCode.value).toEqual('test company code');
+    expect(component.invoiceFormGroup.controls.erpType.value).toEqual('test erp type');
+    expect(component.invoiceFormGroup.controls.vendorNumber.value).toEqual('test vendor number');
+    expect(component.invoiceFormGroup.controls.currency.value).toEqual('test currency');
+    expect(component.lineItemsFormArray.length).toEqual(1);
+    const lineItem = component.lineItemsFormArray.at(0) as FormGroup;
+    expect(lineItem.controls.glAccount.value).toEqual('test line item gl account');
+    expect(lineItem.controls.costCenter.value).toEqual('test line item cost center');
+    expect(lineItem.controls.companyCode.value).toEqual('test line item company code');
+    expect(lineItem.controls.lineItemNetAmount.value).toEqual(0);
+    expect(lineItem.controls.notes.value).toEqual('');
+    expect(loadingService.hideLoading).toHaveBeenCalled();
+  });
+
+  it('should NOT submit for approval on failed attachment', async () => {
+    spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(false));
+    spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
+    spyOn(invoiceService, 'submitForApproval').and.returnValue(of(invoiceResponse));
+    component.falconInvoiceNumber = 'F0000000010';
+    await component.onSubmitForApprovalButtonClick();
+    expect(attachmentService.saveAttachments).toHaveBeenCalled();
+    expect(invoiceService.saveInvoice).not.toHaveBeenCalled();
+    expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
+  });
+
+  describe(', after loading data', () => {
+    beforeEach(() => {
+      spyOn(invoiceService, 'getInvoice').and.returnValue(of(invoiceResponse));
+      component.loadData();
+
+    });
+
+    it('should NOT have latest milestone', () => {
+      expect(component.hasLatestMilestone).toBeFalse();
+      expect(component.latestMilestone).toBeUndefined();
+    });
+
+    it('should NOT have latest milestone comments', () => {
+      expect(component.hasLatestMilestoneComments).toBeFalse();
+      expect(component.latestMilestoneComments).toEqual('');
+    });
+
+    it('should have comment label prefix "General"', () => {
+      expect(component.commentLabelPrefix).toEqual('General');
+    });
+
+    describe(', given a milestone', () => {
+      let testMilestone: any;
+      beforeEach(() => {
+        testMilestone = {
+          name: 'test milestone'
+        };
+        invoiceResponse.milestones.push(testMilestone);
+      });
+
+      it('should have latest milestone', () => {
+        expect(component.hasLatestMilestone).toBeTrue();
+        expect(component.latestMilestone).toEqual(testMilestone);
+      });
+
+      it('should NOT have latest milestone comments', () => {
+        expect(component.hasLatestMilestoneComments).toBeFalse();
+        expect(component.latestMilestoneComments).toEqual('');
+      });
+
+      it('should have comment label prefix "General"', () => {
+        expect(component.commentLabelPrefix).toEqual('General');
+      });
+
+      describe(', given comments', () => {
+        beforeEach(() => {
+          testMilestone.comments = 'test comments';
+        });
+
+        it('should have latest milestone comments', () => {
+          expect(component.hasLatestMilestoneComments).toBeTrue();
+          expect(component.latestMilestoneComments).toEqual('test comments');
+        });
+      });
+
+      describe(', given Submitted status', () => {
+        beforeEach(() => {
+          testMilestone.status = {label: 'Submitted for Approval'};
+        });
+
+        it('should have label prefix "Creator"', () => {
+          expect(component.commentLabelPrefix).toEqual('Creator');
+        });
+      });
+
+    });
+
+  });
+
 
 });

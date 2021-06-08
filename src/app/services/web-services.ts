@@ -8,16 +8,16 @@ export class WebServices {
   constructor(private http: HttpClient) {
   }
 
-  public httpPost<T>(url: string, body: any): Observable<T> {
-    return this.http.post<T>(url, body);
+  public httpPost<T>(url: string, body?: any): Observable<T> {
+    return this.http.post<T>(url, body ?? '');
   }
 
   public httpGet<T>(url: string): Observable<T> {
     return this.http.get<T>(url);
   }
 
-  public httpPut<T>(url: string, body: any): Observable<T> {
-    return this.http.put<T>(url, body);
+  public httpPut<T>(url: string, body?: any): Observable<T> {
+    return this.http.put<T>(url, body ?? '');
   }
 
   public httpDelete<T>(url: string): Observable<T> {

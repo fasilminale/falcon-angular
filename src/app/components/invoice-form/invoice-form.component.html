@@ -7,12 +7,23 @@
     Milestones
   </elm-button>
   <div class="content">
-    <form [formGroup]="invoiceFormGroup"
-          (ngSubmit)="onSubmit()">
+    <form [formGroup]="invoiceFormGroup">
 
       <div class="row me-0">
 
+        <div *ngIf="hasLatestMilestoneComments"
+             id="comment-container-parent"
+             class="col-12">
+          <fal-container id="comment-container">
+            <strong>
+              {{commentLabelPrefix}} Comments:
+            </strong>
+            {{latestMilestoneComments}}
+          </fal-container>
+        </div>
+
         <div class="row col-12 col-lg-6 me-1">
+
           <!-- MY TEMPLATE SELECT -->
           <div *ngIf="!isOnEditPage" class="col-12">
             <label for="my-templates-input" class="form-label fieldLabel1">
@@ -207,14 +218,15 @@
 
         <!-- LINE ITEMS -->
         <elm-card id="line-items-card"
-                       formArrayName="lineItems">
+                  formArrayName="lineItems"
+                  overflow="visible">
           <elm-section-header [sectionTitle]="'Line Items'">
           </elm-section-header>
 
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
             <div *ngFor="let _ of lineItemsFormArray.controls; index as i"
-                 class="line-item-row row align-items-end"
+                 class="line-item-row row align-items-center"
                  [formGroupName]="i">
 
               <div class="d-flex col-2 align-items-end">
@@ -223,6 +235,9 @@
                   <div class="fake-form-control">
                     {{i + 1}}
                   </div>
+                  <small class="error-text invisible">
+                    spacer
+                  </small>
                 </div>
 
                 <!-- LINE ITEM - COMPANY CODE -->
@@ -237,6 +252,9 @@
                          (keypress)="validateRegex($event)"
                          maxlength="4"
                   />
+                  <small class="error-text invisible">
+                    spacer
+                  </small>
                 </div>
               </div>
 
@@ -254,6 +272,10 @@
                           && lineItemCostCenter(i).hasError('required')
                           && !lineItemCostCenter(i).pristine ? 'error' : ''"
                 />
+                <small class="error-text"
+                       [ngClass]="{'invisible': !(lineItemCostCenter(i).hasError('required') && lineItemCostCenter(i).dirty)}">
+                  Cost Center is required
+                </small>
               </div>
 
               <!-- LINE ITEM - GL ACCOUNT -->
@@ -270,6 +292,10 @@
                           && lineItemGlAccount(i).hasError('required')
                           && !lineItemGlAccount(i).pristine ? 'error' : ''"
                 />
+                <small class="error-text"
+                       [ngClass]="{'invisible': !(lineItemGlAccount(i).hasError('required') && lineItemGlAccount(i).dirty)}">
+                  GL Account is required
+                </small>
               </div>
 
               <!-- LINE ITEM - NET AMOUNT -->
@@ -284,6 +310,10 @@
                                           && !lineItemNetAmountFormControl(i).pristine)"
                                         (keyup)="calculateLineItemNetAmount()">
                 </app-fal-currency-input>
+                <small class="error-text invisible">
+                  <!-- this will eventually hold real error messages -->
+                  spacer
+                </small>
               </div>
 
               <div class="d-flex col-4 align-items-end">
@@ -298,6 +328,9 @@
                          (keypress)="validateFreeTextRegex($event)"
                          maxlength="50"
                   />
+                  <small class="error-text invisible">
+                    spacer
+                  </small>
                 </div>
 
                 <!-- LINE ITEM - REMOVE -->
@@ -308,7 +341,11 @@
                          [disabled]="lineItemRemoveButtonDisable || readOnly"
                          (click)="removeLineItem(i)"
                   />
+                  <small class="error-text invisible">
+                    spacer
+                  </small>
                 </div>
+
               </div>
 
             </div>
@@ -332,9 +369,18 @@
               Line Net Amount Total
             </div>
           </div>
-
-
         </elm-card>
+
+        <div class="col-6" style="padding-right: 44px">
+          <!-- COMMENTS -->
+          <label for="comments-input" class="form-label fieldLabel1">
+            General Comments (optional)
+          </label>
+          <textarea id="comments-input"
+                    formControlName="comments"
+                    class="form-control"
+          ></textarea><!-- this formatting is to prevent accidental output to textarea -->
+        </div>
 
         <!-- FORM FOOTER -->
         <div id="form-footer"
@@ -349,16 +395,29 @@
             <u>Cancel</u>
           </elm-button>
 
-          <!-- SUBMIT -->
-          <elm-button id="submit-button"
-                      buttonType="submit"
-                      buttonStyle="primary"
-                      class="flex-shrink-1"
-                      [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)">
-            {{falconInvoiceNumber ? 'Save' : 'Create'}}
-          </elm-button>
-        </div>
+          <div class="flex-shrink-1">
+            <!-- SAVE -->
+            <elm-button id="save-button"
+                        buttonType="button"
+                        buttonStyle="primary"
+                        class="fake-form-control"
+                        [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)"
+                        (buttonClick)="onSaveButtonClick()">
+              Save
+            </elm-button>
 
+            <!-- SUBMIT FOR APPROVAL -->
+            <elm-button *ngIf="!isOnEditPage"
+                        id="submit-for-approval-button"
+                        buttonType="button"
+                        buttonStyle="primary"
+                        class="fake-form-control"
+                        [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)"
+                        (buttonClick)="onSubmitForApprovalButtonClick()">
+              Submit for Approval
+            </elm-button>
+          </div>
+        </div>
       </div>
     </form>
   </div>
