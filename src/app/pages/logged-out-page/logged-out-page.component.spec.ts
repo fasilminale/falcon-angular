@@ -13,7 +13,7 @@ describe('LoggedOutPageComponent', () => {
   let oktaAuth: OktaAuthService;
   let auth: AuthService;
   const oktaConfig = {
-    clientId: '0oaxq1k68o0ND1S0n0h7',
+    clientId: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
     issuer: 'https://identity.dev.cardinalhealth.net/',
     redirectUri: window.location.origin + '/login/callback',
     logoutUrl: window.location.origin + '/logged-out',
