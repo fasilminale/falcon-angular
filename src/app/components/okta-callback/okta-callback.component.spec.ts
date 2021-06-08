@@ -28,7 +28,7 @@ describe('OktaCallbackComponent', () => {
           sub: 'joseph.muzio@cardinalhealth.com',
           iat: 1620238261,
           exp: 1620241861,
-          cid: '0oaxq1k68o0ND1S0n0h7',
+          cid: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
           uid: '00uy71zeh4G6pJxcK0h7',
           scp: ['openid', 'email', 'profile']
         },
@@ -46,7 +46,7 @@ describe('OktaCallbackComponent', () => {
           email: 'joseph.muzio@cardinalhealth.com',
           ver: 1,
           iss: 'https://identity.dev.cardinalhealth.net',
-          aud: '0oaxq1k68o0ND1S0n0h7',
+          aud: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
           iat: 1620238261,
           exp: 1620241861,
           jti: 'ID.ZgAasCPt7e-3iNKQd_z_C8U81rcjZkILG4isE8jgQkQ',
@@ -61,13 +61,13 @@ describe('OktaCallbackComponent', () => {
         scopes: ['openid', 'email', 'profile'],
         authorizeUrl: 'https://identity.dev.cardinalhealth.net/oauth2/v1/authorize',
         issuer: 'https://identity.dev.cardinalhealth.net',
-        clientId: '0oaxq1k68o0ND1S0n0h7'
+        clientId: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG'
       }
     }, code: '4Rz5tzM4yzKgZn2S4baX3QbWCRsbWsXSRz5IAXgx8xQ'
   };
 
   const oktaConfig = {
-    clientId: '0oaxq1k68o0ND1S0n0h7',
+    clientId: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
     issuer: 'https://identity.dev.cardinalhealth.net/',
     redirectUri: window.location.origin + '/login/callback',
     logoutUrl: window.location.origin + '/logged-out',
