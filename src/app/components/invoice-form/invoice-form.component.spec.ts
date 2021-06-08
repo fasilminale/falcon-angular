@@ -86,7 +86,7 @@ describe('InvoiceFormComponent', () => {
         }
       }
     ],
-    milestones: [],
+    milestones: [] as Array<any>,
     lineItems: [
       {
         lineItemNetAmount: 2999.99
@@ -172,6 +172,7 @@ describe('InvoiceFormComponent', () => {
     (component.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('0');
     component.externalAttachment = true;
+    invoiceResponse.milestones = [];
     spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
   });
 
@@ -543,5 +544,75 @@ describe('InvoiceFormComponent', () => {
     expect(invoiceService.saveInvoice).not.toHaveBeenCalled();
     expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
   });
+
+  describe(', after loading data', () => {
+    beforeEach(() => {
+      spyOn(invoiceService, 'getInvoice').and.returnValue(of(invoiceResponse));
+      component.loadData();
+
+    });
+
+    it('should NOT have latest milestone', () => {
+      expect(component.hasLatestMilestone).toBeFalse();
+      expect(component.latestMilestone).toBeUndefined();
+    });
+
+    it('should NOT have latest milestone comments', () => {
+      expect(component.hasLatestMilestoneComments).toBeFalse();
+      expect(component.latestMilestoneComments).toEqual('');
+    });
+
+    it('should have comment label prefix "General"', () => {
+      expect(component.commentLabelPrefix).toEqual('General');
+    });
+
+    describe(', given a milestone', () => {
+      let testMilestone: any;
+      beforeEach(() => {
+        testMilestone = {
+          name: 'test milestone'
+        };
+        invoiceResponse.milestones.push(testMilestone);
+      });
+
+      it('should have latest milestone', () => {
+        expect(component.hasLatestMilestone).toBeTrue();
+        expect(component.latestMilestone).toEqual(testMilestone);
+      });
+
+      it('should NOT have latest milestone comments', () => {
+        expect(component.hasLatestMilestoneComments).toBeFalse();
+        expect(component.latestMilestoneComments).toEqual('');
+      });
+
+      it('should have comment label prefix "General"', () => {
+        expect(component.commentLabelPrefix).toEqual('General');
+      });
+
+      describe(', given comments', () => {
+        beforeEach(() => {
+          testMilestone.comments = 'test comments';
+        });
+
+        it('should have latest milestone comments', () => {
+          expect(component.hasLatestMilestoneComments).toBeTrue();
+          expect(component.latestMilestoneComments).toEqual('test comments');
+        });
+      });
+
+      describe(', given Submitted status', () => {
+        beforeEach(() => {
+          testMilestone.status = {label: 'Submitted for Approval'};
+        });
+
+        it('should have label prefix "Creator"', () => {
+          expect(component.commentLabelPrefix).toEqual('Creator');
+        });
+      });
+
+    });
+
+  });
+
 
 });
