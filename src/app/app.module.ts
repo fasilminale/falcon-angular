@@ -4,7 +4,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {WebServices} from './services/web-services';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {ButtonModule, ContainersModule, DataTableModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -20,22 +20,74 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-input.component';
 import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
-import { FalFileInputComponent } from './components/fal-file-input/fal-file-input.component';
-import { InvoiceFormComponent } from './components/invoice-form/invoice-form.component';
-import { SearchComponent } from './components/search/search.component';
+import {FalFileInputComponent} from './components/fal-file-input/fal-file-input.component';
+import {InvoiceFormComponent} from './components/invoice-form/invoice-form.component';
+import {SearchComponent} from './components/search/search.component';
 import {NgxCurrencyModule} from 'ngx-currency';
-import { FalCurrencyInputComponent } from './components/fal-currency-input/fal-currency-input.component';
+import {FalCurrencyInputComponent} from './components/fal-currency-input/fal-currency-input.component';
 import {TemplateService} from './services/template-service';
 import {UtilService} from './services/util-service';
-import { TemplateInputModalComponent } from './components/template-input-modal/template-input-modal.component';
-import { ManageMyTemplatesComponent } from './pages/manage-my-templates/manage-my-templates.component';
-import { MatTableModule } from '@angular/material/table';
-import { UploadFormComponent } from './components/upload-form/upload-form.component';
+import {TemplateInputModalComponent} from './components/template-input-modal/template-input-modal.component';
+import {ManageMyTemplatesComponent} from './pages/manage-my-templates/manage-my-templates.component';
+import {MatTableModule} from '@angular/material/table';
+import {UploadFormComponent} from './components/upload-form/upload-form.component';
 import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
 import {AttachmentService} from './services/attachment-service';
-import { InputMaskModule } from 'racoon-mask-raw';
+import {InputMaskModule} from 'racoon-mask-raw';
+import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
+import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
+import {AuthService} from './services/auth-service';
+import {ErrorService} from './services/error-service';
+import {FalHttpInterceptor} from './services/fal-http-interceptor';
+import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 import { FalContainerComponent } from './components/fal-container/fal-container.component';
+
+const getOktaConfig = () => {
+  const fullURL = window.location.origin;
+  switch (fullURL) {
+    case 'https://elm-dev.cardinalhealth.net': {
+      return {
+        clientId: '0oaxq1k68o0ND1S0n0h7',
+        issuer: 'https://identity.dev.cardinalhealth.net/',
+        redirectUri: 'https://elm-dev.cardinalhealth.net/falcon/login/callback',
+        logoutUrl: 'https://elm-dev.cardinalhealth.net/falcon/logged-out'
+      };
+    }
+    case 'https://elm-qa.cardinalhealth.net': {
+      return {
+        clientId: '0oaxq1k68o0ND1S0n0h7',
+        issuer: 'https://identity.dev.cardinalhealth.net/',
+        redirectUri: 'https://elm-qa.cardinalhealth.net/falcon/login/callback',
+        logoutUrl: 'https://elm-qa.cardinalhealth.net/falcon/logged-out'
+      };
+    }
+    case 'https://elm.cardinalhealth.net': {
+      return {
+        clientId: '0oaxq1k68o0ND1S0n0h7',
+        issuer: 'https://identity.cardinalhealth.net/',
+        redirectUri: 'https://elm.cardinalhealth.net/falcon/login/callback',
+        logoutUrl: 'https://elm.cardinalhealth.net/falcon/logged-out'
+      };
+    }
+    default: {
+      return {
+        clientId: '0oaxq1k68o0ND1S0n0h7',
+        issuer: 'https://identity.dev.cardinalhealth.net/',
+        redirectUri: 'http://localhost:4200/login/callback',
+        logoutUrl: 'http://localhost:4200/logged-out'
+      };
+    }
+  }
+};
+
+const oktaConfigKeys = getOktaConfig();
+const oktaConfig = {
+  issuer: oktaConfigKeys.issuer,
+  clientId: oktaConfigKeys.clientId,
+  redirectUri: oktaConfigKeys.redirectUri,
+  logoutUrl: oktaConfigKeys.logoutUrl,
+};
 
 @NgModule({
   declarations: [
@@ -53,6 +105,8 @@ import { FalContainerComponent } from './components/fal-container/fal-container.
     ManageMyTemplatesComponent,
     UploadFormComponent,
     FalContainerComponent,
+    OktaCallbackComponent,
+    LoggedOutPageComponent
   ],
   imports: [
     BrowserModule,
@@ -86,7 +140,13 @@ import { FalContainerComponent } from './components/fal-container/fal-container.
     AttachmentService,
     TemplateService,
     UtilService,
-    TimeService
+    TimeService,
+    ErrorService,
+    OktaAuthGuard,
+    OktaAuthService,
+    AuthService,
+    {provide: OKTA_CONFIG, useValue: oktaConfig},
+    {provide: HTTP_INTERCEPTORS, useClass: FalHttpInterceptor, multi: true},
   ],
   bootstrap: [
     AppComponent
