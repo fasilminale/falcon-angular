@@ -17,7 +17,6 @@ export class AuthService {
       if (this.isAuthenticated) {
         this.webServices.httpGet(`${environment.baseServiceUrl}/v1/user/info`).subscribe((userInfo: any) => {
           this.userInfo = userInfo;
-          console.log('userInfo',this.userInfo);
         });
       }
     });
