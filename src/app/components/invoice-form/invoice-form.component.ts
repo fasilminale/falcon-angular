@@ -195,7 +195,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get commentLabelPrefix(): string {
-    const status = this.latestMilestone?.status;
+    return this.getCommentLabelPrefix(this.latestMilestone);
+  }
+
+  public getCommentLabelPrefix(milestone: any): string {
+    const status = milestone?.status;
     if (status?.label && status.label === 'Submitted for Approval') {
       return 'Creator';
     }

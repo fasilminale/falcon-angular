@@ -335,12 +335,13 @@
 
                 <!-- LINE ITEM - REMOVE -->
                 <div class="flex-shrink-1">
+                  <div>
                   <input type="button"
                          value="remove_circle"
                          class="material-icons btn line-item-remove-button"
                          [disabled]="lineItemRemoveButtonDisable || readOnly"
                          (click)="removeLineItem(i)"
-                  />
+                  /></div>
                   <small class="error-text invisible">
                     spacer
                   </small>
