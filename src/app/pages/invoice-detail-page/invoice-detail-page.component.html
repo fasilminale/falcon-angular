@@ -45,7 +45,9 @@
         <div class="milestone"
              *ngFor="let milestone of this.milestones; index as i">
           {{milestone.status.label}} in Falcon at {{formatTimestamp(milestone.timestamp)}} by {{milestone.user}}
-          <div *ngIf="!!milestone.comments">Comments: "{{milestone.comments}}"</div>
+          <div *ngIf="!!milestone.comments">{{invoiceForm.getCommentLabelPrefix(milestone)}} Comments:
+            "{{milestone.comments}}"
+          </div>
         </div>
       </mat-nav-list>
     </mat-sidenav>
