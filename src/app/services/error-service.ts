@@ -1,16 +1,24 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 
 @Injectable()
 export class ErrorService {
-  private errors = new Subject<any>();
-  constructor() {}
+  private errors = new Subject<Error>();
 
-  public addError = (error: any): void => {
+  constructor() {
+  }
+
+  public addError(error: Error): void {
     return this.errors.next(error);
   }
-  public getErrors = () => {
+
+  public getErrors(): Observable<Error> {
     return this.errors.asObservable();
   }
+}
+
+export interface Error {
+  status: string;
+  error: { message: string };
 }

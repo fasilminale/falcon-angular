@@ -1,12 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {LoadingService} from './services/loading-service';
 import {Router} from '@angular/router';
-import {ErrorModalComponent, ErrorModalData, MenuItem, NavbarItem} from '@elm/elm-styleguide-ui';
-// import {AuthService} from './services/auth-service';
+import {ErrorModalData, MenuItem, NavbarItem} from '@elm/elm-styleguide-ui';
 import {ErrorService} from './services/error-service';
-import {MatDialog} from '@angular/material/dialog';
 import {OktaAuthService} from '@okta/okta-angular';
-import { AuthService } from './services/auth-service';
+import {AuthService} from './services/auth-service';
+import {UtilService} from './services/util-service';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +32,7 @@ export class AppComponent implements OnInit {
     }
   ];
 
-  navItemClicked(item: NavbarItem): void {
+  public navItemClicked(item: NavbarItem): void {
     if (item.click) {
       item.click();
     }
@@ -44,7 +43,7 @@ export class AppComponent implements OnInit {
               public authService: AuthService,
               private errorService: ErrorService,
               private oktaService: OktaAuthService,
-              private dialog: MatDialog) {
+              private util: UtilService) {
     this.loadingService.loadingSubject.subscribe((args) => {
       this.dataLoading = args[0] as boolean;
       this.label = args[1] as string;
@@ -56,27 +55,23 @@ export class AppComponent implements OnInit {
     this.dataLoading = false;
   }
 
-  private initializeErrors(): void {
+  public initializeErrors(): void {
     this.errorService.getErrors().subscribe(error => {
       const modalData: ErrorModalData = {
         title: 'Error',
         innerHtmlMessage: `<strong>Status:</strong> ${error.status}<br>` +
           `${error.error.message}`
       };
-      this.dialog.open(ErrorModalComponent, {
-        width: '400px',
-        autoFocus: false,
-        data: modalData,
-      });
-      this.dialog.afterAllClosed.subscribe(() => {
-        if (error.status === '401') {
-          this.router.navigate(['/logged-out']).then();
-        }
-      });
+      this.util.openErrorModal(modalData)
+        .subscribe(() => {
+          if (error.status === '401') {
+            this.router.navigate(['/logged-out']).then();
+          }
+        });
     });
   }
 
-  logout(): void {
+  public logout(): void {
     this.oktaService.signOut().then(() => {
       this.router.navigate(['/logged-out']).then();
     });
