@@ -14,13 +14,14 @@ export class InvoiceService {
     return this.checkInvoiceIsValid(invoice)
       .pipe(
         mergeMap((response: any) => {
-            return response && invoice.falconInvoiceNumber
-              ? of(response.falconInvoiceNumber !== invoice.falconInvoiceNumber)
-              : of(true);
+            if (!response) {
+              return of(false);
+            } else {
+              return invoice.falconInvoiceNumber
+                ? of(response.falconInvoiceNumber !== invoice.falconInvoiceNumber)
+                : of(true);
+            }
           }
-        ),
-        catchError(() =>
-          of(false)
         )
       );
   }
@@ -30,7 +31,7 @@ export class InvoiceService {
    *   a 404 if the invoice is not found,
    *   and an error otherwise.
    */
-  public checkInvoiceIsValid(invoice: any): Observable<any> {
+  public checkInvoiceIsValid(invoice: any): Observable<boolean> {
     return this.web.httpPost(
       `${environment.baseServiceUrl}/v1/invoice/is-valid`,
       {
