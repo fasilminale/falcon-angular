@@ -51,8 +51,8 @@ describe('InvoiceService Tests', () => {
     expect(isDuplicate).toBeTrue();
   });
 
-  it('should NOT be duplicate on error', async () => {
-    spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
+  it('should NOT be duplicate on empty', async () => {
+    spyOn(web, 'httpPost').and.returnValue(of(''));
     const isDuplicate = await invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
     expect(isDuplicate).toBeFalse();
