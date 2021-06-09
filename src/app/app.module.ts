@@ -48,7 +48,7 @@ const getOktaConfig = () => {
   switch (fullURL) {
     case 'https://elm-dev.cardinalhealth.net': {
       return {
-        clientId: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
+        clientId: '0oaxq1k68o0ND1S0n0h7',
         issuer: 'https://identity.dev.cardinalhealth.net/',
         redirectUri: 'https://elm-dev.cardinalhealth.net/falcon/login/callback',
         logoutUrl: 'https://elm-dev.cardinalhealth.net/falcon/logged-out'
@@ -56,7 +56,7 @@ const getOktaConfig = () => {
     }
     case 'https://elm-qa.cardinalhealth.net': {
       return {
-        clientId: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
+        clientId: '0oaxq1k68o0ND1S0n0h7',
         issuer: 'https://identity.dev.cardinalhealth.net/',
         redirectUri: 'https://elm-qa.cardinalhealth.net/falcon/login/callback',
         logoutUrl: 'https://elm-qa.cardinalhealth.net/falcon/logged-out'
@@ -64,7 +64,7 @@ const getOktaConfig = () => {
     }
     case 'https://elm.cardinalhealth.net': {
       return {
-        clientId: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
+        clientId: '0oaxq1k68o0ND1S0n0h7',
         issuer: 'https://identity.cardinalhealth.net/',
         redirectUri: 'https://elm.cardinalhealth.net/falcon/login/callback',
         logoutUrl: 'https://elm.cardinalhealth.net/falcon/logged-out'
@@ -72,7 +72,7 @@ const getOktaConfig = () => {
     }
     default: {
       return {
-        clientId: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
+        clientId: '0oaxq1k68o0ND1S0n0h7',
         issuer: 'https://identity.dev.cardinalhealth.net/',
         redirectUri: 'http://localhost:4200/login/callback',
         logoutUrl: 'http://localhost:4200/logged-out'
