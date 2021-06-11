@@ -347,15 +347,22 @@ describe('InvoiceFormComponent', () => {
     expect(component.validAmount).toBeFalse();
   });
 
-  it('should not create a new invoice with invalid invoice amounts', () => {
-    spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    spyOn(component, 'onSaveButtonClick').and.callThrough();
-    component.amountOfInvoiceFormControl.setValue('1');
-    component.validateInvoiceAmount();
-    component.onSaveButtonClick();
-    expect(component.validateInvoiceAmount).toHaveBeenCalled();
-    expect(component.onSaveButtonClick).toHaveBeenCalled();
+  describe('invalid invoice amounts', () => {
+    const falconInvoiceNumbers = ['', 'F0000000010'];
+
+    falconInvoiceNumbers.forEach(value => {
+      it('should not create or update an invoice with invalid invoice amounts', () => {
+        spyOn(component, 'validateInvoiceAmount').and.callThrough();
+        spyOn(component, 'onSaveButtonClick').and.callThrough();
+        component.falconInvoiceNumber = value;
+        component.validateInvoiceAmount();
+        component.onSaveButtonClick();
+        expect(component.validateInvoiceAmount).toHaveBeenCalled();
+        expect(component.onSaveButtonClick).toHaveBeenCalled();
+      });
+    });
   });
+
 
   it('should display an error indicating a duplicate invoice', async () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
@@ -531,6 +538,24 @@ describe('InvoiceFormComponent', () => {
     expect(lineItem.controls.lineItemNetAmount.value).toEqual(0);
     expect(lineItem.controls.notes.value).toEqual('');
     expect(loadingService.hideLoading).toHaveBeenCalled();
+  });
+
+  describe ('submit invoice', () => {
+    const falconInvoiceNumbers = ['', 'F0000000010'];
+
+    falconInvoiceNumbers.forEach(value => {
+      it('should submit for approval', async () => {
+        spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+        spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
+        spyOn(invoiceService, 'submitForApproval').and.returnValue(of(invoiceResponse));
+        spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
+        component.falconInvoiceNumber = value;
+        await component.onSubmitForApprovalButtonClick();
+        expect(attachmentService.saveAttachments).toHaveBeenCalled();
+        expect(invoiceService.saveInvoice).toHaveBeenCalled();
+        expect(invoiceService.submitForApproval).toHaveBeenCalled();
+      });
+    });
   });
 
   it('should NOT submit for approval on failed attachment', async () => {
