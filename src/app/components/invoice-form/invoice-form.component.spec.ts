@@ -98,6 +98,33 @@ describe('InvoiceFormComponent', () => {
     }
   };
 
+  const submittedInvoiceResponse = {
+    falconInvoiceNumber: 'F0000000002',
+    amountOfInvoice: 2999.99,
+    attachments: [
+      {
+        file: {
+          name: 'test'
+        }
+      }
+    ],
+    milestones: [
+      {
+        status: 'SUBMITTED',
+        user: 'Falcon System'
+      }
+    ],
+    lineItems: [
+      {
+        lineItemNetAmount: 2999.99
+      }
+    ],
+    status: {
+      key: 'SUBMITTED',
+      label: 'Submitted for Approval'
+    }
+  };
+
   const template: TemplateToSave = {
     name: 'testTemplate',
     description: 'testDescription',
@@ -173,6 +200,7 @@ describe('InvoiceFormComponent', () => {
       .controls.lineItemNetAmount.setValue('0');
     component.externalAttachment = true;
     invoiceResponse.milestones = [];
+    submittedInvoiceResponse.milestones = [];
     spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
   });
 
@@ -549,7 +577,6 @@ describe('InvoiceFormComponent', () => {
     beforeEach(() => {
       spyOn(invoiceService, 'getInvoice').and.returnValue(of(invoiceResponse));
       component.loadData();
-
     });
 
     it('should NOT have latest milestone', () => {
@@ -614,5 +641,13 @@ describe('InvoiceFormComponent', () => {
 
   });
 
-
+  describe(', after submitting invoice', () => {
+    it('should emit true to the readOnly flag for submitted invoices', () => {
+      const getInvoice = spyOn(invoiceService, 'getInvoice').and.returnValue(of(submittedInvoiceResponse));
+      const emit = spyOn(component.isSubmittedInvoice, 'emit');
+      component.loadData();
+      expect(getInvoice).toHaveBeenCalled();
+      expect(emit).toHaveBeenCalledWith(true);
+    });
+  });
 });
