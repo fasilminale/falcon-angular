@@ -200,7 +200,6 @@ describe('InvoiceFormComponent', () => {
       .controls.lineItemNetAmount.setValue('0');
     component.externalAttachment = true;
     invoiceResponse.milestones = [];
-    submittedInvoiceResponse.milestones = [];
     spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
   });
 
