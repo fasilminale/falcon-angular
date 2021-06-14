@@ -313,9 +313,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
             this.uploadFormComponent.load(invoice.attachments);
           }
 
-          this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
-            return b.timestamp.localeCompare(a.timestamp);
-          }));
+          this.updateMilestones.emit(invoice.milestones);
           if (this.invoice.status.key === 'DELETED') {
             this.isDeletedInvoice.emit(true);
           }
