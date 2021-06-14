@@ -25,6 +25,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   public readOnly = true;
   public milestonesTabOpen = false;
   public isDeletedInvoice = false;
+  public isSubmittedInvoice = false;
   public falconInvoiceNumber = '';
   public milestones: Array<any> = [];
   public invoiceStatus = '';
@@ -107,6 +108,10 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
 
   public disableInvoice(value: boolean): void {
     this.isDeletedInvoice = value;
+  }
+
+  public submittedInvoice(value: boolean): void {
+    this.isSubmittedInvoice = value;
   }
 
   public formatTimestamp(value: string): string | undefined {
