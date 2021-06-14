@@ -27,11 +27,13 @@ import {LoadingService} from '../../services/loading-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {Subscription} from 'rxjs';
+import {of, Subscription} from 'rxjs';
 import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-invoice-form',
@@ -88,6 +90,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   /* CONSTRUCTORS */
   public constructor(private webService: WebServices,
                      private route: ActivatedRoute,
+                     private dialog: MatDialog,
                      private loadingService: LoadingService,
                      private invoiceService: InvoiceService,
                      private attachmentService: AttachmentService,
@@ -461,7 +464,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     try {
       if (this.isOnEditPage) {
         // consider refactoring update/create invoice methods in the future!
-        return this.updateInvoice();
+        return this.checkCompanyCode();
       } else {
         return this.createInvoice();
       }
@@ -704,4 +707,47 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     return null;
   }
 
+  public async checkCompanyCode(): Promise<string | null> {
+    const componyCode = this.invoiceFormGroup.controls.companyCode.value;
+    
+    if(componyCode !== this.invoice.companyCode) {
+      const dialogRef = this.dialog.open(ConfirmationModalComponent,
+        {
+          autoFocus: false,
+          data: {
+            title: `You've changed company code(s)`,
+            innerHtmlMessage: `Are you sure you want to continue with the changes?`,
+            confirmButtonText: 'Yes, continue',
+            cancelButtonText: 'No, go back'
+          }
+        });
+        let updateInvoice: any = of(null).toPromise();
+        const promise = new Promise((resolve, reject) => {
+          dialogRef.afterClosed().subscribe(
+            result=> {
+              if (result) {
+                resolve(this.updateInvoice());
+              }
+            }
+          )
+
+        });
+        await promise.then(
+          (value) => {
+            updateInvoice = value;
+          },
+          () => {
+            updateInvoice = of(null).toPromise();
+          }
+        );
+        return updateInvoice;
+    }
+    return this.updateInvoice();
+  } 
+
+  // public checkFormArrayCompanyCode() {
+    // this.lineItemsFormArray.controls.forEach( control => {
+
+  //   });
+  // }
 }
