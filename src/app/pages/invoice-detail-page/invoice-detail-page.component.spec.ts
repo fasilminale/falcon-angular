@@ -145,6 +145,14 @@ describe('InvoiceDetailPageComponent', () => {
     expect(component.readOnly).toBeFalsy();
   });
 
+  it('should update the isSubmittedInvoice flag', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(component, 'submittedInvoice').and.callThrough();
+    component.submittedInvoice(true);
+    expect(component.isSubmittedInvoice).toBeTruthy();
+  });
+
   it('should call delete invoice route after confirming delete invoice', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
       .flush(invoiceResponse);

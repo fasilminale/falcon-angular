@@ -80,6 +80,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   @Output() updateMilestones: EventEmitter<any> = new EventEmitter<any>();
   @Output() toggleMilestones: EventEmitter<any> = new EventEmitter<any>();
   @Output() isDeletedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() isSubmittedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   /* CHILDREN */
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
@@ -315,6 +316,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           this.updateMilestones.emit(invoice.milestones);
           if (this.invoice.status.key === 'DELETED') {
             this.isDeletedInvoice.emit(true);
+          }
+          if (this.invoice.status.key === 'SUBMITTED') {
+            this.isSubmittedInvoice.emit(true);
           }
           this.loadingService.hideLoading();
           this.calculateLineItemNetAmount();
