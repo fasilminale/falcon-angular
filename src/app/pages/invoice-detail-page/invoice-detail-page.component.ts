@@ -9,6 +9,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
 import {Subscription} from 'rxjs';
 import {TimeService} from '../../services/time-service';
+import {Milestone} from '../../models/milestone/milestone-model';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -27,7 +28,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   public isDeletedInvoice = false;
   public isSubmittedInvoice = false;
   public falconInvoiceNumber = '';
-  public milestones: Array<any> = [];
+  public milestones: Array<Milestone> = [];
   public invoiceStatus = '';
 
   private subscriptions: Array<Subscription> = [];
@@ -53,12 +54,12 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  public updateMilestones(milestones: any): void {
+  public updateMilestones(milestones: Array<Milestone>): void {
     this.milestones = milestones;
     this.milestones.sort((a: any, b: any) => {
       return b.timestamp.localeCompare(a.timestamp);
     });
-    this.invoiceStatus = this.milestones[0].status.label;
+    this.invoiceStatus = this.milestones[0].status.statusLabel;
   }
 
   public toggleMilestones(): void {

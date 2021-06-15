@@ -26,8 +26,12 @@ describe('Invoice Model Tests', () => {
   };
 
   const invoice = {
-    status: new StatusModel({label: 'Invoice Created', key: 'CREATED'}),
-    statusLabel: 'Invoice Created',
+    status: {
+      statusLabel: 'Created',
+      milestoneLabel: 'Invoice Created',
+      key: 'CREATED'
+    },
+    statusLabel: 'Created',
     falconInvoiceNumber: '123456',
     externalInvoiceNumber: '0000000001',
     amountOfInvoice: '2999.99',
@@ -45,8 +49,12 @@ describe('Invoice Model Tests', () => {
   };
 
   const expectedInvoice = {
-    status: new StatusModel({label: 'Invoice Created', key: 'CREATED'}),
-    statusLabel: 'Invoice Created',
+    status: new StatusModel({
+      statusLabel: 'Created',
+      milestoneLabel: 'Invoice Created',
+      key: 'CREATED'
+    }),
+    statusLabel: 'Created',
     falconInvoiceNumber: '123456',
     externalInvoiceNumber: '0000000001',
     amountOfInvoice: '$2,999.99',
