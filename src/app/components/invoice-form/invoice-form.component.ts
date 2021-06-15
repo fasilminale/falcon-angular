@@ -32,6 +32,7 @@ import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
+import {Milestone} from '../../models/milestone/milestone-model';
 
 @Component({
   selector: 'app-invoice-form',
@@ -77,8 +78,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   @Input() falconInvoiceNumber = '';
 
   /* OUTPUTS */
-  @Output() updateMilestones: EventEmitter<any> = new EventEmitter<any>();
-  @Output() toggleMilestones: EventEmitter<any> = new EventEmitter<any>();
+  @Output() updateMilestones: EventEmitter<Array<Milestone>> = new EventEmitter<Array<Milestone>>();
+  @Output() toggleMilestones: EventEmitter<void> = new EventEmitter<void>();
   @Output() isDeletedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isSubmittedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -199,9 +200,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     return this.getCommentLabelPrefix(this.latestMilestone);
   }
 
-  public getCommentLabelPrefix(milestone: any): string {
+  public getCommentLabelPrefix(milestone: Milestone): string {
     const status = milestone?.status;
-    if (status?.label && status.label === 'Submitted for Approval') {
+    if (status?.key && status.key === 'SUBMITTED') {
       return 'Creator';
     }
     return 'General';

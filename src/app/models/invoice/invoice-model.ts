@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import {LineItem} from '../line-item/line-item-model';
 import {formatCurrency} from '@angular/common';
 import {ElmDataTableHeader} from '@elm/elm-styleguide-ui';
+import {Milestone} from '../milestone/milestone-model';
 
 export class InvoiceDataModel {
 
@@ -21,72 +22,48 @@ export class InvoiceDataModel {
 
   static dateFormat = 'MM/DD/YYYY';
 
-  status = new StatusModel();
-  statusLabel = '';
-  falconInvoiceNumber = '';
-  externalInvoiceNumber = '';
-  amountOfInvoice = '';
-  vendorNumber = '';
-  invoiceDate = '';
-  createdBy = '';
-  companyCode = '';
-  createdDate = '';
-  workType = '';
-  erpType = '';
-  currency = '';
-  standardPaymentTermsOverride = '';
-  lineItems: Array<LineItem> = [];
-  milestones: Array<any> = [];
+  status: StatusModel;
+  statusLabel: string;
+  falconInvoiceNumber: string;
+  externalInvoiceNumber: string;
+  amountOfInvoice: string;
+  vendorNumber: string;
+  invoiceDate: string;
+  createdBy: string;
+  companyCode: string;
+  createdDate: string;
+  workType: string;
+  erpType: string;
+  currency: string;
+  standardPaymentTermsOverride: string;
+  lineItems: Array<LineItem>;
+  milestones: Array<Milestone>;
 
   constructor(json?: any) {
-    if (json?.status) {
-      this.status = new StatusModel(json.status);
-    }
-    if (this.status.label) {
-      this.statusLabel = this.status.getLabel();
-    }
-    if (json?.falconInvoiceNumber) {
-      this.falconInvoiceNumber = json.falconInvoiceNumber;
-    }
-    if (json?.externalInvoiceNumber) {
-      this.externalInvoiceNumber = json.externalInvoiceNumber;
-    }
-    if (json?.amountOfInvoice) {
-      this.amountOfInvoice = formatCurrency(json.amountOfInvoice, 'en-US', '$');
-    }
-    if (json?.vendorNumber) {
-      this.vendorNumber = json.vendorNumber;
-    }
-    if (json?.invoiceDate) {
-      this.invoiceDate = moment(json.invoiceDate).format(InvoiceDataModel.dateFormat);
-    }
-    if (json?.createdBy) {
-      this.createdBy = json.createdBy;
-    }
-    if (json?.companyCode) {
-      this.companyCode = json.companyCode;
-    }
-    if (json?.createdDate) {
-      this.createdDate = json.createdDate;
-    }
-    if (json?.workType) {
-      this.workType = json.workType;
-    }
-    if (json?.erpType) {
-      this.erpType = json.erpType;
-    }
-    if (json?.currency) {
-      this.currency = json.currency;
-    }
-    if (json?.standardPaymentTermsOverride) {
-      this.standardPaymentTermsOverride = json.standardPaymentTermsOverride === 'Z000' ? 'Immediately' : '14 Day';
-    }
-    if (json?.lineItems) {
-      this.lineItems = json.lineItems;
-    }
-    if (json?.milestones) {
-      this.milestones = json.milestones;
-    }
+    this.status = json?.status
+      ? new StatusModel(json.status)
+      : new StatusModel();
+    this.statusLabel = this.status.statusLabel;
+    this.falconInvoiceNumber = json?.falconInvoiceNumber ?? '';
+    this.externalInvoiceNumber = json?.externalInvoiceNumber ?? '';
+    this.amountOfInvoice = json?.amountOfInvoice
+      ? formatCurrency(json.amountOfInvoice, 'en-US', '$')
+      : '';
+    this.vendorNumber = json?.vendorNumber ?? '';
+    this.invoiceDate = json?.invoiceDate
+      ? moment(json.invoiceDate).format(InvoiceDataModel.dateFormat)
+      : '';
+    this.createdBy = json?.createdBy ?? '';
+    this.companyCode = json?.companyCode ?? '';
+    this.createdDate = json?.createdDate ?? '';
+    this.workType = json?.workType ?? '';
+    this.erpType = json?.erpType ?? '';
+    this.currency = json?.currency ?? '';
+    this.standardPaymentTermsOverride = json?.standardPaymentTermsOverride
+      ? (json.standardPaymentTermsOverride === 'Z000' ? 'Immediately' : '14 Day')
+      : '';
+    this.lineItems = json?.lineItems ?? [];
+    this.milestones = json?.milestones ?? [];
   }
 
 }

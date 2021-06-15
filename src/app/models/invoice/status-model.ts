@@ -1,13 +1,17 @@
-export class StatusModel{
-  label = '';
-  key = '';
+export interface Status {
+  readonly statusLabel: string;
+  readonly milestoneLabel: string;
+  readonly key: string;
+}
+
+export class StatusModel implements Status {
+  public readonly statusLabel: string;
+  public readonly milestoneLabel: string;
+  public readonly key: string;
 
   constructor(json?: any) {
-    if (json?.label) { this.label = json.label; }
-    if (json?.key) { this.key = json.key; }
-  }
-
-  public getLabel(): string {
-    return `${this.label}`;
+    this.statusLabel = json?.statusLabel ?? '';
+    this.milestoneLabel = json?.milestoneLabel ?? '';
+    this.key = json?.key ?? '';
   }
 }

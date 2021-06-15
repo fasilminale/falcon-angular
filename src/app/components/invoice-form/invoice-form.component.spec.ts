@@ -653,7 +653,7 @@ describe('InvoiceFormComponent', () => {
 
       describe(', given Submitted status', () => {
         beforeEach(() => {
-          testMilestone.status = {label: 'Submitted for Approval'};
+          testMilestone.status = {key: 'SUBMITTED'};
         });
 
         it('should have label prefix "Creator"', () => {

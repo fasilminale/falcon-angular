@@ -18,8 +18,9 @@ import {UtilService} from '../../services/util-service';
 import {Router} from '@angular/router';
 import {TimeService} from '../../services/time-service';
 import {Template} from '../../models/template/template-model';
-import {By } from '@angular/platform-browser';
-import {ButtonModule, ElmButtonComponent } from '@elm/elm-styleguide-ui';
+import {By} from '@angular/platform-browser';
+import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -44,13 +45,23 @@ describe('InvoiceDetailPageComponent', () => {
       }
     ],
     milestones: [{
-      status: 'CREATED',
+      status: {
+        key: 'CREATED',
+        statusLabel: 'Created',
+        milestoneLabel: 'Invoice Created'
+      },
       timestamp: '2021-04-19T19:58:41.765Z',
-      user: 'Falcon User'
+      user: 'Falcon User',
+      comments: ''
     }, {
-      status: 'CREATED',
+      status: {
+        key: 'CREATED',
+        statusLabel: 'Created',
+        milestoneLabel: 'Invoice Created'
+      },
       timestamp: '2021-04-20T20:58:41.765Z',
-      user: 'Falcon User'
+      user: 'Falcon User',
+      comments: ''
     }],
     lineItems: [
       {
