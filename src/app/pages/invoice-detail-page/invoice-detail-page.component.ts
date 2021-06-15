@@ -56,9 +56,6 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
 
   public updateMilestones(milestones: Array<Milestone>): void {
     this.milestones = milestones;
-    this.milestones.sort((a: any, b: any) => {
-      return b.timestamp.localeCompare(a.timestamp);
-    });
     this.invoiceStatus = this.milestones[0].status.statusLabel;
   }
 
