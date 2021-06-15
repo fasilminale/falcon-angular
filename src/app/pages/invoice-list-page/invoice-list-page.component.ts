@@ -6,7 +6,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {DataTableComponent} from '@elm/elm-styleguide-ui';
+import {DataTableComponent, ElmDataTableHeader} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -15,7 +15,18 @@ import {DataTableComponent} from '@elm/elm-styleguide-ui';
 })
 export class InvoiceListPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
-  headers = InvoiceDataModel.invoiceTableHeaders;
+  headers: Array<ElmDataTableHeader> = [
+    {header: 'statusLabel', label: 'Status'},
+    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end'},
+    {header: 'externalInvoiceNumber', label: 'External Invoice Number', alignment: 'end'},
+    {header: 'amountOfInvoice', label: 'Invoice Amount', alignment: 'end'},
+    {header: 'currency', label: 'Currency'},
+    {header: 'vendorNumber', label: 'Vendor Number', alignment: 'end'},
+    {header: 'invoiceDate', label: 'Invoice Date'},
+    {header: 'createdBy', label: 'Created By'},
+    {header: 'companyCode', label: 'Company Code', alignment: 'end'},
+    {header: 'standardPaymentTermsOverride', label: 'Override'}
+  ];
   invoices: Array<InvoiceDataModel> = [];
   sortField = '';
   searchValue = '';

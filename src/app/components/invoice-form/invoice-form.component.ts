@@ -279,8 +279,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.loadingService.showLoading('Loading');
     this.subscriptions.push(
       this.invoiceService.getInvoice(this.falconInvoiceNumber)
-        .subscribe((invoice: any) => {
-          this.invoice = new InvoiceDataModel(invoice);
+        .subscribe((invoice: InvoiceDataModel) => {
           this.invoiceFormGroup.controls.workType.setValue(invoice.workType);
           this.invoiceFormGroup.controls.companyCode.setValue(invoice.companyCode);
           this.invoiceFormGroup.controls.erpType.setValue(invoice.erpType);
@@ -316,10 +315,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
           this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
             return b.timestamp.localeCompare(a.timestamp);
           }));
-          if (this.invoice.status.key === 'DELETED') {
+          if (this.invoice.status.matches('DELETED')) {
             this.isDeletedInvoice.emit(true);
           }
-          if (this.invoice.status.key === 'SUBMITTED') {
+          if (this.invoice.status.matches('SUBMITTED')) {
             this.isSubmittedInvoice.emit(true);
           }
           this.loadingService.hideLoading();
