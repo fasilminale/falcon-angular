@@ -16,6 +16,7 @@ import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
+import {SubscriptionManager} from '../../services/subscription-manager';
 
 describe('InvoiceFormComponent ROUTING', () => {
   let component: InvoiceFormComponent;
@@ -82,6 +83,7 @@ describe('InvoiceFormComponent ROUTING', () => {
         AttachmentService,
         TemplateService,
         UtilService,
+        SubscriptionManager,
         {provide: ActivatedRoute, useValue: route},
         {provide: Router, useValue: mockRouter}
       ],

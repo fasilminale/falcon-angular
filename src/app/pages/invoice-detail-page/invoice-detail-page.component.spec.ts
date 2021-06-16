@@ -21,6 +21,7 @@ import {Template} from '../../models/template/template-model';
 import {By} from '@angular/platform-browser';
 import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {SubscriptionManager} from '../../services/subscription-manager';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -103,7 +104,8 @@ describe('InvoiceDetailPageComponent', () => {
         MatDialog,
         LoadingService,
         MatSnackBar,
-        TimeService
+        TimeService,
+        SubscriptionManager
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
