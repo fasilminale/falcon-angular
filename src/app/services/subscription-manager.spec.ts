@@ -1,11 +1,8 @@
 import {TestBed} from '@angular/core/testing';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {UtilService} from './util-service';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {SubscriptionManager} from './subscription-manager';
+import {of, Subscription} from 'rxjs';
 
-describe('SubscriptionManager Tests', () => {
+describe('SubscriptionManager', () => {
 
   let subscriptionManager: SubscriptionManager;
 
@@ -18,12 +15,33 @@ describe('SubscriptionManager Tests', () => {
     subscriptionManager = TestBed.inject(SubscriptionManager);
   });
 
-  it('should create', () => {
+  it('should create.', () => {
     expect(subscriptionManager).toBeTruthy();
   });
 
-  it('should start empty', () => {
-    expect(subscriptionManager.getSubscriptions.length).toEqual(0);
+  it('should start empty.', () => {
+    const subscriptions = subscriptionManager.getSubscriptions();
+    expect(subscriptions).toBeTruthy();
+    expect(subscriptions.length).toEqual(0);
+  });
+
+  describe('given a subscription.', () => {
+    let subscription: Subscription;
+    beforeEach(() => {
+      subscription = of(true).subscribe(() => true);
+      subscriptionManager.manage(subscription);
+    });
+
+    it('should store subscription.', () => {
+      expect(subscriptionManager.getSubscriptions().length).toEqual(1);
+    });
+
+    it(', when ngOnDestroy called, should unsubscribe.', () => {
+      spyOn(subscription, 'unsubscribe').and.callThrough();
+      subscriptionManager.ngOnDestroy();
+      expect(subscription.unsubscribe).toHaveBeenCalled();
+    });
+
   });
 
 });
