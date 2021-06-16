@@ -7,6 +7,17 @@ import {Milestone} from '../milestone/milestone-model';
 
 export class InvoiceDataModel {
 
+  static invoiceStatusOptions: Array<StatusModel> = [
+    {statusLabel: 'Created', milestoneLabel: 'Invoice Created', key: 'CREATED'},
+    {statusLabel: 'Submitted', milestoneLabel: 'Submitted for Approval', key: 'SUBMITTED'},
+    {statusLabel: 'Resubmitted', milestoneLabel: 'Re-Submitted for Approval', key: 'RESUBMITTED'},
+    {statusLabel: 'Approved', milestoneLabel: 'Approved', key: 'APPROVED'},
+    {statusLabel: 'Rejected', milestoneLabel: 'Rejected', key: 'REJECTED'},
+    {statusLabel: 'Pending Pay', milestoneLabel: 'Pending Payment by ERP', key: 'PENDING_PAY'},
+    {statusLabel: 'Paid', milestoneLabel: 'Paid Invoice', key: 'PAID'},
+    {statusLabel: 'Deleted', milestoneLabel: 'Invoice Deleted', key: 'DELETED'},
+  ];
+
   static invoiceTableHeaders: Array<ElmDataTableHeader> = [
     {header: 'statusLabel', label: 'Status'},
     {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end'},
