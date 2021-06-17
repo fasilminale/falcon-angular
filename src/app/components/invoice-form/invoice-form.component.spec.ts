@@ -4,7 +4,7 @@ import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatDialog, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {WebServices} from '../../services/web-services';
 import {CUSTOM_ELEMENTS_SCHEMA, SimpleChange} from '@angular/core';
@@ -39,6 +39,7 @@ describe('InvoiceFormComponent', () => {
   let snackBar: MatSnackBar;
   let router: Router;
   let loadingService: LoadingService;
+  let dialog: MatDialog;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -78,6 +79,7 @@ describe('InvoiceFormComponent', () => {
 
   const invoiceResponse = {
     falconInvoiceNumber: 'F0000000001',
+    companyCode: companyCode,
     amountOfInvoice: 2999.99,
     attachments: [
       {
@@ -89,7 +91,9 @@ describe('InvoiceFormComponent', () => {
     milestones: [] as Array<any>,
     lineItems: [
       {
-        lineItemNetAmount: 2999.99
+        lineItemNetAmount: 2999.99,
+        lineItemNumber: '1',
+        companyCode: 'test'
       }
     ],
     status: {
@@ -97,6 +101,15 @@ describe('InvoiceFormComponent', () => {
       label: 'Invoice Deleted'
     }
   };
+
+  const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
+    afterClosed: of(true),
+    close: null
+  });
+  const MOCK_CANCEL_DIALOG = jasmine.createSpyObj({
+    afterClosed: of(false),
+    close: null
+  });
 
   const template: TemplateToSave = {
     name: 'testTemplate',
@@ -141,7 +154,7 @@ describe('InvoiceFormComponent', () => {
         InvoiceService,
         AttachmentService,
         TemplateService,
-        UtilService
+        UtilService,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -153,6 +166,7 @@ describe('InvoiceFormComponent', () => {
     templateService = TestBed.inject(TemplateService);
     loadingService = TestBed.inject(LoadingService);
     fixture = TestBed.createComponent(InvoiceFormComponent);
+    dialog = TestBed.inject(MatDialog);
     component = fixture.componentInstance;
     fixture.detectChanges();
     component.invoiceFormGroup.controls.companyCode.setValue(companyCode);
@@ -221,6 +235,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSaveButtonClick();
     fixture.detectChanges();
@@ -231,6 +246,7 @@ describe('InvoiceFormComponent', () => {
   it('should show failure snackbar on failed put', async () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(new ErrorEvent('test error event'), {
       status: 123,
       statusText: 'test status text'
@@ -377,6 +393,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(component, 'onSaveButtonClick').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.falconInvoiceNumber = 'F0000000010';
     component.amountOfInvoiceFormControl.setValue('0');
     await component.onSaveButtonClick();
@@ -549,6 +566,7 @@ describe('InvoiceFormComponent', () => {
         spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
         spyOn(invoiceService, 'submitForApproval').and.returnValue(of(invoiceResponse));
         spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
+        spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
         component.falconInvoiceNumber = value;
         await component.onSubmitForApprovalButtonClick();
         expect(attachmentService.saveAttachments).toHaveBeenCalled();
@@ -563,6 +581,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(invoiceService, 'submitForApproval').and.returnValue(of(invoiceResponse));
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSubmitForApprovalButtonClick();
     expect(attachmentService.saveAttachments).toHaveBeenCalled();
@@ -591,6 +610,40 @@ describe('InvoiceFormComponent', () => {
       expect(component.commentLabelPrefix).toEqual('General');
     });
 
+    it('should recognized the invoice being edited and not display a duplicate invoice error line item changed', async () => {
+      spyOn(component, 'validateInvoiceAmount').and.callThrough();
+      spyOn(component, 'onSaveButtonClick').and.callThrough();
+      spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
+      spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+      component.lineItemsFormArray.controls[0].value.companyCode='TEST2';
+      component.falconInvoiceNumber = 'F0000000010';
+      component.amountOfInvoiceFormControl.setValue('0');
+      await component.onSaveButtonClick();
+      expect(component.validateInvoiceAmount).toHaveBeenCalled();
+      expect(component.onSaveButtonClick).toHaveBeenCalled();
+    });
+
+    it('should failed checkFormArrayCompanyCode and update invoice', async () => {
+      spyOn(component, 'validateInvoiceAmount').and.callThrough();
+      spyOn(component, 'onSaveButtonClick').and.callThrough();
+      spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
+      spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+      component.falconInvoiceNumber = 'F0000000010';
+      component.amountOfInvoiceFormControl.setValue('0');
+      await component.onSaveButtonClick();
+      expect(component.validateInvoiceAmount).toHaveBeenCalled();
+      expect(component.onSaveButtonClick).toHaveBeenCalled();
+    });
+
+    it('should failed checkFormArrayCompanyCode and update invoice', async () => {
+      spyOn(component, 'validateInvoiceAmount').and.callThrough();
+      spyOn(component, 'onSaveButtonClick').and.callThrough();
+      spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
+      spyOn(dialog, 'open').and.returnValue(MOCK_CANCEL_DIALOG);
+      await component.onSaveButtonClick();
+      expect(component.onSaveButtonClick).toHaveBeenCalled();
+    });
+  
     describe(', given a milestone', () => {
       let testMilestone: any;
       beforeEach(() => {
@@ -641,3 +694,4 @@ describe('InvoiceFormComponent', () => {
 
 
 });
+

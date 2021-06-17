@@ -72,7 +72,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
   private subscriptions: Array<Subscription> = [];
-
+  private lineItemNumber = 0;
   /* INPUTS */
   @Input() enableMilestones = false;
   @Input() readOnly = false;
@@ -306,7 +306,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
               costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
               companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
               lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
-              notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
+              notes: new FormControl({value: lineItem.notes, disabled: this.readOnly}),
+              lineItemNumber: new FormControl({value: lineItem.lineItemNumber, disabled: this.readOnly})
             }));
           }
 
@@ -625,6 +626,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
       if (!lineItem.companyCode) {
         lineItem.companyCode = invoice.companyCode;
       }
+      lineItem.lineItemNumber = ++this.lineItemNumber;
       lineItem.lineItemNetAmount = this.util.toNumber(lineItem.lineItemNetAmount);
     });
   }
@@ -710,7 +712,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   public async checkCompanyCode(): Promise<string | null> {
     const componyCode = this.invoiceFormGroup.controls.companyCode.value;
     
-    if(componyCode !== this.invoice.companyCode) {
+    if(componyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
       const dialogRef = this.dialog.open(ConfirmationModalComponent,
         {
           autoFocus: false,
@@ -735,9 +737,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
         await promise.then(
           (value) => {
             updateInvoice = value;
-          },
-          () => {
-            updateInvoice = of(null).toPromise();
           }
         );
         return updateInvoice;
@@ -745,9 +744,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     return this.updateInvoice();
   } 
 
-  // public checkFormArrayCompanyCode() {
-    // this.lineItemsFormArray.controls.forEach( control => {
-
-  //   });
-  // }
+  private checkFormArrayCompanyCode() {
+    let isCompanyCodeChanged = false;
+    this.lineItemsFormArray.controls.forEach(control => {
+      const item = control.value;
+      if(item.lineItemNumber) {
+        const lineItem = this.invoice.lineItems.find(f => f.lineItemNumber === item.lineItemNumber && f.companyCode !== item.companyCode);
+        if(lineItem) {
+          isCompanyCodeChanged = true;
+        }
+      }
+    });
+    return isCompanyCodeChanged;
+  }
 }
