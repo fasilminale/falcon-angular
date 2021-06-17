@@ -10,7 +10,6 @@ import {PaginationModel} from '../../models/PaginationModel';
 export class SearchComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
   @Input() label = 'Falcon Invoice Number, External Invoice Number or Vendor Number';
-  @Input() value = '';
 
   @Output() submitEvent: EventEmitter<string> = new EventEmitter<string>();
 
