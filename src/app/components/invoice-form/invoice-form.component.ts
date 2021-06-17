@@ -4,7 +4,6 @@ import {
   forwardRef,
   Input,
   OnChanges,
-  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -27,14 +26,15 @@ import {LoadingService} from '../../services/loading-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {of, Subscription} from 'rxjs';
 import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
+import {SubscriptionManager} from '../../services/subscription-manager';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-invoice-form',
@@ -48,7 +48,7 @@ import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
     },
   ]
 })
-export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
+export class InvoiceFormComponent implements OnInit, OnChanges {
 
   /* PUBLIC FIELDS */
   public readonly regex = /[a-zA-Z0-9_\\-]/;
@@ -72,7 +72,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
-  private subscriptions: Array<Subscription> = [];
   private lineItemNumber = 0;
 
   /* INPUTS */
@@ -91,15 +90,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild(UploadFormComponent) uploadFormComponent?: UploadFormComponent;
 
   /* CONSTRUCTORS */
-  public constructor(private webService: WebServices,
-                     private route: ActivatedRoute,
-                     private dialog: MatDialog,
+  public constructor(private dialog: MatDialog,
                      private loadingService: LoadingService,
                      private invoiceService: InvoiceService,
                      private attachmentService: AttachmentService,
                      private templateService: TemplateService,
                      private util: UtilService,
-                     private router: Router) {
+                     private router: Router,
+                     private subscriptionManager: SubscriptionManager) {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
       workType: new FormControl({value: null, disabled: this.readOnly}, [required]),
@@ -124,13 +122,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
       disabled: (this.myTemplateOptions.length === 0)
     });
 
-    this.subscriptions.push(
+    this.subscriptionManager.manage(
       this.osptFormGroup.controls.isPaymentOverrideSelected.valueChanges
-        .subscribe(value => {
-          if (!value) {
-            this.osptFormGroup.controls.paymentTerms.reset();
-          }
-        })
+        .subscribe(
+          (value: any) => {
+            if (!value) {
+              this.osptFormGroup.controls.paymentTerms.reset();
+            }
+          })
     );
   }
 
@@ -219,7 +218,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
       costCenter: new FormControl(null, [Validators.required]),
       companyCode: new FormControl(null),
       lineItemNetAmount: new FormControl('0', [Validators.required]),
-      notes: new FormControl(null)
+      notes: new FormControl(null),
     });
   }
 
@@ -233,10 +232,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     if (this.falconInvoiceNumber) {
       this.loadData();
     }
-  }
-
-  public ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   public ngOnChanges(change: SimpleChanges): void {
@@ -283,55 +278,56 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
 
   public loadData(): void {
     this.loadingService.showLoading('Loading');
-    this.subscriptions.push(
+    this.subscriptionManager.manage(
       this.invoiceService.getInvoice(this.falconInvoiceNumber)
-        .subscribe((invoice: any) => {
-          this.invoice = new InvoiceDataModel(invoice);
-          this.invoiceFormGroup.controls.workType.setValue(invoice.workType);
-          this.invoiceFormGroup.controls.companyCode.setValue(invoice.companyCode);
-          this.invoiceFormGroup.controls.erpType.setValue(invoice.erpType);
-          this.invoiceFormGroup.controls.vendorNumber.setValue(invoice.vendorNumber);
-          this.invoiceFormGroup.controls.externalInvoiceNumber.setValue(invoice.externalInvoiceNumber);
-          this.invoiceFormGroup.controls.invoiceDate.setValue(new Date(invoice.invoiceDate));
-          this.invoiceFormGroup.controls.amountOfInvoice.setValue(invoice.amountOfInvoice);
-          this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
-          this.invoiceFormGroup.controls.comments.setValue(invoice.comments);
-          this.invoiceFormGroup.disable();
+        .subscribe(
+          (invoice: any) => {
+            this.invoice = new InvoiceDataModel(invoice);
+            this.invoiceFormGroup.controls.workType.setValue(invoice.workType);
+            this.invoiceFormGroup.controls.companyCode.setValue(invoice.companyCode);
+            this.invoiceFormGroup.controls.erpType.setValue(invoice.erpType);
+            this.invoiceFormGroup.controls.vendorNumber.setValue(invoice.vendorNumber);
+            this.invoiceFormGroup.controls.externalInvoiceNumber.setValue(invoice.externalInvoiceNumber);
+            this.invoiceFormGroup.controls.invoiceDate.setValue(new Date(invoice.invoiceDate));
+            this.invoiceFormGroup.controls.amountOfInvoice.setValue(invoice.amountOfInvoice);
+            this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
+            this.invoiceFormGroup.controls.comments.setValue(invoice.comments);
+            this.invoiceFormGroup.disable();
 
-          this.osptFormGroup.controls.isPaymentOverrideSelected.setValue(!!invoice.standardPaymentTermsOverride);
-          this.osptFormGroup.controls.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
-          this.osptFormGroup.disable();
+            this.osptFormGroup.controls.isPaymentOverrideSelected.setValue(!!invoice.standardPaymentTermsOverride);
+            this.osptFormGroup.controls.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
+            this.osptFormGroup.disable();
 
-          // Line Items
-          this.lineItemsFormArray.clear();
-          for (const lineItem of invoice.lineItems) {
-            this.lineItemsFormArray.push(new FormGroup({
-              glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
-              costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
-              companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
-              lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
-              notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
-            }));
+            // Line Items
+            this.lineItemsFormArray.clear();
+            for (const lineItem of invoice.lineItems) {
+              this.lineItemsFormArray.push(new FormGroup({
+                glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
+                costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
+                companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
+                lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
+                notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
+              }));
+            }
+
+            // Attachments
+            if (this.uploadFormComponent) {
+              this.uploadFormComponent.load(invoice.attachments);
+            }
+
+            this.updateMilestones.emit(invoice.milestones);
+            if (this.invoice.status.key === 'DELETED') {
+              this.isDeletedInvoice.emit(true);
+            }
+            if (this.invoice.status.key === 'SUBMITTED') {
+              this.isSubmittedInvoice.emit(true);
+            }
+            this.loadingService.hideLoading();
+            this.calculateLineItemNetAmount();
+
+            this.markFormAsPristine();
           }
-
-          // Attachments
-          if (this.uploadFormComponent) {
-            this.uploadFormComponent.load(invoice.attachments);
-          }
-
-          this.updateMilestones.emit(invoice.milestones);
-          if (this.invoice.status.key === 'DELETED') {
-            this.isDeletedInvoice.emit(true);
-          }
-          if (this.invoice.status.key === 'SUBMITTED') {
-            this.isSubmittedInvoice.emit(true);
-          }
-          this.loadingService.hideLoading();
-          this.calculateLineItemNetAmount();
-
-          this.markFormAsPristine();
-        })
-    );
+        ));
   }
 
   public resetForm(): void {
@@ -357,9 +353,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     this.invoiceFormGroup.controls.amountOfInvoice.setValue('0');
     this.calculateLineItemNetAmount();
     this.markFormAsPristine();
-    this.subscriptions.push(
-      this.selectedTemplateFormControl.valueChanges
-        .subscribe(v => this.loadTemplate(v))
+    this.subscriptionManager.manage(
+      this.selectedTemplateFormControl.valueChanges.subscribe(v => this.loadTemplate(v))
     );
   }
 
@@ -570,21 +565,23 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public saveTemplate(): void {
-    this.subscriptions.push(
+    this.subscriptionManager.manage(
       this.util.openTemplateInputModal(this.osptFormGroup.controls.isPaymentOverrideSelected.value)
-        .subscribe(async (result) => {
-          if (result) {
-            const template: TemplateToSave = {
-              falconInvoiceNumber: this.falconInvoiceNumber,
-              name: result.name,
-              description: result.description
-            };
-            const savedTemplate = await this.templateService.createTemplate(template).toPromise();
-            (savedTemplate && savedTemplate.name)
-              ? this.onSaveTemplateSuccess(savedTemplate.name)
-              : this.onSaveTemplateFailure();
+        .subscribe(
+          async (result) => {
+            if (result) {
+              const template: TemplateToSave = {
+                falconInvoiceNumber: this.falconInvoiceNumber,
+                name: result.name,
+                description: result.description
+              };
+              const savedTemplate = await this.templateService.createTemplate(template).toPromise();
+              (savedTemplate && savedTemplate.name)
+                ? this.onSaveTemplateSuccess(savedTemplate.name)
+                : this.onSaveTemplateFailure();
+            }
           }
-        })
+        )
     );
   }
 

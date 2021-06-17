@@ -42,6 +42,7 @@ import {ErrorService} from './services/error-service';
 import {FalHttpInterceptor} from './services/fal-http-interceptor';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 import { FalContainerComponent } from './components/fal-container/fal-container.component';
+import {SubscriptionManager} from './services/subscription-manager';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -141,6 +142,7 @@ const oktaConfig = {
     TemplateService,
     UtilService,
     TimeService,
+    SubscriptionManager,
     ErrorService,
     OktaAuthGuard,
     OktaAuthService,

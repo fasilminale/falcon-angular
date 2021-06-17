@@ -17,6 +17,7 @@ import {AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
 import {Router} from '@angular/router';
 import {Template, TemplateToSave} from '../../models/template/template-model';
+import {SubscriptionManager} from '../../services/subscription-manager';
 
 describe('InvoiceFormComponent', () => {
 
@@ -180,7 +181,8 @@ describe('InvoiceFormComponent', () => {
         InvoiceService,
         AttachmentService,
         TemplateService,
-        UtilService
+        UtilService,
+        SubscriptionManager
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
