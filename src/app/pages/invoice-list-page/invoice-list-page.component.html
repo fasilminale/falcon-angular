@@ -6,15 +6,15 @@
   </div>
   <app-search [value]="searchValue" (submitEvent)="searchInvoices($event)"></app-search>
 </div>
-<div>
+<div class="invoice-status">
   <div class="col-12 col-lg-2 col-xxl-2 mt-3 invoice-status-field">
-    <label for="invoice-status-field" class="form-label elm-field-label2">Invoice Status</label>
-    <ng-select class="invoice-status"
+    <label for="invoice-status-input" class="form-label elm-field-label2">Invoice Status</label>
+    <ng-select class="invoice-status-input"
                [multiple]="true"
                [items]="invoiceStatuses"
                bindLabel="statusLabel"
                bindValue="key"
-               id="invoice-status-field"
+               id="invoice-status-input"
                placeholder="Select One...."
                (change)="changeInvoiceStatus($event)">
     </ng-select>

@@ -22,3 +22,7 @@
   min-width: 300px;
   width: fit-content;
 }
+
+.ng-select.invoice-status-input ::ng-deep .ng-input {
+  width: 0;
+}
