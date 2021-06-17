@@ -32,6 +32,7 @@ import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
+import {Milestone} from '../../models/milestone/milestone-model';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
 
@@ -73,15 +74,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
   private invoice = new InvoiceDataModel();
   private subscriptions: Array<Subscription> = [];
   private lineItemNumber = 0;
+
   /* INPUTS */
   @Input() enableMilestones = false;
   @Input() readOnly = false;
   @Input() falconInvoiceNumber = '';
 
   /* OUTPUTS */
-  @Output() updateMilestones: EventEmitter<any> = new EventEmitter<any>();
-  @Output() toggleMilestones: EventEmitter<any> = new EventEmitter<any>();
+  @Output() updateMilestones: EventEmitter<Array<Milestone>> = new EventEmitter<Array<Milestone>>();
+  @Output() toggleMilestones: EventEmitter<void> = new EventEmitter<void>();
   @Output() isDeletedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() isSubmittedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   /* CHILDREN */
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
@@ -201,9 +204,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     return this.getCommentLabelPrefix(this.latestMilestone);
   }
 
-  public getCommentLabelPrefix(milestone: any): string {
+  public getCommentLabelPrefix(milestone: Milestone): string {
     const status = milestone?.status;
-    if (status?.label && status.label === 'Submitted for Approval') {
+    if (status?.key && status.key === 'SUBMITTED') {
       return 'Creator';
     }
     return 'General';
@@ -265,7 +268,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
             costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
             companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
             lineItemNetAmount: new FormControl({value: 0, disabled: this.readOnly}, [Validators.required]),
-            notes: new FormControl({value: '', disabled: this.readOnly})
+            notes: new FormControl({value: '', disabled: this.readOnly}),
+            lineItemNumber: new FormControl({value: lineItem.lineItemNumber, disabled: this.readOnly})
           }));
         }
         if (this.lineItemsFormArray.length === 0) {
@@ -306,8 +310,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
               costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
               companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
               lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
-              notes: new FormControl({value: lineItem.notes, disabled: this.readOnly}),
-              lineItemNumber: new FormControl({value: lineItem.lineItemNumber, disabled: this.readOnly})
+              notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
             }));
           }
 
@@ -316,11 +319,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
             this.uploadFormComponent.load(invoice.attachments);
           }
 
-          this.updateMilestones.emit(invoice.milestones.sort((a: any, b: any) => {
-            return b.timestamp.localeCompare(a.timestamp);
-          }));
+          this.updateMilestones.emit(invoice.milestones);
           if (this.invoice.status.key === 'DELETED') {
             this.isDeletedInvoice.emit(true);
+          }
+          if (this.invoice.status.key === 'SUBMITTED') {
+            this.isSubmittedInvoice.emit(true);
           }
           this.loadingService.hideLoading();
           this.calculateLineItemNetAmount();
@@ -732,7 +736,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
               }
             }
           )
-
         });
         await promise.then(
           (value) => {
@@ -743,7 +746,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     }
     return this.updateInvoice();
   } 
-
   private checkFormArrayCompanyCode() {
     let isCompanyCodeChanged = false;
     this.lineItemsFormArray.controls.forEach(control => {
@@ -757,4 +759,5 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, OnChanges {
     });
     return isCompanyCodeChanged;
   }
+
 }

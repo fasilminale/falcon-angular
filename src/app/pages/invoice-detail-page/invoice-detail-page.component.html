@@ -18,7 +18,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="!readOnly || isDeletedInvoice"
+                  [isDisabled]="!readOnly || isDeletedInvoice || isSubmittedInvoice"
                   (buttonClick)="editInvoice()">
         Edit
       </elm-button>
@@ -26,7 +26,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="isDeletedInvoice"
+                  [isDisabled]="isDeletedInvoice || isSubmittedInvoice"
                   (buttonClick)="deleteInvoice()">
         Delete
       </elm-button>
@@ -44,9 +44,11 @@
       <mat-nav-list>
         <div class="milestone"
              *ngFor="let milestone of this.milestones; index as i">
-          {{milestone.status.label}} in Falcon at {{formatTimestamp(milestone.timestamp)}} by {{milestone.user}}
-          <div *ngIf="!!milestone.comments">{{!!invoiceForm ? invoiceForm.getCommentLabelPrefix(milestone) : ''}} Comments:
-            "{{milestone.comments}}"
+          {{milestone.status.milestoneLabel}}<br/>
+          at {{formatTimestamp(milestone.timestamp)}}<br/>
+          by {{milestone.user}}
+          <div *ngIf="!!milestone.comments">{{!!invoiceForm ? invoiceForm.getCommentLabelPrefix(milestone) : ''}}
+            Comments: "{{milestone.comments}}"
           </div>
         </div>
       </mat-nav-list>
@@ -58,7 +60,8 @@
                         [readOnly]="readOnly"
                         (updateMilestones)="updateMilestones($event)"
                         (toggleMilestones)="toggleMilestones()"
-                        (isDeletedInvoice)="disableInvoice($event)">
+                        (isDeletedInvoice)="disableInvoice($event)"
+                        (isSubmittedInvoice)="submittedInvoice($event)">
       </app-invoice-form>
     </mat-sidenav-content>
   </mat-sidenav-container>

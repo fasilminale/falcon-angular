@@ -79,7 +79,6 @@ describe('InvoiceFormComponent', () => {
 
   const invoiceResponse = {
     falconInvoiceNumber: 'F0000000001',
-    companyCode: companyCode,
     amountOfInvoice: 2999.99,
     attachments: [
       {
@@ -110,6 +109,33 @@ describe('InvoiceFormComponent', () => {
     afterClosed: of(false),
     close: null
   });
+
+  const submittedInvoiceResponse = {
+    falconInvoiceNumber: 'F0000000002',
+    amountOfInvoice: 2999.99,
+    attachments: [
+      {
+        file: {
+          name: 'test'
+        }
+      }
+    ],
+    milestones: [
+      {
+        status: 'SUBMITTED',
+        user: 'Falcon System'
+      }
+    ],
+    lineItems: [
+      {
+        lineItemNetAmount: 2999.99
+      }
+    ],
+    status: {
+      key: 'SUBMITTED',
+      label: 'Submitted for Approval'
+    }
+  };
 
   const template: TemplateToSave = {
     name: 'testTemplate',
@@ -154,7 +180,7 @@ describe('InvoiceFormComponent', () => {
         InvoiceService,
         AttachmentService,
         TemplateService,
-        UtilService,
+        UtilService
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -593,7 +619,6 @@ describe('InvoiceFormComponent', () => {
     beforeEach(() => {
       spyOn(invoiceService, 'getInvoice').and.returnValue(of(invoiceResponse));
       component.loadData();
-
     });
 
     it('should NOT have latest milestone', () => {
@@ -610,7 +635,7 @@ describe('InvoiceFormComponent', () => {
       expect(component.commentLabelPrefix).toEqual('General');
     });
 
-    it('should recognized the invoice being edited and not display a duplicate invoice error line item changed', async () => {
+    it('should recognize the invoice being edited and not display a duplicate invoice error line item changed', async () => {
       spyOn(component, 'validateInvoiceAmount').and.callThrough();
       spyOn(component, 'onSaveButtonClick').and.callThrough();
       spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
@@ -622,7 +647,6 @@ describe('InvoiceFormComponent', () => {
       expect(component.validateInvoiceAmount).toHaveBeenCalled();
       expect(component.onSaveButtonClick).toHaveBeenCalled();
     });
-
     it('should failed checkFormArrayCompanyCode and update invoice', async () => {
       spyOn(component, 'validateInvoiceAmount').and.callThrough();
       spyOn(component, 'onSaveButtonClick').and.callThrough();
@@ -634,7 +658,6 @@ describe('InvoiceFormComponent', () => {
       expect(component.validateInvoiceAmount).toHaveBeenCalled();
       expect(component.onSaveButtonClick).toHaveBeenCalled();
     });
-
     it('should failed checkFormArrayCompanyCode and update invoice', async () => {
       spyOn(component, 'validateInvoiceAmount').and.callThrough();
       spyOn(component, 'onSaveButtonClick').and.callThrough();
@@ -680,7 +703,7 @@ describe('InvoiceFormComponent', () => {
 
       describe(', given Submitted status', () => {
         beforeEach(() => {
-          testMilestone.status = {label: 'Submitted for Approval'};
+          testMilestone.status = {key: 'SUBMITTED'};
         });
 
         it('should have label prefix "Creator"', () => {
@@ -692,6 +715,13 @@ describe('InvoiceFormComponent', () => {
 
   });
 
-
+  describe(', after submitting invoice', () => {
+    it('should emit true to the readOnly flag for submitted invoices', () => {
+      const getInvoice = spyOn(invoiceService, 'getInvoice').and.returnValue(of(submittedInvoiceResponse));
+      const emit = spyOn(component.isSubmittedInvoice, 'emit');
+      component.loadData();
+      expect(getInvoice).toHaveBeenCalled();
+      expect(emit).toHaveBeenCalledWith(true);
+    });
+  });
 });
-
