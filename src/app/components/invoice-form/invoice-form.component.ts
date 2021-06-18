@@ -360,6 +360,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     (await this.templateService.getTemplates().toPromise())
       .forEach((template: Template) => {
         newTemplateOptions.push(template.name);
+        newTemplateOptions.sort((a,b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
       });
     this.myTemplateOptions = newTemplateOptions;
   }

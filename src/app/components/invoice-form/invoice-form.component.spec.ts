@@ -151,6 +151,11 @@ describe('InvoiceFormComponent', () => {
     tempName: '',
   };
 
+  const templates: Template[] = [
+    templateResponse,
+    new Template({ name: 'test2' })
+  ];
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -483,6 +488,7 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should disable line item remove button on form reset', () => {
+    spyOn(templateService, 'getTemplates').and.returnValue(of(templates));
     component.lineItemRemoveButtonDisable = false;
     component.resetForm();
     expect(component.lineItemRemoveButtonDisable).toBeTrue();
