@@ -615,7 +615,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     if (this.isOnEditPage) {
       invoice.falconInvoiceNumber = this.falconInvoiceNumber;
     }
-    invoice.createdBy = 'Falcon User';
     invoice.amountOfInvoice = this.util.toNumber(invoice.amountOfInvoice);
     invoice.standardPaymentTermsOverride = this.osptFormGroup.controls.paymentTerms.value
       ? this.osptFormGroup.controls.paymentTerms.value
