@@ -99,7 +99,8 @@ describe('InvoiceFormComponent', () => {
     status: {
       key: 'DELETED',
       label: 'Invoice Deleted'
-    }
+    },
+    companyCode: companyCode
   };
 
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({

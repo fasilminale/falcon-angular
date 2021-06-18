@@ -306,7 +306,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
                 costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
                 companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
                 lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
-                notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
+                notes: new FormControl({value: lineItem.notes, disabled: this.readOnly}),
+                lineItemNumber: new FormControl({value: lineItem.lineItemNumber, disabled: this.readOnly}),
               }));
             }
 
@@ -711,35 +712,20 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   public async checkCompanyCode(): Promise<string | null> {
-    const componyCode = this.invoiceFormGroup.controls.companyCode.value;
+    const companyCode = this.invoiceFormGroup.controls.companyCode.value;
     
-    if(componyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
-      const dialogRef = this.dialog.open(ConfirmationModalComponent,
-        {
-          autoFocus: false,
-          data: {
-            title: `You've changed company code(s)`,
-            innerHtmlMessage: `Are you sure you want to continue with the changes?`,
-            confirmButtonText: 'Yes, continue',
-            cancelButtonText: 'No, go back'
-          }
-        });
-        let updateInvoice: any = of(null).toPromise();
-        const promise = new Promise((resolve, reject) => {
-          dialogRef.afterClosed().subscribe(
-            result=> {
-              if (result) {
-                resolve(this.updateInvoice());
-              }
-            }
-          )
-        });
-        await promise.then(
-          (value) => {
-            updateInvoice = value;
-          }
-        );
-        return updateInvoice;
+    if(companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
+      const dialogRef = this.util.openConfirmationModal({
+        title: `You've changed company code(s)`,
+        innerHtmlMessage: `Are you sure you want to continue with the changes?`,
+        confirmButtonText: 'Yes, continue',
+        cancelButtonText: 'No, go back'
+      }).toPromise();
+      
+      if(await dialogRef) {
+        return this.updateInvoice();
+      }
+      return of(null).toPromise();;
     }
     return this.updateInvoice();
   } 
