@@ -61,7 +61,7 @@ export class FalCurrencyInputComponent extends FalControlValueAccessorComponent<
    */
   forceCursorToRightOfPrefix(selectable: Selectable): void {
     if (selectable.selectionStart != null
-      && selectable.selectionStart <= 0) {
+      && selectable.selectionStart < this.PREFIX.length) {
       const newStart = this.PREFIX.length;
       const newEnd = selectable.selectionEnd != null
       && selectable.selectionEnd >= this.PREFIX.length
