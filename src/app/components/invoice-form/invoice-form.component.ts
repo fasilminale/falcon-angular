@@ -4,7 +4,6 @@ import {
   forwardRef,
   Input,
   OnChanges,
-  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -33,6 +32,9 @@ import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-invoice-form',
@@ -70,6 +72,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
+  private lineItemNumber = 0;
 
   /* INPUTS */
   @Input() enableMilestones = false;
@@ -87,8 +90,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   @ViewChild(UploadFormComponent) uploadFormComponent?: UploadFormComponent;
 
   /* CONSTRUCTORS */
-  public constructor(private webService: WebServices,
-                     private route: ActivatedRoute,
+  public constructor(private dialog: MatDialog,
                      private loadingService: LoadingService,
                      private invoiceService: InvoiceService,
                      private attachmentService: AttachmentService,
@@ -216,7 +218,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       costCenter: new FormControl(null, [Validators.required]),
       companyCode: new FormControl(null),
       lineItemNetAmount: new FormControl('0', [Validators.required]),
-      notes: new FormControl(null)
+      notes: new FormControl(null),
     });
   }
 
@@ -261,7 +263,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
             companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
             lineItemNetAmount: new FormControl({value: 0, disabled: this.readOnly}, [Validators.required]),
-            notes: new FormControl({value: '', disabled: this.readOnly})
+            notes: new FormControl({value: '', disabled: this.readOnly}),
+            lineItemNumber: new FormControl({value: lineItem.lineItemNumber, disabled: this.readOnly})
           }));
         }
         if (this.lineItemsFormArray.length === 0) {
@@ -303,7 +306,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
                 costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
                 companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
                 lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
-                notes: new FormControl({value: lineItem.notes, disabled: this.readOnly})
+                notes: new FormControl({value: lineItem.notes, disabled: this.readOnly}),
+                lineItemNumber: new FormControl({value: lineItem.lineItemNumber, disabled: this.readOnly}),
               }));
             }
 
@@ -462,7 +466,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     try {
       if (this.isOnEditPage) {
         // consider refactoring update/create invoice methods in the future!
-        return this.updateInvoice();
+        return this.checkCompanyCode();
       } else {
         return this.createInvoice();
       }
@@ -625,6 +629,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       if (!lineItem.companyCode) {
         lineItem.companyCode = invoice.companyCode;
       }
+      lineItem.lineItemNumber = ++this.lineItemNumber;
       lineItem.lineItemNetAmount = this.util.toNumber(lineItem.lineItemNetAmount);
     });
   }
@@ -705,6 +710,38 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       }
     }
     return null;
+  }
+
+  public async checkCompanyCode(): Promise<string | null> {
+    const companyCode = this.invoiceFormGroup.controls.companyCode.value;
+    
+    if(companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
+      const dialogRef = this.util.openConfirmationModal({
+        title: `You've changed company code(s)`,
+        innerHtmlMessage: `Are you sure you want to continue with the changes?`,
+        confirmButtonText: 'Yes, continue',
+        cancelButtonText: 'No, go back'
+      }).toPromise();
+      
+      if(await dialogRef) {
+        return this.updateInvoice();
+      }
+      return of(null).toPromise();;
+    }
+    return this.updateInvoice();
+  } 
+  private checkFormArrayCompanyCode() {
+    let isCompanyCodeChanged = false;
+    this.lineItemsFormArray.controls.forEach(control => {
+      const item = control.value;
+      if(item.lineItemNumber) {
+        const lineItem = this.invoice.lineItems.find(f => f.lineItemNumber === item.lineItemNumber && f.companyCode !== item.companyCode);
+        if(lineItem) {
+          isCompanyCodeChanged = true;
+        }
+      }
+    });
+    return isCompanyCodeChanged;
   }
 
 }
