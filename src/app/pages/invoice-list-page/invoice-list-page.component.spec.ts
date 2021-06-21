@@ -13,6 +13,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {of} from 'rxjs';
+import {StatusModel} from '../../models/invoice/status-model';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -47,6 +48,13 @@ describe('InvoiceListPageComponent', () => {
       falconInvoiceNumber: '2'
     }]
   };
+  const invoiceStatuses: Array<StatusModel> = [
+    {
+      statusLabel: 'Created',
+      milestoneLabel: 'Invoice Created',
+      key: 'CREATED'
+    }
+  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -122,6 +130,30 @@ describe('InvoiceListPageComponent', () => {
     expect(component.searchInvoices).toHaveBeenCalled();
     expect(component.getTableData).toHaveBeenCalled();
     expect(component.searchValue).toEqual('1');
+  }));
+
+  it('should Search Invoices by status', fakeAsync( () => {
+    spyOn(component, 'changeInvoiceStatus').and.callThrough();
+    spyOn(component, 'getTableData').and.callThrough();
+    component.changeInvoiceStatus(invoiceStatuses);
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
+    tick(150);
+    fixture.detectChanges();
+    expect(component.changeInvoiceStatus).toHaveBeenCalled();
+    expect(component.getTableData).toHaveBeenCalled();
+    expect(component.selectedInvoiceStatuses).toEqual(['CREATED']);
+  }));
+
+  it('should Search Invoices by created user', fakeAsync( () => {
+    spyOn(component, 'changeCreatedByUser').and.callThrough();
+    spyOn(component, 'getTableData').and.callThrough();
+    component.changeCreatedByUser();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
+    tick(150);
+    fixture.detectChanges();
+    expect(component.changeCreatedByUser).toHaveBeenCalled();
+    expect(component.getTableData).toHaveBeenCalled();
+    expect(component.createdByUser).toEqual(true);
   }));
 
   it('should init with invoices from api', () => {

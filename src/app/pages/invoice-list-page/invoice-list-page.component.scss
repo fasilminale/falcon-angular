@@ -6,7 +6,23 @@
   justify-content: space-between;
   align-items: flex-end;
   background-color: $cardinal-white;
-  margin: 0 -24px 24px;
+  margin: 0 -24px 0;
   padding: 0 24px 16px;
   min-height: 120px;
+}
+
+.invoice-status {
+  display: flex;
+  flex-wrap: nowrap;
+  margin: 0 -12px 12px;
+  padding: 0 12px 8px;
+}
+
+.invoice-status-field {
+  min-width: 300px;
+  width: fit-content;
+}
+
+.ng-select.invoice-status-input ::ng-deep .ng-input {
+  width: 0;
 }
