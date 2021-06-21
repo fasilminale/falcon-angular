@@ -26,7 +26,7 @@ import {LoadingService} from '../../services/loading-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {UploadFormComponent} from '../upload-form/upload-form.component';
+import {Attachment, UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
@@ -35,6 +35,7 @@ import {SubscriptionManager} from '../../services/subscription-manager';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
 import { of } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-invoice-form',
@@ -532,6 +533,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         this.onInvoiceIsDuplicate();
       } else {
         // IS NOT DUPLICATE
+        if(await this.validateFile()) {
         this.processInvoice(invoice);
         let shouldReset = false;
         savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
@@ -560,6 +562,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
           this.resetForm();
         }
       }
+    }
     } else {
       this.onInvoiceInvalidated();
     }
@@ -728,7 +731,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       return of(null).toPromise();;
     }
     return this.updateInvoice();
-  } 
+  }
+
   private checkFormArrayCompanyCode() {
     let isCompanyCodeChanged = false;
     this.lineItemsFormArray.controls.forEach(control => {
@@ -743,4 +747,38 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     return isCompanyCodeChanged;
   }
 
+private async validateFile() {
+    let isValidated = true;
+    if(this.uploadFormComponent && this.uploadFormComponent.attachments) {
+      const allAttachments = this.uploadFormComponent.attachments;
+      const fileNames = allAttachments.map((a: Attachment)=> a.file.name);
+      const duplicates = fileNames.filter((a: string, index) => fileNames.indexOf(a) !== index);
+    
+      if(duplicates && duplicates.length > 0) {
+        const dialogRef = this.util.openConfirmationModal({
+          title: `File Name Already Exists`,
+          innerHtmlMessage: `You may replace exising file OR rename the file on local drive and upload again`,
+          confirmButtonText: 'Replace',
+          cancelButtonText: 'Cancel'
+        }).toPromise();
+
+        const attachments = new Array<Attachment>();
+        attachments.push(...allAttachments.filter((a: Attachment) => !duplicates.includes(a.file.name)));
+        if(await dialogRef) {
+          duplicates.forEach( d=> {
+            const lastAttachIndex = fileNames.lastIndexOf(d);
+            attachments.push(allAttachments[lastAttachIndex]);
+          });
+        } else {
+          duplicates.forEach( d=> {
+            const lastAttachIndex = fileNames.indexOf(d);
+            attachments.push(allAttachments[lastAttachIndex]);
+          });
+        }
+        this.uploadFormComponent.attachments = attachments;
+        isValidated = false;
+      }
+    }
+    return isValidated;
+  }
 }
