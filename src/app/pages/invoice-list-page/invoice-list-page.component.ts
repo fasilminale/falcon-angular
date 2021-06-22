@@ -7,6 +7,7 @@ import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {DataTableComponent} from '@elm/elm-styleguide-ui';
+import {StatusModel} from '../../models/invoice/status-model';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -16,9 +17,12 @@ import {DataTableComponent} from '@elm/elm-styleguide-ui';
 export class InvoiceListPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
   headers = InvoiceDataModel.invoiceTableHeaders;
+  invoiceStatuses = InvoiceDataModel.invoiceStatusOptions;
   invoices: Array<InvoiceDataModel> = [];
   sortField = '';
   searchValue = '';
+  createdByUser = false;
+  selectedInvoiceStatuses: Array<string> = [];
   invoiceCountLabel = 'Invoices';
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
@@ -48,10 +52,14 @@ export class InvoiceListPageComponent implements OnInit {
       sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
       searchValue: this.searchValue,
+      invoiceStatuses: this.selectedInvoiceStatuses,
+      createdByUser: this.createdByUser,
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
-      this.invoiceCountLabel = this.searchValue ? `Invoices (${this.paginationModel.total})` : 'Invoices';
+      this.invoiceCountLabel = this.createdByUser ? `My Invoices (${this.paginationModel.total})` :
+        (this.searchValue || this.selectedInvoiceStatuses.length > 0) ? `Invoices (${this.paginationModel.total})` :
+          'Invoices';
       const invoiceArray: Array<InvoiceDataModel> = [];
       invoiceData.data.map((invoice: any) => {
         invoiceArray.push(new InvoiceDataModel(invoice));
@@ -79,6 +87,18 @@ export class InvoiceListPageComponent implements OnInit {
 
   searchInvoices(searchValue: any): void {
     this.searchValue = searchValue;
+    this.sortField = '';
+    this.resetTable();
+  }
+
+  changeCreatedByUser(): void {
+    this.createdByUser = !this.createdByUser;
+    this.sortField = '';
+    this.resetTable();
+  }
+
+  changeInvoiceStatus(statuses: Array<StatusModel>): void {
+    this.selectedInvoiceStatuses = statuses.map(status => status.key);
     this.sortField = '';
     this.resetTable();
   }

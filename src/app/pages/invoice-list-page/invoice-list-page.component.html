@@ -6,8 +6,37 @@
   </div>
   <app-search (submitEvent)="searchInvoices($event)"></app-search>
 </div>
+<div class="invoice-status">
+  <div class="col-12 col-lg-2 col-xxl-2 mt-3 invoice-status-field">
+    <label for="invoice-status-input" class="form-label elm-field-label2">Invoice Status</label>
+    <ng-select class="invoice-status-input"
+               [multiple]="true"
+               [items]="invoiceStatuses"
+               bindLabel="statusLabel"
+               bindValue="key"
+               id="invoice-status-input"
+               placeholder="Select One...."
+               (change)="changeInvoiceStatus($event)">
+    </ng-select>
+  </div>
+</div>
 <elm-card>
   <elm-section-header [sectionTitle]="this.invoiceCountLabel">
+    <div class="col-12">
+      <div class='d-flex justify-content-end align-items-center'>
+        <div class="form-check mt-2">
+        <input class="form-check-input"
+               id="user-invoices"
+               type="checkbox"
+               [value]="createdByUser"
+               [checked]="createdByUser"
+               (change)="changeCreatedByUser()">
+        <label class="form-check-label elm-field-label2"
+               for="user-invoices">My Invoices
+        </label>
+        </div>
+      </div>
+    </div>
   </elm-section-header>
   <elm-data-table
     tableType="clickable"

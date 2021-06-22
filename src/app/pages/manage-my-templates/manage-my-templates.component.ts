@@ -30,9 +30,9 @@ export class ManageMyTemplatesComponent implements OnInit {
       (templates) => {
         templates.map((template: any) => {
           this.templates.push(new Template(template));
-          this.templates.sort((a,b) => a.createdDate > b.createdDate ? 1 : -1);
+          this.templates.sort((a,b) => a.createdDate > b.createdDate ? -1 : 1);
           this.templateTable.renderRows();
-        });;
+        });
       });
     }
 
