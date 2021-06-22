@@ -156,7 +156,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public async confirmRemoveAttachment(): Promise<boolean> {
+  private async confirmRemoveAttachment(): Promise<boolean> {
     return this.util.openConfirmationModal({
       title: 'Remove Attachment',
       innerHtmlMessage: `Are you sure you want to remove this attachment?
