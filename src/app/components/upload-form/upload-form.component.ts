@@ -76,6 +76,43 @@ export class UploadFormComponent implements OnInit, OnChanges {
       .forEach(c => c.reset());
   }
 
+  public async uploadButtonClick(): Promise<void> {
+    const fileName = this.file.value.name;
+    const isDuplicate = this.hasFileWithName(fileName);
+    if (isDuplicate) {
+      const confirmReplace = await this.confirmReplaceAttachment();
+      if (confirmReplace) {
+        // DO REPLACE
+        const index = this.attachmentNames.indexOf(fileName);
+        this.forceRemoveAttachment(index);
+        this.addAttachment();
+      }
+    } else {
+      // DO ADD
+      this.addAttachment();
+    }
+  }
+
+  public hasFileWithName(name: string): boolean {
+    return this.attachments
+      .filter(a => a.action !== 'DELETE')
+      .map(a => a.file.name)
+      .includes(name);
+  }
+
+  private get attachmentNames(): Array<string> {
+    return this.attachments.map(a => a.file.name);
+  }
+
+  private async confirmReplaceAttachment(): Promise<boolean> {
+    return this.util.openConfirmationModal({
+      title: `File Name Already Exists`,
+      innerHtmlMessage: `You may replace exising file OR rename the file on local drive and upload again.`,
+      confirmButtonText: 'Replace',
+      cancelButtonText: 'Cancel'
+    }).toPromise();
+  }
+
   public addAttachment(): void {
     if (this.file.value && this.attachmentType.value) {
       this.attachments.push({
@@ -94,8 +131,13 @@ export class UploadFormComponent implements OnInit, OnChanges {
   }
 
   public async removeAttachment(index: number): Promise<void> {
-    if (await this.confirmRemoveAttachment()
-      && this.attachments.length > index) {
+    if (await this.confirmRemoveAttachment()) {
+      this.forceRemoveAttachment(index);
+    }
+  }
+
+  private forceRemoveAttachment(index: number): void {
+    if (this.attachments.length > index) {
       const attachment = this.attachments[index];
       if (attachment.action === 'NONE') {
         attachment.action = 'DELETE';
@@ -114,7 +156,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
     }
   }
 
-  private async confirmRemoveAttachment(): Promise<boolean> {
+  public async confirmRemoveAttachment(): Promise<boolean> {
     return this.util.openConfirmationModal({
       title: 'Remove Attachment',
       innerHtmlMessage: `Are you sure you want to remove this attachment?
@@ -130,7 +172,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
       && attachment.action !== 'DELETE'
     );
   }
-
 }
 
 export interface Attachment {

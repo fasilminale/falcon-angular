@@ -32,10 +32,10 @@ import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
-import { of } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
+import {of} from 'rxjs';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-invoice-form',
@@ -365,7 +365,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     (await this.templateService.getTemplates().toPromise())
       .forEach((template: Template) => {
         newTemplateOptions.push(template.name);
-        newTemplateOptions.sort((a,b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
+        newTemplateOptions.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
       });
     this.myTemplateOptions = newTemplateOptions;
   }
@@ -533,7 +533,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         this.onInvoiceIsDuplicate();
       } else {
         // IS NOT DUPLICATE
-        if(await this.validateFile()) {
         this.processInvoice(invoice);
         let shouldReset = false;
         savedInvoice = await this.invoiceService.saveInvoice(invoice).toPromise();
@@ -562,7 +561,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
           this.resetForm();
         }
       }
-    }
     } else {
       this.onInvoiceInvalidated();
     }
@@ -716,69 +714,34 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public async checkCompanyCode(): Promise<string | null> {
     const companyCode = this.invoiceFormGroup.controls.companyCode.value;
-    
-    if(companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
+
+    if (companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
       const dialogRef = this.util.openConfirmationModal({
         title: `You've changed company code(s)`,
         innerHtmlMessage: `Are you sure you want to continue with the changes?`,
         confirmButtonText: 'Yes, continue',
         cancelButtonText: 'No, go back'
       }).toPromise();
-      
-      if(await dialogRef) {
+
+      if (await dialogRef) {
         return this.updateInvoice();
       }
-      return of(null).toPromise();;
+      return of(null).toPromise();
     }
     return this.updateInvoice();
   }
 
-  private checkFormArrayCompanyCode() {
+  private checkFormArrayCompanyCode(): boolean {
     let isCompanyCodeChanged = false;
     this.lineItemsFormArray.controls.forEach(control => {
       const item = control.value;
-      if(item.lineItemNumber) {
+      if (item.lineItemNumber) {
         const lineItem = this.invoice.lineItems.find(f => f.lineItemNumber === item.lineItemNumber && f.companyCode !== item.companyCode);
-        if(lineItem) {
+        if (lineItem) {
           isCompanyCodeChanged = true;
         }
       }
     });
     return isCompanyCodeChanged;
-  }
-
-private async validateFile() {
-    let isValidated = true;
-    if(this.uploadFormComponent && this.uploadFormComponent.attachments) {
-      const allAttachments = this.uploadFormComponent.attachments;
-      const fileNames = allAttachments.map((a: Attachment)=> a.file.name);
-      const duplicates = fileNames.filter((a: string, index) => fileNames.indexOf(a) !== index);
-    
-      if(duplicates && duplicates.length > 0) {
-        const dialogRef = this.util.openConfirmationModal({
-          title: `File Name Already Exists`,
-          innerHtmlMessage: `You may replace exising file OR rename the file on local drive and upload again`,
-          confirmButtonText: 'Replace',
-          cancelButtonText: 'Cancel'
-        }).toPromise();
-
-        const attachments = new Array<Attachment>();
-        attachments.push(...allAttachments.filter((a: Attachment) => !duplicates.includes(a.file.name)));
-        if(await dialogRef) {
-          duplicates.forEach( d=> {
-            const lastAttachIndex = fileNames.lastIndexOf(d);
-            attachments.push(allAttachments[lastAttachIndex]);
-          });
-        } else {
-          duplicates.forEach( d=> {
-            const lastAttachIndex = fileNames.indexOf(d);
-            attachments.push(allAttachments[lastAttachIndex]);
-          });
-        }
-        this.uploadFormComponent.attachments = attachments;
-        isValidated = false;
-      }
-    }
-    return isValidated;
   }
 }
