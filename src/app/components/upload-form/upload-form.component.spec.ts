@@ -10,6 +10,10 @@ import {SimpleChanges} from '@angular/core';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 
 describe('UploadFormComponent', () => {
+
+  const TEST_FILE_1 = new File([], 'test file 1');
+  const TEST_FILE_2 = new File([], 'test file 2');
+
   let component: UploadFormComponent;
   let fixture: ComponentFixture<UploadFormComponent>;
   let util: UtilService;
@@ -27,12 +31,8 @@ describe('UploadFormComponent', () => {
         MatSnackBar,
         MatDialog,
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
     util = TestBed.inject(UtilService);
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UploadFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -75,7 +75,13 @@ describe('UploadFormComponent', () => {
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
     component.addAttachment();
-    expect(component.attachments).toEqual([{file: testFile, type: testType, uploadError: false, action: 'UPLOAD', url: undefined}]);
+    expect(component.attachments).toEqual([{
+      file: testFile,
+      type: testType,
+      uploadError: false,
+      action: 'UPLOAD',
+      url: undefined
+    }]);
   });
 
   it('should reset', () => {
@@ -211,6 +217,110 @@ describe('UploadFormComponent', () => {
     spyOn(component, 'downloadAttachment').and.callThrough();
     component.downloadAttachment(0);
     expect(component.downloadAttachment).toHaveBeenCalled();
+  });
+
+  it('should add attachment if duplicate is NOT found', () => {
+    component.file.setValue(TEST_FILE_2);
+    component.attachmentType.setValue('test type 2');
+    component.attachments.push({
+      file: TEST_FILE_1,
+      type: 'test type 1',
+      uploadError: false,
+      action: 'NONE',
+      url: 'url'
+    });
+    spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+    component.uploadButtonClick();
+    expect(util.openConfirmationModal).not.toHaveBeenCalled();
+    expect(component.attachments).toEqual([{
+      file: TEST_FILE_1,
+      type: 'test type 1',
+      uploadError: false,
+      action: 'NONE',
+      url: 'url'
+    }, {
+      file: TEST_FILE_1,
+      type: 'test type 2',
+      uploadError: false,
+      action: 'UPLOAD',
+      url: undefined
+    }]);
+  });
+
+  it('should do nothing if duplicate is found but replace is denied', async () => {
+    component.file.setValue(TEST_FILE_1);
+    component.attachmentType.setValue('test type 2');
+    component.attachments.push({
+      file: TEST_FILE_1,
+      type: 'test type 1',
+      uploadError: false,
+      action: 'NONE',
+      url: 'url'
+    });
+    spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+    await component.uploadButtonClick();
+    expect(util.openConfirmationModal).toHaveBeenCalled();
+    expect(component.attachments).toEqual([{
+      file: TEST_FILE_1,
+      type: 'test type 1',
+      uploadError: false,
+      action: 'NONE',
+      url: 'url'
+    }]);
+  });
+
+  it('should replace attachment if duplicate is found', async () => {
+    component.file.setValue(TEST_FILE_1);
+    component.attachmentType.setValue('test type 2');
+    component.attachments.push({
+      file: TEST_FILE_1,
+      type: 'test type 1',
+      uploadError: false,
+      action: 'NONE',
+      url: 'url'
+    });
+    spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
+    await component.uploadButtonClick();
+    expect(util.openConfirmationModal).toHaveBeenCalled();
+    expect(component.attachments).toEqual([{
+      file: TEST_FILE_1,
+      type: 'test type 1',
+      uploadError: false,
+      action: 'DELETE',
+      url: 'url'
+    }, {
+      file: TEST_FILE_1,
+      type: 'test type 2',
+      uploadError: false,
+      action: 'UPLOAD',
+      url: undefined
+    }]);
+  });
+
+  it('should find attachments in list', () => {
+    const attachment: any = {
+      file: TEST_FILE_1,
+      type: 'test type',
+      uploadError: false,
+      action: 'NONE',
+      url: 'url'
+    };
+    component.attachments.push(attachment);
+    const result = component.hasFileWithName(TEST_FILE_1.name);
+    expect(result).toBeTrue();
+  });
+
+  it('should not find marked for delete attachments in list', () => {
+    const attachment: any = {
+      file: TEST_FILE_1,
+      type: 'test type',
+      uploadError: false,
+      action: 'DELETE',
+      url: 'url'
+    };
+    component.attachments.push(attachment);
+    const result = component.hasFileWithName(TEST_FILE_1.name);
+    expect(result).toBeFalse();
   });
 
 });

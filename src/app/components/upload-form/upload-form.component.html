@@ -1,5 +1,4 @@
-<form [formGroup]="formGroup"
-      (ngSubmit)="addAttachment()">
+<form [formGroup]="formGroup">
   <label class="form-label fieldLabel1">
     Upload Attachments
   </label>
@@ -41,9 +40,10 @@
 
         <!-- UPLOAD BUTTON -->
         <div id="upload-button-container">
-          <elm-button buttonType="submit"
+          <elm-button buttonType="button"
                       buttonStyle="primary"
-                      [isDisabled]="!(formGroup.controls.file.value && formGroup.controls.attachmentType.value)">
+                      [isDisabled]="!(formGroup.controls.file.value && formGroup.controls.attachmentType.value)"
+                      (buttonClick)="uploadButtonClick()">
             Upload
           </elm-button>
         </div>

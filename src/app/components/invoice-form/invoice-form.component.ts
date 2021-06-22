@@ -26,15 +26,16 @@ import {LoadingService} from '../../services/loading-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {UploadFormComponent} from '../upload-form/upload-form.component';
+import {Attachment, UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationModalComponent } from '@elm/elm-styleguide-ui';
-import { of } from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
+import {of} from 'rxjs';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-invoice-form',
@@ -364,7 +365,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     (await this.templateService.getTemplates().toPromise())
       .forEach((template: Template) => {
         newTemplateOptions.push(template.name);
-        newTemplateOptions.sort((a,b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
+        newTemplateOptions.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
       });
     this.myTemplateOptions = newTemplateOptions;
   }
@@ -713,34 +714,34 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public async checkCompanyCode(): Promise<string | null> {
     const companyCode = this.invoiceFormGroup.controls.companyCode.value;
-    
-    if(companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
+
+    if (companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
       const dialogRef = this.util.openConfirmationModal({
         title: `You've changed company code(s)`,
         innerHtmlMessage: `Are you sure you want to continue with the changes?`,
         confirmButtonText: 'Yes, continue',
         cancelButtonText: 'No, go back'
       }).toPromise();
-      
-      if(await dialogRef) {
+
+      if (await dialogRef) {
         return this.updateInvoice();
       }
-      return of(null).toPromise();;
+      return of(null).toPromise();
     }
     return this.updateInvoice();
-  } 
-  private checkFormArrayCompanyCode() {
+  }
+
+  private checkFormArrayCompanyCode(): boolean {
     let isCompanyCodeChanged = false;
     this.lineItemsFormArray.controls.forEach(control => {
       const item = control.value;
-      if(item.lineItemNumber) {
+      if (item.lineItemNumber) {
         const lineItem = this.invoice.lineItems.find(f => f.lineItemNumber === item.lineItemNumber && f.companyCode !== item.companyCode);
-        if(lineItem) {
+        if (lineItem) {
           isCompanyCodeChanged = true;
         }
       }
     });
     return isCompanyCodeChanged;
   }
-
 }
