@@ -321,7 +321,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             if (this.invoice.status.key === 'DELETED') {
               this.isDeletedInvoice.emit(true);
             }
-            if (this.invoice.status.key === 'SUBMITTED') {
+            if (this.invoice.status.key !== 'CREATED' && this.invoice.status.key !== 'REJECTED') {
               this.isSubmittedInvoice.emit(true);
             }
             this.loadingService.hideLoading();
