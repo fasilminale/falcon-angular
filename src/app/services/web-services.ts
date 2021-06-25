@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
 @Injectable()
 export class WebServices {
+
+  readonly headers = new HttpHeaders().set('X-SKIP-INTERCEPTOR', '');
 
   constructor(private http: HttpClient) {
   }
@@ -14,6 +16,10 @@ export class WebServices {
 
   public httpGet<T>(url: string): Observable<T> {
     return this.http.get<T>(url);
+  }
+  
+  public httpGetSkipIntereptor<T>(url: string): Observable<T> {
+    return this.http.get<T>(url, {headers: this.headers});
   }
 
   public httpPut<T>(url: string, body?: any): Observable<T> {

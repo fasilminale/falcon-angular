@@ -37,6 +37,11 @@
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="createdBy">
+      <th id="description" mat-header-cell *matHeaderCellDef> Created By</th>
+      <td mat-cell *matCellDef="let template">{{template.createdBy}}</td>
+    </ng-container>
+
     <ng-container matColumnDef="action">
       <th id="action" mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let template">
