@@ -16,7 +16,7 @@ export class ManageMyTemplatesComponent implements OnInit {
   @ViewChild(MatTable, { static: true })
   templateTable!: MatTable<Template>;
   templates: Array<Template> = [];
-  displayedColumns: string[] = ['createdDate', 'name', 'description', 'createdBy', 'action'];
+  displayedColumns: string[] = ['createdDate', 'name', 'description', 'action'];
   editedTemplate: Template | undefined;
 
   constructor(
