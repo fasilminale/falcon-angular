@@ -340,8 +340,7 @@
                                         (focus)="form.forceValueChangeEvent(lineItemNetAmount(i))"
                                         [isError]="!!(lineItemNetAmount(i).errors
                                                       && lineItemNetAmount(i).hasError('required')
-                                                      && lineItemNetAmount(i).touched)"
-                                        (keyup)="calculateLineItemNetAmount()">
+                                                      && lineItemNetAmount(i).touched)">
                 </app-fal-currency-input>
                 <small class="error-text invisible">
                   <!-- this will eventually hold real error messages -->
@@ -400,7 +399,7 @@
               </elm-button>
             </div>
             <div class="col-2 line-item-total-amount">
-              ${{totalLineItemNetAmount | number : '1.2-2'}}
+              ${{form.totalLineItemNetAmount | number : '1.2-2'}}
             </div>
             <div class="col-4 form-label fieldLabel1">
               Line Net Amount Total

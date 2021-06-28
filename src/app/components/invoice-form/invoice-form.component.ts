@@ -58,7 +58,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public validAmount = true;
   public externalAttachment = false;
   public file = null;
-  public totalLineItemNetAmount = 0;
 
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
@@ -234,8 +233,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
               this.isSubmittedInvoice.emit(true);
             }
             this.loadingService.hideLoading();
-            this.calculateLineItemNetAmount();
-
             this.markFormAsPristine();
           }
         ));
@@ -262,7 +259,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.form.invoiceDate.markAsPristine();
     this.form.companyCode.setValue('');
     this.form.amountOfInvoice.setValue('0');
-    this.calculateLineItemNetAmount();
     this.markFormAsPristine();
     this.subscriptionManager.manage(
       this.form.selectedTemplateFormControl.valueChanges.subscribe(v => this.loadTemplate(v))
@@ -347,7 +343,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     if (this.form.lineItems.length <= 1) {
       this.lineItemRemoveButtonDisable = true;
     }
-    this.calculateLineItemNetAmount();
   }
 
   public async onCancel(): Promise<void> {
@@ -611,15 +606,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.form.lineItems.enable();
     this.form.comments.enable();
   }
-
-  public calculateLineItemNetAmount(): void {
-    this.totalLineItemNetAmount = 0;
-    for (const control of this.form.lineItems.controls) {
-      const lineItemGroup = (control as FormGroup);
-      this.totalLineItemNetAmount += parseFloat(lineItemGroup.controls.lineItemNetAmount.value);
-    }
-  }
-
 
   public async checkCompanyCode(): Promise<string | null> {
     const companyCode = this.form.companyCode.value;

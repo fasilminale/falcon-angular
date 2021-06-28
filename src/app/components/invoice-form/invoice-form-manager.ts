@@ -10,21 +10,21 @@ export class InvoiceFormManager {
 
   /* INVOICE FORM GROUP */
   public readonly invoiceFormGroup: FormGroup;
-  public readonly workType: FormControl;
-  public readonly companyCode: FormControl;
-  public readonly erpType: FormControl;
-  public readonly vendorNumber: FormControl;
-  public readonly externalInvoiceNumber: FormControl;
-  public readonly invoiceDate: FormControl;
-  public readonly amountOfInvoice: FormControl;
-  public readonly currency: FormControl;
-  public readonly comments: FormControl;
-  public readonly lineItems: FormArray;
+  public readonly workType = new FormControl({value: null}, [required]);
+  public readonly companyCode = new FormControl({value: null}, [required]);
+  public readonly erpType = new FormControl({value: null}, [required]);
+  public readonly vendorNumber = new FormControl({value: null}, [required]);
+  public readonly externalInvoiceNumber = new FormControl({value: null}, [required]);
+  public readonly invoiceDate = new FormControl({value: null}, [required, validateDate]);
+  public readonly amountOfInvoice = new FormControl({value: 0}, [required]);
+  public readonly currency = new FormControl({value: null}, [required]);
+  public readonly comments = new FormControl({value: null});
+  public readonly lineItems = new FormArray([]);
 
   /* OVERRIDE PAYMENT TERMS FORM GROUP */
   public readonly osptFormGroup: FormGroup;
-  public readonly isPaymentOverrideSelected: FormControl;
-  public readonly paymentTerms: FormControl;
+  public readonly isPaymentOverrideSelected = new FormControl({value: false});
+  public readonly paymentTerms = new FormControl({value: null});
 
   /* MISC FORM CONTROLS */
   public readonly selectedTemplateFormControl: FormControl;
@@ -40,23 +40,9 @@ export class InvoiceFormManager {
     {value: 'ZN14', display: 'Pay in 14 days'}
   ];
 
+  public totalLineItemNetAmount = 0;
+
   constructor(private subscriptionManager: SubscriptionManager) {
-    this.workType = new FormControl({value: null}, [required]);
-    this.companyCode = new FormControl({value: null}, [required]);
-    this.erpType = new FormControl({value: null}, [required]);
-    this.vendorNumber = new FormControl({value: null}, [required]);
-    this.externalInvoiceNumber = new FormControl({value: null}, [required]);
-    this.invoiceDate = new FormControl({value: null}, [required, validateDate]);
-    this.amountOfInvoice = new FormControl({value: 0}, [required]);
-    this.currency = new FormControl({value: null}, [required]);
-    this.isPaymentOverrideSelected = new FormControl({value: false});
-    this.paymentTerms = new FormControl({value: null});
-    this.osptFormGroup = new FormGroup({
-      isPaymentOverrideSelected: this.isPaymentOverrideSelected,
-      paymentTerms: this.paymentTerms
-    });
-    this.lineItems = new FormArray([]);
-    this.comments = new FormControl({value: null});
     this.invoiceFormGroup = new FormGroup({
       workType: this.workType,
       companyCode: this.companyCode,
@@ -68,6 +54,10 @@ export class InvoiceFormManager {
       currency: this.currency,
       comments: this.comments,
       lineItems: this.lineItems
+    });
+    this.osptFormGroup = new FormGroup({
+      isPaymentOverrideSelected: this.isPaymentOverrideSelected,
+      paymentTerms: this.paymentTerms
     });
     this.selectedTemplateFormControl = new FormControl({
       value: null,
@@ -87,9 +77,13 @@ export class InvoiceFormManager {
     this.establishTouchLink(this.lineItems, this.osptFormGroup);
     this.establishTouchLink(this.comments, this.lineItems);
     this.subscriptionManager.manage(
+      // CLEAR PAYMENT TERMS SELECTION WHEN UNSELECTING OVERRIDE
       this.isPaymentOverrideSelected.valueChanges
         .pipe(filter(isFalsey))
-        .subscribe(() => this.paymentTerms.reset())
+        .subscribe(() => this.paymentTerms.reset()),
+      // RECALCULATE LINE ITEM TOTAL WHEN LINE ITEMS CHANGE
+      this.lineItems.valueChanges
+        .subscribe(() => this.calculateLineItemNetAmount())
     );
   }
 
@@ -121,6 +115,13 @@ export class InvoiceFormManager {
     return new FormGroup({companyCode, costCenter, glAccount, lineItemNetAmount, notes});
   }
 
+  public calculateLineItemNetAmount(): void {
+    this.totalLineItemNetAmount = 0;
+    for (const control of this.lineItems.controls) {
+      const lineItemGroup = (control as FormGroup);
+      this.totalLineItemNetAmount += parseFloat(lineItemGroup.controls.lineItemNetAmount.value);
+    }
+  }
 }
 
 /* VALIDATORS */
