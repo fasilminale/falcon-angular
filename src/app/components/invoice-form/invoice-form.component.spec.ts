@@ -141,6 +141,33 @@ describe('InvoiceFormComponent', () => {
     }
   };
 
+  const createdInvoiceResponse = {
+    falconInvoiceNumber: 'F0000000002',
+    amountOfInvoice: 2999.99,
+    attachments: [
+      {
+        file: {
+          name: 'test'
+        }
+      }
+    ],
+    milestones: [
+      {
+        status: 'CREATED',
+        user: 'Falcon System'
+      }
+    ],
+    lineItems: [
+      {
+        lineItemNetAmount: 2999.99
+      }
+    ],
+    status: {
+      key: 'CREATED',
+      label: 'Invoice Created'
+    }
+  };
+
   const template: TemplateToSave = {
     name: 'testTemplate',
     description: 'testDescription',
@@ -732,6 +759,14 @@ describe('InvoiceFormComponent', () => {
       component.loadData();
       expect(getInvoice).toHaveBeenCalled();
       expect(emit).toHaveBeenCalledWith(true);
+    });
+
+    it('should not emit to the readOnly flag for submitted invoices', () => {
+      const getInvoice = spyOn(invoiceService, 'getInvoice').and.returnValue(of(createdInvoiceResponse));
+      const emit = spyOn(component.isSubmittedInvoice, 'emit');
+      component.loadData();
+      expect(getInvoice).toHaveBeenCalled();
+      expect(emit).not.toHaveBeenCalled();
     });
   });
 });
