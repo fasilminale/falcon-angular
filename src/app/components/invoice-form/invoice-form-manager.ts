@@ -76,6 +76,9 @@ export class InvoiceFormManager {
   }
 
   public init(): void {
+    this.invoiceFormGroup.enable();
+    this.isPaymentOverrideSelected.enable();
+    this.selectedTemplateFormControl.enable();
     this.establishTouchLink(this.companyCode, this.workType);
     this.establishTouchLink(this.erpType, this.companyCode);
     this.establishTouchLink(this.vendorNumber, this.erpType);
