@@ -17,6 +17,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
   ];
 
   @Input() isDisabled = false;
+  @Input() pristine = true;
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
 
   /* FORM CONTROLS */
@@ -79,6 +80,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
   public async uploadButtonClick(): Promise<void> {
     const fileName = this.file.value.name;
     const isDuplicate = this.hasFileWithName(fileName);
+    this.pristine = false;
     if (isDuplicate) {
       const confirmReplace = await this.confirmReplaceAttachment();
       if (confirmReplace) {
@@ -137,6 +139,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
   }
 
   private forceRemoveAttachment(index: number): void {
+    this.pristine = false;
     if (this.attachments.length > index) {
       const attachment = this.attachments[index];
       if (attachment.action === 'NONE') {
@@ -145,6 +148,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
         this.attachments.splice(index, 1);
       }
       this.externalAttachment = this.validateExternalAttachment();
+      console.log(this.externalAttachment);
       this.util.openSnackBar(`Success! ${attachment.file.name} was removed.`);
       this.formGroup.markAsDirty();
     }
@@ -168,8 +172,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
 
   private validateExternalAttachment(): boolean {
     return this.attachments.some(attachment =>
-      (attachment.type === 'EXTERNAL' || attachment.type === 'External Invoice')
-      && attachment.action !== 'DELETE'
+      attachment.type === 'External Invoice' && attachment.action !== 'DELETE'
     );
   }
 }

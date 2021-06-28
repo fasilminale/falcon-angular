@@ -340,6 +340,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.lineItemsFormArray.clear();
     if (this.uploadFormComponent) {
       this.uploadFormComponent.reset();
+      this.uploadFormComponent.pristine = true;
     }
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
