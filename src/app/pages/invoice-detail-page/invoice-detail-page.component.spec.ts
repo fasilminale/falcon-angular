@@ -22,6 +22,7 @@ import {By} from '@angular/platform-browser';
 import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
+import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-manager';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -80,6 +81,7 @@ describe('InvoiceDetailPageComponent', () => {
   let router: Router;
   let time: TimeService;
   let templateService: TemplateService;
+  let form: InvoiceFormManager;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -89,11 +91,11 @@ describe('InvoiceDetailPageComponent', () => {
         MatSnackBarModule,
         NoopAnimationsModule,
         MatDialogModule,
-        ButtonModule
+        ButtonModule,
       ],
       declarations: [
         InvoiceDetailPageComponent,
-        InvoiceFormComponent
+        InvoiceFormComponent,
       ],
       providers: [
         WebServices,
@@ -105,7 +107,8 @@ describe('InvoiceDetailPageComponent', () => {
         LoadingService,
         MatSnackBar,
         TimeService,
-        SubscriptionManager
+        SubscriptionManager,
+        InvoiceFormManager,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -118,6 +121,9 @@ describe('InvoiceDetailPageComponent', () => {
     templateService = TestBed.inject(TemplateService);
     spyOn(templateService, 'getTemplates').and.returnValue(of([]));
     spyOn(templateService, 'getTemplateByName').and.returnValue(of({lineItems: []} as unknown as Template));
+    form = TestBed.inject(InvoiceFormManager);
+    spyOn(form, 'establishTouchLink').and.stub();
+    spyOn(form, 'forceValueChangeEvent').and.stub();
     fixture = TestBed.createComponent(InvoiceDetailPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
