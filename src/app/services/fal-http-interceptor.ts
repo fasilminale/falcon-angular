@@ -9,6 +9,9 @@ import {OktaAuthService} from '@okta/okta-angular';
 
 @Injectable()
 export class FalHttpInterceptor implements HttpInterceptor{
+
+  readonly skipInterceptorHeader = 'X-SKIP-INTERCEPTOR';
+
   constructor(private errorService: ErrorService,
               private oktaAuth: OktaAuthService,
               private loadingService: LoadingService) {}
@@ -18,12 +21,18 @@ export class FalHttpInterceptor implements HttpInterceptor{
     const modifiedReq = request.clone({
       headers: request.headers.set('Authorization', `Bearer ${this.oktaAuth.getAccessToken()}`),
     });
-    return next.handle(modifiedReq).pipe(
-      catchError(err => {
-        const errorMessage = `status: ${err.status}, message: ${err.error.message}`;
-        this.errorService.addError(err);
-        this.loadingService.hideLoading();
-        return throwError(errorMessage);
-      }));
+
+    if(request.headers.has(this.skipInterceptorHeader)){
+      const headers = modifiedReq.headers.delete(this.skipInterceptorHeader);
+      return next.handle(request.clone({headers}));
+    } else {
+      return next.handle(modifiedReq).pipe(
+        catchError(err => {
+          const errorMessage = `status: ${err.status}, message: ${err.error.message}`;
+          this.errorService.addError(err);
+          this.loadingService.hideLoading();
+          return throwError(errorMessage);
+        }));
+    }
   }
 }
