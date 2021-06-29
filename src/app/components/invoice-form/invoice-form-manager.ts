@@ -9,25 +9,25 @@ import {SubscriptionManager} from '../../services/subscription-manager';
 export class InvoiceFormManager {
 
   /* INVOICE FORM GROUP */
-  public readonly invoiceFormGroup: FormGroup;
-  public readonly workType: FormControl;
-  public readonly companyCode: FormControl;
-  public readonly erpType: FormControl;
-  public readonly vendorNumber: FormControl;
-  public readonly externalInvoiceNumber: FormControl;
-  public readonly invoiceDate: FormControl;
-  public readonly amountOfInvoice: FormControl;
-  public readonly currency: FormControl;
-  public readonly comments: FormControl;
-  public readonly lineItems: FormArray;
+  public invoiceFormGroup = new FormGroup({});
+  public workType = new FormControl();
+  public companyCode = new FormControl();
+  public erpType = new FormControl();
+  public vendorNumber = new FormControl();
+  public externalInvoiceNumber = new FormControl();
+  public invoiceDate = new FormControl();
+  public amountOfInvoice = new FormControl();
+  public currency = new FormControl();
+  public comments = new FormControl();
+  public lineItems = new FormArray([]);
 
   /* OVERRIDE PAYMENT TERMS FORM GROUP */
-  public readonly osptFormGroup: FormGroup;
-  public readonly isPaymentOverrideSelected: FormControl;
-  public readonly paymentTerms: FormControl;
+  public osptFormGroup = new FormGroup({});
+  public isPaymentOverrideSelected = new FormControl();
+  public paymentTerms = new FormControl();
 
   /* MISC FORM CONTROLS */
-  public readonly selectedTemplateFormControl: FormControl;
+  public selectedTemplate = new FormControl();
 
   /* VALUE OPTIONS */
   // TODO replace these with calls to the backend?
@@ -41,6 +41,9 @@ export class InvoiceFormManager {
   ];
 
   constructor(private subscriptionManager: SubscriptionManager) {
+  }
+
+  public init(): void {
     this.workType = new FormControl({value: null}, [required]);
     this.companyCode = new FormControl({value: null}, [required]);
     this.erpType = new FormControl({value: null}, [required]);
@@ -69,16 +72,14 @@ export class InvoiceFormManager {
       comments: this.comments,
       lineItems: this.lineItems
     });
-    this.selectedTemplateFormControl = new FormControl({
-      value: null,
-      disabled: (this.myTemplateOptions.length === 0)
-    });
-  }
-
-  public init(): void {
+    this.selectedTemplate = new FormControl({value: null});
     this.invoiceFormGroup.enable();
     this.isPaymentOverrideSelected.enable();
-    this.selectedTemplateFormControl.enable();
+    if (this.myTemplateOptions.length === 0) {
+      this.selectedTemplate.disable();
+    } else {
+      this.selectedTemplate.enable();
+    }
     this.establishTouchLink(this.companyCode, this.workType);
     this.establishTouchLink(this.erpType, this.companyCode);
     this.establishTouchLink(this.vendorNumber, this.erpType);
