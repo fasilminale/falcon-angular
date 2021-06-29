@@ -134,11 +134,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   /* METHODS */
   public ngOnInit(): void {
-    this.form.init();
     this.initForm();
   }
 
   public initForm(): void {
+    this.form.init();
     this.resetForm();
     if (this.falconInvoiceNumber) {
       this.loadData();
@@ -229,7 +229,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             if (this.invoice.status.key === 'DELETED') {
               this.isDeletedInvoice.emit(true);
             }
-            if (this.invoice.status.key === 'SUBMITTED') {
+            if (this.invoice.status.key !== 'CREATED' && this.invoice.status.key !== 'REJECTED') {
               this.isSubmittedInvoice.emit(true);
             }
             this.loadingService.hideLoading();
@@ -242,11 +242,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.resetTemplateOptions().finally();
     this.form.invoiceFormGroup.reset();
     this.form.osptFormGroup.reset();
-    this.form.selectedTemplateFormControl.reset();
-    this.form.lineItems.clear();
+    this.form.selectedTemplate.reset();
     if (this.uploadFormComponent) {
       this.uploadFormComponent.reset();
     }
+    this.form.lineItems.clear();
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
     // set default currency to USD
@@ -260,20 +260,30 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.form.companyCode.setValue('');
     this.form.amountOfInvoice.setValue('0');
     this.markFormAsPristine();
-    this.subscriptionManager.manage(
-      this.form.selectedTemplateFormControl.valueChanges.subscribe(v => this.loadTemplate(v))
-    );
     this.form.invoiceFormGroup.markAsUntouched();
   }
 
   private async resetTemplateOptions(): Promise<void> {
-    const newTemplateOptions: Array<string> = [];
-    (await this.templateService.getTemplates().toPromise())
-      .forEach((template: Template) => {
-        newTemplateOptions.push(template.name);
-        newTemplateOptions.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
-      });
-    this.form.myTemplateOptions = newTemplateOptions;
+    if (this.isOnEditPage) {
+      this.form.myTemplateOptions = [];
+      this.form.selectedTemplate.disable();
+    } else {
+      const newTemplateOptions: Array<string> = [];
+      (await this.templateService.getTemplates().toPromise())
+        .forEach((template: Template) => {
+          newTemplateOptions.push(template.name);
+          newTemplateOptions.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
+        });
+      this.form.myTemplateOptions = newTemplateOptions;
+      if (newTemplateOptions.length === 0) {
+        this.form.selectedTemplate.disable();
+      } else {
+        this.form.selectedTemplate.enable();
+      }
+    }
+    this.subscriptionManager.manage(
+      this.form.selectedTemplate.valueChanges.subscribe(v => this.loadTemplate(v))
+    );
   }
 
   private markFormAsPristine(): void {

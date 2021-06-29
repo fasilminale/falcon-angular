@@ -52,16 +52,16 @@ describe('TemplateService Tests', () => {
   });
 
   it('template should be duplicate from matching template name', async () => {
-    spyOn(web, 'httpGet').and.returnValue(of(template));
+    spyOn(web, 'httpGetSkipIntereptor').and.returnValue(of(template));
     const isDuplicate = await templateService.checkTemplateIsDuplicate(template.name).toPromise();
-    expect(web.httpGet).toHaveBeenCalled();
+    expect(web.httpGetSkipIntereptor).toHaveBeenCalled();
     expect(isDuplicate).toBeTrue();
   });
 
   it('template should NOT be duplicate from non-matching template name', async () => {
-    spyOn(web, 'httpGet').and.returnValue(throwError('test error'));
+    spyOn(web, 'httpGetSkipIntereptor').and.returnValue(throwError('test error'));
     const isDuplicate = await templateService.checkTemplateIsDuplicate('some other name').toPromise();
-    expect(web.httpGet).toHaveBeenCalled();
+    expect(web.httpGetSkipIntereptor).toHaveBeenCalled();
     expect(isDuplicate).toBeFalse();
   });
 

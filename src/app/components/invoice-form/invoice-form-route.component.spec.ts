@@ -54,7 +54,7 @@ describe('InvoiceFormComponent ROUTING', () => {
   let dialog: MatDialog;
   let router: Router;
   let templateService: TemplateService;
-  let form : InvoiceFormManager;
+  let form: InvoiceFormManager;
 
   const route = {
     snapshot: {url: [{path: 'invoice'}, {path: 'F0000000001'}]},

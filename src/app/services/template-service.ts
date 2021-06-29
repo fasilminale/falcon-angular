@@ -27,7 +27,7 @@ export class TemplateService {
   }
 
   public checkTemplateExists(templateName: any): Observable<any> {
-    return this.web.httpGet(
+    return this.web.httpGetSkipIntereptor(
       `${environment.baseServiceUrl}/v1/template/${templateName}`
     );
   }

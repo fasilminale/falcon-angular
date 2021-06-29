@@ -9,25 +9,25 @@ import {SubscriptionManager} from '../../services/subscription-manager';
 export class InvoiceFormManager {
 
   /* INVOICE FORM GROUP */
-  public readonly invoiceFormGroup: FormGroup;
-  public readonly workType = new FormControl({value: null}, [required]);
-  public readonly companyCode = new FormControl({value: null}, [required]);
-  public readonly erpType = new FormControl({value: null}, [required]);
-  public readonly vendorNumber = new FormControl({value: null}, [required]);
-  public readonly externalInvoiceNumber = new FormControl({value: null}, [required]);
-  public readonly invoiceDate = new FormControl({value: null}, [required, validateDate]);
-  public readonly amountOfInvoice = new FormControl({value: 0}, [required]);
-  public readonly currency = new FormControl({value: null}, [required]);
-  public readonly comments = new FormControl({value: null});
-  public readonly lineItems = new FormArray([]);
+  public invoiceFormGroup = new FormGroup({});
+  public workType = new FormControl();
+  public companyCode = new FormControl();
+  public erpType = new FormControl();
+  public vendorNumber = new FormControl();
+  public externalInvoiceNumber = new FormControl();
+  public invoiceDate = new FormControl();
+  public amountOfInvoice = new FormControl();
+  public currency = new FormControl();
+  public comments = new FormControl();
+  public lineItems = new FormArray([]);
 
   /* OVERRIDE PAYMENT TERMS FORM GROUP */
-  public readonly osptFormGroup: FormGroup;
-  public readonly isPaymentOverrideSelected = new FormControl({value: false});
-  public readonly paymentTerms = new FormControl({value: null});
+  public osptFormGroup = new FormGroup({});
+  public isPaymentOverrideSelected = new FormControl();
+  public paymentTerms = new FormControl();
 
   /* MISC FORM CONTROLS */
-  public readonly selectedTemplateFormControl: FormControl;
+  public selectedTemplate = new FormControl();
 
   /* VALUE OPTIONS */
   // TODO replace these with calls to the backend?
@@ -43,6 +43,25 @@ export class InvoiceFormManager {
   public totalLineItemNetAmount = 0;
 
   constructor(private subscriptionManager: SubscriptionManager) {
+  }
+
+  public init(): void {
+    this.workType = new FormControl({value: null}, [required]);
+    this.companyCode = new FormControl({value: null}, [required]);
+    this.erpType = new FormControl({value: null}, [required]);
+    this.vendorNumber = new FormControl({value: null}, [required]);
+    this.externalInvoiceNumber = new FormControl({value: null}, [required]);
+    this.invoiceDate = new FormControl({value: null}, [required, validateDate]);
+    this.amountOfInvoice = new FormControl({value: 0}, [required]);
+    this.currency = new FormControl({value: null}, [required]);
+    this.isPaymentOverrideSelected = new FormControl({value: false});
+    this.paymentTerms = new FormControl({value: null});
+    this.osptFormGroup = new FormGroup({
+      isPaymentOverrideSelected: this.isPaymentOverrideSelected,
+      paymentTerms: this.paymentTerms
+    });
+    this.lineItems = new FormArray([]);
+    this.comments = new FormControl({value: null});
     this.invoiceFormGroup = new FormGroup({
       workType: this.workType,
       companyCode: this.companyCode,
@@ -55,17 +74,14 @@ export class InvoiceFormManager {
       comments: this.comments,
       lineItems: this.lineItems
     });
-    this.osptFormGroup = new FormGroup({
-      isPaymentOverrideSelected: this.isPaymentOverrideSelected,
-      paymentTerms: this.paymentTerms
-    });
-    this.selectedTemplateFormControl = new FormControl({
-      value: null,
-      disabled: (this.myTemplateOptions.length === 0)
-    });
-  }
-
-  public init(): void {
+    this.selectedTemplate = new FormControl({value: null});
+    this.invoiceFormGroup.enable();
+    this.isPaymentOverrideSelected.enable();
+    if (this.myTemplateOptions.length === 0) {
+      this.selectedTemplate.disable();
+    } else {
+      this.selectedTemplate.enable();
+    }
     this.establishTouchLink(this.companyCode, this.workType);
     this.establishTouchLink(this.erpType, this.companyCode);
     this.establishTouchLink(this.vendorNumber, this.erpType);
