@@ -177,7 +177,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
           this.form.lineItems.push(newLineItemGroup);
         }
         if (this.form.lineItems.length === 0) {
-          this.addNewEmptyLineItem();
+          this.form.addNewEmptyLineItem();
         }
       }
     } finally {
@@ -247,8 +247,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       this.uploadFormComponent.reset();
     }
     this.form.lineItems.clear();
-    this.addNewEmptyLineItem();
-    this.lineItemRemoveButtonDisable = true;
+    this.form.lineItems.valueChanges.subscribe(() => {
+      this.lineItemRemoveButtonDisable = this.form.lineItems.length <= 1;
+    });
+    this.form.addNewEmptyLineItem();
     // set default currency to USD
     this.form.currency.setValue(this.form.currencyOptions[0]);
     // default work type as long as there is only one value
@@ -315,45 +317,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public lineItemCompanyCode(index: number): FormControl {
-    return this.lineItemGroup(index).controls.companyCode as FormControl;
-  }
-
-  public lineItemCostCenter(index: number): FormControl {
-    return this.lineItemGroup(index).controls.costCenter as FormControl;
-  }
-
-  public lineItemGlAccount(index: number): FormControl {
-    return this.lineItemGroup(index).controls.glAccount as FormControl;
-  }
-
-  public lineItemNetAmount(index: number): FormControl {
-    return this.lineItemGroup(index).controls.lineItemNetAmount as FormControl;
-  }
-
-  public lineItemNotes(index: number): FormControl {
-    return this.lineItemGroup(index).controls.notes as FormControl;
-  }
-
-  public lineItemGroup(index: number): FormGroup {
-    return this.form.lineItems.at(index) as FormGroup;
-  }
-
-  public addNewEmptyLineItem(): void {
-    this.form.lineItems.push(this.form.createEmptyLineItemGroup());
-    this.form.lineItems.markAsDirty();
-    if (this.form.lineItems.length > 1) {
-      this.lineItemRemoveButtonDisable = false;
-    }
-  }
 
 
-  public removeLineItem(index: number): void {
-    this.form.lineItems.removeAt(index);
-    if (this.form.lineItems.length <= 1) {
-      this.lineItemRemoveButtonDisable = true;
-    }
-  }
 
   public async onCancel(): Promise<void> {
     if (this.isFormPristine || await this.askForCancelConfirmation()) {
@@ -638,7 +603,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   private checkFormArrayCompanyCode(): boolean {
     let isCompanyCodeChanged = false;
-    this.form.lineItems.controls.forEach(control => {
+    this.form.lineItems.controls.forEach((control: AbstractControl) => {
       const item = control.value;
       if (item.lineItemNumber) {
         const lineItem = this.invoice.lineItems.find(f => f.lineItemNumber === item.lineItemNumber && f.companyCode !== item.companyCode);

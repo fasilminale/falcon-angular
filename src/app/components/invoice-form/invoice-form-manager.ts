@@ -118,6 +118,39 @@ export class InvoiceFormManager {
     control.setValue(control.value);
   }
 
+  public lineItemCompanyCode(index: number): FormControl {
+    return this.lineItemGroup(index).controls.companyCode as FormControl;
+  }
+
+  public lineItemCostCenter(index: number): FormControl {
+    return this.lineItemGroup(index).controls.costCenter as FormControl;
+  }
+
+  public lineItemGlAccount(index: number): FormControl {
+    return this.lineItemGroup(index).controls.glAccount as FormControl;
+  }
+
+  public lineItemNetAmount(index: number): FormControl {
+    return this.lineItemGroup(index).controls.lineItemNetAmount as FormControl;
+  }
+
+  public lineItemNotes(index: number): FormControl {
+    return this.lineItemGroup(index).controls.notes as FormControl;
+  }
+
+  public lineItemGroup(index: number): FormGroup {
+    return this.lineItems.at(index) as FormGroup;
+  }
+
+  public removeLineItem(index: number): void {
+    this.lineItems.removeAt(index);
+  }
+
+  public addNewEmptyLineItem(): void {
+    this.lineItems.push(this.createEmptyLineItemGroup());
+    this.lineItems.markAsDirty();
+  }
+
   public createEmptyLineItemGroup(): FormGroup {
     const companyCode = new FormControl(null);
     const costCenter = new FormControl(null, [required]);
