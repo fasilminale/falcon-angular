@@ -50,7 +50,7 @@ import {filter} from 'rxjs/operators';
 export class InvoiceFormComponent implements OnInit, OnChanges {
 
   /* PUBLIC FIELDS */
-  public readonly regex = /[a-zA-Z0-9_\\-]/;
+  public readonly validCharacters = /[a-zA-Z0-9_\\-]/;
   public readonly freeTextRegex = /[\w\-\s]/;
   public workTypeOptions = ['Indirect Non-PO Invoice'];
   public erpTypeOptions = ['Pharma Corp', 'TPM'];
@@ -69,6 +69,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public file = null;
   public totalLineItemNetAmount = 0;
   public specialCharErrorMessage= 'Special Characters(~`!@#$%^&*()+={}|[]:”;’<>?./) not allowed';
+  static readonly allowedCharacters = '^[a-zA-Z0-9_-]+$';
 
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
@@ -89,10 +90,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @ViewChild(UploadFormComponent) uploadFormComponent?: UploadFormComponent;
 
-  static readonly regExpStr = '^[a-zA-Z0-9_-]+$';
   /* CONSTRUCTORS */
-  public constructor(private dialog: MatDialog,
-                     private loadingService: LoadingService,
+  public constructor(private loadingService: LoadingService,
                      private invoiceService: InvoiceService,
                      private attachmentService: AttachmentService,
                      private templateService: TemplateService,
@@ -102,10 +101,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
       workType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      companyCode: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
+      companyCode: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
       erpType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      vendorNumber: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
-      externalInvoiceNumber: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
+      vendorNumber: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
+      externalInvoiceNumber: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
       invoiceDate: new FormControl({value: null, disabled: this.readOnly}, [required, this.validateDate]),
       amountOfInvoice: new FormControl({value: '0', disabled: this.readOnly}, [required]),
       currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
@@ -215,9 +214,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   /* STATIC FUNCTIONS */
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
-      glAccount: new FormControl(null, [Validators.required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
-      costCenter: new FormControl(null, [Validators.required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
-      companyCode: new FormControl(null, [Validators.pattern(InvoiceFormComponent.regExpStr)]),
+      glAccount: new FormControl(null, [Validators.required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
+      costCenter: new FormControl(null, [Validators.required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
+      companyCode: new FormControl(null, [Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
       lineItemNetAmount: new FormControl('0', [Validators.required]),
       notes: new FormControl(null),
     });
@@ -382,7 +381,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public validateRegex(event: any): boolean {
     const char = String.fromCharCode(event.keyCode);
-    if (this.regex.test(char)) {
+    if (this.validCharacters.test(char)) {
       return true;
     } else {
       event.preventDefault();
