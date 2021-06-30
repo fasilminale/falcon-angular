@@ -45,6 +45,14 @@
   padding-bottom: 1em;
 }
 
+.line-item-row {
+  align-items: end;
+}
+
+.line-item-row:first-child .flex-shrink-1{
+  padding-top: 45px;
+}
+
 .line-item-row > div {
   padding-left: calc(var(--bs-gutter-x) / 2) !important;
   padding-right: calc(var(--bs-gutter-x) / 2) !important;

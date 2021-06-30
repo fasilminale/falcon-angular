@@ -18,22 +18,20 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
-import {WebServices} from '../../services/web-services';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {Attachment, UploadFormComponent} from '../upload-form/upload-form.component';
+import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
 import {of} from 'rxjs';
 import {filter} from 'rxjs/operators';
 
@@ -70,6 +68,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public externalAttachment = false;
   public file = null;
   public totalLineItemNetAmount = 0;
+  public specialCharErrorMessage= 'Special Characters(~`!@#$%^&*()+={}|[]:”;’<>?./) not allowed';
 
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
@@ -90,6 +89,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @ViewChild(UploadFormComponent) uploadFormComponent?: UploadFormComponent;
 
+  static readonly regExpStr = '^[a-zA-Z0-9_-]+$';
   /* CONSTRUCTORS */
   public constructor(private dialog: MatDialog,
                      private loadingService: LoadingService,
@@ -102,10 +102,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     const {required} = Validators;
     this.invoiceFormGroup = new FormGroup({
       workType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      companyCode: new FormControl({value: null, disabled: this.readOnly}, [required]),
+      companyCode: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
       erpType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      vendorNumber: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      externalInvoiceNumber: new FormControl({value: null, disabled: this.readOnly}, [required]),
+      vendorNumber: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
+      externalInvoiceNumber: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
       invoiceDate: new FormControl({value: null, disabled: this.readOnly}, [required, this.validateDate]),
       amountOfInvoice: new FormControl({value: '0', disabled: this.readOnly}, [required]),
       currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
@@ -215,9 +215,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   /* STATIC FUNCTIONS */
   private static createEmptyLineItemForm(): FormGroup {
     return new FormGroup({
-      glAccount: new FormControl(null, [Validators.required]),
-      costCenter: new FormControl(null, [Validators.required]),
-      companyCode: new FormControl(null),
+      glAccount: new FormControl(null, [Validators.required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
+      costCenter: new FormControl(null, [Validators.required, Validators.pattern(InvoiceFormComponent.regExpStr)]),
+      companyCode: new FormControl(null, [Validators.pattern(InvoiceFormComponent.regExpStr)]),
       lineItemNetAmount: new FormControl('0', [Validators.required]),
       notes: new FormControl(null),
     });
@@ -398,6 +398,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       event.preventDefault();
       return false;
     }
+  }
+
+  public lineItemCompanyCodeFormControl(index: number): AbstractControl {
+    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
+    return lineItemFormGroup.controls.companyCode;
   }
 
   public lineItemNetAmountFormControl(index: number): AbstractControl {

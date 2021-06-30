@@ -66,11 +66,16 @@
                    class="form-control"
                    (keypress)="validateRegex($event)"
                    maxlength="4"
-                   [ngClass]="companyCode.errors && companyCode.hasError('required') && !companyCode.pristine ? 'error' : ''"
+                   [ngClass]="(companyCode.errors && companyCode.hasError('required') && !companyCode.pristine)|| companyCode.hasError('pattern')
+                    ? 'error' : ''"
             />
             <small class="error-text"
                    *ngIf="companyCode.hasError('required') && !companyCode.pristine">
               Company Code is required
+            </small>
+            <small class="error-text"
+                   *ngIf="companyCode.hasError('pattern')">
+                   {{specialCharErrorMessage}}
             </small>
           </div>
 
@@ -102,13 +107,17 @@
                    formControlName="vendorNumber"
                    (keypress)="validateRegex($event)"
                    maxlength="10"
-                   [ngClass]="vendorNumber.errors
+                   [ngClass]="(vendorNumber.errors
                       && vendorNumber.hasError('required')
-                      && !vendorNumber.pristine ? 'error' : ''"
+                      && !vendorNumber.pristine) || vendorNumber.hasError('pattern') ? 'error' : ''"
             />
             <small class="error-text"
                    *ngIf="vendorNumber.hasError('required') && !vendorNumber.pristine">
               Vendor Number is required
+            </small>
+            <small class="error-text"
+                   *ngIf="vendorNumber.hasError('pattern')">
+                   {{specialCharErrorMessage}}
             </small>
           </div>
 
@@ -123,12 +132,16 @@
                    formControlName="externalInvoiceNumber"
                    (keypress)="validateRegex($event)"
                    maxlength="16"
-                   [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')
-                      && !externalInvoiceNumber.pristine ? 'error' : ''"
+                   [ngClass]="(externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')
+                      && !externalInvoiceNumber.pristine) || externalInvoiceNumber.hasError('pattern') ? 'error' : ''"
             />
             <small class="error-text"
                    *ngIf="externalInvoiceNumber.hasError('required') && !externalInvoiceNumber.pristine">
               External Invoice Number is required
+            </small>
+            <small class="error-text"
+                   *ngIf="externalInvoiceNumber.hasError('pattern')">
+                   {{specialCharErrorMessage}}
             </small>
           </div>
 
@@ -226,10 +239,10 @@
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
             <div *ngFor="let _ of lineItemsFormArray.controls; index as i"
-                 class="line-item-row row align-items-center"
+                 class="line-item-row row"
                  [formGroupName]="i">
 
-              <div class="d-flex col-2 align-items-end">
+              <div class="d-flex col-2">
                 <!-- LINE ITEM - NUMBER -->
                 <div class="flex-shrink-1">
                   <div class="fake-form-control">
@@ -251,10 +264,17 @@
                          [placeholder]="invoiceFormGroup.controls.companyCode.value"
                          (keypress)="validateRegex($event)"
                          maxlength="4"
+                         [ngClass]="lineItemCompanyCodeFormControl(i).hasError('pattern') ? 'error' : ''"
                   />
-                  <small class="error-text invisible">
-                    spacer
+                  <small class="error-text"
+                   *ngIf="lineItemCompanyCodeFormControl(i).hasError('pattern'); else companyCodeReq">
+                   {{specialCharErrorMessage}}
                   </small>
+                  <ng-template #companyCodeReq>
+                    <small class="error-text invisible">
+                      spacer
+                    </small>
+                  </ng-template>
                 </div>
               </div>
 
@@ -268,14 +288,20 @@
                        formControlName="costCenter"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       [ngClass]="lineItemCostCenter(i).errors
+                       [ngClass]="(lineItemCostCenter(i).errors
                           && lineItemCostCenter(i).hasError('required')
-                          && !lineItemCostCenter(i).pristine ? 'error' : ''"
+                          && !lineItemCostCenter(i).pristine) || lineItemCostCenter(i).hasError('pattern')  ? 'error' : ''"
                 />
                 <small class="error-text"
+                   *ngIf="lineItemCostCenter(i).hasError('pattern'); else costCenterRequired">
+                   {{specialCharErrorMessage}}
+                  </small>
+                <ng-template #costCenterRequired>
+                  <small class="error-text"
                        [ngClass]="{'invisible': !(lineItemCostCenter(i).hasError('required') && lineItemCostCenter(i).dirty)}">
                   Cost Center is required
                 </small>
+                </ng-template>
               </div>
 
               <!-- LINE ITEM - GL ACCOUNT -->
@@ -288,14 +314,21 @@
                        formControlName="glAccount"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       [ngClass]="lineItemGlAccount(i).errors
+                       [ngClass]="(lineItemGlAccount(i).errors
                           && lineItemGlAccount(i).hasError('required')
-                          && !lineItemGlAccount(i).pristine ? 'error' : ''"
+                          && !lineItemGlAccount(i).pristine) || lineItemGlAccount(i).hasError('pattern') ? 'error' : ''"
                 />
+                
                 <small class="error-text"
+                   *ngIf="lineItemGlAccount(i).hasError('pattern'); else glAccountReq">
+                   {{specialCharErrorMessage}}
+                  </small>
+                  <ng-template #glAccountReq>
+                    <small class="error-text"
                        [ngClass]="{'invisible': !(lineItemGlAccount(i).hasError('required') && lineItemGlAccount(i).dirty)}">
                   GL Account is required
                 </small>
+                  </ng-template>
               </div>
 
               <!-- LINE ITEM - NET AMOUNT -->
