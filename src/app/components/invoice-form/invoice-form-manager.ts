@@ -105,7 +105,7 @@ export class InvoiceFormManager {
 
   public establishTouchLink(a: AbstractControl, b: AbstractControl): void {
     this.subscriptionManager.manage(
-      a.statusChanges.subscribe(() => {
+      a.valueChanges.subscribe(() => {
         if (b.untouched) {
           b.markAsTouched();
           this.forceValueChangeEvent(b);

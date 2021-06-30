@@ -284,7 +284,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       }
     }
     this.subscriptionManager.manage(
-      this.form.selectedTemplate.valueChanges.subscribe(v => this.loadTemplate(v))
+      this.form.selectedTemplate.valueChanges.subscribe((v: string) => this.loadTemplate(v))
     );
   }
 
@@ -316,8 +316,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       return false;
     }
   }
-
-
 
 
   public async onCancel(): Promise<void> {
