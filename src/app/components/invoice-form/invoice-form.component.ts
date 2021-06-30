@@ -68,7 +68,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public externalAttachment = false;
   public file = null;
   public totalLineItemNetAmount = 0;
-  public specialCharErrorMessage= 'Special Characters(~`!@#$%^&*()+={}|[]:”;’<>?./) not allowed';
+  public specialCharErrorMessage= 'Special characters are not allowed';
   static readonly allowedCharacters = '^[a-zA-Z0-9_-]+$';
 
   /* PRIVATE FIELDS */
