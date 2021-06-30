@@ -1,7 +1,7 @@
-import {Component, forwardRef, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Input, OnInit, Output} from '@angular/core';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
 import {NgbDateNativeAdapter, NgbDateParserFormatter, NgbDateAdapter} from '@ng-bootstrap/ng-bootstrap';
-import { DateParserFormatter } from 'src/app/utils/date-parser-formatter';
+import {DateParserFormatter} from 'src/app/utils/date-parser-formatter';
 import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fal-control-value-accessor.component';
 
 @Component({
@@ -20,11 +20,13 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
                [(ngModel)]="value"
                (ngModelChange)="value"
                rInputMask="99-99-9999"
+               (focus)="focus.emit($event)"
         />
         <button [ngClass]="isError ? 'error' : ''"
                 [disabled]="isDisabled"
                 type="button"
                 class="btn btn-outline-secondary material-icons align-middle"
+                (focusout)="focus.emit($event)"
                 (click)="d.toggle()">
           today
         </button>
@@ -48,6 +50,8 @@ export class FalDateInputComponent extends FalControlValueAccessorComponent<stri
   @Input() isDisabled = false;
   @Input() navigation = 'select';
   @Input() isError = false;
+
+  @Output() focus = new EventEmitter<FocusEvent>();
 
   constructor() {
     super();

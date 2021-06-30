@@ -7,7 +7,7 @@
     Milestones
   </elm-button>
   <div class="content">
-    <form [formGroup]="invoiceFormGroup">
+    <form [formGroup]="form.invoiceFormGroup">
 
       <div class="row me-0">
 
@@ -30,8 +30,8 @@
               My Templates (optional)
             </label>
             <ng-select id="my-templates-input"
-                       [formControl]="selectedTemplateFormControl"
-                       [items]="myTemplateOptions"
+                       [formControl]="form.selectedTemplate"
+                       [items]="form.myTemplateOptions"
                        [searchable]="true"
                        placeholder="Select One...">
             </ng-select>
@@ -44,13 +44,17 @@
             </label>
             <ng-select id="work-type-input"
                        formControlName="workType"
-                       [items]="workTypeOptions"
+                       [items]="form.workTypeOptions"
                        [searchable]="true"
                        placeholder="Select One...."
-                       [ngClass]="{ 'error': workType.errors && workType.hasError('required') && !workType.pristine, 'disabled': readOnly }">
+                       [ngClass]="{ 'error': form.workType.errors
+                                             && form.workType.hasError('required')
+                                             && form.workType.touched,
+                                    'disabled': readOnly }">
             </ng-select>
             <small class="error-text"
-                   *ngIf="workType.hasError('required') && !workType.pristine">
+                   *ngIf="form.workType.hasError('required')
+                          && form.workType.touched">
               Work Type is required
             </small>
           </div>
@@ -66,10 +70,14 @@
                    class="form-control"
                    (keypress)="validateRegex($event)"
                    maxlength="4"
-                   [ngClass]="companyCode.errors && companyCode.hasError('required') && !companyCode.pristine ? 'error' : ''"
+                   (focus)="form.forceValueChangeEvent(form.companyCode)"
+                   [ngClass]="form.companyCode.errors
+                              && form.companyCode.hasError('required')
+                              && form.companyCode.touched ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="companyCode.hasError('required') && !companyCode.pristine">
+                   *ngIf="form.companyCode.hasError('required')
+                          && form.companyCode.touched">
               Company Code is required
             </small>
           </div>
@@ -81,12 +89,15 @@
             </label>
             <app-fal-radio-input id="erp-type-input"
                                  formControlName="erpType"
-                                 [options]="erpTypeOptions"
+                                 [options]="form.erpTypeOptions"
                                  [isDisabled]="readOnly"
-                                 [isError]="!!(erpType.errors && erpType.hasError('required') && !erpType.pristine)">
+                                 (focus)="form.forceValueChangeEvent(form.erpType)"
+                                 [isError]="!!(form.erpType.errors
+                                               && form.erpType.hasError('required')
+                                               && form.erpType.touched)">
             </app-fal-radio-input>
             <small class="error-text"
-                   *ngIf="erpType.hasError('required') && !erpType.pristine">
+                   *ngIf="form.erpType.hasError('required') && form.erpType.touched">
               ERP Type is required
             </small>
           </div>
@@ -102,12 +113,13 @@
                    formControlName="vendorNumber"
                    (keypress)="validateRegex($event)"
                    maxlength="10"
-                   [ngClass]="vendorNumber.errors
-                      && vendorNumber.hasError('required')
-                      && !vendorNumber.pristine ? 'error' : ''"
+                   (focus)="form.forceValueChangeEvent(form.vendorNumber)"
+                   [ngClass]="form.vendorNumber.errors
+                      && form.vendorNumber.hasError('required')
+                      && form.vendorNumber.touched ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="vendorNumber.hasError('required') && !vendorNumber.pristine">
+                   *ngIf="form.vendorNumber.hasError('required') && form.vendorNumber.touched">
               Vendor Number is required
             </small>
           </div>
@@ -123,11 +135,14 @@
                    formControlName="externalInvoiceNumber"
                    (keypress)="validateRegex($event)"
                    maxlength="16"
-                   [ngClass]="externalInvoiceNumber.errors && externalInvoiceNumber.hasError('required')
-                      && !externalInvoiceNumber.pristine ? 'error' : ''"
+                   (focus)="form.forceValueChangeEvent(form.externalInvoiceNumber)"
+                   [ngClass]="form.externalInvoiceNumber.errors
+                              && form.externalInvoiceNumber.hasError('required')
+                              && form.externalInvoiceNumber.touched ? 'error' : ''"
             />
             <small class="error-text"
-                   *ngIf="externalInvoiceNumber.hasError('required') && !externalInvoiceNumber.pristine">
+                   *ngIf="form.externalInvoiceNumber.hasError('required')
+                          && form.externalInvoiceNumber.touched">
               External Invoice Number is required
             </small>
           </div>
@@ -140,14 +155,19 @@
             <app-fal-date-input id="external-invoice-date-input"
                                 formControlName="invoiceDate"
                                 [isDisabled]="readOnly"
-                                [isError]="!!(invoiceDate.errors && (invoiceDate.hasError('required') && !invoiceDate.pristine || invoiceDate.hasError('validateDate')))">
+                                (focus)="form.forceValueChangeEvent(form.invoiceDate)"
+                                [isError]="!!(form.invoiceDate.errors
+                                              && (form.invoiceDate.hasError('required')
+                                              && form.invoiceDate.touched
+                                              || form.invoiceDate.hasError('validateDate')))">
             </app-fal-date-input>
             <small class="error-text"
-                   *ngIf="invoiceDate.hasError('required') && !invoiceDate.pristine">
+                   *ngIf="form.invoiceDate.hasError('required')
+                          && form.invoiceDate.touched">
               External Invoice Date is required
             </small>
             <small class="error-text"
-                   *ngIf="invoiceDate.hasError('validateDate')">
+                   *ngIf="form.invoiceDate.hasError('validateDate')">
               Invoice Date is invalid
             </small>
           </div>
@@ -161,12 +181,14 @@
             <app-fal-currency-input id="invoice-amount-input"
                                     formControlName="amountOfInvoice"
                                     [isDisabled]="readOnly"
-                                    [isError]="!!(amountOfInvoiceFormControl.errors
-                                      && amountOfInvoiceFormControl.hasError('required')
-                                      && !amountOfInvoiceFormControl.pristine)">
+                                    (focus)="form.forceValueChangeEvent(form.amountOfInvoice)"
+                                    [isError]="!!(form.amountOfInvoice.errors
+                                                  && form.amountOfInvoice.hasError('required')
+                                                  && form.amountOfInvoice.touched)">
             </app-fal-currency-input>
             <small class="error-text"
-                   *ngIf="amountOfInvoiceFormControl.hasError('required') && !amountOfInvoiceFormControl.pristine">
+                   *ngIf="form.amountOfInvoice.hasError('required')
+                          && form.amountOfInvoice.touched">
               Invoice Net Amount is required
             </small>
           </div>
@@ -178,31 +200,36 @@
             </label>
             <app-fal-radio-input id="currency-input"
                                  formControlName="currency"
-                                 [options]="currencyOptions"
+                                 [options]="form.currencyOptions"
                                  [isDisabled]="readOnly"
-                                 [isError]="!!(currency.errors && currency.hasError('required') && !currency.pristine)">
+                                 (focus)="form.forceValueChangeEvent(form.currency)"
+                                 [isError]="!!(form.currency.errors
+                                               && form.currency.hasError('required')
+                                               && form.currency.touched)">
             </app-fal-radio-input>
             <small class="error-text"
-                   *ngIf="currency.hasError('required') && !currency.pristine">
+                   *ngIf="form.currency.hasError('required')
+                          && form.currency.touched">
               Currency is required
             </small>
           </div>
 
-
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
-          <div [formGroup]="osptFormGroup">
+          <div [formGroup]="form.osptFormGroup">
             <label for="override-stp-checkbox"
                    class="form-label fieldLabel1">
               <input id="override-stp-checkbox"
                      type="checkbox"
+                     (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
                      formControlName="isPaymentOverrideSelected"
                      [attr.disabled]="readOnly ? true : null"
               />
               Override Standard Payment Terms
             </label>
             <app-fal-radio-input formControlName="paymentTerms"
-                                 [options]="paymentTermOptions"
-                                 [isDisabled]="readOnly || !osptFormGroup.controls.isPaymentOverrideSelected.value">
+                                 [options]="form.paymentTermOptions"
+                                 (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
+                                 [isDisabled]="readOnly || !form.isPaymentOverrideSelected.value">
             </app-fal-radio-input>
           </div>
         </div>
@@ -225,7 +252,7 @@
 
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
-            <div *ngFor="let _ of lineItemsFormArray.controls; index as i"
+            <div *ngFor="let _ of form.lineItems.controls; index as i"
                  class="line-item-row row align-items-center"
                  [formGroupName]="i">
 
@@ -248,9 +275,10 @@
                   <input type="text"
                          class="form-control"
                          formControlName="companyCode"
-                         [placeholder]="invoiceFormGroup.controls.companyCode.value"
+                         [placeholder]="form.companyCode.value"
                          (keypress)="validateRegex($event)"
                          maxlength="4"
+                         (focus)="form.forceValueChangeEvent(lineItemCompanyCode(i))"
                   />
                   <small class="error-text invisible">
                     spacer
@@ -268,12 +296,14 @@
                        formControlName="costCenter"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
+                       (focus)="form.forceValueChangeEvent(lineItemCostCenter(i))"
                        [ngClass]="lineItemCostCenter(i).errors
                           && lineItemCostCenter(i).hasError('required')
-                          && !lineItemCostCenter(i).pristine ? 'error' : ''"
+                          && lineItemCostCenter(i).touched ? 'error' : ''"
                 />
                 <small class="error-text"
-                       [ngClass]="{'invisible': !(lineItemCostCenter(i).hasError('required') && lineItemCostCenter(i).dirty)}">
+                       [ngClass]="{'invisible': !(lineItemCostCenter(i).hasError('required')
+                                                  && lineItemCostCenter(i).touched)}">
                   Cost Center is required
                 </small>
               </div>
@@ -288,12 +318,14 @@
                        formControlName="glAccount"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
+                       (focus)="form.forceValueChangeEvent(lineItemGlAccount(i))"
                        [ngClass]="lineItemGlAccount(i).errors
                           && lineItemGlAccount(i).hasError('required')
-                          && !lineItemGlAccount(i).pristine ? 'error' : ''"
+                          && lineItemGlAccount(i).touched ? 'error' : ''"
                 />
                 <small class="error-text"
-                       [ngClass]="{'invisible': !(lineItemGlAccount(i).hasError('required') && lineItemGlAccount(i).dirty)}">
+                       [ngClass]="{'invisible': !(lineItemGlAccount(i).hasError('required')
+                                                  && lineItemGlAccount(i).touched)}">
                   GL Account is required
                 </small>
               </div>
@@ -305,9 +337,10 @@
                 </label>
                 <app-fal-currency-input formControlName="lineItemNetAmount"
                                         [isDisabled]="readOnly"
-                                        [isError]="!!(lineItemNetAmountFormControl(i).errors
-                                          && lineItemNetAmountFormControl(i).hasError('required')
-                                          && !lineItemNetAmountFormControl(i).pristine)"
+                                        (focus)="form.forceValueChangeEvent(lineItemNetAmount(i))"
+                                        [isError]="!!(lineItemNetAmount(i).errors
+                                                      && lineItemNetAmount(i).hasError('required')
+                                                      && lineItemNetAmount(i).touched)"
                                         (keyup)="calculateLineItemNetAmount()">
                 </app-fal-currency-input>
                 <small class="error-text invisible">
@@ -325,6 +358,7 @@
                   <input type="text"
                          class="form-control"
                          formControlName="notes"
+                         (focus)="form.forceValueChangeEvent(lineItemNotes(i))"
                          (keypress)="validateFreeTextRegex($event)"
                          maxlength="50"
                   />
@@ -336,12 +370,13 @@
                 <!-- LINE ITEM - REMOVE -->
                 <div class="flex-shrink-1">
                   <div>
-                  <input type="button"
-                         value="remove_circle"
-                         class="material-icons btn line-item-remove-button"
-                         [disabled]="lineItemRemoveButtonDisable || readOnly"
-                         (click)="removeLineItem(i)"
-                  /></div>
+                    <input type="button"
+                           value="remove_circle"
+                           class="material-icons btn line-item-remove-button"
+                           [disabled]="lineItemRemoveButtonDisable || readOnly"
+                           (focus)="form.forceValueChangeEvent(form.lineItems)"
+                           (click)="removeLineItem(i)"
+                    /></div>
                   <small class="error-text invisible">
                     spacer
                   </small>
@@ -359,6 +394,7 @@
                           buttonType="button"
                           buttonStyle="text"
                           id="add-new-line-item-button"
+                          (focus)="form.forceValueChangeEvent(form.lineItems)"
                           (buttonClick)="addNewEmptyLineItem()">
                 <u>+ Add New Line Item</u>
               </elm-button>
@@ -380,6 +416,7 @@
           <textarea id="comments-input"
                     formControlName="comments"
                     class="form-control"
+                    (focus)="form.forceValueChangeEvent(form.comments)"
           ></textarea><!-- this formatting is to prevent accidental output to textarea -->
         </div>
 
@@ -402,7 +439,8 @@
                         buttonType="button"
                         buttonStyle="primary"
                         class="fake-form-control"
-                        [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)"
+                        [isDisabled]="(form.invoiceFormGroup.invalid || readOnly
+                                        || !this.uploadFormComponent?.externalAttachment)"
                         (buttonClick)="onSaveButtonClick()">
               Save
             </elm-button>
@@ -412,7 +450,8 @@
                         buttonType="button"
                         buttonStyle="primary"
                         class="fake-form-control"
-                        [isDisabled]="(invoiceFormGroup.invalid || readOnly || !this.uploadFormComponent?.externalAttachment)"
+                        [isDisabled]="(form.invoiceFormGroup.invalid || readOnly
+                                        || !this.uploadFormComponent?.externalAttachment)"
                         (buttonClick)="onSubmitForApprovalButtonClick()">
               Submit for Approval
             </elm-button>

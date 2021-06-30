@@ -1,4 +1,4 @@
-import {Component, forwardRef, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Input, OnInit, Output} from '@angular/core';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
 import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fal-control-value-accessor.component';
 
@@ -17,7 +17,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
                [(ngModel)]="value"
                (keydown)="onSelectionEvent($event)"
                (keyup)="onSelectionEvent($event)"
-               (focus)="onSelectionEvent($event)"
+               (focus)="focus.emit($event); onSelectionEvent($event)"
                (click)="onSelectionEvent($event)"
         />
       </div>
@@ -39,6 +39,8 @@ export class FalCurrencyInputComponent extends FalControlValueAccessorComponent<
   @Input() initialValue = '0.00';
   @Input() isDisabled = false;
   @Input() isError = false;
+
+  @Output() focus = new EventEmitter<FocusEvent>();
 
   constructor() {
     super();

@@ -1,4 +1,4 @@
-import {Component, forwardRef, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Input, OnInit, Output} from '@angular/core';
 import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fal-control-value-accessor.component';
 import {NG_VALUE_ACCESSOR} from '@angular/forms';
 
@@ -37,7 +37,8 @@ export interface FalRadioDisplayOption {
     <div ngbRadioGroup
          [disabled]="isDisabled"
          [ngClass]="{'form-control': outline, 'error': isError, 'background-disabled': isDisabled}"
-         [(ngModel)]="value">
+         [(ngModel)]="value"
+         (focus)="focus.emit($event)">
       <div [ngClass]="{'row': isHorizontal()}">
         <div *ngIf="options.length <= 0"
              class="fieldLabel1">
@@ -76,6 +77,8 @@ export class FalRadioInputComponent extends FalControlValueAccessorComponent<str
   @Input() options: Array<FalRadioOption> = [];
   @Input() noOptionMessage = '(Missing Radio Options)';
   @Input() initialValue: string | undefined;
+
+  @Output() focus = new EventEmitter<FocusEvent>();
 
   constructor() {
     super();
