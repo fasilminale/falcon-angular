@@ -5,6 +5,22 @@ import {isFalsey} from '../../utils/predicates';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
 import {SubscriptionManager} from '../../services/subscription-manager';
 
+/* VALIDATORS */
+const {required, pattern} = Validators;
+
+export function validateDate(control: AbstractControl): ValidationErrors | null {
+  const dateString = control.value;
+  if (dateString) {
+    if (!(dateString instanceof Date)) {
+      return {validateDate: true};
+    } else if (dateString.getFullYear() < 1000
+      || dateString.getFullYear() > 9999) {
+      return {validateDate: true};
+    }
+  }
+  return null;
+}
+
 @Injectable()
 export class InvoiceFormManager {
 
@@ -115,10 +131,10 @@ export class InvoiceFormManager {
   }
 
   public createEmptyLineItemGroup(): FormGroup {
-    const companyCode = new FormControl(null, [Validators.pattern(this.allowedCharacters)]);
-    const costCenter = new FormControl(null, [required, Validators.pattern(this.allowedCharacters)]);
+    const companyCode = new FormControl(null, [pattern(this.allowedCharacters)]);
+    const costCenter = new FormControl(null, [required, pattern(this.allowedCharacters)]);
     this.establishTouchLink(costCenter, companyCode);
-    const glAccount = new FormControl(null, [required, Validators.pattern(this.allowedCharacters)]);
+    const glAccount = new FormControl(null, [required, pattern(this.allowedCharacters)]);
     this.establishTouchLink(glAccount, costCenter);
     const lineItemNetAmount = new FormControl('0', [required]);
     this.establishTouchLink(lineItemNetAmount, glAccount);
@@ -127,20 +143,4 @@ export class InvoiceFormManager {
     return new FormGroup({companyCode, costCenter, glAccount, lineItemNetAmount, notes});
   }
 
-}
-
-/* VALIDATORS */
-const {required} = Validators;
-
-export function validateDate(control: AbstractControl): ValidationErrors | null {
-  const dateString = control.value;
-  if (dateString) {
-    if (!(dateString instanceof Date)) {
-      return {validateDate: true};
-    } else if (dateString.getFullYear() < 1000
-      || dateString.getFullYear() > 9999) {
-      return {validateDate: true};
-    }
-  }
-  return null;
 }
