@@ -3,6 +3,7 @@ import {SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {AbstractControl, FormControl} from '@angular/forms';
 import Spy = jasmine.Spy;
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('InvoiceFormManager', () => {
 
@@ -18,15 +19,8 @@ describe('InvoiceFormManager', () => {
     return formControl;
   }
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [],
-      declarations: [],
-      providers: [
-        InvoiceFormManager,
-        SubscriptionManager,
-      ],
-    }).compileComponents();
+  beforeEach(() => {
+    TestBed.configureTestingModule({imports: [FalconTestingModule]});
     invoiceFormManager = TestBed.inject(InvoiceFormManager);
     // stub these so they don't trigger cascading events during tests
     // they are tested for their functionality in isolation.
