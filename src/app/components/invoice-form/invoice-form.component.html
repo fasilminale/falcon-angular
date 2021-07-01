@@ -268,10 +268,10 @@
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
             <div *ngFor="let _ of form.lineItems.controls; index as i"
-                 class="line-item-row row align-items-center"
+                 class="line-item-row row align-items-start"
                  [formGroupName]="i">
 
-              <div class="d-flex col-2 align-items-end">
+              <div class="d-flex col-2 align-items-start">
                 <!-- LINE ITEM - NUMBER -->
                 <div class="flex-shrink-1">
                   <div class="fake-form-control">
