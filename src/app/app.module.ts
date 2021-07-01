@@ -43,6 +43,7 @@ import {FalHttpInterceptor} from './services/fal-http-interceptor';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 import { FalContainerComponent } from './components/fal-container/fal-container.component';
 import {SubscriptionManager} from './services/subscription-manager';
+import {InvoiceFormManager} from './components/invoice-form/invoice-form-manager';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -147,6 +148,7 @@ const oktaConfig = {
     OktaAuthGuard,
     OktaAuthService,
     AuthService,
+    InvoiceFormManager,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     {provide: HTTP_INTERCEPTORS, useClass: FalHttpInterceptor, multi: true},
   ],

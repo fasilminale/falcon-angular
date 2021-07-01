@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {
-  AbstractControl,
+  AbstractControl, Form,
   FormArray,
   FormControl,
   FormGroup,
@@ -18,58 +18,48 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
+import {WebServices} from '../../services/web-services';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {UploadFormComponent} from '../upload-form/upload-form.component';
+import {Attachment, UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
 import {MatDialog} from '@angular/material/dialog';
+import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
 import {of} from 'rxjs';
-import {filter} from 'rxjs/operators';
+import {filter, mergeMap} from 'rxjs/operators';
+import {isFalsey} from '../../utils/predicates';
+import {InvoiceFormManager} from './invoice-form-manager';
 
 @Component({
   selector: 'app-invoice-form',
   templateUrl: './invoice-form.component.html',
   styleUrls: ['./invoice-form.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InvoiceFormComponent),
-      multi: true
-    },
-  ]
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => InvoiceFormComponent),
+    multi: true
+  }]
 })
 export class InvoiceFormComponent implements OnInit, OnChanges {
 
   /* PUBLIC FIELDS */
-  public readonly validCharacters = /[a-zA-Z0-9_\\-]/;
+  public readonly regex = /[a-zA-Z0-9_\\-]/;
   public readonly freeTextRegex = /[\w\-\s]/;
-  public workTypeOptions = ['Indirect Non-PO Invoice'];
-  public erpTypeOptions = ['Pharma Corp', 'TPM'];
-  public currencyOptions = ['USD', 'CAD'];
-  public myTemplateOptions = ['TEST_1', 'TEST_2'];
-  public paymentTermOptions: Array<FalRadioOption> = [
-    {value: 'Z000', display: 'Pay Immediately'},
-    {value: 'ZN14', display: 'Pay in 14 days'}
-  ];
+  public readonly specialCharErrorMessage= 'Special characters are not allowed';
   public lineItemRemoveButtonDisable = true;
-  public invoiceFormGroup: FormGroup;
-  public osptFormGroup: FormGroup;
-  public selectedTemplateFormControl: FormControl;
   public validAmount = true;
   public externalAttachment = false;
   public file = null;
   public totalLineItemNetAmount = 0;
-  public specialCharErrorMessage= 'Special characters are not allowed';
-  static readonly allowedCharacters = '^[a-zA-Z0-9_-]+$';
 
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
@@ -81,104 +71,37 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   @Input() falconInvoiceNumber = '';
 
   /* OUTPUTS */
-  @Output() updateMilestones: EventEmitter<Array<Milestone>> = new EventEmitter<Array<Milestone>>();
-  @Output() toggleMilestones: EventEmitter<void> = new EventEmitter<void>();
-  @Output() isDeletedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
-  @Output() isSubmittedInvoice: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() updateMilestones = new EventEmitter<Array<Milestone>>();
+  @Output() toggleMilestones = new EventEmitter<void>();
+  @Output() isDeletedInvoice = new EventEmitter<boolean>();
+  @Output() isSubmittedInvoice = new EventEmitter<boolean>();
 
   /* CHILDREN */
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @ViewChild(UploadFormComponent) uploadFormComponent?: UploadFormComponent;
 
   /* CONSTRUCTORS */
-  public constructor(private loadingService: LoadingService,
+  public constructor(private dialog: MatDialog,
+                     private loadingService: LoadingService,
                      private invoiceService: InvoiceService,
                      private attachmentService: AttachmentService,
                      private templateService: TemplateService,
                      private util: UtilService,
                      private router: Router,
-                     private subscriptionManager: SubscriptionManager) {
-    const {required} = Validators;
-    this.invoiceFormGroup = new FormGroup({
-      workType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      companyCode: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
-      erpType: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      vendorNumber: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
-      externalInvoiceNumber: new FormControl({value: null, disabled: this.readOnly}, [required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
-      invoiceDate: new FormControl({value: null, disabled: this.readOnly}, [required, this.validateDate]),
-      amountOfInvoice: new FormControl({value: '0', disabled: this.readOnly}, [required]),
-      currency: new FormControl({value: null, disabled: this.readOnly}, [required]),
-      comments: new FormControl({value: null, disabled: this.readOnly}),
-      lineItems: new FormArray([])
-    });
-
-    this.osptFormGroup = new FormGroup({
-      isPaymentOverrideSelected: new FormControl({value: false, disabled: this.readOnly}),
-      paymentTerms: new FormControl({value: null, disabled: this.readOnly})
-    });
-
-    this.selectedTemplateFormControl = new FormControl({
-      value: null,
-      disabled: (this.myTemplateOptions.length === 0)
-    });
-
-    this.subscriptionManager.manage(
-      this.osptFormGroup.controls.isPaymentOverrideSelected.valueChanges
-        .subscribe(
-          (value: any) => {
-            if (!value) {
-              this.osptFormGroup.controls.paymentTerms.reset();
-            }
-          })
-    );
+                     private subscriptionManager: SubscriptionManager,
+                     public form: InvoiceFormManager) {
   }
 
   /* PROPERTY FUNCTIONS */
-  get erpType(): AbstractControl {
-    return this.invoiceFormGroup.controls.erpType;
-  }
-
-  get workType(): AbstractControl {
-    return this.invoiceFormGroup.controls.workType;
-  }
-
-  get companyCode(): AbstractControl {
-    return this.invoiceFormGroup.controls.companyCode;
-  }
-
-  get externalInvoiceNumber(): AbstractControl {
-    return this.invoiceFormGroup.controls.externalInvoiceNumber;
-  }
-
-  get vendorNumber(): AbstractControl {
-    return this.invoiceFormGroup.controls.vendorNumber;
-  }
-
-  get invoiceDate(): AbstractControl {
-    return this.invoiceFormGroup.controls.invoiceDate;
-  }
-
-  get currency(): AbstractControl {
-    return this.invoiceFormGroup.controls.currency;
-  }
-
-  get amountOfInvoiceFormControl(): AbstractControl {
-    return this.invoiceFormGroup.controls.amountOfInvoice;
-  }
-
-  get lineItemsFormArray(): FormArray {
-    return this.invoiceFormGroup.get('lineItems') as FormArray;
-  }
-
   get isOnEditPage(): boolean {
     return !!this.falconInvoiceNumber;
   }
 
   get isFormPristine(): boolean {
-    return this.invoiceFormGroup.pristine
-      && this.osptFormGroup.pristine
+    return this.form.invoiceFormGroup.pristine
+      && this.form.osptFormGroup.pristine
       && (this.uploadFormComponent?.formGroup.pristine ?? true)
-      && this.lineItemsFormArray.pristine;
+      && this.form.lineItems.pristine;
   }
 
   get hasLatestMilestone(): boolean {
@@ -211,23 +134,13 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     return 'General';
   }
 
-  /* STATIC FUNCTIONS */
-  private static createEmptyLineItemForm(): FormGroup {
-    return new FormGroup({
-      glAccount: new FormControl(null, [Validators.required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
-      costCenter: new FormControl(null, [Validators.required, Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
-      companyCode: new FormControl(null, [Validators.pattern(InvoiceFormComponent.allowedCharacters)]),
-      lineItemNetAmount: new FormControl('0', [Validators.required]),
-      notes: new FormControl(null),
-    });
-  }
-
   /* METHODS */
   public ngOnInit(): void {
     this.initForm();
   }
 
   public initForm(): void {
+    this.form.init();
     this.resetForm();
     if (this.falconInvoiceNumber) {
       this.loadData();
@@ -251,23 +164,21 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     try {
       const template = await this.templateService.getTemplateByName(templateName).toPromise();
       if (template) {
-        this.invoiceFormGroup.controls.workType.setValue(template.workType);
-        this.invoiceFormGroup.controls.companyCode.setValue(template.companyCode);
-        this.invoiceFormGroup.controls.erpType.setValue(template.erpType);
-        this.invoiceFormGroup.controls.vendorNumber.setValue(template.vendorNumber);
-        this.invoiceFormGroup.controls.currency.setValue(template.currency);
-        this.lineItemsFormArray.clear();
+        this.form.workType.setValue(template.workType);
+        this.form.companyCode.setValue(template.companyCode);
+        this.form.erpType.setValue(template.erpType);
+        this.form.vendorNumber.setValue(template.vendorNumber);
+        this.form.currency.setValue(template.currency);
+        this.form.lineItems.clear();
         for (const lineItem of template.lineItems) {
-          this.lineItemsFormArray.push(new FormGroup({
-            glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
-            costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
-            companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
-            lineItemNetAmount: new FormControl({value: 0, disabled: this.readOnly}, [Validators.required]),
-            notes: new FormControl({value: '', disabled: this.readOnly}),
-            lineItemNumber: new FormControl({value: lineItem.lineItemNumber, disabled: this.readOnly})
-          }));
+          const newLineItemGroup = this.form.createEmptyLineItemGroup();
+          newLineItemGroup.controls.companyCode.setValue(lineItem.companyCode);
+          newLineItemGroup.controls.costCenter.setValue(lineItem.costCenter);
+          newLineItemGroup.controls.glAccount.setValue(lineItem.glAccount);
+          this.form.establishTouchLink(newLineItemGroup, this.form.lineItems);
+          this.form.lineItems.push(newLineItemGroup);
         }
-        if (this.lineItemsFormArray.length === 0) {
+        if (this.form.lineItems.length === 0) {
           this.addNewEmptyLineItem();
         }
       }
@@ -283,33 +194,33 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         .subscribe(
           (invoice: any) => {
             this.invoice = new InvoiceDataModel(invoice);
-            this.invoiceFormGroup.controls.workType.setValue(invoice.workType);
-            this.invoiceFormGroup.controls.companyCode.setValue(invoice.companyCode);
-            this.invoiceFormGroup.controls.erpType.setValue(invoice.erpType);
-            this.invoiceFormGroup.controls.vendorNumber.setValue(invoice.vendorNumber);
-            this.invoiceFormGroup.controls.externalInvoiceNumber.setValue(invoice.externalInvoiceNumber);
-            this.invoiceFormGroup.controls.invoiceDate.setValue(new Date(invoice.invoiceDate));
-            this.invoiceFormGroup.controls.amountOfInvoice.setValue(invoice.amountOfInvoice);
-            this.invoiceFormGroup.controls.currency.setValue(invoice.currency);
-            this.invoiceFormGroup.controls.comments.setValue(invoice.comments);
-            this.invoiceFormGroup.disable();
+            this.form.workType.setValue(invoice.workType);
+            this.form.companyCode.setValue(invoice.companyCode);
+            this.form.erpType.setValue(invoice.erpType);
+            this.form.vendorNumber.setValue(invoice.vendorNumber);
+            this.form.externalInvoiceNumber.setValue(invoice.externalInvoiceNumber);
+            this.form.invoiceDate.setValue(new Date(invoice.invoiceDate));
+            this.form.amountOfInvoice.setValue(invoice.amountOfInvoice);
+            this.form.currency.setValue(invoice.currency);
+            this.form.comments.setValue(invoice.comments);
+            this.form.invoiceFormGroup.disable();
 
-            this.osptFormGroup.controls.isPaymentOverrideSelected.setValue(!!invoice.standardPaymentTermsOverride);
-            this.osptFormGroup.controls.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
-            this.osptFormGroup.disable();
+            this.form.isPaymentOverrideSelected.setValue(!!invoice.standardPaymentTermsOverride);
+            this.form.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
+            this.form.osptFormGroup.disable();
 
             // Line Items
-            this.lineItemsFormArray.clear();
+            this.form.lineItems.clear();
             for (const lineItem of invoice.lineItems) {
-              this.lineItemsFormArray.push(new FormGroup({
-                glAccount: new FormControl({value: lineItem.glAccount, disabled: this.readOnly}, [Validators.required]),
-                costCenter: new FormControl({value: lineItem.costCenter, disabled: this.readOnly}, [Validators.required]),
-                companyCode: new FormControl({value: lineItem.companyCode, disabled: this.readOnly}),
-                lineItemNetAmount: new FormControl({value: lineItem.lineItemNetAmount, disabled: this.readOnly}, [Validators.required]),
-                notes: new FormControl({value: lineItem.notes, disabled: this.readOnly}),
-                lineItemNumber: new FormControl({value: lineItem.lineItemNumber, disabled: this.readOnly}),
-              }));
+              const newLineItemGroup = this.form.createEmptyLineItemGroup();
+              newLineItemGroup.controls.companyCode.setValue(lineItem.companyCode);
+              newLineItemGroup.controls.costCenter.setValue(lineItem.costCenter);
+              newLineItemGroup.controls.glAccount.setValue(lineItem.glAccount);
+              newLineItemGroup.controls.lineItemNetAmount.setValue(lineItem.lineItemNetAmount);
+              newLineItemGroup.controls.notes.setValue(lineItem.notes);
+              this.form.lineItems.push(newLineItemGroup);
             }
+            this.form.lineItems.disable();
 
             // Attachments
             if (this.uploadFormComponent) {
@@ -333,55 +244,62 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public resetForm(): void {
     this.resetTemplateOptions().finally();
-    this.invoiceFormGroup.reset();
-    this.osptFormGroup.reset();
-    this.selectedTemplateFormControl.reset();
-    this.lineItemsFormArray.clear();
+    this.form.invoiceFormGroup.reset();
+    this.form.osptFormGroup.reset();
+    this.form.selectedTemplate.reset();
     if (this.uploadFormComponent) {
       this.uploadFormComponent.reset();
       this.uploadFormComponent.pristine = true;
     }
+    this.form.lineItems.clear();
     this.addNewEmptyLineItem();
     this.lineItemRemoveButtonDisable = true;
     // set default currency to USD
-    this.invoiceFormGroup.controls.currency.setValue(this.currencyOptions[0]);
+    this.form.currency.setValue(this.form.currencyOptions[0]);
     // default work type as long as there is only one value
-    if (this.workTypeOptions.length === 1) {
-      this.invoiceFormGroup.controls.workType.setValue(this.workTypeOptions[0]);
+    if (this.form.workTypeOptions.length === 1) {
+      this.form.workType.setValue(this.form.workTypeOptions[0]);
     }
-    this.erpType.markAsPristine();
-    this.invoiceDate.markAsPristine();
-    this.invoiceFormGroup.controls.companyCode.setValue('');
-    this.invoiceFormGroup.controls.amountOfInvoice.setValue('0');
+    this.form.erpType.markAsPristine();
+    this.form.invoiceDate.markAsPristine();
+    this.form.companyCode.setValue('');
+    this.form.amountOfInvoice.setValue('0');
     this.calculateLineItemNetAmount();
     this.markFormAsPristine();
-    this.subscriptionManager.manage(
-      this.selectedTemplateFormControl.valueChanges.subscribe(v => this.loadTemplate(v))
-    );
+    this.form.invoiceFormGroup.markAsUntouched();
   }
 
   private async resetTemplateOptions(): Promise<void> {
-    const newTemplateOptions: Array<string> = [];
-    (await this.templateService.getTemplates().toPromise())
-      .forEach((template: Template) => {
-        newTemplateOptions.push(template.name);
-        newTemplateOptions.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
-      });
-    this.myTemplateOptions = newTemplateOptions;
+    if (this.isOnEditPage) {
+      this.form.myTemplateOptions = [];
+      this.form.selectedTemplate.disable();
+    } else {
+      const newTemplateOptions: Array<string> = [];
+      (await this.templateService.getTemplates().toPromise())
+        .forEach((template: Template) => {
+          newTemplateOptions.push(template.name);
+          newTemplateOptions.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1);
+        });
+      this.form.myTemplateOptions = newTemplateOptions;
+      this.form.selectedTemplate.enable();
+    }
+    this.subscriptionManager.manage(
+      this.form.selectedTemplate.valueChanges.subscribe(v => this.loadTemplate(v))
+    );
   }
 
   private markFormAsPristine(): void {
-    this.invoiceFormGroup.markAsPristine();
-    this.osptFormGroup.markAsPristine();
+    this.form.invoiceFormGroup.markAsPristine();
+    this.form.osptFormGroup.markAsPristine();
     if (this.uploadFormComponent) {
       this.uploadFormComponent.formGroup.markAsPristine();
     }
-    this.lineItemsFormArray.markAsPristine();
+    this.form.lineItems.markAsPristine();
   }
 
   public validateRegex(event: any): boolean {
     const char = String.fromCharCode(event.keyCode);
-    if (this.validCharacters.test(char)) {
+    if (this.regex.test(char)) {
       return true;
     } else {
       event.preventDefault();
@@ -399,37 +317,42 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public lineItemCompanyCodeFormControl(index: number): AbstractControl {
-    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItemFormGroup.controls.companyCode;
+  public lineItemCompanyCode(index: number): FormControl {
+    return this.lineItemGroup(index).controls.companyCode as FormControl;
   }
 
-  public lineItemNetAmountFormControl(index: number): AbstractControl {
-    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItemFormGroup.controls.lineItemNetAmount;
+  public lineItemCostCenter(index: number): FormControl {
+    return this.lineItemGroup(index).controls.costCenter as FormControl;
   }
 
-  public lineItemCostCenter(index: number): AbstractControl {
-    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItemFormGroup.controls.costCenter;
+  public lineItemGlAccount(index: number): FormControl {
+    return this.lineItemGroup(index).controls.glAccount as FormControl;
   }
 
-  public lineItemGlAccount(index: number): AbstractControl {
-    const lineItemFormGroup = this.lineItemsFormArray.at(index) as FormGroup;
-    return lineItemFormGroup.controls.glAccount;
+  public lineItemNetAmount(index: number): FormControl {
+    return this.lineItemGroup(index).controls.lineItemNetAmount as FormControl;
+  }
+
+  public lineItemNotes(index: number): FormControl {
+    return this.lineItemGroup(index).controls.notes as FormControl;
+  }
+
+  public lineItemGroup(index: number): FormGroup {
+    return this.form.lineItems.at(index) as FormGroup;
   }
 
   public addNewEmptyLineItem(): void {
-    this.lineItemsFormArray.push(InvoiceFormComponent.createEmptyLineItemForm());
-    this.lineItemsFormArray.markAsDirty();
-    if (this.lineItemsFormArray.length > 1) {
+    this.form.lineItems.push(this.form.createEmptyLineItemGroup());
+    this.form.lineItems.markAsDirty();
+    if (this.form.lineItems.length > 1) {
       this.lineItemRemoveButtonDisable = false;
     }
   }
 
+
   public removeLineItem(index: number): void {
-    this.lineItemsFormArray.removeAt(index);
-    if (this.lineItemsFormArray.length <= 1) {
+    this.form.lineItems.removeAt(index);
+    if (this.form.lineItems.length <= 1) {
       this.lineItemRemoveButtonDisable = true;
     }
     this.calculateLineItemNetAmount();
@@ -485,7 +408,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     let savedInvoice;
     if (this.validateInvoiceAmount()) {
       // IS VALID
-      const invoice = this.invoiceFormGroup.getRawValue();
+      const invoice = this.form.invoiceFormGroup.getRawValue();
       invoice.falconInvoiceNumber = this.falconInvoiceNumber;
       const isDuplicate = await this.invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
       if (isDuplicate) {
@@ -530,7 +453,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     let savedInvoice;
     if (this.validateInvoiceAmount()) {
       // IS VALID
-      const invoice = this.invoiceFormGroup.getRawValue();
+      const invoice = this.form.invoiceFormGroup.getRawValue();
       invoice.falconInvoiceNumber = this.falconInvoiceNumber;
       const isDuplicate = await this.invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
       if (isDuplicate) {
@@ -574,7 +497,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   public saveTemplate(): void {
     this.subscriptionManager.manage(
-      this.util.openTemplateInputModal(this.osptFormGroup.controls.isPaymentOverrideSelected.value)
+      this.util.openTemplateInputModal(this.form.isPaymentOverrideSelected.value)
         .subscribe(
           async (result) => {
             if (result) {
@@ -596,10 +519,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   public validateInvoiceAmount(): boolean {
     let sum = 0;
     const invoiceAmount = this.util
-      .toNumber(this.amountOfInvoiceFormControl.value)
+      .toNumber(this.form.amountOfInvoice.value)
       .toFixed(2);
-    for (let i = 0; i < this.lineItemsFormArray.controls.length; i++) {
-      const lineItem = this.lineItemsFormArray.at(i) as FormGroup;
+    for (let i = 0; i < this.form.lineItems.controls.length; i++) {
+      const lineItem = this.form.lineItems.at(i) as FormGroup;
       const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
       sum += this.util.toNumber(lineItemAmount.value);
     }
@@ -627,8 +550,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       invoice.falconInvoiceNumber = this.falconInvoiceNumber;
     }
     invoice.amountOfInvoice = this.util.toNumber(invoice.amountOfInvoice);
-    invoice.standardPaymentTermsOverride = this.osptFormGroup.controls.paymentTerms.value
-      ? this.osptFormGroup.controls.paymentTerms.value
+    invoice.standardPaymentTermsOverride = this.form.paymentTerms.value
+      ? this.form.paymentTerms.value
       : null;
     invoice.lineItems.forEach((lineItem: any) => {
       if (!lineItem.companyCode) {
@@ -685,40 +608,29 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   private enableFormFields(): void {
-    this.invoiceFormGroup.controls.workType.enable();
-    this.invoiceFormGroup.controls.companyCode.enable();
-    this.invoiceFormGroup.controls.erpType.enable();
-    this.invoiceFormGroup.controls.vendorNumber.enable();
-    this.invoiceFormGroup.controls.externalInvoiceNumber.enable();
-    this.invoiceFormGroup.controls.invoiceDate.enable();
-    this.invoiceFormGroup.controls.amountOfInvoice.enable();
-    this.invoiceFormGroup.controls.currency.enable();
-    this.invoiceFormGroup.controls.lineItems.enable();
-    this.invoiceFormGroup.controls.comments.enable();
+    this.form.workType.enable();
+    this.form.companyCode.enable();
+    this.form.erpType.enable();
+    this.form.vendorNumber.enable();
+    this.form.externalInvoiceNumber.enable();
+    this.form.invoiceDate.enable();
+    this.form.amountOfInvoice.enable();
+    this.form.currency.enable();
+    this.form.lineItems.enable();
+    this.form.comments.enable();
   }
 
   public calculateLineItemNetAmount(): void {
     this.totalLineItemNetAmount = 0;
-    for (const control of this.lineItemsFormArray.controls) {
-      this.totalLineItemNetAmount += parseFloat((control as FormGroup).controls.lineItemNetAmount.value);
+    for (const control of this.form.lineItems.controls) {
+      const lineItemGroup = (control as FormGroup);
+      this.totalLineItemNetAmount += parseFloat(lineItemGroup.controls.lineItemNetAmount.value);
     }
   }
 
-  public validateDate(control: AbstractControl): ValidationErrors | null {
-    const dateString = control.value;
-    if (dateString) {
-      if (!(dateString instanceof Date)) {
-        return {validateDate: true};
-      } else if (dateString.getFullYear() < 1000
-        || dateString.getFullYear() > 9999) {
-        return {validateDate: true};
-      }
-    }
-    return null;
-  }
 
   public async checkCompanyCode(): Promise<string | null> {
-    const companyCode = this.invoiceFormGroup.controls.companyCode.value;
+    const companyCode = this.form.companyCode.value;
 
     if (companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
       const dialogRef = this.util.openConfirmationModal({
@@ -738,7 +650,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   private checkFormArrayCompanyCode(): boolean {
     let isCompanyCodeChanged = false;
-    this.lineItemsFormArray.controls.forEach(control => {
+    this.form.lineItems.controls.forEach(control => {
       const item = control.value;
       if (item.lineItemNumber) {
         const lineItem = this.invoice.lineItems.find(f => f.lineItemNumber === item.lineItemNumber && f.companyCode !== item.companyCode);

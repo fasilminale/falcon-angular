@@ -17,6 +17,7 @@ import {AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {SubscriptionManager} from '../../services/subscription-manager';
+import {InvoiceFormManager} from './invoice-form-manager';
 
 describe('InvoiceFormComponent ROUTING', () => {
   let component: InvoiceFormComponent;
@@ -53,6 +54,7 @@ describe('InvoiceFormComponent ROUTING', () => {
   let dialog: MatDialog;
   let router: Router;
   let templateService: TemplateService;
+  let form: InvoiceFormManager;
 
   const route = {
     snapshot: {url: [{path: 'invoice'}, {path: 'F0000000001'}]},
@@ -70,7 +72,7 @@ describe('InvoiceFormComponent ROUTING', () => {
         HttpClientTestingModule,
         MatSnackBarModule,
         NoopAnimationsModule,
-        MatDialogModule
+        MatDialogModule,
       ],
       declarations: [InvoiceFormComponent],
       providers: [
@@ -84,6 +86,7 @@ describe('InvoiceFormComponent ROUTING', () => {
         TemplateService,
         UtilService,
         SubscriptionManager,
+        InvoiceFormManager,
         {provide: ActivatedRoute, useValue: route},
         {provide: Router, useValue: mockRouter}
       ],
@@ -93,6 +96,9 @@ describe('InvoiceFormComponent ROUTING', () => {
     snackBar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
     router = TestBed.inject(Router);
+    form = TestBed.inject(InvoiceFormManager);
+    spyOn(form, 'establishTouchLink').and.stub();
+    spyOn(form, 'forceValueChangeEvent').and.stub();
     templateService = TestBed.inject(TemplateService);
     spyOn(templateService, 'getTemplates').and.returnValue(of([]));
     fixture = TestBed.createComponent(InvoiceFormComponent);
