@@ -1,5 +1,5 @@
 import {TestBed} from '@angular/core/testing';
-import {SubscriptionManager} from '../../services/subscription-manager';
+import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {AbstractControl, FormControl} from '@angular/forms';
 import Spy = jasmine.Spy;
@@ -10,6 +10,19 @@ describe('InvoiceFormManager', () => {
   let invoiceFormManager: InvoiceFormManager;
   let subscriptionManager: SubscriptionManager;
 
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [FalconTestingModule]
+    });
+    subscriptionManager = TestBed.inject(SUBSCRIPTION_MANAGER);
+    spyOn(subscriptionManager, 'manage').and.callThrough();
+    invoiceFormManager = new InvoiceFormManager(subscriptionManager);
+    // stub these so they don't trigger cascading events during tests
+    // they are tested for their functionality in isolation.
+    spyOn(invoiceFormManager, 'forceValueChangeEvent').and.stub();
+    spyOn(invoiceFormManager, 'establishTouchLink').and.stub();
+  });
+
   function createSpyFormControl(): FormControl {
     const formControl = new FormControl();
     spyOn(formControl.statusChanges, 'subscribe').and.callThrough();
@@ -18,17 +31,6 @@ describe('InvoiceFormManager', () => {
     spyOn(formControl, 'setValue').and.callThrough();
     return formControl;
   }
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({imports: [FalconTestingModule]});
-    invoiceFormManager = TestBed.inject(InvoiceFormManager);
-    // stub these so they don't trigger cascading events during tests
-    // they are tested for their functionality in isolation.
-    spyOn(invoiceFormManager, 'forceValueChangeEvent').and.stub();
-    spyOn(invoiceFormManager, 'establishTouchLink').and.stub();
-    subscriptionManager = TestBed.inject(SubscriptionManager);
-    spyOn(subscriptionManager, 'manage').and.callThrough();
-  });
 
   // BEFORE INIT TESTS
   describe('when constructed, before init is called', () => {
