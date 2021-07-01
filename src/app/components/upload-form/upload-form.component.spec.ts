@@ -159,7 +159,7 @@ describe('UploadFormComponent', () => {
 
   it('should validate an external attachment exists', () => {
     const testFile = new File([], 'test file');
-    const testType = 'EXTERNAL';
+    const testType = 'External Invoice';
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
     component.addAttachment();
@@ -168,7 +168,7 @@ describe('UploadFormComponent', () => {
 
   it('should fail external attachment validation', async () => {
     const testFile = new File([], 'test file');
-    const testType = 'EXTERNAL';
+    const testType = 'External Invoice';
     spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
@@ -191,7 +191,16 @@ describe('UploadFormComponent', () => {
     expect(component.attachments).toHaveSize(1);
   });
 
-  it('should not modify attachment', async () => {
+  it('should set pristine to false on adding attachment', () => {
+    const testFile = new File([], 'test file');
+    const testType = 'External Invoice';
+    component.file.setValue(testFile);
+    component.attachmentType.setValue(testType);
+    component.uploadButtonClick();
+    expect(component.pristine).toBeFalse();
+  });
+
+  it('should set pristine to false on removing attachment', async () => {
     const attachment: any = {
       file: new File([], 'test file'),
       type: 'test type',
@@ -202,7 +211,7 @@ describe('UploadFormComponent', () => {
     component.attachments.push(attachment);
     spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
     await component.removeAttachment(0);
-    expect(component.attachments).toHaveSize(1);
+    expect(component.pristine).toBeFalse();
   });
 
   it('should download attachment', () => {
