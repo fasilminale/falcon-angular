@@ -73,7 +73,7 @@
                    (focus)="form.forceValueChangeEvent(form.companyCode)"
                    [ngClass]="(form.companyCode.errors
                               && form.companyCode.hasError('required')
-                              && form.companyCode.touched) 
+                              && form.companyCode.touched)
                               || form.companyCode.hasError('pattern') ? 'error' : ''"
             />
             <small class="error-text"
@@ -293,11 +293,11 @@
                          [placeholder]="form.companyCode.value"
                          (keypress)="validateRegex($event)"
                          maxlength="4"
-                         (focus)="form.forceValueChangeEvent(lineItemCompanyCode(i))"
-                         [ngClass]="lineItemCompanyCode(i).hasError('pattern') ? 'error' : ''"
+                         (focus)="form.forceValueChangeEvent(form.lineItemCompanyCode(i))"
+                         [ngClass]="form.lineItemCompanyCode(i).hasError('pattern') ? 'error' : ''"
                   />
                   <small class="error-text"
-                   *ngIf="lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
+                   *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
                   {{specialCharErrorMessage}}
                 </small>
                 <ng-template #companyCodeError>
@@ -318,19 +318,21 @@
                        formControlName="costCenter"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       (focus)="form.forceValueChangeEvent(lineItemCostCenter(i))"
-                       [ngClass]="lineItemCostCenter(i).errors
-                          && lineItemCostCenter(i).hasError('required')
-                          && lineItemCostCenter(i).touched || lineItemCostCenter(i).hasError('pattern') ? 'error' : ''"
+                       (focus)="form.forceValueChangeEvent(form.lineItemCostCenter(i))"
+                       [ngClass]="form.lineItemCostCenter(i).errors
+                          && form.lineItemCostCenter(i).hasError('required')
+                          && form.lineItemCostCenter(i).touched
+                          || form.lineItemCostCenter(i).hasError('pattern')
+                          ? 'error' : ''"
                 />
                 <small class="error-text"
-                   *ngIf="lineItemCostCenter(i).hasError('pattern'); else costCenterReq">
+                   *ngIf="form.lineItemCostCenter(i).hasError('pattern'); else costCenterReq">
                   {{specialCharErrorMessage}}
                 </small>
                 <ng-template #costCenterReq>
                   <small class="error-text"
-                       [ngClass]="{'invisible': !(lineItemCostCenter(i).hasError('required')
-                                                  && lineItemCostCenter(i).touched)}">
+                       [ngClass]="{'invisible': !(form.lineItemCostCenter(i).hasError('required')
+                                                  && form.lineItemCostCenter(i).touched)}">
                   Cost Center is required
                 </small>
                 </ng-template>
@@ -346,19 +348,21 @@
                        formControlName="glAccount"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       (focus)="form.forceValueChangeEvent(lineItemGlAccount(i))"
-                       [ngClass]="lineItemGlAccount(i).errors
-                          && lineItemGlAccount(i).hasError('required')
-                          && lineItemGlAccount(i).touched || lineItemGlAccount(i).hasError('pattern') ? 'error' : ''"
+                       (focus)="form.forceValueChangeEvent(form.lineItemGlAccount(i))"
+                       [ngClass]="form.lineItemGlAccount(i).errors
+                          && form.lineItemGlAccount(i).hasError('required')
+                          && form.lineItemGlAccount(i).touched
+                          || form.lineItemGlAccount(i).hasError('pattern')
+                          ? 'error' : ''"
                 />
                 <small class="error-text"
-                   *ngIf="lineItemGlAccount(i).hasError('pattern'); else glAmountReq">
+                   *ngIf="form.lineItemGlAccount(i).hasError('pattern'); else glAmountReq">
                   {{specialCharErrorMessage}}
                 </small>
                 <ng-template #glAmountReq>
                   <small class="error-text"
-                       [ngClass]="{'invisible': !(lineItemGlAccount(i).hasError('required')
-                                                  && lineItemGlAccount(i).touched)}">
+                       [ngClass]="{'invisible': !(form.lineItemGlAccount(i).hasError('required')
+                                                  && form.lineItemGlAccount(i).touched)}">
                   GL Account is required
                 </small>
                 </ng-template>
@@ -371,11 +375,10 @@
                 </label>
                 <app-fal-currency-input formControlName="lineItemNetAmount"
                                         [isDisabled]="readOnly"
-                                        (focus)="form.forceValueChangeEvent(lineItemNetAmount(i))"
-                                        [isError]="!!(lineItemNetAmount(i).errors
-                                                      && lineItemNetAmount(i).hasError('required')
-                                                      && lineItemNetAmount(i).touched)"
-                                        (keyup)="calculateLineItemNetAmount()">
+                                        (focus)="form.forceValueChangeEvent(form.lineItemNetAmount(i))"
+                                        [isError]="!!(form.lineItemNetAmount(i).errors
+                                                      && form.lineItemNetAmount(i).hasError('required')
+                                                      && form.lineItemNetAmount(i).touched)">
                 </app-fal-currency-input>
                 <small class="error-text invisible">
                   <!-- this will eventually hold real error messages -->
@@ -392,7 +395,7 @@
                   <input type="text"
                          class="form-control"
                          formControlName="notes"
-                         (focus)="form.forceValueChangeEvent(lineItemNotes(i))"
+                         (focus)="form.forceValueChangeEvent(form.lineItemNotes(i))"
                          (keypress)="validateFreeTextRegex($event)"
                          maxlength="50"
                   />
@@ -409,7 +412,7 @@
                            class="material-icons btn line-item-remove-button"
                            [disabled]="lineItemRemoveButtonDisable || readOnly"
                            (focus)="form.forceValueChangeEvent(form.lineItems)"
-                           (click)="removeLineItem(i)"
+                           (click)="form.removeLineItem(i)"
                     /></div>
                   <small class="error-text invisible">
                     spacer
@@ -429,12 +432,12 @@
                           buttonStyle="text"
                           id="add-new-line-item-button"
                           (focus)="form.forceValueChangeEvent(form.lineItems)"
-                          (buttonClick)="addNewEmptyLineItem()">
+                          (buttonClick)="form.addNewEmptyLineItem()">
                 <u>+ Add New Line Item</u>
               </elm-button>
             </div>
             <div class="col-2 line-item-total-amount">
-              ${{totalLineItemNetAmount | number : '1.2-2'}}
+              ${{form.totalLineItemNetAmount | number : '1.2-2'}}
             </div>
             <div class="col-4 form-label fieldLabel1">
               Line Net Amount Total

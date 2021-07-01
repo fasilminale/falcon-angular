@@ -332,7 +332,7 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should enable remove button after going up to more than one line item', () => {
-    component.addNewEmptyLineItem();
+    component.form.addNewEmptyLineItem();
     expect(component.lineItemRemoveButtonDisable).toBeFalse();
   });
 
@@ -402,8 +402,8 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should disable remove button after going down to one line item', () => {
-    component.addNewEmptyLineItem();
-    component.removeLineItem(0);
+    component.form.addNewEmptyLineItem();
+    component.form.removeLineItem(0);
     expect(component.lineItemRemoveButtonDisable).toBeTrue();
   });
 
@@ -546,8 +546,8 @@ describe('InvoiceFormComponent', () => {
   it('should called changeLineItemNetAmount and totalLineItemNetAmount value changed and validate invoiceDate date', () => {
     (component.form.lineItems.get('0') as FormGroup)
       .controls.lineItemNetAmount.setValue('1');
-    component.calculateLineItemNetAmount();
-    expect(component.totalLineItemNetAmount).toEqual(1);
+    component.form.calculateLineItemNetAmount();
+    expect(component.form.totalLineItemNetAmount).toEqual(1);
     const control = component.form.invoiceDate;
     control.setValue('test');
     expect(validateDate(control)).toEqual({validateDate: true});
@@ -615,7 +615,7 @@ describe('InvoiceFormComponent', () => {
     expect(component.form.vendorNumber.value).toEqual('test vendor number');
     expect(component.form.currency.value).toEqual('test currency');
     expect(component.form.lineItems.length).toEqual(1);
-    const lineItem = component.lineItemGroup(0);
+    const lineItem = component.form.lineItemGroup(0);
     expect(lineItem.controls.glAccount.value).toEqual('test line item gl account');
     expect(lineItem.controls.costCenter.value).toEqual('test line item cost center');
     expect(lineItem.controls.companyCode.value).toEqual('test line item company code');
@@ -680,7 +680,7 @@ describe('InvoiceFormComponent', () => {
       spyOn(component, 'validateInvoiceAmount').and.callThrough();
       spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(true));
       spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
-      component.lineItemGroup(0).controls.companyCode.setValue('TEST2');
+      component.form.lineItemGroup(0).controls.companyCode.setValue('TEST2');
       component.falconInvoiceNumber = 'F0000000010';
       component.form.amountOfInvoice.setValue('0');
       await component.onSaveButtonClick();

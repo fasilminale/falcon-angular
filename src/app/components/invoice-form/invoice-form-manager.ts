@@ -58,6 +58,8 @@ export class InvoiceFormManager {
     {value: 'ZN14', display: 'Pay in 14 days'}
   ];
 
+  public totalLineItemNetAmount = 0;
+
   constructor(private subscriptionManager: SubscriptionManager) {
   }
 
@@ -109,15 +111,19 @@ export class InvoiceFormManager {
     this.establishTouchLink(this.lineItems, this.osptFormGroup);
     this.establishTouchLink(this.comments, this.lineItems);
     this.subscriptionManager.manage(
+      // CLEAR PAYMENT TERMS SELECTION WHEN UNSELECTING OVERRIDE
       this.isPaymentOverrideSelected.valueChanges
         .pipe(filter(isFalsey))
-        .subscribe(() => this.paymentTerms.reset())
+        .subscribe(() => this.paymentTerms.reset()),
+      // RECALCULATE LINE ITEM TOTAL WHEN LINE ITEMS CHANGE
+      this.lineItems.valueChanges
+        .subscribe(() => this.calculateLineItemNetAmount())
     );
   }
 
   public establishTouchLink(a: AbstractControl, b: AbstractControl): void {
     this.subscriptionManager.manage(
-      a.statusChanges.subscribe(() => {
+      a.valueChanges.subscribe(() => {
         if (b.untouched) {
           b.markAsTouched();
           this.forceValueChangeEvent(b);
@@ -128,6 +134,39 @@ export class InvoiceFormManager {
 
   public forceValueChangeEvent(control: AbstractControl): void {
     control.setValue(control.value);
+  }
+
+  public lineItemCompanyCode(index: number): FormControl {
+    return this.lineItemGroup(index).controls.companyCode as FormControl;
+  }
+
+  public lineItemCostCenter(index: number): FormControl {
+    return this.lineItemGroup(index).controls.costCenter as FormControl;
+  }
+
+  public lineItemGlAccount(index: number): FormControl {
+    return this.lineItemGroup(index).controls.glAccount as FormControl;
+  }
+
+  public lineItemNetAmount(index: number): FormControl {
+    return this.lineItemGroup(index).controls.lineItemNetAmount as FormControl;
+  }
+
+  public lineItemNotes(index: number): FormControl {
+    return this.lineItemGroup(index).controls.notes as FormControl;
+  }
+
+  public lineItemGroup(index: number): FormGroup {
+    return this.lineItems.at(index) as FormGroup;
+  }
+
+  public removeLineItem(index: number): void {
+    this.lineItems.removeAt(index);
+  }
+
+  public addNewEmptyLineItem(): void {
+    this.lineItems.push(this.createEmptyLineItemGroup());
+    this.lineItems.markAsDirty();
   }
 
   public createEmptyLineItemGroup(): FormGroup {
@@ -143,4 +182,11 @@ export class InvoiceFormManager {
     return new FormGroup({companyCode, costCenter, glAccount, lineItemNetAmount, notes});
   }
 
+  public calculateLineItemNetAmount(): void {
+    this.totalLineItemNetAmount = 0;
+    for (const control of this.lineItems.controls) {
+      const lineItemGroup = (control as FormGroup);
+      this.totalLineItemNetAmount += parseFloat(lineItemGroup.controls.lineItemNetAmount.value);
+    }
+  }
 }
