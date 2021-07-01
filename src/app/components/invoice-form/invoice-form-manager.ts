@@ -63,10 +63,10 @@ export class InvoiceFormManager {
 
   public init(): void {
     this.workType = new FormControl({value: null}, [required]);
-    this.companyCode = new FormControl({value: null}, [required, Validators.pattern(this.allowedCharacters)]);
+    this.companyCode = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
     this.erpType = new FormControl({value: null}, [required]);
-    this.vendorNumber = new FormControl({value: null}, [required, Validators.pattern(this.allowedCharacters)]);
-    this.externalInvoiceNumber = new FormControl({value: null}, [required, Validators.pattern(this.allowedCharacters)]);
+    this.vendorNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
+    this.externalInvoiceNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
     this.invoiceDate = new FormControl({value: null}, [required, validateDate]);
     this.amountOfInvoice = new FormControl({value: 0}, [required]);
     this.currency = new FormControl({value: null}, [required]);
