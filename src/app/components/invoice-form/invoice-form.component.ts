@@ -54,6 +54,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   /* PUBLIC FIELDS */
   public readonly regex = /[a-zA-Z0-9_\\-]/;
   public readonly freeTextRegex = /[\w\-\s]/;
+  public readonly specialCharErrorMessage= 'Special characters are not allowed';
   public lineItemRemoveButtonDisable = true;
   public validAmount = true;
   public externalAttachment = false;

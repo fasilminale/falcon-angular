@@ -71,14 +71,19 @@
                    (keypress)="validateRegex($event)"
                    maxlength="4"
                    (focus)="form.forceValueChangeEvent(form.companyCode)"
-                   [ngClass]="form.companyCode.errors
+                   [ngClass]="(form.companyCode.errors
                               && form.companyCode.hasError('required')
-                              && form.companyCode.touched ? 'error' : ''"
+                              && form.companyCode.touched) 
+                              || form.companyCode.hasError('pattern') ? 'error' : ''"
             />
             <small class="error-text"
                    *ngIf="form.companyCode.hasError('required')
                           && form.companyCode.touched">
               Company Code is required
+            </small>
+            <small class="error-text"
+                   *ngIf="form.companyCode.hasError('pattern')">
+              {{specialCharErrorMessage}}
             </small>
           </div>
 
@@ -114,13 +119,18 @@
                    (keypress)="validateRegex($event)"
                    maxlength="10"
                    (focus)="form.forceValueChangeEvent(form.vendorNumber)"
-                   [ngClass]="form.vendorNumber.errors
+                   [ngClass]="(form.vendorNumber.errors
                       && form.vendorNumber.hasError('required')
-                      && form.vendorNumber.touched ? 'error' : ''"
+                      && form.vendorNumber.touched)
+                      || form.vendorNumber.hasError('pattern') ? 'error' : ''"
             />
             <small class="error-text"
                    *ngIf="form.vendorNumber.hasError('required') && form.vendorNumber.touched">
               Vendor Number is required
+            </small>
+            <small class="error-text"
+                   *ngIf="form.vendorNumber.hasError('pattern')">
+              {{specialCharErrorMessage}}
             </small>
           </div>
 
@@ -136,14 +146,19 @@
                    (keypress)="validateRegex($event)"
                    maxlength="16"
                    (focus)="form.forceValueChangeEvent(form.externalInvoiceNumber)"
-                   [ngClass]="form.externalInvoiceNumber.errors
+                   [ngClass]="(form.externalInvoiceNumber.errors
                               && form.externalInvoiceNumber.hasError('required')
-                              && form.externalInvoiceNumber.touched ? 'error' : ''"
+                              && form.externalInvoiceNumber.touched)
+                              || form.externalInvoiceNumber.hasError('pattern') ? 'error' : ''"
             />
             <small class="error-text"
                    *ngIf="form.externalInvoiceNumber.hasError('required')
                           && form.externalInvoiceNumber.touched">
               External Invoice Number is required
+            </small>
+            <small class="error-text"
+                   *ngIf="form.externalInvoiceNumber.hasError('pattern')">
+              {{specialCharErrorMessage}}
             </small>
           </div>
 
@@ -253,10 +268,10 @@
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
             <div *ngFor="let _ of form.lineItems.controls; index as i"
-                 class="line-item-row row align-items-center"
+                 class="line-item-row row align-items-start"
                  [formGroupName]="i">
 
-              <div class="d-flex col-2 align-items-end">
+              <div class="d-flex col-2 align-items-start">
                 <!-- LINE ITEM - NUMBER -->
                 <div class="flex-shrink-1">
                   <div class="fake-form-control">
@@ -279,10 +294,17 @@
                          (keypress)="validateRegex($event)"
                          maxlength="4"
                          (focus)="form.forceValueChangeEvent(lineItemCompanyCode(i))"
+                         [ngClass]="lineItemCompanyCode(i).hasError('pattern') ? 'error' : ''"
                   />
+                  <small class="error-text"
+                   *ngIf="lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
+                  {{specialCharErrorMessage}}
+                </small>
+                <ng-template #companyCodeError>
                   <small class="error-text invisible">
                     spacer
                   </small>
+                </ng-template>
                 </div>
               </div>
 
@@ -299,13 +321,19 @@
                        (focus)="form.forceValueChangeEvent(lineItemCostCenter(i))"
                        [ngClass]="lineItemCostCenter(i).errors
                           && lineItemCostCenter(i).hasError('required')
-                          && lineItemCostCenter(i).touched ? 'error' : ''"
+                          && lineItemCostCenter(i).touched || lineItemCostCenter(i).hasError('pattern') ? 'error' : ''"
                 />
                 <small class="error-text"
+                   *ngIf="lineItemCostCenter(i).hasError('pattern'); else costCenterReq">
+                  {{specialCharErrorMessage}}
+                </small>
+                <ng-template #costCenterReq>
+                  <small class="error-text"
                        [ngClass]="{'invisible': !(lineItemCostCenter(i).hasError('required')
                                                   && lineItemCostCenter(i).touched)}">
                   Cost Center is required
                 </small>
+                </ng-template>
               </div>
 
               <!-- LINE ITEM - GL ACCOUNT -->
@@ -321,13 +349,19 @@
                        (focus)="form.forceValueChangeEvent(lineItemGlAccount(i))"
                        [ngClass]="lineItemGlAccount(i).errors
                           && lineItemGlAccount(i).hasError('required')
-                          && lineItemGlAccount(i).touched ? 'error' : ''"
+                          && lineItemGlAccount(i).touched || lineItemGlAccount(i).hasError('pattern') ? 'error' : ''"
                 />
                 <small class="error-text"
+                   *ngIf="lineItemGlAccount(i).hasError('pattern'); else glAmountReq">
+                  {{specialCharErrorMessage}}
+                </small>
+                <ng-template #glAmountReq>
+                  <small class="error-text"
                        [ngClass]="{'invisible': !(lineItemGlAccount(i).hasError('required')
                                                   && lineItemGlAccount(i).touched)}">
                   GL Account is required
                 </small>
+                </ng-template>
               </div>
 
               <!-- LINE ITEM - NET AMOUNT -->
