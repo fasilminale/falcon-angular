@@ -268,12 +268,15 @@
           <!-- LINE ITEM - LOOP -->
           <div id="line-item-rows-container">
             <div *ngFor="let _ of form.lineItems.controls; index as i"
-                 class="line-item-row row align-items-start"
+                 class="line-item-row row"
                  [formGroupName]="i">
 
-              <div class="d-flex col-2 align-items-start">
+              <div class="d-flex flex-row col-2 align-items-stretch">
                 <!-- LINE ITEM - NUMBER -->
-                <div class="flex-shrink-1">
+                <div class="d-flex flex-column flex-shrink-1 justify-content-start">
+                  <label *ngIf="i === 0" class="form-label fieldLabel1 invisible">
+                    #
+                  </label>
                   <div class="fake-form-control">
                     {{i + 1}}
                   </div>
@@ -297,14 +300,14 @@
                          [ngClass]="form.lineItemCompanyCode(i).hasError('pattern') ? 'error' : ''"
                   />
                   <small class="error-text"
-                   *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
-                  {{specialCharErrorMessage}}
-                </small>
-                <ng-template #companyCodeError>
-                  <small class="error-text invisible">
-                    spacer
+                         *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
+                    {{specialCharErrorMessage}}
                   </small>
-                </ng-template>
+                  <ng-template #companyCodeError>
+                    <small class="error-text invisible">
+                      spacer
+                    </small>
+                  </ng-template>
                 </div>
               </div>
 
@@ -326,15 +329,15 @@
                           ? 'error' : ''"
                 />
                 <small class="error-text"
-                   *ngIf="form.lineItemCostCenter(i).hasError('pattern'); else costCenterReq">
+                       *ngIf="form.lineItemCostCenter(i).hasError('pattern'); else costCenterReq">
                   {{specialCharErrorMessage}}
                 </small>
                 <ng-template #costCenterReq>
                   <small class="error-text"
-                       [ngClass]="{'invisible': !(form.lineItemCostCenter(i).hasError('required')
+                         [ngClass]="{'invisible': !(form.lineItemCostCenter(i).hasError('required')
                                                   && form.lineItemCostCenter(i).touched)}">
-                  Cost Center is required
-                </small>
+                    Cost Center is required
+                  </small>
                 </ng-template>
               </div>
 
@@ -356,15 +359,15 @@
                           ? 'error' : ''"
                 />
                 <small class="error-text"
-                   *ngIf="form.lineItemGlAccount(i).hasError('pattern'); else glAmountReq">
+                       *ngIf="form.lineItemGlAccount(i).hasError('pattern'); else glAmountReq">
                   {{specialCharErrorMessage}}
                 </small>
                 <ng-template #glAmountReq>
                   <small class="error-text"
-                       [ngClass]="{'invisible': !(form.lineItemGlAccount(i).hasError('required')
+                         [ngClass]="{'invisible': !(form.lineItemGlAccount(i).hasError('required')
                                                   && form.lineItemGlAccount(i).touched)}">
-                  GL Account is required
-                </small>
+                    GL Account is required
+                  </small>
                 </ng-template>
               </div>
 
@@ -386,7 +389,7 @@
                 </small>
               </div>
 
-              <div class="d-flex col-4 align-items-end">
+              <div class="d-flex col-4 align-items-start">
                 <!-- LINE ITEM - NOTES -->
                 <div class="flex-grow-1">
                   <label *ngIf="i === 0" class="form-label fieldLabel1">
@@ -406,6 +409,9 @@
 
                 <!-- LINE ITEM - REMOVE -->
                 <div class="flex-shrink-1">
+                  <label *ngIf="i === 0" class="form-label fieldLabel1 invisible">
+                    remove
+                  </label>
                   <div>
                     <input type="button"
                            value="remove_circle"
