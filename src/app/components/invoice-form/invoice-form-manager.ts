@@ -111,10 +111,16 @@ export class InvoiceFormManager {
     this.establishTouchLink(this.lineItems, this.osptFormGroup);
     this.establishTouchLink(this.comments, this.lineItems);
     this.subscriptionManager.manage(
-      // CLEAR PAYMENT TERMS SELECTION WHEN UNSELECTING OVERRIDE
+      // HANDLE PAYMENT TERMS WHEN OVERRIDE SELECTION CHANGES
       this.isPaymentOverrideSelected.valueChanges
-        .pipe(filter(isFalsey))
-        .subscribe(() => this.paymentTerms.reset()),
+        .subscribe((selected: boolean) => {
+          if (selected) {
+            this.paymentTerms.enable();
+          } else {
+            this.paymentTerms.reset();
+            this.paymentTerms.disable();
+          }
+        }),
       // RECALCULATE LINE ITEM TOTAL WHEN LINE ITEMS CHANGE
       this.lineItems.valueChanges
         .subscribe(() => this.calculateLineItemNetAmount())
