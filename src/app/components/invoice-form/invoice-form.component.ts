@@ -614,4 +614,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     });
     return isCompanyCodeChanged;
   }
+
+    public focusInvoicDate() {
+        this.form.forceValueChangeEvent(this.form.invoiceDate);
+        if (this.uploadFormComponent) {
+            this.uploadFormComponent.pristine = false;
+        }
+    }
 }

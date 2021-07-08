@@ -1,14 +1,15 @@
 <form [formGroup]="formGroup">
-  <label class="form-label fieldLabel1">
+
+  <label class="elm-h3 attachment-label ">
     Upload Attachments
   </label>
   <div class="form-control upload-container" [ngClass]="(!externalAttachment && !pristine) ? 'error' : ''">
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-12 fieldLabel3">
         Supported file types: eml, doc, jpg, pdf, xlsx
       </div>
 
-    </div>
+    </div> -->
     <div class="row">
       <div class="col-6">
         <!-- FILE CHOOSER -->
@@ -41,7 +42,7 @@
         <!-- UPLOAD BUTTON -->
         <div id="upload-button-container">
           <elm-button buttonType="button"
-                      buttonStyle="primary"
+                      buttonStyle="secondary"
                       [isDisabled]="!(formGroup.controls.file.value && formGroup.controls.attachmentType.value)"
                       (buttonClick)="uploadButtonClick()">
             Upload
