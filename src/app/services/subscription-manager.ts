@@ -1,38 +1,37 @@
-import {Injectable, InjectionToken, OnDestroy} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {Subscription} from 'rxjs';
 
-export const SUBSCRIPTION_MANAGER = new InjectionToken<SubscriptionManager>('SubscriptionManager');
-
-/* INTERFACE */
-/** This service class handles unsubscribing from any subscriptions given to it. */
-export interface SubscriptionManager extends OnDestroy {
-
-  /** Get a read only view of the subscriptions being managed by the service. */
-  readonly subscriptions: readonly Subscription[];
-
-  /** Give the service subscription(s) to manage. */
-  manage(...newSubs: Array<Subscription>): void;
-}
-
-/* REAL IMPLEMENTATION */
+/**
+ * This service class handles unsubscribing from any subscriptions given to it.
+ */
 @Injectable()
-export class RealSubscriptionManager implements SubscriptionManager, OnDestroy {
+export class SubscriptionManager implements OnDestroy {
 
-  static PROVIDER = {provide: SUBSCRIPTION_MANAGER, useClass: RealSubscriptionManager};
+  private subscriptions: Array<Subscription> = [];
 
-  private subs: Array<Subscription> = [];
-
-  get subscriptions(): readonly Subscription[] {
-    return this.subs;
+  public constructor() {
   }
 
-  manage(...newSubs: Array<Subscription>): void {
-    newSubs.forEach(sub => this.subs.push(sub));
+  /**
+   * Get a read only view of the subscriptions being managed by the service.
+   */
+  public getSubscriptions(): readonly Subscription[] {
+    return this.subscriptions;
   }
 
-  ngOnDestroy(): void {
-    const subsToUnsubscribe = this.subs;
-    this.subs = [];
-    subsToUnsubscribe.forEach(sub => sub.unsubscribe());
+  /**
+   * Give the service subscription(s) to manage. The service will then unsubscribe when the ngOnDestroy event is called.
+   * @param subs the variable list of subscriptions to manage.
+   */
+  public manage(...subs: Array<Subscription>): void {
+    subs.forEach(sub => this.subscriptions.push(sub));
   }
+
+  /**
+   * Unlike ngOnInit, ngOnDestroy is called for each injected service when a component is destroyed.
+   */
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
 }

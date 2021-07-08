@@ -1,23 +1,31 @@
 import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {TemplateService} from './template-service';
 import {of, throwError} from 'rxjs';
 import {Template} from '../models/template/template-model';
-import {FalconTestingModule} from '../testing/falcon-testing.module';
 
-describe('TemplateService', () => {
-
+describe('TemplateService Tests', () => {
   let templateService: TemplateService;
   let web: WebServices;
   let template: any;
   let manageTemplate: Template;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [FalconTestingModule],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+      ],
+      providers: [
+        TemplateService,
+        WebServices,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
+    templateService = TestBed.inject(TemplateService);
     web = TestBed.inject(WebServices);
-    templateService = new TemplateService(web);
+
     template = {
       name: 'testTemplate',
       description: 'testDescription'
@@ -59,7 +67,7 @@ describe('TemplateService', () => {
 
   it('should create template', async () => {
     spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
-    await templateService.createTemplate(manageTemplate).toPromise();
+    const successes = await templateService.createTemplate(manageTemplate).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
   });
 
@@ -79,15 +87,13 @@ describe('TemplateService', () => {
 
   it('should update template', async () => {
     spyOn(web, 'httpPut').and.returnValue(of('SOME RESPONSE BODY'));
-    const parsedTemplateId = parseInt(manageTemplate.templateId);
-    await templateService.updateTemplate(parsedTemplateId, manageTemplate).toPromise();
+    const successes = await templateService.updateTemplate(parseInt(manageTemplate.templateId), manageTemplate).toPromise();
     expect(web.httpPut).toHaveBeenCalled();
   });
 
   it('should update template', async () => {
     spyOn(web, 'httpDelete').and.returnValue(of('SOME RESPONSE BODY'));
-    const parsedTemplateId = parseInt(manageTemplate.templateId);
-    await templateService.deleteTemplate(parsedTemplateId).toPromise();
+    const successes = await templateService.deleteTemplate(parseInt(manageTemplate.templateId)).toPromise();
     expect(web.httpDelete).toHaveBeenCalled();
   });
 

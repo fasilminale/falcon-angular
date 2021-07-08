@@ -1,12 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {LoadingService} from './services/loading-service';
 import {Router} from '@angular/router';
-import {ErrorModalData, FeedbackCollectorService, MenuItem, NavbarItem} from '@elm/elm-styleguide-ui';
+import {ErrorModalData, MenuItem, NavbarItem} from '@elm/elm-styleguide-ui';
 import {ErrorService} from './services/error-service';
 import {OktaAuthService} from '@okta/okta-angular';
 import {AuthService} from './services/auth-service';
 import {UtilService} from './services/util-service';
-import {environment} from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -44,8 +43,7 @@ export class AppComponent implements OnInit {
               public authService: AuthService,
               private errorService: ErrorService,
               private oktaService: OktaAuthService,
-              private util: UtilService,
-              private feedbackCollector: FeedbackCollectorService) {
+              private util: UtilService) {
     this.loadingService.loadingSubject.subscribe((args) => {
       this.dataLoading = args[0] as boolean;
       this.label = args[1] as string;
@@ -53,8 +51,7 @@ export class AppComponent implements OnInit {
     this.initializeErrors();
   }
 
-  public async ngOnInit(): Promise<void> {
-    await this.feedbackCollector.initLoad(environment.jiraFeedbackCollectorId);
+  public ngOnInit(): void {
     this.dataLoading = false;
   }
 

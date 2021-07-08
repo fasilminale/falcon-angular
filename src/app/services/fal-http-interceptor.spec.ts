@@ -1,11 +1,14 @@
 import {TestBed} from '@angular/core/testing';
-import {HttpTestingController} from '@angular/common/http/testing';
-import {OktaAuthService, OKTA_CONFIG} from '@okta/okta-angular';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {OktaAuthModule, OktaAuthService, OKTA_CONFIG} from '@okta/okta-angular';
 import {HttpClient, HttpHeaders, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {FalHttpInterceptor} from './fal-http-interceptor';
-import {FalconTestingModule} from '../testing/falcon-testing.module';
+import {RouterTestingModule} from '@angular/router/testing';
+import {ErrorService} from './error-service';
+import {LoadingService} from './loading-service';
 
-describe('HttpInterceptor', () => {
+describe('HttpInterceptor Tests', () => {
 
   const TEST_URL = '/test';
   const TEST_RESPONSE = 'test response';
@@ -20,14 +23,26 @@ describe('HttpInterceptor', () => {
     redirectUri: 'http://localhost:4200'
   };
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [FalconTestingModule],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+        OktaAuthModule,
+        RouterTestingModule
+      ],
       providers: [
-        {provide: HTTP_INTERCEPTORS, useClass: FalHttpInterceptor, multi: true},
+        OktaAuthService,
+        ErrorService,
+        LoadingService,
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: FalHttpInterceptor,
+          multi: true
+        },
         {provide: OKTA_CONFIG, useValue: oktaConfig}
       ],
-    });
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
     oktaAuth = TestBed.inject(OktaAuthService);
     httpClient = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
@@ -39,7 +54,7 @@ describe('HttpInterceptor', () => {
 
   it('test header Authorization', async () => {
     const headers = new HttpHeaders().set('X-SKIP-INTERCEPTOR', '');
-    const promise = httpClient.get(TEST_URL, {headers}).toPromise();
+    const promise = httpClient.get(TEST_URL, {headers: headers}).toPromise();
     const req = httpMock.expectOne(TEST_URL);
     req.flush(TEST_RESPONSE);
     const response = await promise;

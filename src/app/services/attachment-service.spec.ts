@@ -1,11 +1,11 @@
 import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {of, throwError} from 'rxjs';
 import {AttachmentService} from './attachment-service';
-import {FalconTestingModule} from '../testing/falcon-testing.module';
 
-describe('AttachmentService', () => {
-
+describe('AttachmentService Tests', () => {
   let attachmentService: AttachmentService;
   let web: WebServices;
   let invoice: any;
@@ -23,12 +23,19 @@ describe('AttachmentService', () => {
     action: 'NONE'
   };
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [FalconTestingModule],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+      ],
+      providers: [
+        AttachmentService,
+        WebServices,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
+    attachmentService = TestBed.inject(AttachmentService);
     web = TestBed.inject(WebServices);
-    attachmentService = new AttachmentService(web);
     invoice = {
       falconInvoiceNumber: 'F0000000001',
       companyCode: '1234',
@@ -75,5 +82,5 @@ describe('AttachmentService', () => {
     ).toPromise();
     expect(successes).toEqual(true);
   });
-
-});
+})
+;
