@@ -122,11 +122,10 @@ export class InvoiceFormManager {
           }
         }),
       // RECALCULATE LINE ITEM TOTAL WHEN LINE ITEMS CHANGE
-      this.lineItems.valueChanges
-        .subscribe(() => this.calculateLineItemNetAmount()),
-      this.companyCode.valueChanges.subscribe(() => this.forceValueUpperCaseEvent(this.companyCode)),
-      this.vendorNumber.valueChanges.subscribe(() => this.forceValueUpperCaseEvent(this.vendorNumber)),
-      this.externalInvoiceNumber.valueChanges.subscribe(() => this.forceValueUpperCaseEvent(this.externalInvoiceNumber))
+      this.lineItems.valueChanges.subscribe(() => this.calculateLineItemNetAmount()),
+      this.companyCode.valueChanges.subscribe(() => this.forceValueToUpperCase(this.companyCode)),
+      this.vendorNumber.valueChanges.subscribe(() => this.forceValueToUpperCase(this.vendorNumber)),
+      this.externalInvoiceNumber.valueChanges.subscribe(() => this.forceValueToUpperCase(this.externalInvoiceNumber))
     );
   }
 
@@ -145,7 +144,7 @@ export class InvoiceFormManager {
     control.setValue(control.value);
   }
 
-  public forceValueUpperCaseEvent(control: AbstractControl): void {
+  public forceValueToUpperCase(control: AbstractControl): void {
     control.setValue(isFalsey(control.value) ? control.value : control.value.toUpperCase(), {emitEvent: false});
   }
 
@@ -193,10 +192,10 @@ export class InvoiceFormManager {
     const notes = new FormControl(null);
     this.establishTouchLink(notes, lineItemNetAmount);
     this.subscriptionManager.manage(
-      companyCode.valueChanges.subscribe(() => this.forceValueUpperCaseEvent(companyCode)),
-      costCenter.valueChanges.subscribe(() => this.forceValueUpperCaseEvent(costCenter)),
-      glAccount.valueChanges.subscribe(() => this.forceValueUpperCaseEvent(glAccount)),
-      notes.valueChanges.subscribe(() => this.forceValueUpperCaseEvent(notes))
+      companyCode.valueChanges.subscribe(() => this.forceValueToUpperCase(companyCode)),
+      costCenter.valueChanges.subscribe(() => this.forceValueToUpperCase(costCenter)),
+      glAccount.valueChanges.subscribe(() => this.forceValueToUpperCase(glAccount)),
+      notes.valueChanges.subscribe(() => this.forceValueToUpperCase(notes))
     );
     return new FormGroup({companyCode, costCenter, glAccount, lineItemNetAmount, notes});
   }

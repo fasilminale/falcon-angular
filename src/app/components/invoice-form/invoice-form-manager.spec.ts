@@ -20,7 +20,7 @@ describe('InvoiceFormManager', () => {
     // stub these so they don't trigger cascading events during tests
     // they are tested for their functionality in isolation.
     spyOn(invoiceFormManager, 'forceValueChangeEvent').and.stub();
-    spyOn(invoiceFormManager, 'forceValueUpperCaseEvent').and.stub();
+    spyOn(invoiceFormManager, 'forceValueToUpperCase').and.callThrough();
     spyOn(invoiceFormManager, 'establishTouchLink').and.stub();
   });
 
@@ -274,9 +274,8 @@ describe('InvoiceFormManager', () => {
     let control: AbstractControl;
     beforeEach(() => {
       // un-stubbed for isolated testing
-      (invoiceFormManager.forceValueUpperCaseEvent as Spy).and.callThrough();
       control = createSpyFormControl();
-      invoiceFormManager.forceValueUpperCaseEvent(control);
+      invoiceFormManager.forceValueToUpperCase(control);
     });
     it('should make a redundant setValue call', () => {
       expect(control.setValue).toHaveBeenCalledOnceWith(control.value, {emitEvent: false});
