@@ -123,7 +123,7 @@ describe('ManageMyTemplatesComponent', () => {
     spyOn(util, 'openSnackBar').and.stub();
     spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 404}));
     component.updateTemplate(template);
-    expect(util.openSnackBar).toHaveBeenCalledWith(`Failure! Template has been failed.`);
+    expect(util.openSnackBar).toHaveBeenCalledWith(`Failure! Template not saved.`);
   });
 
   it('should update template failed with error code 422', () => {
