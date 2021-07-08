@@ -1,9 +1,9 @@
-import {Inject, Injectable} from '@angular/core';
-import {AbstractControl, Form, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {Injectable} from '@angular/core';
+import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'rxjs/operators';
 import {isFalsey} from '../../utils/predicates';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
+import {SubscriptionManager} from '../../services/subscription-manager';
 
 /* VALIDATORS */
 const {required, pattern} = Validators;
@@ -44,7 +44,7 @@ export class InvoiceFormManager {
 
   /* MISC FORM CONTROLS */
   public selectedTemplate = new FormControl();
-
+  
   readonly allowedCharacters = '^[a-zA-Z0-9_-]+$';
 
   /* VALUE OPTIONS */
@@ -60,7 +60,7 @@ export class InvoiceFormManager {
 
   public totalLineItemNetAmount = 0;
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
+  constructor(private subscriptionManager: SubscriptionManager) {
   }
 
   public init(): void {

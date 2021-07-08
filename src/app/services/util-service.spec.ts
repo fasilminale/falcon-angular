@@ -1,13 +1,11 @@
 import {TestBed} from '@angular/core/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {UtilService} from './util-service';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {of} from 'rxjs';
-import {FalconTestingModule} from '../testing/falcon-testing.module';
 
-describe('UtilService', () => {
-
-  let snackbar: MatSnackBar;
+describe('UtilService Tests', () => {
   let util: UtilService;
   let dialog: MatDialog;
 
@@ -31,13 +29,22 @@ describe('UtilService', () => {
     close: null
   });
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [FalconTestingModule],
-    });
-    snackbar = TestBed.inject(MatSnackBar);
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        MatSnackBarModule,
+        MatDialogModule
+      ],
+      providers: [
+        UtilService,
+        MatSnackBar,
+        MatDialog,
+        MatSnackBar,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
+    util = TestBed.inject(UtilService);
     dialog = TestBed.inject(MatDialog);
-    util = new UtilService(snackbar, dialog);
   });
 
   it('should create', () => {
@@ -80,4 +87,5 @@ describe('UtilService', () => {
     expect(result).toBeFalse();
   });
 
-});
+})
+;

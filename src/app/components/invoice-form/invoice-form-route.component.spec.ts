@@ -18,7 +18,6 @@ import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
 import {SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager} from './invoice-form-manager';
-import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('InvoiceFormComponent ROUTING', () => {
   let component: InvoiceFormComponent;
@@ -68,9 +67,26 @@ describe('InvoiceFormComponent ROUTING', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FalconTestingModule],
+      imports: [
+        RouterTestingModule,
+        HttpClientTestingModule,
+        MatSnackBarModule,
+        NoopAnimationsModule,
+        MatDialogModule,
+      ],
       declarations: [InvoiceFormComponent],
       providers: [
+        WebServices,
+        MatSnackBar,
+        MatDialog,
+        LoadingService,
+        MatSnackBar,
+        InvoiceService,
+        AttachmentService,
+        TemplateService,
+        UtilService,
+        SubscriptionManager,
+        InvoiceFormManager,
         {provide: ActivatedRoute, useValue: route},
         {provide: Router, useValue: mockRouter}
       ],

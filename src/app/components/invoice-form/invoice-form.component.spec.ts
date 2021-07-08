@@ -19,7 +19,6 @@ import {Router} from '@angular/router';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager, validateDate} from './invoice-form-manager';
-import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('InvoiceFormComponent', () => {
 
@@ -202,7 +201,6 @@ describe('InvoiceFormComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        FalconTestingModule,
         RouterTestingModule,
         HttpClientTestingModule,
         MatSnackBarModule,
@@ -219,6 +217,8 @@ describe('InvoiceFormComponent', () => {
         AttachmentService,
         TemplateService,
         UtilService,
+        SubscriptionManager,
+        InvoiceFormManager,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();

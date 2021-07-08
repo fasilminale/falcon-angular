@@ -1,22 +1,20 @@
 import {Injectable} from '@angular/core';
-import {HttpHandler, HttpInterceptor, HttpRequest, HttpEvent, HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HttpHandler, HttpInterceptor, HttpRequest, HttpEvent} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {ErrorService} from './error-service';
+import {WebServices} from './web-services';
 import {LoadingService} from './loading-service';
 import {OktaAuthService} from '@okta/okta-angular';
 
 @Injectable()
-export class FalHttpInterceptor implements HttpInterceptor {
-
-  static readonly PROVIDER = {provide: HTTP_INTERCEPTORS, useClass: FalHttpInterceptor, multi: true};
+export class FalHttpInterceptor implements HttpInterceptor{
 
   readonly skipInterceptorHeader = 'X-SKIP-INTERCEPTOR';
 
   constructor(private errorService: ErrorService,
               private oktaAuth: OktaAuthService,
-              private loadingService: LoadingService) {
-  }
+              private loadingService: LoadingService) {}
 
   intercept(request: HttpRequest<any>,
             next: HttpHandler): Observable<HttpEvent<any>> {
@@ -24,7 +22,7 @@ export class FalHttpInterceptor implements HttpInterceptor {
       headers: request.headers.set('Authorization', `Bearer ${this.oktaAuth.getAccessToken()}`),
     });
 
-    if (request.headers.has(this.skipInterceptorHeader)) {
+    if(request.headers.has(this.skipInterceptorHeader)){
       const headers = modifiedReq.headers.delete(this.skipInterceptorHeader);
       return next.handle(request.clone({headers}));
     } else {

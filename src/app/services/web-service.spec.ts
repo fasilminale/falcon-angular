@@ -1,8 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
-import {HttpTestingController,} from '@angular/common/http/testing';
-import {FalconTestingModule} from '../testing/falcon-testing.module';
-import {HttpClient} from '@angular/common/http';
+import {HttpClientTestingModule, HttpTestingController, TestRequest} from '@angular/common/http/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('WebService Tests', () => {
 
@@ -13,12 +12,18 @@ describe('WebService Tests', () => {
   let http: HttpTestingController;
   let web: WebServices;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [FalconTestingModule],
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+      ],
+      providers: [
+        WebServices,
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    }).compileComponents();
     http = TestBed.inject(HttpTestingController);
-    web = new WebServices(TestBed.inject(HttpClient));
+    web = TestBed.inject(WebServices);
   });
 
   afterEach(() => {
