@@ -74,7 +74,7 @@ export class ManageMyTemplatesComponent implements OnInit {
             if(error.status === 422) {
               template.isError = true;
             } else {
-              this.onFail(`Failure! Template has been failed.`);
+              this.onFail(`Failure! Template not saved.`);
             }
           },
           () => {
