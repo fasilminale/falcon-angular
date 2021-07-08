@@ -11,8 +11,7 @@ import {NG_VALUE_ACCESSOR} from '@angular/forms';
            [disabled]="isDisabled"
            [accept]="accept"
            (change)="onChildInputChange($event)"
-    />`
-    ,
+    />`,
   styleUrls: ['./fal-file-input.component.scss'],
   providers: [
     {

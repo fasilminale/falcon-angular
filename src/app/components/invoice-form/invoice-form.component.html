@@ -170,7 +170,7 @@
             <app-fal-date-input id="external-invoice-date-input"
                                 formControlName="invoiceDate"
                                 [isDisabled]="readOnly"
-                                (focus)="focusInvoicDate()"
+                                (focus)="focusInvoiceDate()"
                                 [isError]="!!(form.invoiceDate.errors
                                               && (form.invoiceDate.hasError('required')
                                               && form.invoiceDate.touched
