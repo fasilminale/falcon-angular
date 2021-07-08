@@ -1,4 +1,11 @@
-input[type=file]::-webkit-file-upload-button {
+#fileInput::-webkit-file-upload-button, #fileInput::file-selector-button{
     float: right;
     margin-right: -13px;
+    background-color: #407aa0;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 1;
+    padding: 8px 12px;
+    letter-spacing: 1.25px;
  }
