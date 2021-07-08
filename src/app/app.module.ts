@@ -5,7 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {WebServices} from './services/web-services';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {ButtonModule, ContainersModule, DataTableModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
+import {ButtonModule, ContainersModule, DataTableModule, InputsModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-create-page.component';
@@ -41,8 +41,8 @@ import {AuthService} from './services/auth-service';
 import {ErrorService} from './services/error-service';
 import {FalHttpInterceptor} from './services/fal-http-interceptor';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
-import { FalContainerComponent } from './components/fal-container/fal-container.component';
-import {SubscriptionManager} from './services/subscription-manager';
+import {FalContainerComponent} from './components/fal-container/fal-container.component';
+import {RealSubscriptionManager} from './services/subscription-manager';
 import {InvoiceFormManager} from './components/invoice-form/invoice-form-manager';
 
 const getOktaConfig = () => {
@@ -131,7 +131,8 @@ const oktaConfig = {
     MatTableModule,
     NgbModule,
     NgxCurrencyModule,
-    InputMaskModule
+    InputMaskModule,
+    InputsModule
   ],
   providers: [
     WebServices,
@@ -143,14 +144,14 @@ const oktaConfig = {
     TemplateService,
     UtilService,
     TimeService,
-    SubscriptionManager,
     ErrorService,
     OktaAuthGuard,
     OktaAuthService,
     AuthService,
     InvoiceFormManager,
+    RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
-    {provide: HTTP_INTERCEPTORS, useClass: FalHttpInterceptor, multi: true},
+    FalHttpInterceptor.PROVIDER,
   ],
   bootstrap: [
     AppComponent

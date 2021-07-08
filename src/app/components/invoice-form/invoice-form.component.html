@@ -26,7 +26,7 @@
 
           <!-- MY TEMPLATE SELECT -->
           <div *ngIf="!isOnEditPage" class="col-12">
-            <label for="my-templates-input" class="form-label fieldLabel1">
+            <label for="my-templates-input" class="fal-label">
               My Templates (optional)
             </label>
             <ng-select id="my-templates-input"
@@ -39,7 +39,7 @@
 
           <!-- WORK TYPE -->
           <div class="col-12">
-            <label for="work-type-input" class="form-label fieldLabel1">
+            <label for="work-type-input" class="fal-label">
               Work Type
             </label>
             <ng-select id="work-type-input"
@@ -61,7 +61,7 @@
 
           <!-- COMPANY CODE -->
           <div class="col-12">
-            <label for="company-code-input" class="form-label fieldLabel1">
+            <label for="company-code-input" class="fal-label">
               Company Code
             </label>
             <input type="text"
@@ -89,7 +89,7 @@
 
           <!-- ERP TYPE -->
           <div class="col-12">
-            <label for="erp-type-input" class="form-label fieldLabel1">
+            <label for="erp-type-input" class="fal-label">
               ERP Type
             </label>
             <app-fal-radio-input id="erp-type-input"
@@ -109,7 +109,7 @@
 
           <!-- VENDOR NUMBER -->
           <div class="col-12">
-            <label for="vendor-number-input" class="form-label fieldLabel1">
+            <label for="vendor-number-input" class="fal-label">
               Vendor Number
             </label>
             <input type="text"
@@ -136,7 +136,7 @@
 
           <!-- EXTERNAL INVOICE NUMBER -->
           <div class="col-12">
-            <label for="external-invoice-number-input" class="form-label fieldLabel1">
+            <label for="external-invoice-number-input" class="fal-label">
               External Invoice Number
             </label>
             <input type="text"
@@ -164,7 +164,7 @@
 
           <!-- EXTERNAL INVOICE DATE -->
           <div class="col-12">
-            <label for="external-invoice-date-input" class="form-label fieldLabel1">
+            <label for="external-invoice-date-input" class="fal-label">
               External Invoice Date
             </label>
             <app-fal-date-input id="external-invoice-date-input"
@@ -190,7 +190,7 @@
 
           <!-- INVOICE AMOUNT -->
           <div class="col-12">
-            <label for="invoice-amount-input" class="form-label fieldLabel1">
+            <label for="invoice-amount-input" class="fal-label">
               Invoice Net Amount
             </label>
             <app-fal-currency-input id="invoice-amount-input"
@@ -210,7 +210,7 @@
 
           <!-- CURRENCY -->
           <div class="col-12">
-            <label for="currency-input" class="form-label fieldLabel1">
+            <label for="currency-input" class="fal-label">
               Currency
             </label>
             <app-fal-radio-input id="currency-input"
@@ -232,7 +232,7 @@
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
           <div [formGroup]="form.osptFormGroup">
             <label for="override-stp-checkbox"
-                   class="form-label fieldLabel1">
+                   class="fal-label">
               <input id="override-stp-checkbox"
                      type="checkbox"
                      (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
@@ -274,10 +274,10 @@
               <div class="d-flex flex-row col-2 align-items-stretch">
                 <!-- LINE ITEM - NUMBER -->
                 <div class="d-flex flex-column flex-shrink-1 justify-content-start">
-                  <label *ngIf="i === 0" class="form-label fieldLabel1 invisible">
+                  <label *ngIf="i === 0" class="fal-label invisible">
                     #
                   </label>
-                  <div class="fake-form-control">
+                  <div class="fake-form-control line-item-number">
                     {{i + 1}}
                   </div>
                   <small class="error-text invisible">
@@ -287,7 +287,7 @@
 
                 <!-- LINE ITEM - COMPANY CODE -->
                 <div class="flex-grow-1">
-                  <label *ngIf="i === 0" class="form-label fieldLabel1">
+                  <label *ngIf="i === 0" class="fal-label">
                     Company Code
                   </label>
                   <input type="text"
@@ -313,7 +313,7 @@
 
               <!-- LINE ITEM - COST CENTER -->
               <div class="col-2">
-                <label *ngIf="i === 0" class="form-label fieldLabel1">
+                <label *ngIf="i === 0" class="fal-label">
                   Cost Center
                 </label>
                 <input type="text"
@@ -343,7 +343,7 @@
 
               <!-- LINE ITEM - GL ACCOUNT -->
               <div class="col-2">
-                <label *ngIf="i === 0" class="form-label fieldLabel1">
+                <label *ngIf="i === 0" class="fal-label">
                   GL Account
                 </label>
                 <input type="text"
@@ -373,7 +373,7 @@
 
               <!-- LINE ITEM - NET AMOUNT -->
               <div class="col-2">
-                <label *ngIf="i === 0" class="form-label fieldLabel1">
+                <label *ngIf="i === 0" class="fal-label">
                   Line Net Amount
                 </label>
                 <app-fal-currency-input formControlName="lineItemNetAmount"
@@ -392,7 +392,7 @@
               <div class="d-flex col-4 align-items-start">
                 <!-- LINE ITEM - NOTES -->
                 <div class="flex-grow-1">
-                  <label *ngIf="i === 0" class="form-label fieldLabel1">
+                  <label *ngIf="i === 0" class="fal-label">
                     Notes (optional)
                   </label>
                   <input type="text"
@@ -409,7 +409,7 @@
 
                 <!-- LINE ITEM - REMOVE -->
                 <div class="flex-shrink-1">
-                  <label *ngIf="i === 0" class="form-label fieldLabel1 invisible">
+                  <label *ngIf="i === 0" class="fal-label invisible">
                     remove
                   </label>
                   <div>
@@ -442,18 +442,22 @@
                 <u>+ Add New Line Item</u>
               </elm-button>
             </div>
-            <div class="col-2 line-item-total-amount">
-              ${{form.totalLineItemNetAmount | number : '1.2-2'}}
+            <div class="col-2">
+              <div class="fake-form-control line-item-total-amount">
+                ${{form.totalLineItemNetAmount | number : '1.2-2'}}
+              </div>
             </div>
-            <div class="col-4 form-label fieldLabel1">
-              Line Net Amount Total
+            <div class="col-4">
+              <div class="fake-form-control">
+                Line Net Amount Total
+              </div>
             </div>
           </div>
         </elm-card>
 
         <div class="col-6" style="padding-right: 44px">
           <!-- COMMENTS -->
-          <label for="comments-input" class="form-label fieldLabel1">
+          <label for="comments-input" class="fal-label">
             General Comments (optional)
           </label>
           <textarea id="comments-input"

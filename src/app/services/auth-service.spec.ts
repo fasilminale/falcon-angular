@@ -1,52 +1,40 @@
 import {TestBed} from '@angular/core/testing';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { OktaAuthModule, OktaAuthService, OKTA_CONFIG } from '@okta/okta-angular';
-import { WebServices } from './web-services';
-import { AuthService } from './auth-service';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FalHttpInterceptor } from './fal-http-interceptor';
-import { of } from 'rxjs';
-import { RouterTestingModule } from '@angular/router/testing';
+import {OktaAuthService, OKTA_CONFIG} from '@okta/okta-angular';
+import {WebServices} from './web-services';
+import {AuthService} from './auth-service';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {FalHttpInterceptor} from './fal-http-interceptor';
+import {of} from 'rxjs';
+import {FalconTestingModule} from '../testing/falcon-testing.module';
 
-describe('AuthService Tests', () => {
-    let oktaAuth: OktaAuthService;
-    let webServices: WebServices;
-    let authService: AuthService;
+describe('AuthService', () => {
 
-    const userInfo = {
-        firstName: 'Rob',
-        lastName: 'Hermance-Moore',
-        email: ''
-      }; 
-      const oktaConfig = {
-        issuer: 'https://not-real.okta.com',
-        clientId: 'fake-client-id',
-        redirectUri: 'http://localhost:4200'
-      };
-    
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule, OktaAuthModule, RouterTestingModule
-      ],
-      
+  let oktaAuth: OktaAuthService;
+  let webServices: WebServices;
+  let authService: AuthService;
+
+  const userInfo = {
+    firstName: 'Rob',
+    lastName: 'Hermance-Moore',
+    email: ''
+  };
+  const oktaConfig = {
+    issuer: 'https://not-real.okta.com',
+    clientId: 'fake-client-id',
+    redirectUri: 'http://localhost:4200'
+  };
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [FalconTestingModule],
       providers: [
-        OktaAuthService,
-        WebServices,
-        AuthService,
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: FalHttpInterceptor,
-            multi: true
-        },
+        {provide: HTTP_INTERCEPTORS, useClass: FalHttpInterceptor, multi: true},
         {provide: OKTA_CONFIG, useValue: oktaConfig}
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    }).compileComponents();
+    });
     oktaAuth = TestBed.inject(OktaAuthService);
     webServices = TestBed.inject(WebServices);
-    authService = TestBed.inject(AuthService);
+    authService = new AuthService(oktaAuth, webServices);
   });
 
   it('should create', () => {
@@ -60,5 +48,4 @@ describe('AuthService Tests', () => {
     expect(authService.isAuthenticated).toBeTruthy();
   });
 
-})
-;
+});
