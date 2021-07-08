@@ -23,6 +23,7 @@ import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-manager';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -86,6 +87,7 @@ describe('InvoiceDetailPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        FalconTestingModule,
         RouterTestingModule,
         HttpClientTestingModule,
         MatSnackBarModule,
@@ -107,8 +109,6 @@ describe('InvoiceDetailPageComponent', () => {
         LoadingService,
         MatSnackBar,
         TimeService,
-        SubscriptionManager,
-        InvoiceFormManager,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();

@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     this.initializeErrors();
   }
 
-  public ngOnInit(): void {
+  public async ngOnInit(): Promise<void> {
     this.dataLoading = false;
   }
 

@@ -1,44 +1,42 @@
 import {TestBed} from '@angular/core/testing';
-import {SubscriptionManager} from './subscription-manager';
+import {RealSubscriptionManager} from './subscription-manager';
 import {of, Subscription} from 'rxjs';
+import {FalconTestingModule} from '../testing/falcon-testing.module';
 
-describe('SubscriptionManager', () => {
+describe('RealSubscriptionManager', () => {
 
-  let subscriptionManager: SubscriptionManager;
+  let realSubscriptionManager: RealSubscriptionManager;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [],
-      providers: [SubscriptionManager],
-      schemas: []
-    }).compileComponents();
-    subscriptionManager = TestBed.inject(SubscriptionManager);
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [FalconTestingModule]
+    });
+    realSubscriptionManager = new RealSubscriptionManager();
   });
 
   it('should create.', () => {
-    expect(subscriptionManager).toBeTruthy();
+    expect(realSubscriptionManager).toBeTruthy();
   });
 
   it('should start empty.', () => {
-    const subscriptions = subscriptionManager.getSubscriptions();
-    expect(subscriptions).toBeTruthy();
-    expect(subscriptions.length).toEqual(0);
+    expect(realSubscriptionManager.subscriptions).toBeTruthy();
+    expect(realSubscriptionManager.subscriptions.length).toEqual(0);
   });
 
   describe('given a subscription.', () => {
     let subscription: Subscription;
     beforeEach(() => {
       subscription = of(true).subscribe(() => true);
-      subscriptionManager.manage(subscription);
+      realSubscriptionManager.manage(subscription);
     });
 
     it('should store subscription.', () => {
-      expect(subscriptionManager.getSubscriptions().length).toEqual(1);
+      expect(realSubscriptionManager.subscriptions.length).toEqual(1);
     });
 
     it(', when ngOnDestroy called, should unsubscribe.', () => {
       spyOn(subscription, 'unsubscribe').and.callThrough();
-      subscriptionManager.ngOnDestroy();
+      realSubscriptionManager.ngOnDestroy();
       expect(subscription.unsubscribe).toHaveBeenCalled();
     });
 

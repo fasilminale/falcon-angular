@@ -1,9 +1,9 @@
-import {Injectable} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {Inject, Injectable} from '@angular/core';
+import {AbstractControl, Form, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {filter} from 'rxjs/operators';
 import {isFalsey} from '../../utils/predicates';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {SubscriptionManager} from '../../services/subscription-manager';
+import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 
 /* VALIDATORS */
 const {required, pattern} = Validators;
@@ -44,7 +44,7 @@ export class InvoiceFormManager {
 
   /* MISC FORM CONTROLS */
   public selectedTemplate = new FormControl();
-  
+
   readonly allowedCharacters = '^[a-zA-Z0-9_-]+$';
 
   /* VALUE OPTIONS */
@@ -60,7 +60,7 @@ export class InvoiceFormManager {
 
   public totalLineItemNetAmount = 0;
 
-  constructor(private subscriptionManager: SubscriptionManager) {
+  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
   }
 
   public init(): void {
@@ -111,10 +111,16 @@ export class InvoiceFormManager {
     this.establishTouchLink(this.lineItems, this.osptFormGroup);
     this.establishTouchLink(this.comments, this.lineItems);
     this.subscriptionManager.manage(
-      // CLEAR PAYMENT TERMS SELECTION WHEN UNSELECTING OVERRIDE
+      // HANDLE PAYMENT TERMS WHEN OVERRIDE SELECTION CHANGES
       this.isPaymentOverrideSelected.valueChanges
-        .pipe(filter(isFalsey))
-        .subscribe(() => this.paymentTerms.reset()),
+        .subscribe((selected: boolean) => {
+          if (selected) {
+            this.paymentTerms.enable();
+          } else {
+            this.paymentTerms.reset();
+            this.paymentTerms.disable();
+          }
+        }),
       // RECALCULATE LINE ITEM TOTAL WHEN LINE ITEMS CHANGE
       this.lineItems.valueChanges
         .subscribe(() => this.calculateLineItemNetAmount())
