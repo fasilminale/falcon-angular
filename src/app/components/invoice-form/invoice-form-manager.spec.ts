@@ -20,6 +20,7 @@ describe('InvoiceFormManager', () => {
     // stub these so they don't trigger cascading events during tests
     // they are tested for their functionality in isolation.
     spyOn(invoiceFormManager, 'forceValueChangeEvent').and.stub();
+    spyOn(invoiceFormManager, 'forceValueUpperCaseEvent').and.stub();
     spyOn(invoiceFormManager, 'establishTouchLink').and.stub();
   });
 
@@ -139,7 +140,7 @@ describe('InvoiceFormManager', () => {
               invoiceFormManager.lineItemGroup(0).controls.companyCode.setValue('company code');
             });
             it('should be able to get line item\'s company code', () => {
-              expect(invoiceFormManager.lineItemCompanyCode(0).value).toEqual('company code');
+              expect(invoiceFormManager.lineItemCompanyCode(0).value).toEqual('COMPANY CODE');
             });
             it('should have called calculateLineItemNetAmount twice', () => {
               expect(invoiceFormManager.calculateLineItemNetAmount).toHaveBeenCalledTimes(2);
@@ -150,7 +151,7 @@ describe('InvoiceFormManager', () => {
               invoiceFormManager.lineItemGroup(0).controls.costCenter.setValue('cost center');
             });
             it('should be able to get line item\'s cost center', () => {
-              expect(invoiceFormManager.lineItemCostCenter(0).value).toEqual('cost center');
+              expect(invoiceFormManager.lineItemCostCenter(0).value).toEqual('COST CENTER');
             });
             it('should have called calculateLineItemNetAmount twice', () => {
               expect(invoiceFormManager.calculateLineItemNetAmount).toHaveBeenCalledTimes(2);
@@ -161,7 +162,7 @@ describe('InvoiceFormManager', () => {
               invoiceFormManager.lineItemGroup(0).controls.glAccount.setValue('gl account');
             });
             it('should be able to get line item\'s GL account', () => {
-              expect(invoiceFormManager.lineItemGlAccount(0).value).toEqual('gl account');
+              expect(invoiceFormManager.lineItemGlAccount(0).value).toEqual('GL ACCOUNT');
             });
             it('should have called calculateLineItemNetAmount twice', () => {
               expect(invoiceFormManager.calculateLineItemNetAmount).toHaveBeenCalledTimes(2);
@@ -183,7 +184,7 @@ describe('InvoiceFormManager', () => {
               invoiceFormManager.lineItemGroup(0).controls.notes.setValue('notes');
             });
             it('should be able to get line item\'s notes', () => {
-              expect(invoiceFormManager.lineItemNotes(0).value).toEqual('notes');
+              expect(invoiceFormManager.lineItemNotes(0).value).toEqual('NOTES');
             });
             it('should have called calculateLineItemNetAmount twice', () => {
               expect(invoiceFormManager.calculateLineItemNetAmount).toHaveBeenCalledTimes(2);
@@ -267,5 +268,20 @@ describe('InvoiceFormManager', () => {
       expect(control.setValue).toHaveBeenCalledOnceWith(control.value);
     });
   });
+
+  // FORCE UPPERCASE EVENT TESTS
+  describe('when forceValueUpperCaseEvent is called', () => {
+    let control: AbstractControl;
+    beforeEach(() => {
+      // un-stubbed for isolated testing
+      (invoiceFormManager.forceValueUpperCaseEvent as Spy).and.callThrough();
+      control = createSpyFormControl();
+      invoiceFormManager.forceValueUpperCaseEvent(control);
+    });
+    it('should make a redundant setValue call', () => {
+      expect(control.setValue).toHaveBeenCalledOnceWith(control.value, {emitEvent: false});
+    });
+  });
+
 
 });
