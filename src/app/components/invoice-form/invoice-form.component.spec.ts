@@ -17,6 +17,7 @@ import {AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
 import {Router} from '@angular/router';
 import {Template, TemplateToSave} from '../../models/template/template-model';
+import {SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager, validateDate} from './invoice-form-manager';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 

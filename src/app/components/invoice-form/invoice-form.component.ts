@@ -616,5 +616,4 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         });
         return isCompanyCodeChanged;
     }
-
 }

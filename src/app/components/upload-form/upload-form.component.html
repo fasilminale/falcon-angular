@@ -1,5 +1,5 @@
 <form [formGroup]="formGroup">
-  <label class="fal-label">
+  <label class="form-label fieldLabel1">
     Upload Attachments
   </label>
   <div class="form-control upload-container" [ngClass]="(!externalAttachment && !pristine) ? 'error' : ''">
@@ -13,7 +13,7 @@
       <div class="col-6">
         <!-- FILE CHOOSER -->
         <label for="file-chooser-input"
-               class="fal-label">
+               class="form-label fieldLabel1">
           File
         </label>
         <app-fal-file-input id="file-chooser-input"
@@ -21,13 +21,13 @@
                             accept=".eml, .doc, .jpg, .pdf, .xlsx"
                             [isDisabled]="isDisabled">
         </app-fal-file-input>
-        <div class="fal-label p-1">
+        <div class="form-label fieldLabel1 p-1">
           Maximum file size 50MB
         </div>
 
         <!-- ATTACHMENT TYPE -->
         <label for="attachment-type-input"
-               class="fal-label">
+               class="form-label fieldLabel1">
           Document Type
         </label>
         <ng-select id="attachment-type-input"

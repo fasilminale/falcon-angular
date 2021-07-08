@@ -5,7 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {WebServices} from './services/web-services';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {ButtonModule, ContainersModule, DataTableModule, InputsModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
+import {ButtonModule, ContainersModule, DataTableModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-create-page.component';
@@ -131,8 +131,7 @@ const oktaConfig = {
     MatTableModule,
     NgbModule,
     NgxCurrencyModule,
-    InputMaskModule,
-    InputsModule
+    InputMaskModule
   ],
   providers: [
     WebServices,
