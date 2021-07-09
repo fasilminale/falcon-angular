@@ -16,6 +16,7 @@ import {
     FormGroup,
     NG_VALUE_ACCESSOR,
     ValidationErrors,
+    ValidatorFn,
     Validators
 } from '@angular/forms';
 import {WebServices} from '../../services/web-services';
@@ -499,6 +500,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             title: 'Invalid Amount(s)',
             innerHtmlMessage: `Total of Line Net Amount(s) must equal Invoice Net Amount.`
         });
+        this.form.validateInvoiceNetAmountSum();
     }
 
     private onInvoiceIsDuplicate(): void {
@@ -616,5 +618,4 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         });
         return isCompanyCodeChanged;
     }
-
 }

@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {AbstractControl, Form, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, Form, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {filter} from 'rxjs/operators';
 import {isFalsey} from '../../utils/predicates';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
@@ -70,7 +70,7 @@ export class InvoiceFormManager {
     this.vendorNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
     this.externalInvoiceNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
     this.invoiceDate = new FormControl({value: null}, [required, validateDate]);
-    this.amountOfInvoice = new FormControl({value: 0}, [required]);
+    this.amountOfInvoice = new FormControl({value: 0}, [required, this.validateInvoiceNetAmount()]);
     this.currency = new FormControl({value: null}, [required]);
     this.isPaymentOverrideSelected = new FormControl({value: false});
     this.paymentTerms = new FormControl({value: null});
@@ -194,5 +194,30 @@ export class InvoiceFormManager {
       const lineItemGroup = (control as FormGroup);
       this.totalLineItemNetAmount += parseFloat(lineItemGroup.controls.lineItemNetAmount.value);
     }
+  }
+
+  validateInvoiceNetAmount(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        const value = control.value > 0;
+        return value ? null : {isGreaterThanZero: {value: control.value}};
+      };
+  }
+
+  validateInvoiceNetAmountSum() {
+    const amountOfInvoice = this.invoiceFormGroup?.controls.amountOfInvoice?.value;
+        console.log(amountOfInvoice);
+        if(amountOfInvoice && parseFloat(amountOfInvoice) === this.totalLineItemNetAmount) {
+          this.invoiceFormGroup?.controls.amountOfInvoice?.setErrors({isSumEqual: false});
+          for (const control of this.lineItems.controls) {
+            const lineItemGroup = (control as FormGroup);
+            lineItemGroup.controls.lineItemNetAmount.setErrors({isSumEqual: false});
+          }
+        } else {
+          this.invoiceFormGroup?.controls.amountOfInvoice?.setErrors({isSumEqual: true});
+          for (const control of this.lineItems.controls) {
+            const lineItemGroup = (control as FormGroup);
+            lineItemGroup.controls.lineItemNetAmount.setErrors({isSumEqual: true});
+          }
+        }
   }
 }
