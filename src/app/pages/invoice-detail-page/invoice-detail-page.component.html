@@ -14,14 +14,6 @@
                   (buttonClick)="saveAsTemplate()">
         <u>Save as Template</u>
       </elm-button>
-      <elm-button id="edit-button"
-                  buttonType="button"
-                  buttonStyle="secondary"
-                  class="flex-shrink-1 header-button"
-                  [isDisabled]="!readOnly || isDeletedInvoice || isSubmittedInvoice"
-                  (buttonClick)="editInvoice()">
-        Edit
-      </elm-button>
       <elm-button id="delete-button"
                   buttonType="button"
                   buttonStyle="secondary"
@@ -29,6 +21,14 @@
                   [isDisabled]="isDeletedInvoice || isSubmittedInvoice"
                   (buttonClick)="deleteInvoice()">
         Delete
+      </elm-button>
+      <elm-button id="edit-button"
+                  buttonType="button"
+                  buttonStyle="primary"
+                  class="flex-shrink-1 header-button"
+                  [isDisabled]="!readOnly || isDeletedInvoice || isSubmittedInvoice"
+                  (buttonClick)="editInvoice()">
+        Edit
       </elm-button>
     </div>
   </div>
