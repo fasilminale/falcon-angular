@@ -44,11 +44,12 @@
       <mat-nav-list>
         <div class="milestone"
              *ngFor="let milestone of this.milestones; index as i">
-          {{milestone.status.milestoneLabel}}<br/>
-          at {{formatTimestamp(milestone.timestamp)}}<br/>
-          by {{milestone.user}}
-          <div *ngIf="!!milestone.comments">{{!!invoiceForm ? invoiceForm.getCommentLabelPrefix(milestone) : ''}}
+          <div class="elm-div2 milestone-label"> {{milestone.status.milestoneLabel}}</div>
+          <div class="elm-div2 milestone-sub" *ngIf="!!milestone.comments">{{!!invoiceForm ? invoiceForm.getCommentLabelPrefix(milestone) : ''}}
             Comments: "{{milestone.comments}}"
+          </div>
+          <div class="elm-field-sub1 milestone-sub">
+            {{formatTimestamp(milestone.timestamp)}} by {{milestone.user}}
           </div>
         </div>
       </mat-nav-list>
