@@ -1,28 +1,21 @@
 import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {of, throwError} from 'rxjs';
+import {of} from 'rxjs';
 import {InvoiceService} from './invoice-service';
+import {FalconTestingModule} from '../testing/falcon-testing.module';
 
-describe('InvoiceService Tests', () => {
+describe('InvoiceService', () => {
+
   let invoiceService: InvoiceService;
   let web: WebServices;
   let invoice: any;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule,
-      ],
-      providers: [
-        InvoiceService,
-        WebServices,
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    }).compileComponents();
-    invoiceService = TestBed.inject(InvoiceService);
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [FalconTestingModule],
+    });
     web = TestBed.inject(WebServices);
+    invoiceService = new InvoiceService(web);
     invoice = {
       falconInvoiceNumber: 'F0000000001',
       companyCode: '1234',
