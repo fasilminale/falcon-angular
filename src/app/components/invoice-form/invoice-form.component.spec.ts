@@ -19,6 +19,7 @@ import {Router} from '@angular/router';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager, validateDate} from './invoice-form-manager';
+import { UploadFormComponent } from '../upload-form/upload-form.component';
 
 describe('InvoiceFormComponent', () => {
 
@@ -207,7 +208,7 @@ describe('InvoiceFormComponent', () => {
         NoopAnimationsModule,
         MatDialogModule,
       ],
-      declarations: [InvoiceFormComponent],
+      declarations: [InvoiceFormComponent, UploadFormComponent],
       providers: [
         WebServices,
         MatSnackBar,
@@ -768,5 +769,13 @@ describe('InvoiceFormComponent', () => {
       expect(getInvoice).toHaveBeenCalled();
       expect(emit).not.toHaveBeenCalled();
     });
+  });
+  it('should set uploadFromComponent dirty', () => {
+    const childFixture = TestBed.createComponent(UploadFormComponent);
+    component.focusInvoiceDate();
+    component.uploadFormComponent = childFixture.componentInstance;
+    component.focusInvoiceDate();
+    const isDirty = component.uploadFormComponent?.formGroup.dirty;
+    expect(isDirty).toBeTruthy();
   });
 });

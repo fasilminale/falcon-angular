@@ -619,6 +619,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         this.form.forceValueChangeEvent(this.form.invoiceDate);
         if (this.uploadFormComponent) {
             this.uploadFormComponent.pristine = false;
+            this.uploadFormComponent.formGroup.markAsDirty();
         }
     }
 }

@@ -3,7 +3,7 @@
   <label class="elm-h3 attachment-label ">
     Upload Attachments
   </label>
-  <div class="form-control upload-container" [ngClass]="(!externalAttachment && !pristine) ? 'error' : ''">
+  <div class="form-control upload-container" [ngClass]="(!externalAttachment && (!pristine || formGroup.dirty )) ? 'error' : ''">
     <div class="row">
       <div class="col-6">
         <!-- FILE CHOOSER -->
@@ -72,7 +72,7 @@
     </div>
   </div>
   <small class="error-text"
-         *ngIf="(!externalAttachment && !pristine)">
+         *ngIf="(!externalAttachment && (!pristine || formGroup.dirty ))">
     External Invoice is required
   </small>
 </form>
