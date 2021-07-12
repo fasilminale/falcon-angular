@@ -46,7 +46,7 @@ export class InvoiceFormManager {
   public selectedTemplate = new FormControl();
 
   readonly allowedCharacters = '^[a-zA-Z0-9_-]+$';
-
+  public isInvoiceAmountValid = true;
   /* VALUE OPTIONS */
   // TODO replace these with calls to the backend?
   public workTypeOptions = ['Indirect Non-PO Invoice'];
@@ -91,7 +91,12 @@ export class InvoiceFormManager {
       currency: this.currency,
       comments: this.comments,
       lineItems: this.lineItems
-    });
+    },
+    {
+      //updateOn: 'submit',
+      //validators: this.validateInvoiceNetAmountSum()
+    }
+    );
     this.selectedTemplate = new FormControl({value: null});
     this.invoiceFormGroup.enable();
     this.isPaymentOverrideSelected.enable();
@@ -125,6 +130,7 @@ export class InvoiceFormManager {
       this.lineItems.valueChanges
         .subscribe(() => this.calculateLineItemNetAmount())
     );
+    this.isInvoiceAmountValid = true;
   }
 
   public establishTouchLink(a: AbstractControl, b: AbstractControl): void {
@@ -196,28 +202,23 @@ export class InvoiceFormManager {
     }
   }
 
-  validateInvoiceNetAmount(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-        const value = control.value > 0;
-        return value ? null : {isGreaterThanZero: {value: control.value}};
-      };
-  }
-
   validateInvoiceNetAmountSum() {
     const amountOfInvoice = this.invoiceFormGroup?.controls.amountOfInvoice?.value;
-        console.log(amountOfInvoice);
-        if(amountOfInvoice && parseFloat(amountOfInvoice) === this.totalLineItemNetAmount) {
-          this.invoiceFormGroup?.controls.amountOfInvoice?.setErrors({isSumEqual: false});
-          for (const control of this.lineItems.controls) {
-            const lineItemGroup = (control as FormGroup);
-            lineItemGroup.controls.lineItemNetAmount.setErrors({isSumEqual: false});
-          }
-        } else {
-          this.invoiceFormGroup?.controls.amountOfInvoice?.setErrors({isSumEqual: true});
-          for (const control of this.lineItems.controls) {
-            const lineItemGroup = (control as FormGroup);
-            lineItemGroup.controls.lineItemNetAmount.setErrors({isSumEqual: true});
-          }
-        }
+    console.log(amountOfInvoice);
+    if(amountOfInvoice){
+      const value = parseFloat(amountOfInvoice);
+      if(value > 0 && value === this.totalLineItemNetAmount) {
+        this.isInvoiceAmountValid = true;
+      } else {
+        this.isInvoiceAmountValid = false;
+      }
+    } 
+  }
+
+  validateInvoiceNetAmount(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        const value = parseFloat(control.value) > 0;
+        return value ? null : {isGreaterThanZero: {value: control.value}};
+      };
   }
 }

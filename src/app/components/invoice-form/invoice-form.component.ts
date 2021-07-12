@@ -268,6 +268,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         this.form.amountOfInvoice.setValue('0');
         this.markFormAsPristine();
         this.form.invoiceFormGroup.markAsUntouched();
+        this.form.isInvoiceAmountValid = true;
     }
 
     private async resetTemplateOptions(): Promise<void> {
@@ -491,7 +492,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
             sum += this.util.toNumber(lineItemAmount.value);
         }
-        this.validAmount = sum.toFixed(2) === invoiceAmount;
+        this.validAmount = parseFloat(invoiceAmount) > 0 && sum.toFixed(2) === invoiceAmount;
         return this.validAmount;
     }
 
