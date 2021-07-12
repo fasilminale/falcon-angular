@@ -22,13 +22,13 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
                rInputMask="99-99-9999"
                (focus)="focus.emit($event)"
         />
-        <button [ngClass]="isError ? 'error' : ''"
+        <button [ngClass]="{ 'error': isError, 'btn-secondary': isDisabled, 'btn-primary': !isDisabled }"
                 [disabled]="isDisabled"
                 type="button"
-                class="btn btn-outline-secondary material-icons align-middle"
+                class="btn material-icons align-middle"
                 (focusout)="focus.emit($event)"
                 (click)="d.toggle()">
-          today
+          event
         </button>
       </div>
     </div>
