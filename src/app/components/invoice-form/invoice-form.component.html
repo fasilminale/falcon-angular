@@ -205,19 +205,11 @@
                                                   || !form.isInvoiceAmountValid">
             </app-fal-currency-input>
             <small class="error-text"
-                   *ngIf="form.amountOfInvoice.hasError('required')
+                   *ngIf="(form.amountOfInvoice.hasError('required')
+                          || form.amountOfInvoice.hasError('isGreaterThanZero'))
                           && form.amountOfInvoice.touched">
               Invoice Net Amount is required
             </small>
-            <small class="error-text"
-                  *ngIf="form.amountOfInvoice.hasError('isGreaterThanZero')
-                  && form.amountOfInvoice.touched">
-              Invoice Net Amount must be greater than 0
-            </small>
-            <!-- <small class="error-text"
-                   *ngIf="!form.isInvoiceAmountValid">
-                   Total of Line Net Amount(s) must equal Invoice Net Amount.
-            </small> -->
           </div>
 
           <!-- CURRENCY -->
