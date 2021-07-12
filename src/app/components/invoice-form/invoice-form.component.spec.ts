@@ -239,7 +239,7 @@ describe('InvoiceFormComponent', () => {
     component.form.vendorNumber.setValue(vendorNumber);
     component.form.externalInvoiceNumber.setValue(externalInvoiceNumber);
     component.form.invoiceDate.setValue(invoiceDate);
-    component.form.amountOfInvoice.setValue('0');
+    component.form.amountOfInvoice.setValue('1');
     component.form.workType.setValue(workType);
     component.form.erpType.setValue(erpType);
     component.form.currency.setValue(currency);
@@ -250,7 +250,7 @@ describe('InvoiceFormComponent', () => {
     (component.form.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.costCenter.setValue(costCenter);
     (component.form.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
-      .controls.lineItemNetAmount.setValue('0');
+      .controls.lineItemNetAmount.setValue('1');
     component.externalAttachment = true;
     invoiceResponse.milestones = [];
     spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
@@ -415,7 +415,7 @@ describe('InvoiceFormComponent', () => {
 
   it('should validate invoice amounts and return true', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    component.form.amountOfInvoice.setValue('0');
+    component.form.amountOfInvoice.setValue('1');
     component.validateInvoiceAmount();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
     expect(component.validAmount).toBeTrue();
@@ -423,7 +423,7 @@ describe('InvoiceFormComponent', () => {
 
   it('should validate invoice amounts and return false', () => {
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
-    component.form.amountOfInvoice.setValue('1');
+    component.form.amountOfInvoice.setValue('2');
     component.validateInvoiceAmount();
     expect(component.validateInvoiceAmount).toHaveBeenCalled();
     expect(component.validAmount).toBeFalse();
@@ -530,7 +530,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
-    component.form.amountOfInvoice.setValue('0');
+    component.form.amountOfInvoice.setValue('1');
     await component.onSaveButtonClick();
     expect(component.resetForm).toHaveBeenCalled();
   });
