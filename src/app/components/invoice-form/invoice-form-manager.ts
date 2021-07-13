@@ -212,7 +212,6 @@ export class InvoiceFormManager {
 
   validateInvoiceNetAmountSum() {
     const amountOfInvoice = this.invoiceFormGroup?.controls.amountOfInvoice?.value;
-    console.log(amountOfInvoice);
     if(amountOfInvoice){
       const value = parseFloat(amountOfInvoice);
       if(value > 0 && value === this.totalLineItemNetAmount) {
