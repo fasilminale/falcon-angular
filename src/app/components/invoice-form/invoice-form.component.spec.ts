@@ -769,13 +769,13 @@ describe('InvoiceFormComponent', () => {
       expect(emit).not.toHaveBeenCalled();
     });
   });
-    
+
   it('should set uploadFromComponent dirty', () => {
-      const childFixture = TestBed.createComponent(UploadFormComponent);
-      component.focusInvoiceDate();
-      component.uploadFormComponent = childFixture.componentInstance;
-      component.focusInvoiceDate();
-      const isDirty = component.uploadFormComponent?.formGroup.dirty;
-      expect(isDirty).toBeTruthy();
-    });
+    const childFixture = TestBed.createComponent(UploadFormComponent);
+    component.focusInvoiceDate();
+    component.uploadFormComponent = childFixture.componentInstance;
+    component.focusInvoiceDate();
+    const isDirty = component.uploadFormComponent?.formGroup.dirty;
+    expect(isDirty).toBeTruthy();
+  });
 });

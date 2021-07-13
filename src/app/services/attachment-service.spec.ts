@@ -37,9 +37,8 @@ describe('AttachmentService', () => {
       expect(attachmentService).toBeTruthy();
     });
     it('should throw error on saveAttachments', () => {
-      expect(() => {
-        attachmentService.saveAttachments('someInvoiceNumber', []);
-      }).toThrowError('AttachmentService#saveAttachments(...) needs to be spied on for this test!');
+      expect(() => attachmentService.saveAttachments('someInvoiceNumber', []))
+        .toThrowError('AttachmentService#saveAttachments(...) needs to be spied on for this test!');
     });
   });
 
