@@ -12,6 +12,9 @@
   font-size: small;
   word-break: break-all;
 }
+.attachment-label {
+  padding: 9px 0;
+}
 
 .attachment-download {
   cursor: pointer;
@@ -36,4 +39,14 @@
 
 .error {
   border-color: $cardinal-red;
+}
+
+elm-button ::ng-deep {
+  button {
+    width: 100%;
+  }
+}
+
+label.form-label {
+  margin-top: 0;
 }
