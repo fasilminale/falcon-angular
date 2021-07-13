@@ -37,6 +37,7 @@
         <div id="upload-button-container">
           <elm-button buttonType="button"
                       buttonStyle="primary"
+                      class="elm-button"
                       [isDisabled]="!(formGroup.controls.file.value && formGroup.controls.attachmentType.value)"
                       (buttonClick)="uploadButtonClick()">
             Upload

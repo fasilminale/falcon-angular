@@ -41,7 +41,7 @@
   border-color: $cardinal-red;
 }
 
-elm-button ::ng-deep {
+.elm-button ::ng-deep {
   button {
     width: 100%;
   }
