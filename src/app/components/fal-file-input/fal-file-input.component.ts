@@ -5,7 +5,7 @@ import {NG_VALUE_ACCESSOR} from '@angular/forms';
 @Component({
   selector: 'app-fal-file-input',
   template: `
-    <input #childInput
+    <input id="fileInput" #childInput
            type="file"
            class="form-control"
            [disabled]="isDisabled"
