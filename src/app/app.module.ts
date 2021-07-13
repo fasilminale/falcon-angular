@@ -4,7 +4,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {WebServices} from './services/web-services';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HttpClientModule} from '@angular/common/http';
 import {ButtonModule, ContainersModule, DataTableModule, InputsModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -33,7 +33,7 @@ import {MatTableModule} from '@angular/material/table';
 import {UploadFormComponent} from './components/upload-form/upload-form.component';
 import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
-import {AttachmentService} from './services/attachment-service';
+import {RealAttachmentService} from './services/attachment-service';
 import {InputMaskModule} from 'racoon-mask-raw';
 import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
 import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
@@ -140,7 +140,7 @@ const oktaConfig = {
     LoadingService,
     MatDialog,
     InvoiceService,
-    AttachmentService,
+    RealAttachmentService.PROVIDER,
     TemplateService,
     UtilService,
     TimeService,

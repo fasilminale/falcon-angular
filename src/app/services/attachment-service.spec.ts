@@ -1,14 +1,13 @@
 import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
 import {of, throwError} from 'rxjs';
-import {AttachmentService} from './attachment-service';
+import {AttachmentService, FakeAttachmentService, RealAttachmentService} from './attachment-service';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
+
 
 describe('AttachmentService', () => {
 
   let attachmentService: AttachmentService;
-  let web: WebServices;
-  let invoice: any;
 
   const testAttachment = {
     file: new File([], 'TestFileBlobName'),
@@ -27,53 +26,71 @@ describe('AttachmentService', () => {
     TestBed.configureTestingModule({
       imports: [FalconTestingModule],
     });
-    web = TestBed.inject(WebServices);
-    attachmentService = new AttachmentService(web);
-    invoice = {
-      falconInvoiceNumber: 'F0000000001',
-      companyCode: '1234',
-      vendorNumber: '2345',
-      externalInvoiceNumber: '3456',
-      invoiceDate: new Date()
-    };
   });
 
-  it('should create', () => {
-    expect(attachmentService).toBeTruthy();
+  // FAKE ATTACHMENT SERVICE TESTS
+  describe('> FAKE >', () => {
+    beforeEach(() => {
+      attachmentService = new FakeAttachmentService();
+    });
+    it('should create', () => {
+      expect(attachmentService).toBeTruthy();
+    });
+    it('should throw error on saveAttachments', () => {
+      expect(() => {
+        attachmentService.saveAttachments('someInvoiceNumber', []);
+      }).toThrowError('AttachmentService#saveAttachments(...) needs to be spied on for this test!');
+    });
   });
 
-  it('should save attachments', async () => {
-    spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
-    const successes = await attachmentService.saveAttachments(
-      invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
-    ).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(successes).toEqual(true);
+  // REAL ATTACHMENT SERVICE TESTS
+  describe('> REAL >', () => {
+    let web: WebServices;
+    let invoice: any;
+    beforeEach(() => {
+      web = TestBed.inject(WebServices);
+      attachmentService = new RealAttachmentService(web);
+      invoice = {
+        falconInvoiceNumber: 'F0000000001',
+        companyCode: '1234',
+        vendorNumber: '2345',
+        externalInvoiceNumber: '3456',
+        invoiceDate: new Date()
+      };
+    });
+    it('should create', () => {
+      expect(attachmentService).toBeTruthy();
+    });
+    it('should save attachments', async () => {
+      spyOn(web, 'httpPost').and.returnValue(of('ACCEPTED'));
+      const successes = await attachmentService.saveAttachments(
+        invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
+      ).toPromise();
+      expect(web.httpPost).toHaveBeenCalled();
+      expect(successes).toEqual(true);
+    });
+    it('should fail unaccepted attachments', async () => {
+      spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
+      const successes = await attachmentService.saveAttachments(
+        invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
+      ).toPromise();
+      expect(web.httpPost).toHaveBeenCalled();
+      expect(successes).toEqual(false);
+    });
+    it('should fail saving attachments', async () => {
+      spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
+      const successes = await attachmentService.saveAttachments(
+        invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
+      ).toPromise();
+      expect(web.httpPost).toHaveBeenCalled();
+      expect(successes).toEqual(false);
+    });
+    it('should not call attachments route', async () => {
+      const successes = await attachmentService.saveAttachments(
+        invoice.falconInvoiceNumber, []
+      ).toPromise();
+      expect(successes).toEqual(true);
+    });
   });
-
-  it('should fail unaccepted attachments', async () => {
-    spyOn(web, 'httpPost').and.returnValue(of('SOME RESPONSE BODY'));
-    const successes = await attachmentService.saveAttachments(
-      invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
-    ).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(successes).toEqual(false);
-  });
-
-  it('should fail saving attachments', async () => {
-    spyOn(web, 'httpPost').and.returnValue(throwError('test error'));
-    const successes = await attachmentService.saveAttachments(
-      invoice.falconInvoiceNumber, [testAttachment, unmodifiedAttachment]
-    ).toPromise();
-    expect(web.httpPost).toHaveBeenCalled();
-    expect(successes).toEqual(false);
-  });
-
-  it('should not call attachments route', async () => {
-    const successes = await attachmentService.saveAttachments(
-      invoice.falconInvoiceNumber, []
-    ).toPromise();
-    expect(successes).toEqual(true);
-  });
-
 });
+

@@ -9,7 +9,7 @@ import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {WebServices} from '../services/web-services';
 import {LoadingService} from '../services/loading-service';
 import {InvoiceService} from '../services/invoice-service';
-import {AttachmentService} from '../services/attachment-service';
+import {FakeAttachmentService, RealAttachmentService} from '../services/attachment-service';
 import {TemplateService} from '../services/template-service';
 import {UtilService} from '../services/util-service';
 import {OktaAuthModule, OktaAuthService} from '@okta/okta-angular';
@@ -26,6 +26,10 @@ import {ErrorService} from '../services/error-service';
     OktaAuthModule,
   ],
   providers: [
+    // PROVIDE FAKE
+    FakeAttachmentService.PROVIDER,
+
+    // PROVIDE REAL
     OktaAuthService,
     ErrorService,
     LoadingService,
@@ -35,7 +39,6 @@ import {ErrorService} from '../services/error-service';
     LoadingService,
     MatSnackBar,
     InvoiceService,
-    AttachmentService,
     TemplateService,
     UtilService,
     InvoiceFormManager,

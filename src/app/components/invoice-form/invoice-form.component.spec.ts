@@ -13,7 +13,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {InvoiceService} from '../../services/invoice-service';
-import {AttachmentService} from '../../services/attachment-service';
+import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
 import {Router} from '@angular/router';
 import {Template, TemplateToSave} from '../../models/template/template-model';
@@ -215,7 +215,6 @@ describe('InvoiceFormComponent', () => {
         MatDialog,
         LoadingService,
         InvoiceService,
-        AttachmentService,
         TemplateService,
         UtilService,
       ],
@@ -225,7 +224,7 @@ describe('InvoiceFormComponent', () => {
     snackBar = TestBed.inject(MatSnackBar);
     util = TestBed.inject(UtilService);
     invoiceService = TestBed.inject(InvoiceService);
-    attachmentService = TestBed.inject(AttachmentService);
+    attachmentService = TestBed.inject(ATTACHMENT_SERVICE);
     templateService = TestBed.inject(TemplateService);
     loadingService = TestBed.inject(LoadingService);
     fixture = TestBed.createComponent(InvoiceFormComponent);
@@ -311,6 +310,7 @@ describe('InvoiceFormComponent', () => {
 
   it('should show failure snackbar on failed put', async () => {
     spyOn(util, 'openSnackBar').and.stub();
+    spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(new ErrorEvent('test error event'), {
