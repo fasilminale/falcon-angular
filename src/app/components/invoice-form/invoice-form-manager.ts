@@ -91,10 +91,6 @@ export class InvoiceFormManager {
       currency: this.currency,
       comments: this.comments,
       lineItems: this.lineItems
-    },
-    {
-      //updateOn: 'submit',
-      //validators: this.validateInvoiceNetAmountSum()
     }
     );
     this.selectedTemplate = new FormControl({value: null});
