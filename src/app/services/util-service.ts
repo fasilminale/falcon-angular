@@ -65,6 +65,7 @@ export type ConfirmationModalData = {
   title: string,
   innerHtmlMessage: string,
   confirmButtonText?: string,
+  confirmButtonStyle?: string,
   cancelButtonText?: string
 };
 

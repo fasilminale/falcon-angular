@@ -334,6 +334,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
                    <br/><br/><strong>Are you sure you want to cancel creation of this invoice?</strong>`,
             confirmButtonText: 'Yes, cancel',
+            confirmButtonStyle: 'destructive',
             cancelButtonText: 'No, go back'
         }).toPromise();
     }
