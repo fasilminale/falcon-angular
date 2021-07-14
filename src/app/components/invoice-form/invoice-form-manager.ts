@@ -143,7 +143,7 @@ export class InvoiceFormManager {
   }
 
   public forceValueChangeEvent(control: AbstractControl): void {
-    control.setValue(control.value);
+    control.setValue(control instanceof FormGroup ? (control as FormGroup).getRawValue() : control.value);
   }
 
   public forceValueToUpperCase(control: AbstractControl): void {

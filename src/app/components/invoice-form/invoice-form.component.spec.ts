@@ -778,4 +778,22 @@ describe('InvoiceFormComponent', () => {
       const isDirty = component.uploadFormComponent?.formGroup.dirty;
       expect(isDirty).toBeTruthy();
     });
+
+    it('should set uploadFromComponent dirty when focused on lineItem element', () => {
+      const childFixture = TestBed.createComponent(UploadFormComponent);
+      component.focusInvoiceDate();
+      component.uploadFormComponent = childFixture.componentInstance;
+      component.focusLineItemElement(component.form.lineItems.controls[0]);
+      const isDirty = component.uploadFormComponent?.formGroup.dirty;
+      expect(isDirty).toBeTruthy();
+    });
+
+    it('should set uploadFromComponent dirty when focused on amountOfInvoice', () => {
+      const childFixture = TestBed.createComponent(UploadFormComponent);
+      component.focusInvoiceDate();
+      component.uploadFormComponent = childFixture.componentInstance;
+      component.focusAmountOfInvoice();
+      const isDirty = component.uploadFormComponent?.formGroup.dirty;
+      expect(isDirty).toBeTruthy();
+    });
 });

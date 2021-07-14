@@ -628,4 +628,14 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             this.uploadFormComponent.formGroup.markAsDirty();
         }
     }
+
+    public focusAmountOfInvoice() {
+        this.focusInvoiceDate();
+        this.form.forceValueChangeEvent(this.form.amountOfInvoice)
+    }
+
+    public focusLineItemElement(formControl: AbstractControl) {
+        this.focusInvoiceDate();
+        this.form.forceValueChangeEvent(formControl)
+    }
 }
