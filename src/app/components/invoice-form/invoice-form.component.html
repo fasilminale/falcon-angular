@@ -196,7 +196,7 @@
             <app-fal-currency-input id="invoice-amount-input"
                                     formControlName="amountOfInvoice"
                                     [isDisabled]="readOnly"
-                                    (focus)="form.forceValueChangeEvent(form.amountOfInvoice)"
+                                    (focus)="focusAmountOfInvoice()"
                                     [isError]="!!(form.amountOfInvoice.errors
                                                   && form.amountOfInvoice.hasError('required')
                                                   && form.amountOfInvoice.touched) 
@@ -300,7 +300,7 @@
                          [placeholder]="form.companyCode.value"
                          (keypress)="validateRegex($event)"
                          maxlength="4"
-                         (focus)="form.forceValueChangeEvent(form.lineItemCompanyCode(i))"
+                         (focus)="focusLineItemElement(form.lineItemCompanyCode(i))"
                          [ngClass]="form.lineItemCompanyCode(i).hasError('pattern') ? 'error' : ''"
                   />
                   <small class="error-text"
@@ -325,7 +325,7 @@
                        formControlName="costCenter"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       (focus)="form.forceValueChangeEvent(form.lineItemCostCenter(i))"
+                       (focus)="focusLineItemElement(form.lineItemCostCenter(i))"
                        [ngClass]="form.lineItemCostCenter(i).errors
                           && form.lineItemCostCenter(i).hasError('required')
                           && form.lineItemCostCenter(i).touched
@@ -355,7 +355,7 @@
                        formControlName="glAccount"
                        (keypress)="validateRegex($event)"
                        maxlength="10"
-                       (focus)="form.forceValueChangeEvent(form.lineItemGlAccount(i))"
+                       (focus)="focusLineItemElement(form.lineItemGlAccount(i))"
                        [ngClass]="form.lineItemGlAccount(i).errors
                           && form.lineItemGlAccount(i).hasError('required')
                           && form.lineItemGlAccount(i).touched
@@ -383,7 +383,7 @@
                 </label>
                 <app-fal-currency-input formControlName="lineItemNetAmount"
                                         [isDisabled]="readOnly"
-                                        (focus)="form.forceValueChangeEvent(form.lineItemNetAmount(i))"
+                                        (focus)="focusLineItemElement(form.lineItemNetAmount(i))"
                                         [isError]="!!(form.lineItemNetAmount(i).errors
                                                       && form.lineItemNetAmount(i).hasError('required')
                                                       && form.lineItemNetAmount(i).touched)
