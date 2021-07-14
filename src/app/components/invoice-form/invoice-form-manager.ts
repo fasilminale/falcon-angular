@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {AbstractControl, Form, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, Form, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {filter} from 'rxjs/operators';
 import {isFalsey} from '../../utils/predicates';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
@@ -46,7 +46,7 @@ export class InvoiceFormManager {
   public selectedTemplate = new FormControl();
 
   readonly allowedCharacters = '^[a-zA-Z0-9_-]+$';
-
+  public isInvoiceAmountValid = true;
   /* VALUE OPTIONS */
   // TODO replace these with calls to the backend?
   public workTypeOptions = ['Indirect Non-PO Invoice'];
@@ -70,7 +70,7 @@ export class InvoiceFormManager {
     this.vendorNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
     this.externalInvoiceNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
     this.invoiceDate = new FormControl({value: null}, [required, validateDate]);
-    this.amountOfInvoice = new FormControl({value: 0}, [required]);
+    this.amountOfInvoice = new FormControl({value: 0}, [required, this.validateInvoiceNetAmount()]);
     this.currency = new FormControl({value: null}, [required]);
     this.isPaymentOverrideSelected = new FormControl({value: false});
     this.paymentTerms = new FormControl({value: null});
@@ -91,7 +91,8 @@ export class InvoiceFormManager {
       currency: this.currency,
       comments: this.comments,
       lineItems: this.lineItems
-    });
+    }
+    );
     this.selectedTemplate = new FormControl({value: null});
     this.invoiceFormGroup.enable();
     this.isPaymentOverrideSelected.enable();
@@ -127,6 +128,7 @@ export class InvoiceFormManager {
       this.vendorNumber.valueChanges.subscribe(() => this.forceValueToUpperCase(this.vendorNumber)),
       this.externalInvoiceNumber.valueChanges.subscribe(() => this.forceValueToUpperCase(this.externalInvoiceNumber))
     );
+    this.isInvoiceAmountValid = true;
   }
 
   public establishTouchLink(a: AbstractControl, b: AbstractControl): void {
@@ -206,5 +208,24 @@ export class InvoiceFormManager {
       const lineItemGroup = (control as FormGroup);
       this.totalLineItemNetAmount += parseFloat(lineItemGroup.controls.lineItemNetAmount.value);
     }
+  }
+
+  validateInvoiceNetAmountSum() {
+    const amountOfInvoice = this.invoiceFormGroup?.controls.amountOfInvoice?.value;
+    if(amountOfInvoice){
+      const value = parseFloat(amountOfInvoice);
+      if(value > 0 && value === this.totalLineItemNetAmount) {
+        this.isInvoiceAmountValid = true;
+      } else {
+        this.isInvoiceAmountValid = false;
+      }
+    } 
+  }
+
+  validateInvoiceNetAmount(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        const value = parseFloat(control.value) > 0;
+        return value ? null : {isGreaterThanZero: {value: control.value}};
+      };
   }
 }

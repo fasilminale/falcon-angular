@@ -28,12 +28,6 @@ describe('FalControlValueAccessor', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should trigger onTouched when value set', () => {
-    spyOn(component, 'onTouched').and.stub();
-    component.value = 'new value';
-    expect(component.onTouched).toHaveBeenCalled();
-  });
-
   it('should trigger onChange when value set', () => {
     spyOn(component, 'onChange').and.stub();
     const newValue = 'new value';
@@ -46,15 +40,6 @@ describe('FalControlValueAccessor', () => {
     const newValue = 'new value';
     component.writeValue(newValue);
     expect(valueSpy).toHaveBeenCalledWith(newValue);
-  });
-
-  it('should call registered onTouched function', () => {
-    let customFunctionCalled = false;
-    component.registerOnTouched(() => {
-      customFunctionCalled = true;
-    });
-    component.value = 'new value';
-    expect(customFunctionCalled).toBeTrue();
   });
 
   it('should call registered onChange function', () => {

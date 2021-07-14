@@ -21,6 +21,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
                (ngModelChange)="value"
                rInputMask="99-99-9999"
                (focus)="focus.emit($event)"
+               (blur)="onTouched()"
         />
         <button [ngClass]="{ 'error': isError, 'btn-secondary': isDisabled, 'btn-primary': !isDisabled }"
                 [disabled]="isDisabled"
