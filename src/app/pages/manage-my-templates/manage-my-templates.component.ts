@@ -93,6 +93,7 @@ export class ManageMyTemplatesComponent implements OnInit {
             innerHtmlMessage: `Are you sure you want to delete ${template.name}?
                    <br/><br/><strong>This action cannot be undone.</strong>`,
             confirmButtonText: 'Delete Template',
+            confirmButtonStyle: 'destructive',
             cancelButtonText: 'Cancel'
           }
         })

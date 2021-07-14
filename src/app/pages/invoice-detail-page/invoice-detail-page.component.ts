@@ -76,6 +76,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
           innerHtmlMessage: `Are you sure you want to delete this invoice?
                  <br/><br/><strong>This action cannot be undone.</strong>`,
           confirmButtonText: 'Delete Invoice',
+          confirmButtonStyle: 'destructive',
           cancelButtonText: 'Cancel'
         }
       })
