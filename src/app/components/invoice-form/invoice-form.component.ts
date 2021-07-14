@@ -16,6 +16,7 @@ import {
     FormGroup,
     NG_VALUE_ACCESSOR,
     ValidationErrors,
+    ValidatorFn,
     Validators
 } from '@angular/forms';
 import {WebServices} from '../../services/web-services';
@@ -267,6 +268,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         this.form.amountOfInvoice.setValue('0');
         this.markFormAsPristine();
         this.form.invoiceFormGroup.markAsUntouched();
+        this.form.isInvoiceAmountValid = true;
     }
 
     private async resetTemplateOptions(): Promise<void> {
@@ -490,7 +492,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
             sum += this.util.toNumber(lineItemAmount.value);
         }
-        this.validAmount = sum.toFixed(2) === invoiceAmount;
+        this.validAmount = parseFloat(invoiceAmount) > 0 && sum.toFixed(2) === invoiceAmount;
         return this.validAmount;
     }
 
@@ -499,6 +501,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             title: 'Invalid Amount(s)',
             innerHtmlMessage: `Total of Line Net Amount(s) must equal Invoice Net Amount.`
         });
+        this.form.validateInvoiceNetAmountSum();
     }
 
     private onInvoiceIsDuplicate(): void {
