@@ -1,17 +1,14 @@
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-
 import {InvoiceListPageComponent} from './invoice-list-page.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {WebServices} from '../../services/web-services';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {HttpTestingController} from '@angular/common/http/testing';
 import {environment} from '../../../environments/environment';
 import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {of} from 'rxjs';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';

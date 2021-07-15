@@ -4,7 +4,6 @@ import {OKTA_CONFIG, OktaAuthService} from '@okta/okta-angular';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Injector} from '@angular/core';
 import {Router} from '@angular/router';
-import {LoadingService} from '../../services/loading-service';
 import {ErrorService} from '../../services/error-service';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 

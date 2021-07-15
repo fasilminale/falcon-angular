@@ -1,13 +1,9 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {WebServices} from '../../services/web-services';
-import {CUSTOM_ELEMENTS_SCHEMA, SimpleChange} from '@angular/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
+import {SimpleChange} from '@angular/core';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
 import {FormGroup} from '@angular/forms';

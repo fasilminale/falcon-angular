@@ -1,5 +1,4 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {FalCurrencyInputComponent, Selectable} from './fal-currency-input.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 

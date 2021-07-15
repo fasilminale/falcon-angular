@@ -1,5 +1,4 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {FalContainerComponent} from './fal-container.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
