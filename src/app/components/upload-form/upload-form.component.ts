@@ -166,6 +166,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
       innerHtmlMessage: `Are you sure you want to remove this attachment?
             <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Remove Attachment',
+      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     }).toPromise();
   }

@@ -19,6 +19,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
                (keyup)="onSelectionEvent($event)"
                (focus)="focus.emit($event); onSelectionEvent($event)"
                (click)="onSelectionEvent($event)"
+               (blur)="onTouched()"
         />
       </div>
     </div>
