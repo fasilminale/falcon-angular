@@ -3,7 +3,7 @@ import {WebServices} from './web-services';
 import {of, throwError} from 'rxjs';
 import {AttachmentService, FakeAttachmentService, RealAttachmentService} from './attachment-service';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
-import {NeedSpyError} from '../testing/fake-utils';
+import {NeedSpyError} from '../testing/test-utils';
 
 
 describe('AttachmentService', () => {

@@ -6,7 +6,7 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {FalHttpInterceptor} from './fal-http-interceptor';
 import {of} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
-import {NeedSpyError} from '../testing/fake-utils';
+import {NeedSpyError} from '../testing/test-utils';
 
 describe('AuthService', () => {
   const TEST_USER_INFO = {

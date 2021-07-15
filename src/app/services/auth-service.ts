@@ -3,7 +3,7 @@ import {OktaAuthService} from '@okta/okta-angular';
 import {WebServices} from './web-services';
 import {environment} from '../../environments/environment';
 import {UserInfo} from '@elm/elm-styleguide-ui';
-import {NeedSpyError} from '../testing/fake-utils';
+import {NeedSpyError} from '../testing/test-utils';
 
 // INTERFACE
 export const AUTH_SERVICE = new InjectionToken<AuthService>('AuthService');

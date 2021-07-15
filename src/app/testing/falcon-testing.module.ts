@@ -28,6 +28,11 @@ import {TimeService} from '../services/time-service';
     OktaAuthModule,
   ],
   providers: [
+    // PROVIDE EXTERNAL
+    MatSnackBar,
+    MatDialog,
+    LoadingService,
+
     // PROVIDE FAKE
     FakeAttachmentService.PROVIDER,
     FakeAuthService.PROVIDER,
@@ -38,11 +43,7 @@ import {TimeService} from '../services/time-service';
     ErrorService,
     LoadingService,
     WebServices,
-    MatSnackBar,
-    MatDialog,
-    LoadingService,
     ErrorService,
-    MatSnackBar,
     InvoiceService,
     TemplateService,
     UtilService,

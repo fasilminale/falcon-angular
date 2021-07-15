@@ -3,7 +3,7 @@ import {catchError, mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable, InjectionToken} from '@angular/core';
-import {NeedSpyError} from '../testing/fake-utils';
+import {NeedSpyError} from '../testing/test-utils';
 
 // INTERFACE
 export const ATTACHMENT_SERVICE = new InjectionToken<AttachmentService>('AttachmentService');
