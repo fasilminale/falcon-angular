@@ -30,7 +30,7 @@ import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
 import {Attachment, UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
-import {AttachmentService} from '../../services/attachment-service';
+import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {MatDialog} from '@angular/material/dialog';
@@ -85,11 +85,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         private dialog: MatDialog,
         private loadingService: LoadingService,
         private invoiceService: InvoiceService,
-        private attachmentService: AttachmentService,
         private templateService: TemplateService,
         private util: UtilService,
         private router: Router,
         public form: InvoiceFormManager,
+        @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
         @Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
     ) {
     }

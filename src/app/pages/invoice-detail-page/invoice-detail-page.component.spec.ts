@@ -102,7 +102,6 @@ describe('InvoiceDetailPageComponent', () => {
       providers: [
         WebServices,
         InvoiceService,
-        AttachmentService,
         TemplateService,
         UtilService,
         MatDialog,
