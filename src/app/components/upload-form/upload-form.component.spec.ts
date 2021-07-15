@@ -1,16 +1,12 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {UploadFormComponent} from './upload-form.component';
 import {of} from 'rxjs';
 import {UtilService} from '../../services/util-service';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {SimpleChanges} from '@angular/core';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('UploadFormComponent', () => {
-
   const TEST_FILE_1 = new File([], 'test file 1');
   const TEST_FILE_2 = new File([], 'test file 2');
 
@@ -20,17 +16,8 @@ describe('UploadFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        MatSnackBarModule,
-        NoopAnimationsModule,
-        MatDialogModule
-      ],
+      imports: [FalconTestingModule],
       declarations: [UploadFormComponent],
-      providers: [
-        UtilService,
-        MatSnackBar,
-        MatDialog,
-      ]
     }).compileComponents();
     util = TestBed.inject(UtilService);
     fixture = TestBed.createComponent(UploadFormComponent);

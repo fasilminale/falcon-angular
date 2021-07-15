@@ -2,21 +2,12 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {WebServices} from '../../services/web-services';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { HttpTestingController} from '@angular/common/http/testing';
+import {MatSnackBar, } from '@angular/material/snack-bar';
+import {MatDialog, } from '@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {ActivatedRoute, convertToParamMap, Router} from '@angular/router';
-import {LoadingService} from '../../services/loading-service';
-import {RouterTestingModule} from '@angular/router/testing';
-import {InvoiceService} from '../../services/invoice-service';
-import {AttachmentService} from '../../services/attachment-service';
 import {TemplateService} from '../../services/template-service';
-import {UtilService} from '../../services/util-service';
-import {SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
@@ -74,7 +65,6 @@ describe('InvoiceFormComponent ROUTING', () => {
         {provide: ActivatedRoute, useValue: route},
         {provide: Router, useValue: mockRouter}
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
     snackBar = TestBed.inject(MatSnackBar);

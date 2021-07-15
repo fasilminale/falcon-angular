@@ -3,6 +3,7 @@ import {catchError, mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable, InjectionToken} from '@angular/core';
+import {NeedSpyError} from '../testing/fake-utils';
 
 // INTERFACE
 export const ATTACHMENT_SERVICE = new InjectionToken<AttachmentService>('AttachmentService');
@@ -18,7 +19,7 @@ export class FakeAttachmentService implements AttachmentService {
   static PROVIDER = {provide: ATTACHMENT_SERVICE, useClass: FakeAttachmentService};
 
   saveAttachments(invoiceNumber: string, attachments: Array<any>): Observable<boolean> {
-    throw new Error('AttachmentService#saveAttachments(...) needs to be spied on for this test!');
+    throw new NeedSpyError('AttachmentService', 'saveAttachments');
   }
 }
 

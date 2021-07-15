@@ -204,22 +204,11 @@ describe('InvoiceFormComponent', () => {
       imports: [
         FalconTestingModule,
         RouterTestingModule,
-        HttpClientTestingModule,
-        MatSnackBarModule,
-        NoopAnimationsModule,
-        MatDialogModule,
       ],
-      declarations: [InvoiceFormComponent, UploadFormComponent],
-      providers: [
-        WebServices,
-        MatSnackBar,
-        MatDialog,
-        LoadingService,
-        InvoiceService,
-        TemplateService,
-        UtilService,
+      declarations: [
+        InvoiceFormComponent,
+        UploadFormComponent
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     router = TestBed.inject(Router);
     snackBar = TestBed.inject(MatSnackBar);

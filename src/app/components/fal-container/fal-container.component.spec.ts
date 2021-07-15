@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FalContainerComponent } from './fal-container.component';
+import {FalContainerComponent} from './fal-container.component';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('FalContainerComponent', () => {
   let component: FalContainerComponent;
@@ -8,9 +9,9 @@ describe('FalContainerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FalContainerComponent ]
-    })
-    .compileComponents();
+      imports: [FalconTestingModule],
+      declarations: [FalContainerComponent]
+    }).compileComponents();
   });
 
   beforeEach(() => {

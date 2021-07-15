@@ -4,6 +4,7 @@ import {FalDateInputComponent} from './fal-date-input.component';
 import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('FalDateInputComponent', () => {
   let component: FalDateInputComponent;
@@ -11,14 +12,12 @@ describe('FalDateInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NgbDatepickerModule, NoopAnimationsModule],
+      imports: [
+        FalconTestingModule,
+        NgbDatepickerModule
+      ],
       declarations: [FalDateInputComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
-  });
-
-  beforeEach(() => {
+    }).compileComponents();
     fixture = TestBed.createComponent(FalDateInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

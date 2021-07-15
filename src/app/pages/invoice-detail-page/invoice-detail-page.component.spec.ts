@@ -89,27 +89,12 @@ describe('InvoiceDetailPageComponent', () => {
       imports: [
         FalconTestingModule,
         RouterTestingModule,
-        HttpClientTestingModule,
-        MatSnackBarModule,
-        NoopAnimationsModule,
-        MatDialogModule,
         ButtonModule,
       ],
       declarations: [
         InvoiceDetailPageComponent,
         InvoiceFormComponent,
       ],
-      providers: [
-        WebServices,
-        InvoiceService,
-        TemplateService,
-        UtilService,
-        MatDialog,
-        LoadingService,
-        MatSnackBar,
-        TimeService,
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);

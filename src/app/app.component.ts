@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {LoadingService} from './services/loading-service';
 import {Router} from '@angular/router';
 import {ErrorModalData, MenuItem, NavbarItem} from '@elm/elm-styleguide-ui';
 import {ErrorService} from './services/error-service';
 import {OktaAuthService} from '@okta/okta-angular';
-import {AuthService} from './services/auth-service';
+import {AUTH_SERVICE, AuthService} from './services/auth-service';
 import {UtilService} from './services/util-service';
 
 @Component({
@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
 
   constructor(private loadingService: LoadingService,
               private router: Router,
-              public authService: AuthService,
+              @Inject(AUTH_SERVICE) public authService: AuthService,
               private errorService: ErrorService,
               private oktaService: OktaAuthService,
               private util: UtilService) {

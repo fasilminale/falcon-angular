@@ -3,6 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {StatusModel} from './status-model';
 import {AppModule} from '../../app.module';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('Invoice Model Tests', () => {
 
@@ -73,10 +74,10 @@ describe('Invoice Model Tests', () => {
 
   let prototypeEmptyInvoice: InvoiceDataModel;
   let prototypeInvoice: InvoiceDataModel;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [AppModule],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+      imports: [FalconTestingModule],
     }).compileComponents();
     prototypeEmptyInvoice = new InvoiceDataModel({});
     prototypeInvoice = new InvoiceDataModel(invoice);
