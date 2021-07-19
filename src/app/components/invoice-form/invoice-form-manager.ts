@@ -189,7 +189,7 @@ export class InvoiceFormManager {
     this.establishTouchLink(costCenter, companyCode);
     const glAccount = new FormControl(null, [required, pattern(this.allowedCharacters)]);
     this.establishTouchLink(glAccount, costCenter);
-    const lineItemNetAmount = new FormControl('0', [required]);
+    const lineItemNetAmount = new FormControl('0', [required, this.validateInvoiceNetAmount()]);
     this.establishTouchLink(lineItemNetAmount, glAccount);
     const notes = new FormControl(null);
     this.establishTouchLink(notes, lineItemNetAmount);
