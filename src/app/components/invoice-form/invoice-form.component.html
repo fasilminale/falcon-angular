@@ -385,9 +385,9 @@
                                         [isDisabled]="readOnly"
                                         (focus)="form.forceValueChangeEvent(form.lineItemNetAmount(i))"
                                         [isError]="!!(form.lineItemNetAmount(i).errors
-                                        && (form.lineItemNetAmount(i).hasError('required') || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
-                                        && form.lineItemNetAmount(i).touched)
-                                        ">
+                                                      && (form.lineItemNetAmount(i).hasError('required') 
+                                                      || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
+                                                      && form.lineItemNetAmount(i).touched)">
                 </app-fal-currency-input>        
                 <small class="error-text"
                    *ngIf="!!(form.lineItemNetAmount(i).errors
