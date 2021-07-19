@@ -198,9 +198,8 @@
                                     [isDisabled]="readOnly"
                                     (focus)="focusAmountOfInvoice()"
                                     [isError]="!!(form.amountOfInvoice.errors
-                                                  && form.amountOfInvoice.hasError('required')
-                                                  && form.amountOfInvoice.touched) 
-                                                  || (form.amountOfInvoice.hasError('isGreaterThanZero')
+                                                  && (form.amountOfInvoice.hasError('required')
+                                                  || form.amountOfInvoice.hasError('isGreaterThanZero'))
                                                   && form.amountOfInvoice.touched)
                                                   || !form.isInvoiceAmountValid">
             </app-fal-currency-input>
@@ -385,13 +384,15 @@
                                         [isDisabled]="readOnly"
                                         (focus)="focusLineItemElement(form.lineItemNetAmount(i))"
                                         [isError]="!!(form.lineItemNetAmount(i).errors
-                                                      && form.lineItemNetAmount(i).hasError('required')
-                                                      && form.lineItemNetAmount(i).touched)
-                                                      || !form.isInvoiceAmountValid">
-                </app-fal-currency-input>                                
-                <small class="error-text invisible">
-                  <!-- this will eventually hold real error messages -->
-                  spacer
+                                                      && (form.lineItemNetAmount(i).hasError('required') 
+                                                      || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
+                                                      && form.lineItemNetAmount(i).touched) || !form.isInvoiceAmountValid">
+                </app-fal-currency-input>        
+                <small class="error-text"
+                   *ngIf="!!(form.lineItemNetAmount(i).errors
+                   && (form.lineItemNetAmount(i).hasError('required') || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
+                   && form.lineItemNetAmount(i).touched)">
+                          Line Net Amount is required
                 </small>
               </div>
 
