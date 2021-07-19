@@ -198,9 +198,8 @@
                                     [isDisabled]="readOnly"
                                     (focus)="form.forceValueChangeEvent(form.amountOfInvoice)"
                                     [isError]="!!(form.amountOfInvoice.errors
-                                                  && form.amountOfInvoice.hasError('required')
-                                                  && form.amountOfInvoice.touched) 
-                                                  || (form.amountOfInvoice.hasError('isGreaterThanZero')
+                                                  && (form.amountOfInvoice.hasError('required')
+                                                  || form.amountOfInvoice.hasError('isGreaterThanZero'))
                                                   && form.amountOfInvoice.touched)
                                                   || !form.isInvoiceAmountValid">
             </app-fal-currency-input>
@@ -387,14 +386,14 @@
                                         [isError]="!!(form.lineItemNetAmount(i).errors
                                                       && (form.lineItemNetAmount(i).hasError('required') 
                                                       || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
-                                                      && form.lineItemNetAmount(i).touched)">
+                                                      && form.lineItemNetAmount(i).touched) || !form.isInvoiceAmountValid">
                 </app-fal-currency-input>        
                 <small class="error-text"
                    *ngIf="!!(form.lineItemNetAmount(i).errors
                    && (form.lineItemNetAmount(i).hasError('required') || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
                    && form.lineItemNetAmount(i).touched)">
                           Line Net Amount is required
-            </small>
+                </small>
               </div>
 
               <div class="d-flex col-4 align-items-start">
