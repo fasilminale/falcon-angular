@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { SearchComponent } from './search.component';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {SearchComponent} from './search.component';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -9,14 +9,14 @@ describe('SearchComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SearchComponent ],
-      imports: [ ReactiveFormsModule, FormsModule ],
-      providers: [ FormBuilder ]
-    })
-      .compileComponents();
-  });
-
-  beforeEach(() => {
+      imports: [
+        FalconTestingModule,
+        ReactiveFormsModule,
+        FormsModule
+      ],
+      declarations: [SearchComponent],
+      providers: [FormBuilder]
+    }).compileComponents();
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -27,7 +27,7 @@ describe('SearchComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it( 'should emit an event with the search value', () => {
+  it('should emit an event with the search value', () => {
     const emit = spyOn(component.submitEvent, 'emit');
     component.controlGroup.controls.control.setValue('F0000000001');
     fixture.detectChanges();

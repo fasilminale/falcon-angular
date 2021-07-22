@@ -1,32 +1,18 @@
-/* tslint:disable:no-unused-variable */
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {ManageMyTemplatesComponent} from './manage-my-templates.component';
 import {TemplateService} from 'src/app/services/template-service';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {HttpTestingController} from '@angular/common/http/testing';
 import {environment} from 'src/environments/environment';
-import {WebServices} from 'src/app/services/web-services';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterTestingModule} from '@angular/router/testing';
 import {UtilService} from 'src/app/services/util-service';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {Template} from 'src/app/models/template/template-model';
 import {of, throwError} from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
+import {MatTableModule} from '@angular/material/table';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('ManageMyTemplatesComponent', () => {
-  let component: ManageMyTemplatesComponent;
-  let fixture: ComponentFixture<ManageMyTemplatesComponent>;
-  let apiService: TemplateService;
-  let util: UtilService;
-  let http: HttpTestingController;
-  let dialog: MatDialog;
-
-  let template: Template;
-  let templateData: Template[];
-  let updatedTemplate: Template = new Template({
+  const updatedTemplate: Template = new Template({
     description: 'test',
     name: 'test',
     isDisable: true,
@@ -37,17 +23,24 @@ describe('ManageMyTemplatesComponent', () => {
     close: null
   });
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule, MatDialogModule, MatTableModule],
-      declarations: [ManageMyTemplatesComponent],
-      providers: [TemplateService, WebServices, UtilService],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
-    })
-      .compileComponents();
-  }));
+  let component: ManageMyTemplatesComponent;
+  let fixture: ComponentFixture<ManageMyTemplatesComponent>;
+  let apiService: TemplateService;
+  let util: UtilService;
+  let http: HttpTestingController;
+  let dialog: MatDialog;
+  let template: Template;
+  let templateData: Template[];
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        FalconTestingModule,
+        RouterTestingModule,
+        MatTableModule
+      ],
+      declarations: [ManageMyTemplatesComponent],
+    }).compileComponents();
     fixture = TestBed.createComponent(ManageMyTemplatesComponent);
     component = fixture.componentInstance;
     http = TestBed.inject(HttpTestingController);
@@ -87,7 +80,6 @@ describe('ManageMyTemplatesComponent', () => {
   });
 
   it('should get table data', fakeAsync(() => {
-    //component.ngOnInit();
     http.expectOne(`${environment.baseServiceUrl}/v1/templates`).flush(templateData);
     tick();
     expect(component.templates.length).toEqual(2);
@@ -106,7 +98,6 @@ describe('ManageMyTemplatesComponent', () => {
     expect(temp).toEqual(templateData[0]);
   }));
 
-
   it('should update template', () => {
     template.isDisable = false;
     spyOn(util, 'openSnackBar').and.stub();
@@ -116,7 +107,6 @@ describe('ManageMyTemplatesComponent', () => {
     expect(createdDate).toEqual(updatedTemplate.createdDate);
     expect(util.openSnackBar).toHaveBeenCalledWith(`Success! Template has been updated.`);
   });
-
 
   it('should update template failed', () => {
     template.isDisable = false;
@@ -134,6 +124,7 @@ describe('ManageMyTemplatesComponent', () => {
     const isError = template.isError;
     expect(isError).toBeTruthy();
   });
+
   it('should not update for invalid name', () => {
     template.isDisable = false;
     template.name = '';
@@ -142,6 +133,7 @@ describe('ManageMyTemplatesComponent', () => {
     component.updateTemplate(template);
     expect(util.openSnackBar).toHaveBeenCalledTimes(0);
   });
+
   it('should cancel edit template', fakeAsync(() => {
     template.isDisable = false;
     component.cancelTemplate(template);
@@ -161,7 +153,6 @@ describe('ManageMyTemplatesComponent', () => {
     expect(component.templateTable.renderRows).toHaveBeenCalled();
     expect(util.openSnackBar).toHaveBeenCalledWith(`Success! ${template.name} has been deleted.`);
   });
-
 
   it('should not delete template from list on confiramtion', () => {
     component.templates = templateData;

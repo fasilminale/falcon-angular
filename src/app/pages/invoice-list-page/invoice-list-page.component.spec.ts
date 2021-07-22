@@ -1,19 +1,17 @@
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-
 import {InvoiceListPageComponent} from './invoice-list-page.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {WebServices} from '../../services/web-services';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {HttpTestingController} from '@angular/common/http/testing';
 import {environment} from '../../../environments/environment';
 import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {of} from 'rxjs';
 import {StatusModel} from '../../models/invoice/status-model';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 
@@ -70,9 +68,12 @@ describe('InvoiceListPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule, MatSnackBarModule, NoopAnimationsModule],
+      imports: [
+        FalconTestingModule,
+        RouterTestingModule,
+      ],
       declarations: [InvoiceListPageComponent],
-      providers: [WebServices, LoadingService, MatSnackBar, FilterService,
+      providers: [
         {
           provide: MatDialog,
           useClass: DialogMock
@@ -81,8 +82,7 @@ describe('InvoiceListPageComponent', () => {
           provide: ActivatedRoute,
           useValue: new MockActivatedRoute({ falconInvoiceNumber: '1' })
         }
-      ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      ]
     }).compileComponents();
     webservice = TestBed.inject(WebServices);
     loadingService = TestBed.inject(LoadingService);
@@ -108,11 +108,11 @@ describe('InvoiceListPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get table data',  fakeAsync(() => {
+  it('should get table data', fakeAsync(() => {
     expect(component.invoices[0].falconInvoiceNumber).toEqual('1');
   }));
 
-  it('should Page Change', fakeAsync( () => {
+  it('should Page Change', fakeAsync(() => {
     spyOn(component, 'pageChanged').and.callThrough();
     spyOn(component, 'getTableData').and.callThrough();
     component.pageChanged(pageEvent);
@@ -125,7 +125,7 @@ describe('InvoiceListPageComponent', () => {
     expect(component.paginationModel.numberPerPage).toEqual(30);
   }));
 
-  it('should Sort Fields', fakeAsync( () => {
+  it('should Sort Fields', fakeAsync(() => {
     spyOn(component, 'sortChanged').and.callThrough();
     spyOn(component, 'getTableData').and.callThrough();
     component.sortChanged(sortEvent);
@@ -138,7 +138,7 @@ describe('InvoiceListPageComponent', () => {
     expect(component.paginationModel.sortOrder).toEqual(sortEvent.direction);
   }));
 
-  it('should Search Invoices', fakeAsync( () => {
+  it('should Search Invoices', fakeAsync(() => {
     spyOn(component, 'searchInvoices').and.callThrough();
     spyOn(component, 'getTableData').and.callThrough();
     component.searchInvoices('1');
@@ -150,7 +150,7 @@ describe('InvoiceListPageComponent', () => {
     expect(component.searchValue).toEqual('1');
   }));
 
-  it('should Search Invoices by status', fakeAsync( () => {
+  it('should Search Invoices by status', fakeAsync(() => {
     spyOn(component, 'changeInvoiceStatus').and.callThrough();
     spyOn(component, 'getTableData').and.callThrough();
     component.changeInvoiceStatus(invoiceStatuses);
@@ -162,7 +162,7 @@ describe('InvoiceListPageComponent', () => {
     expect(component.selectedInvoiceStatuses).toEqual(['CREATED']);
   }));
 
-  it('should Search Invoices by created user', fakeAsync( () => {
+  it('should Search Invoices by created user', fakeAsync(() => {
     spyOn(component, 'changeCreatedByUser').and.callThrough();
     spyOn(component, 'getTableData').and.callThrough();
     component.changeCreatedByUser();
@@ -182,7 +182,7 @@ describe('InvoiceListPageComponent', () => {
       .toEqual(invoiceData.data[0].falconInvoiceNumber);
   });
 
-  it('should route to an invoice',  fakeAsync(() => {
+  it('should route to an invoice', fakeAsync(() => {
     const invoice = new InvoiceDataModel({falconInvoiceNumber: '1'});
     const navigateSpy = spyOn(router, 'navigate');
     component.rowClicked(invoice);

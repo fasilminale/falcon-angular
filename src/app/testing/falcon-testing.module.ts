@@ -9,11 +9,14 @@ import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {WebServices} from '../services/web-services';
 import {LoadingService} from '../services/loading-service';
 import {InvoiceService} from '../services/invoice-service';
-import {FakeAttachmentService, RealAttachmentService} from '../services/attachment-service';
+import {FakeAttachmentService} from '../services/attachment-service';
 import {TemplateService} from '../services/template-service';
 import {UtilService} from '../services/util-service';
 import {OktaAuthModule, OktaAuthService} from '@okta/okta-angular';
 import {ErrorService} from '../services/error-service';
+import {FakeAuthService} from '../services/auth-service';
+import {TimeService} from '../services/time-service';
+import {FilterService} from '../services/filter-service';
 
 @NgModule({
   declarations: [],
@@ -26,21 +29,26 @@ import {ErrorService} from '../services/error-service';
     OktaAuthModule,
   ],
   providers: [
+    // PROVIDE EXTERNAL
+    MatSnackBar,
+    MatDialog,
+    LoadingService,
+
     // PROVIDE FAKE
     FakeAttachmentService.PROVIDER,
+    FakeAuthService.PROVIDER,
 
     // PROVIDE REAL
+    TimeService,
     OktaAuthService,
     ErrorService,
     LoadingService,
     WebServices,
-    MatSnackBar,
-    MatDialog,
-    LoadingService,
-    MatSnackBar,
+    ErrorService,
     InvoiceService,
     TemplateService,
     UtilService,
+    FilterService,
     InvoiceFormManager,
     RealSubscriptionManager.PROVIDER,
   ],
@@ -49,3 +57,4 @@ import {ErrorService} from '../services/error-service';
 })
 export class FalconTestingModule {
 }
+
