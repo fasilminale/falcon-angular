@@ -37,7 +37,7 @@ import {RealAttachmentService} from './services/attachment-service';
 import {InputMaskModule} from 'racoon-mask-raw';
 import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
 import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
-import {AuthService} from './services/auth-service';
+import {AuthService, RealAuthService} from './services/auth-service';
 import {ErrorService} from './services/error-service';
 import {FalHttpInterceptor} from './services/fal-http-interceptor';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
@@ -147,7 +147,7 @@ const oktaConfig = {
     ErrorService,
     OktaAuthGuard,
     OktaAuthService,
-    AuthService,
+    RealAuthService.PROVIDER,
     InvoiceFormManager,
     RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},

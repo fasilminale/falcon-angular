@@ -1,7 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {FalFileInputComponent} from './fal-file-input.component';
-import {FileChangeEvent} from '@angular/compiler-cli/src/perform_watch';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('FalFileInputComponent', () => {
   let component: FalFileInputComponent;
@@ -9,12 +8,9 @@ describe('FalFileInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [FalconTestingModule],
       declarations: [FalFileInputComponent]
-    })
-      .compileComponents();
-  });
-
-  beforeEach(() => {
+    }).compileComponents();
     fixture = TestBed.createComponent(FalFileInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

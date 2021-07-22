@@ -1,15 +1,12 @@
 import {TestBed} from '@angular/core/testing';
-import {RouterTestingModule} from '@angular/router/testing';
 import {AppComponent} from './app.component';
-import {LoadingService} from './services/loading-service';
 import {AppModule} from './app.module';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {Router} from '@angular/router';
 import {OktaAuthService} from '@okta/okta-angular';
 import {ErrorService} from './services/error-service';
 import {UtilService} from './services/util-service';
-import {EMPTY, of} from 'rxjs';
+import {of} from 'rxjs';
+import {FalconTestingModule} from './testing/falcon-testing.module';
 
 describe('AppComponent', () => {
   let router: Router;
@@ -21,18 +18,12 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,
+        FalconTestingModule,
         AppModule,
-        NoopAnimationsModule
       ],
       declarations: [
         AppComponent
       ],
-      providers: [
-        LoadingService,
-        OktaAuthService
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
     // Get Injectables
     router = TestBed.inject(Router);

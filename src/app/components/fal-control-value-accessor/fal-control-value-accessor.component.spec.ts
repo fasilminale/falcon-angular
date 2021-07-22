@@ -1,25 +1,20 @@
 import {FalControlValueAccessorComponent} from './fal-control-value-accessor.component';
 import {TestBed} from '@angular/core/testing';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('FalControlValueAccessor', () => {
   let component: FalControlValueAccessorComponent<string>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [],
-      declarations: [],
+      imports: [FalconTestingModule],
       providers: [
         {
           provide: FalControlValueAccessorComponent,
           useValue: new FalControlValueAccessorComponent()
         }
       ],
-      schemas: []
-    })
-      .compileComponents();
-  });
-
-  beforeEach(() => {
+    }).compileComponents();
     component = TestBed.inject(FalControlValueAccessorComponent);
     component.value = 'default';
   });
