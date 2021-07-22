@@ -1,0 +1,62 @@
+<div mat-dialog-title class="modal-title">
+  <div class="d-flex align-items-center" style="margin-bottom: 8px">
+    <span class="elm-h2"
+          style="line-height: 1">
+      Invoice Filters
+    </span>
+    <elm-close-button class="ms-auto" mat-dialog-close></elm-close-button>
+  </div>
+  <div class="elm-div2 mt-1"></div>
+</div>
+
+<div mat-dialog-content
+     class="modal-body scrollable mb-0">
+
+  <form
+    novalidate
+    [formGroup]="localFilterModel.form"
+    (ngSubmit)="onSubmit()"
+    class="needs-validation container">
+
+    <span class="elm-nav1">Invoice Status</span>
+    <div class="row">
+      <div *ngFor="let invoiceStatusOption of invoiceStatuses; let i=index"
+           class="col-6 col-md-4">
+        <div class="form-check mt-2">
+          <input class="form-check-input"
+                 id="{{invoiceStatusOption.key}}"
+                 type="checkbox"
+                 [value]="invoiceStatusOption.key"
+                 [checked]="localFilterModel.isChecked('invoiceStatuses', invoiceStatusOption.key)"
+                 (change)="localFilterModel.onCheckChange('invoiceStatuses', $event)">
+          <label class="form-check-label elm-field-label1"
+                 for="{{invoiceStatusOption.key}}">
+            {{invoiceStatusOption.statusLabel}}
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div mat-dialog-actions class="d-flex justify-content-between align-items-end modal-actions">
+  <div class="mt-2 d-flex justify-content-end">
+    <elm-button buttonStyle="text"
+                (buttonClick)="clearFilters()">
+      CLEAR FILTERS
+    </elm-button>
+  </div>
+  <div class="mt-2 flex-grow-1 d-flex justify-content-end">
+    <elm-button buttonStyle="secondary"
+                class="me-3"
+                mat-dialog-close>
+      CANCEL
+    </elm-button>
+    <elm-button buttonStyle="primary"
+                [isDisabled]="!this.localFilterModel.form.valid"
+                (buttonClick)="onSubmit()">
+      APPLY
+    </elm-button>
+  </div>
+</div>

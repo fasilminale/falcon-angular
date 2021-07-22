@@ -8,6 +8,9 @@ import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {DataTableComponent} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
+import {MatDialog} from '@angular/material/dialog';
+import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
+import {FilterService} from '../../services/filter-service';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -17,7 +20,6 @@ import {StatusModel} from '../../models/invoice/status-model';
 export class InvoiceListPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
   headers = InvoiceDataModel.invoiceTableHeaders;
-  invoiceStatuses = InvoiceDataModel.invoiceStatusOptions;
   invoices: Array<InvoiceDataModel> = [];
   sortField = '';
   searchValue = '';
@@ -31,7 +33,9 @@ export class InvoiceListPageComponent implements OnInit {
     private route: ActivatedRoute,
     private loadingService: LoadingService,
     private webservice: WebServices,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private filterService: FilterService
   ) {
   }
 
@@ -47,13 +51,14 @@ export class InvoiceListPageComponent implements OnInit {
 
   getTableData(numberPerPage: number): void {
     this.loadingService.showLoading('Loading');
+    const searchFilters = this.filterService.invoiceFilterModel.formatForSearch();
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
       sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
       searchValue: this.searchValue,
-      invoiceStatuses: this.selectedInvoiceStatuses,
       createdByUser: this.createdByUser,
+      ...searchFilters,
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
@@ -103,7 +108,22 @@ export class InvoiceListPageComponent implements OnInit {
     this.resetTable();
   }
 
-  private resetTable(): void {
+  openFilter(): void {
+    this.dialog.open(InvoiceFilterModalComponent, {
+      minWidth: '525px',
+      width: '33vw',
+      autoFocus: false,
+      position: {
+        right: '24px'
+      }
+    }).afterClosed().subscribe( response => {
+      if (response) {
+        this.resetTable();
+      }
+    });
+  }
+
+  resetTable(): void {
     if (this.paginationModel.pageIndex !== 1) {
       this.dataTable.goToFirstPage();
     } else {

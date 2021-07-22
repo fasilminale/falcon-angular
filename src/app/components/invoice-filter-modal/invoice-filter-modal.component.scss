@@ -1,0 +1,11 @@
+@import "node_modules/@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@import "node_modules/@elm/elm-styleguide-ui/src/styles/elm-modals";
+.inputError {
+  color: $error-red;
+  text-align: center;
+  margin-top: -32px;
+}
+
+.errorSpacing {
+  padding-bottom: 36px;
+}
