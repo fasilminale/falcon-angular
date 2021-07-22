@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {HttpTestingController} from '@angular/common/http/testing';
 import {OktaAuthService, OKTA_CONFIG} from '@okta/okta-angular';
-import {HttpClient, HttpHeaders, HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HttpClient, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {FalHttpInterceptor} from './fal-http-interceptor';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 
@@ -38,8 +38,7 @@ describe('HttpInterceptor', () => {
   });
 
   it('test header Authorization', async () => {
-    const headers = new HttpHeaders().set('X-SKIP-INTERCEPTOR', '');
-    const promise = httpClient.get(TEST_URL, {headers}).toPromise();
+    const promise = httpClient.get(TEST_URL).toPromise();
     const req = httpMock.expectOne(TEST_URL);
     req.flush(TEST_RESPONSE);
     const response = await promise;
