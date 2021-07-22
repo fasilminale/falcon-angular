@@ -2,11 +2,11 @@
   <elm-progress-spinner label="{{label}}" spinnerType="indeterminate"></elm-progress-spinner>
 </div>
 <div class="app">
-  <div *ngIf="authService.isAuthenticated" class="page-header">
+  <div *ngIf="authService.isAuthenticated()" class="page-header">
     <elm-navbar headerTitle="FALCON"
                 logoUrl="/assets/ELM_logo.svg"
                 [NavBarItems]="navBarItems"
-                [user]="authService.userInfo"
+                [user]="authService.getUserInfo()"
                 [showLogout]="true"
                 (logoutClickEvent)="logout()"
                 [showFeedback]="true"

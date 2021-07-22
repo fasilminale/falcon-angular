@@ -4,18 +4,11 @@ import {OKTA_CONFIG, OktaAuthService} from '@okta/okta-angular';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Injector} from '@angular/core';
 import {Router} from '@angular/router';
-import {LoadingService} from '../../services/loading-service';
 import {ErrorService} from '../../services/error-service';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('OktaCallbackComponent', () => {
-  let component: OktaCallbackComponent;
-  let fixture: ComponentFixture<OktaCallbackComponent>;
-  let auth: OktaAuthService;
-  let router: Router;
-  let errorService: ErrorService;
-  let injector: Injector;
-
-  const tokens = {
+  const REAL_TOKENS = {
     tokens: {
       accessToken: {
         value: 'eyJraWQiOiJWbzV6a2lSMmFaN3NEUDBDODV2Szc5a2x2bm9SNDdqdFdaeWZqaWFyeTBvIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULmFPblpqay1SaFFTS2FvTHliN29EaWtBeEVLSENsSUxzVzhrX1J0RUZGVXMiLCJpc3MiOiJodHRwczovL2lkZW50aXR5LmRldi5jYXJkaW5hbGhlYWx0aC5uZXQiLCJhdWQiOiJodHRwczovL2lkZW50aXR5LmRldi5jYXJkaW5hbGhlYWx0aC5uZXQiLCJzdWIiOiJqb3NlcGgubXV6aW9AY2FyZGluYWxoZWFsdGguY29tIiwiaWF0IjoxNjIwMjM4MjYxLCJleHAiOjE2MjAyNDE4NjEsImNpZCI6IjBvYXhxMWs2OG8wTkQxUzBuMGg3IiwidWlkIjoiMDB1eTcxemVoNEc2cEp4Y0swaDciLCJzY3AiOlsib3BlbmlkIiwiZW1haWwiLCJwcm9maWxlIl19.IxY_3aIFCxglImVnc7pJ1sYPoe9DLmUgZyFtmDW6jr5ntU3JdIEeswjYMZ0Z6AgYy44bSqqFEHaRRzADVIbglMcwQHaP5__jCcVWj_CAg9GNpBDl6TLX__03YAAP4bmd0FF22DaORzKGVTw1T7Nsq2QIMbISSIDwUcPOYh_hxaM3tKMkVE0bFC961PauDFOLVIbxs5V3Q1oqpuFnAcCyR2PqX8VsRs_7zh640aflHjVb7B9Se7Pf_hbJl9OS_Fg7J2UrSC0bJt5uTuOvDmoTEaUCOWn03_0ZtJibbNzrg7pKG5prMqj7w4hJTlhfqMuwHFnkryrMutq6Gnrvn52_sg',
@@ -65,20 +58,32 @@ describe('OktaCallbackComponent', () => {
       }
     }, code: '4Rz5tzM4yzKgZn2S4baX3QbWCRsbWsXSRz5IAXgx8xQ'
   };
-
-  const oktaConfig = {
+  const REAL_OKTA_CONFIG = {
     clientId: '00j-LmDhCXi__QRysgMm_VC1DbM-eZsYDvnYncKVaG',
     issuer: 'https://identity.dev.cardinalhealth.net/',
     redirectUri: window.location.origin + '/login/callback',
     logoutUrl: window.location.origin + '/logged-out',
   };
 
+  let component: OktaCallbackComponent;
+  let fixture: ComponentFixture<OktaCallbackComponent>;
+  let auth: OktaAuthService;
+  let router: Router;
+  let errorService: ErrorService;
+  let injector: Injector;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [
+        FalconTestingModule,
+        RouterTestingModule.withRoutes([])
+      ],
       declarations: [OktaCallbackComponent],
-      imports: [RouterTestingModule.withRoutes([])],
-      providers: [OktaAuthService, Injector, LoadingService, ErrorService,
-        {provide: OKTA_CONFIG, useValue: oktaConfig}]
+      providers: [
+        OktaAuthService,
+        Injector,
+        {provide: OKTA_CONFIG, useValue: REAL_OKTA_CONFIG}
+      ]
     }).compileComponents();
     // Get Injectables
     auth = TestBed.inject(OktaAuthService);
@@ -99,7 +104,7 @@ describe('OktaCallbackComponent', () => {
 
   it('redirect handleLoginRedirect called', fakeAsync(() => {
     // @ts-ignore
-    spyOn(auth.token, 'parseFromUrl').and.returnValue(Promise.resolve(tokens));
+    spyOn(auth.token, 'parseFromUrl').and.returnValue(Promise.resolve(REAL_TOKENS));
     spyOn(auth.tokenManager, 'setTokens').and.callThrough();
     spyOn(auth, 'isAuthenticated').and.returnValue(Promise.resolve(true));
     const navigateSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
@@ -116,7 +121,7 @@ describe('OktaCallbackComponent', () => {
 
   it('redirect handle error during authentication', fakeAsync(() => {
     // @ts-ignore
-    spyOn(auth.token, 'parseFromUrl').and.returnValue(Promise.resolve(tokens));
+    spyOn(auth.token, 'parseFromUrl').and.returnValue(Promise.resolve(REAL_TOKENS));
     spyOn(auth.tokenManager, 'setTokens').and.callThrough();
     spyOn(auth, 'isAuthenticated').and.returnValue(Promise.resolve(false));
     spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));

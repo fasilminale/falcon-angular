@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {FalRadioInputComponent, FalRadioOrientation} from './fal-radio-input.component';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('FalRadioInputComponent', () => {
   let component: FalRadioInputComponent;
@@ -8,12 +8,9 @@ describe('FalRadioInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [FalconTestingModule],
       declarations: [FalRadioInputComponent]
-    })
-      .compileComponents();
-  });
-
-  beforeEach(() => {
+    }).compileComponents();
     fixture = TestBed.createComponent(FalRadioInputComponent);
     component = fixture.componentInstance;
     component.initialValue = 'default';
@@ -70,5 +67,4 @@ describe('FalRadioInputComponent', () => {
     component.orientation = FalRadioOrientation.VERTICAL;
     expect(component.isHorizontal()).toBeFalse();
   });
-
 });

@@ -3,6 +3,7 @@ import {WebServices} from './web-services';
 import {of, throwError} from 'rxjs';
 import {AttachmentService, FakeAttachmentService, RealAttachmentService} from './attachment-service';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
+import {NeedSpyError} from '../testing/test-utils';
 
 
 describe('AttachmentService', () => {
@@ -38,7 +39,7 @@ describe('AttachmentService', () => {
     });
     it('should throw error on saveAttachments', () => {
       expect(() => attachmentService.saveAttachments('someInvoiceNumber', []))
-        .toThrowError('AttachmentService#saveAttachments(...) needs to be spied on for this test!');
+        .toThrow(new NeedSpyError('AttachmentService', 'saveAttachments'));
     });
   });
 
