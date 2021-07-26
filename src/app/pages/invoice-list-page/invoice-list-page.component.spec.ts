@@ -12,11 +12,21 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {of} from 'rxjs';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import {MatDialog} from '@angular/material/dialog';
+import {FilterService} from '../../services/filter-service';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
     super();
     this.queryParams = of(map);
+  }
+}
+
+class DialogMock {
+  open(): any {
+    return {
+      afterClosed: () => of(true)
+    };
   }
 }
 
@@ -28,6 +38,8 @@ describe('InvoiceListPageComponent', () => {
   let loadingService: LoadingService;
   let router: Router;
   let snackBar: MatSnackBar;
+  let dialog: MatDialog;
+  let filterService: FilterService;
 
   const pageEvent = new PageEvent();
   pageEvent.pageSize = 30;
@@ -62,14 +74,23 @@ describe('InvoiceListPageComponent', () => {
       ],
       declarations: [InvoiceListPageComponent],
       providers: [
-        {provide: ActivatedRoute, useValue: new MockActivatedRoute({falconInvoiceNumber: '1'})}
-      ],
+        {
+          provide: MatDialog,
+          useClass: DialogMock
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: new MockActivatedRoute({ falconInvoiceNumber: '1' })
+        }
+      ]
     }).compileComponents();
     webservice = TestBed.inject(WebServices);
     loadingService = TestBed.inject(LoadingService);
     http = TestBed.inject(HttpTestingController);
     snackBar = TestBed.inject(MatSnackBar);
     router = TestBed.inject(Router);
+    dialog = TestBed.inject(MatDialog);
+    filterService = TestBed.inject(FilterService);
   });
 
   beforeEach(() => {
@@ -167,4 +188,26 @@ describe('InvoiceListPageComponent', () => {
     component.rowClicked(invoice);
     expect(navigateSpy).toHaveBeenCalledWith(['/invoice/1']);
   }));
+
+  describe('openFilter', () => {
+    function openModal(): void {
+      spyOn(component, 'openFilter').and.callThrough();
+      component.openFilter();
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        const dialogDiv = document.querySelector('mat-dialog-container');
+        const applyButton = dialogDiv?.querySelector('#apply-filter');
+        const mouseEvent = new MouseEvent('click');
+        applyButton?.dispatchEvent(mouseEvent);
+      });
+      tick(150);
+    }
+
+    it('should call resetTable on apply', fakeAsync(() => {
+      spyOn(component, 'resetTable').and.callThrough();
+      openModal();
+      http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
+      expect(component.resetTable).toHaveBeenCalled();
+    }));
+  });
 });

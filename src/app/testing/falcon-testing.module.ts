@@ -16,6 +16,7 @@ import {OktaAuthModule, OktaAuthService} from '@okta/okta-angular';
 import {ErrorService} from '../services/error-service';
 import {FakeAuthService} from '../services/auth-service';
 import {TimeService} from '../services/time-service';
+import {FilterService} from '../services/filter-service';
 
 @NgModule({
   declarations: [],
@@ -47,6 +48,7 @@ import {TimeService} from '../services/time-service';
     InvoiceService,
     TemplateService,
     UtilService,
+    FilterService,
     InvoiceFormManager,
     RealSubscriptionManager.PROVIDER,
   ],

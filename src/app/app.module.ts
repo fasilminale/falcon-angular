@@ -44,6 +44,8 @@ import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.co
 import {FalContainerComponent} from './components/fal-container/fal-container.component';
 import {RealSubscriptionManager} from './services/subscription-manager';
 import {InvoiceFormManager} from './components/invoice-form/invoice-form-manager';
+import {InvoiceFilterModalComponent} from './components/invoice-filter-modal/invoice-filter-modal.component';
+import {FilterService} from './services/filter-service';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -108,7 +110,8 @@ const oktaConfig = {
     UploadFormComponent,
     FalContainerComponent,
     OktaCallbackComponent,
-    LoggedOutPageComponent
+    LoggedOutPageComponent,
+    InvoiceFilterModalComponent
   ],
   imports: [
     BrowserModule,
@@ -149,6 +152,7 @@ const oktaConfig = {
     OktaAuthService,
     RealAuthService.PROVIDER,
     InvoiceFormManager,
+    FilterService,
     RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,
