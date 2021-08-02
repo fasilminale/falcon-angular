@@ -10,3 +10,9 @@
     letter-spacing: 1.25px;
     text-transform: uppercase;
  }
+
+ #fileInput:disabled::-webkit-file-upload-button {
+    background-color: #e5e4e4 !important;
+    color: #27251f !important;
+    opacity: .65;
+ }
