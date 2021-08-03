@@ -110,7 +110,6 @@ describe('InvoiceFormComponent', () => {
     afterClosed: of(false),
     close: null
   });
-
   const submittedInvoiceResponse = {
     falconInvoiceNumber: 'F0000000002',
     amountOfInvoice: 2999.99,
@@ -489,6 +488,12 @@ describe('InvoiceFormComponent', () => {
           expect(router.navigate).toHaveBeenCalled();
         });
         it('should NOT leave page when cancel dialog is DENIED', async () => {
+          spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+          await component.onCancel();
+          expect(router.navigate).not.toHaveBeenCalled();
+        });
+        it('should NOT leave page when cancel dialog is DENIED', async () => {
+          component.falconInvoiceNumber = 'TEST';
           spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
           await component.onCancel();
           expect(router.navigate).not.toHaveBeenCalled();
