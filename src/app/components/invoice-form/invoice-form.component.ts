@@ -349,7 +349,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
 
     public async onSubmitForApprovalButtonClick(): Promise<void> {
-        const invoiceNumber = await this.onSaveButtonClick();
+        const invoiceNumber = await this.saveInvoice();
         this.loadingService.showLoading('Submitting');
         try {
             if (invoiceNumber) {
@@ -358,9 +358,15 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         } finally {
             this.loadingService.hideLoading();
         }
+        await this.gotoInvoiceList();
     }
 
-    public async onSaveButtonClick(): Promise<string | null> {
+    public async onSaveButtonClick(): Promise<void> {
+        await this.saveInvoice();
+        await this.gotoInvoiceList();
+    }
+    
+    private async saveInvoice(): Promise<string | null> {
         this.loadingService.showLoading('Saving');
         try {
             if (this.isOnEditPage) {
