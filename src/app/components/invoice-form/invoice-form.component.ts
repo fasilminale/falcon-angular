@@ -331,12 +331,17 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
 
     private askForCancelConfirmation(): Promise<boolean> {
-        const msg = this.isOnEditPage? 'Are you sure you want to cancel?' : 'Are you sure you want to cancel creation of this invoice?';
+        let line1Message= 'You will lose all entered information if you cancel creation of this invoice now.';
+        let line2Message = 'Are you sure you want to cancel creation of this invoice?';
+        if(this.isOnEditPage) {
+             line1Message = 'All changes to this invoice will be lost if you cancel now.';
+             line2Message = 'Are you sure you want to cancel?';
+        }
         return this.util.openConfirmationModal({
             title: 'Cancel',
-            innerHtmlMessage: `You will lose all entered information if you cancel creation of this invoice now.
+            innerHtmlMessage: `${line1Message}
                    <br/><br/><strong>
-                   ${msg}
+                   ${line2Message}
                    </strong>`,
             confirmButtonText: 'Yes, cancel',
             confirmButtonStyle: 'destructive',
