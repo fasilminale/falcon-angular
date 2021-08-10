@@ -1,0 +1,17 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-fonts";
+
+.chips-container {
+  background-color: $bkg-grey;
+}
+
+.mat-chip-trailing-icon {
+  margin-top: 1px;
+  color: $elm-blue !important;
+  font-size: 16px;
+}
+
+.filter-tooltip {
+  @extend .elm-field-label1;
+  text-align: left;
+}

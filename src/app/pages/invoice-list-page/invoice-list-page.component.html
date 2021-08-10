@@ -19,6 +19,9 @@
       </div>
     </div>
   </elm-section-header>
+  <cardinal-chip [totalResults]="paginationModel.total"
+                 [filtersModel]="this.filterService.invoiceFilterModel"
+                 (chipRemovedEvent)="this.resetTable()"></cardinal-chip>
   <elm-data-table
     tableType="clickable"
     [data]="invoices"

@@ -102,4 +102,20 @@ export class FiltersModel {
       invoiceStatuses: this.form.get('invoiceStatuses')?.value
     };
   }
+
+  resetGroup<T extends AbstractControl>(control: AbstractControl | null): void {
+    if (control instanceof FormArray) {
+      control.clear();
+    }
+    if (control instanceof FormGroup) {
+      const min = control.get('min');
+      if (min) {
+        min.setValue(null);
+      }
+      const max = control.get('max');
+      if (max) {
+        max.setValue(null);
+      }
+    }
+  }
 }

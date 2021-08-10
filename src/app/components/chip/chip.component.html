@@ -1,0 +1,24 @@
+<div *ngIf="chips.length > 0" style="padding: 8px 24px" class="d-flex align-items-center chips-container">
+  <div class="me-3 text-nowrap">
+    Results ({{totalResults}})
+  </div>
+  <mat-chip-list class="d-flex flex-wrap flex-fill">
+    <mat-chip
+      [ngbTooltip]="filter.tooltips ? tipContent : undefined"
+      placement="bottom"
+      *ngFor="let filter of chips"
+      id="{{filter.type}}-{{filter.label}}"
+      [selectable]="selectable"
+      [removable]="removable"
+      (removed)="removeChip(filter.group)">
+      <ng-template #tipContent>
+        <div [innerHTML]="filter.tooltips" class="filter-tooltip"></div>
+      </ng-template>
+      <span [innerHTML]="filter.type"></span>
+      <span [innerHTML]="filter.label"></span>
+      <span class="material-icons" id="{{filter.type}}-{{filter.label}}-remove" matChipRemove
+            *ngIf="removable">cancel</span>
+    </mat-chip>
+  </mat-chip-list>
+  <elm-button buttonStyle="text" (buttonClick)="clearFilters()" [isUppercase]="false">Clear All Filters</elm-button>
+</div>
