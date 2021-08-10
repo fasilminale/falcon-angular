@@ -46,7 +46,7 @@ import {RealSubscriptionManager} from './services/subscription-manager';
 import {InvoiceFormManager} from './components/invoice-form/invoice-form-manager';
 import {InvoiceFilterModalComponent} from './components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from './services/filter-service';
-import { ChipComponent } from './components/chip/chip.component';
+import {ChipComponent} from './components/chip/chip.component';
 import {MatChipsModule} from '@angular/material/chips';
 
 const getOktaConfig = () => {
