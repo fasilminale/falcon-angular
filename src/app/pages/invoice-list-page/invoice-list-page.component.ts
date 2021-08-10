@@ -35,7 +35,7 @@ export class InvoiceListPageComponent implements OnInit {
     private webservice: WebServices,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private filterService: FilterService
+    public filterService: FilterService,
   ) {
   }
 
@@ -130,4 +130,5 @@ export class InvoiceListPageComponent implements OnInit {
       this.getTableData(this.paginationModel.numberPerPage);
     }
   }
+  
 }
