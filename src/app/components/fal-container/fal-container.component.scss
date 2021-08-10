@@ -19,5 +19,11 @@
     margin: 1rem;
     width: auto;
   }
+}
 
+.fal-container-rejected {
+  @extend .fal-container-body;
+  background-color: $error-red-bkg;
+  color: $error-red;
+  border-color: $error-red;
 }

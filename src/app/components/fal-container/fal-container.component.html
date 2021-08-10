@@ -1,4 +1,4 @@
-<div class="fal-container-body">
+<div [ngClass]="isRejected ? 'fal-container-rejected' : 'fal-container-body'">
         <span class="material-icons elm-div1" *ngIf="getIcon()">
           {{getIcon()}}
         </span>

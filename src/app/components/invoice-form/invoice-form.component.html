@@ -14,7 +14,7 @@
         <div *ngIf="hasLatestMilestoneComments"
              id="comment-container-parent"
              class="col-12">
-          <fal-container id="comment-container">
+          <fal-container id="comment-container" [isRejected]="commentLabelPrefix === 'Rejection'">
             <strong>
               {{commentLabelPrefix}} Comments:
             </strong>
@@ -371,7 +371,7 @@
                                                   && form.lineItemGlAccount(i).touched)}">
                     GL Account is required
                   </small>
-                  
+
                 </ng-template>
               </div>
 
@@ -384,10 +384,10 @@
                                         [isDisabled]="readOnly"
                                         (focus)="focusLineItemElement(form.lineItemNetAmount(i))"
                                         [isError]="!!(form.lineItemNetAmount(i).errors
-                                                      && (form.lineItemNetAmount(i).hasError('required') 
+                                                      && (form.lineItemNetAmount(i).hasError('required')
                                                       || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
                                                       && form.lineItemNetAmount(i).touched) || !form.isInvoiceAmountValid">
-                </app-fal-currency-input>        
+                </app-fal-currency-input>
                 <small class="error-text"
                    *ngIf="!!(form.lineItemNetAmount(i).errors
                    && (form.lineItemNetAmount(i).hasError('required') || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
