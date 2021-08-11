@@ -10,16 +10,13 @@ describe('ChipComponent', () => {
   let fixture: ComponentFixture<ChipComponent>;
   let http: HttpTestingController;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    TestBed.configureTestingModule({
       declarations: [ ChipComponent ],
       imports: [ HttpClientTestingModule ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ChipComponent);
     http = TestBed.inject(HttpTestingController);
     component = fixture.componentInstance;
