@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -8,6 +8,8 @@ import {Component, OnInit} from '@angular/core';
 })
 export class FalContainerComponent implements OnInit {
 
+  @Input() isRejected = false;
+
   constructor() {
   }
 
@@ -15,7 +17,7 @@ export class FalContainerComponent implements OnInit {
   }
 
   getIcon(): string {
-    return 'info';
+    return this.isRejected ? 'report_problem' : 'info';
   }
 
 }

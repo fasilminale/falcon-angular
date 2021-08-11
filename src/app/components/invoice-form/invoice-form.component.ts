@@ -10,34 +10,25 @@ import {
     ViewChild
 } from '@angular/core';
 import {
-    AbstractControl, Form,
-    FormArray,
+    AbstractControl,
     FormControl,
     FormGroup,
-    NG_VALUE_ACCESSOR,
-    ValidationErrors,
-    ValidatorFn,
-    Validators
+    NG_VALUE_ACCESSOR
 } from '@angular/forms';
-import {WebServices} from '../../services/web-services';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {TemplateService} from '../../services/template-service';
 import {UtilService} from '../../services/util-service';
-import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {Attachment, UploadFormComponent} from '../upload-form/upload-form.component';
+import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {MatDialog} from '@angular/material/dialog';
-import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
 import {of} from 'rxjs';
-import {filter, mergeMap} from 'rxjs/operators';
-import {isFalsey} from '../../utils/predicates';
 import {InvoiceFormManager} from './invoice-form-manager';
 
 @Component({
@@ -132,6 +123,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         const status = milestone?.status;
         if (status?.key && status.key === 'SUBMITTED') {
             return 'Creator';
+        }
+        if (status?.key && status.key === 'REJECTED') {
+          return 'Rejection';
         }
         return 'General';
     }
@@ -370,7 +364,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         await this.saveInvoice();
         await this.gotoInvoiceList();
     }
-    
+
     private async saveInvoice(): Promise<string | null> {
         this.loadingService.showLoading('Saving');
         try {

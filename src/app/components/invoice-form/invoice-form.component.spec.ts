@@ -738,6 +738,16 @@ describe('InvoiceFormComponent', () => {
         });
       });
 
+      describe(', given Rejected status', () => {
+        beforeEach(() => {
+          testMilestone.status = {key: 'REJECTED'};
+        });
+
+        it('should have label prefix "Creator"', () => {
+          expect(component.commentLabelPrefix).toEqual('Rejection');
+        });
+      });
+
     });
 
   });
