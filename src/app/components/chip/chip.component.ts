@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
-import {FormArray, FormGroup} from '@angular/forms';
+import {FormArray} from '@angular/forms';
 import { StatusModel } from 'src/app/models/invoice/status-model';
 
 export interface FilterChip {
