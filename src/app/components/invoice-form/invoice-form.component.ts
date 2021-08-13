@@ -343,7 +343,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         }).toPromise();
     }
 
-    private async gotoInvoiceList(): Promise<boolean> {
+    public async gotoInvoiceList(): Promise<boolean> {
         return this.router.navigate(['/invoices']);
     }
 
@@ -353,16 +353,18 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         try {
             if (invoiceNumber) {
                 await this.invoiceService.submitForApproval(invoiceNumber).toPromise();
+                await this.gotoInvoiceList();
             }
         } finally {
             this.loadingService.hideLoading();
         }
-        await this.gotoInvoiceList();
     }
 
     public async onSaveButtonClick(): Promise<void> {
-        await this.saveInvoice();
-        await this.gotoInvoiceList();
+        const invoiceNumber = await this.saveInvoice();
+        if (invoiceNumber) {
+          await this.gotoInvoiceList();
+        }
     }
 
     private async saveInvoice(): Promise<string | null> {
