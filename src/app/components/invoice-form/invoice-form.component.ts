@@ -544,7 +544,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
 
     private onSaveSuccess(invoiceNumber: string): void {
-        // do nothing
         this.gotoInvoiceList();
     }
 
