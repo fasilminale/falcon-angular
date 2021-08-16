@@ -507,8 +507,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
     public onInvoiceInvalidated(): void {
         this.util.openErrorModal({
-            title: 'Invalid Amount(s)',
-            innerHtmlMessage: `Total of Line Net Amount(s) must equal Invoice Net Amount.`
+            title: 'Invalid Invoice Amount',
+            innerHtmlMessage: `Line Item Net Amount must equal Invoice Net Amount.`
         });
         this.form.validateInvoiceNetAmountSum();
     }
