@@ -261,12 +261,6 @@
               />
               Override Standard Payment Terms
             </label>
-            <!--
-            <app-fal-radio-input formControlName="paymentTerms"
-                                 [options]="form.paymentTermOptions"
-                                 (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
-                                 [isDisabled]="readOnly || !form.isPaymentOverrideSelected.value">
-            </app-fal-radio-input>-->
             <div class="payment-terms-div">
               <label class="fal-label">Payment terms</label>
               <ng-select id="paymentTerms"
@@ -299,19 +293,10 @@
                  [formGroupName]="i">
 
               <div class="col-1 text-center">
-                <!--<label *ngIf="i === 0" class="fal-label">
-                   Line item
-                </label>-->
                 {{i + 1}}
-                <!--<div class="fake-form-control line-item-number">
-                  {{i + 1}}
-                </div>-->
               </div>   
 
               <div class="col-2">
-                <!--<label *ngIf="i === 0" class="fal-label">
-                  Company Code
-                </label>-->
                 <input type="text"
                        class="form-control"
                        formControlName="companyCode"
@@ -336,9 +321,6 @@
 
               <!-- LINE ITEM - COST CENTER -->
               <div class="col-2">
-                <!--<label *ngIf="i === 0" class="fal-label">
-                  Cost Center
-                </label>-->
                 <input type="text"
                        class="form-control"
                        formControlName="costCenter"
@@ -366,9 +348,6 @@
 
               <!-- LINE ITEM - GL ACCOUNT -->
               <div class="col-2">
-                <!--<label *ngIf="i === 0" class="fal-label">
-                  GL Account
-                </label>-->
                 <input type="text"
                        class="form-control"
                        formControlName="glAccount"
@@ -397,9 +376,6 @@
 
               <!-- LINE ITEM - NET AMOUNT -->
               <div class="col-2">
-               <!-- <label *ngIf="i === 0" class="fal-label">
-                  Line Net Amount
-                </label>-->
                 <app-fal-currency-input formControlName="lineItemNetAmount"
                                         [isDisabled]="readOnly"
                                         (focus)="focusLineItemElement(form.lineItemNetAmount(i))"
@@ -425,21 +401,9 @@
                 (keypress)="validateFreeTextRegex($event)"
                 maxlength="50"
          />
-         <!--<small class="error-text invisible">
-           spacer
-         </small>-->
-                <!--<div class="flex-grow-1">
-                  <label *ngIf="i === 0" class="fal-label">
-                    Notes (optional)
-                  </label>
-                 
-                </div>-->
 
                 <!-- LINE ITEM - REMOVE -->
                 <div class="flex-shrink-1">
-                  <!--<label *ngIf="i === 0" class="fal-label invisible">
-                    remove
-                  </label>-->
                   <div>
                     <input type="button"
                            value="remove_circle"
@@ -470,16 +434,6 @@
                 <u>+ Add New Line Item</u>
               </elm-button>
             </div>
-           <!-- <div class="col-2">
-              <div class="fake-form-control line-item-total-amount">
-                ${{form.totalLineItemNetAmount | number : '1.2-2'}}
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="fake-form-control">
-                Line Net Amount Total
-              </div>
-            </div> -->
           </div>
 
           <div class="row mb-3 mx-3">
