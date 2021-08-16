@@ -188,8 +188,32 @@
           </div>
 
 
-          <!-- INVOICE AMOUNT -->
-          <div class="col-12">
+          
+
+          
+
+          
+        </div>
+
+        <!-- UPLOAD DOCUMENT SECTION -->
+        <app-upload-form class="row col-12 col-lg-6"
+                         [isDisabled]="readOnly">
+        </app-upload-form>
+
+      </div>
+
+      <div class="row">
+
+        <!-- LINE ITEMS -->
+        <elm-card id="line-items-card"
+                  
+                  overflow="visible">
+          <elm-section-header [sectionTitle]="'Invoice Amount'">
+          </elm-section-header>
+
+          <div class="row px-3">
+            <!-- INVOICE AMOUNT -->
+          <div class="col-2">
             <label for="invoice-amount-input" class="fal-label">
               Invoice Net Amount
             </label>
@@ -212,7 +236,7 @@
           </div>
 
           <!-- CURRENCY -->
-          <div class="col-12">
+          <div class="col-4 px-4 currency-div">
             <label for="currency-input" class="fal-label">
               Currency
             </label>
@@ -233,9 +257,9 @@
           </div>
 
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
-          <div [formGroup]="form.osptFormGroup">
+          <div class="col-4 offset-md-2 d-flex" [formGroup]="form.osptFormGroup">
             <label for="override-stp-checkbox"
-                   class="fal-label">
+                   class="fal-label override-stp-checkbox-div">
               <input id="override-stp-checkbox"
                      type="checkbox"
                      (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
@@ -244,81 +268,84 @@
               />
               Override Standard Payment Terms
             </label>
+            <!--
             <app-fal-radio-input formControlName="paymentTerms"
                                  [options]="form.paymentTermOptions"
                                  (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
                                  [isDisabled]="readOnly || !form.isPaymentOverrideSelected.value">
-            </app-fal-radio-input>
+            </app-fal-radio-input>-->
+            <div class="payment-terms-div">
+              <label class="fal-label">Payment terms</label>
+              <ng-select id="paymentTerms"
+              formControlName="paymentTerms"
+              [items]="form.paymentTermOptions"
+              bindLabel="display"
+              bindValue="value"
+              (change)="form.forceValueChangeEvent(form.osptFormGroup)"
+              [readonly]="readOnly || !form.isPaymentOverrideSelected.value"
+              placeholder="Select One...">
+   </ng-select>
+            </div>
+            
           </div>
-        </div>
 
-        <!-- UPLOAD DOCUMENT SECTION -->
-        <app-upload-form class="row col-12 col-lg-6"
-                         [isDisabled]="readOnly">
-        </app-upload-form>
-
-      </div>
-
-      <div class="row">
-
-        <!-- LINE ITEMS -->
-        <elm-card id="line-items-card"
-                  formArrayName="lineItems"
-                  overflow="visible">
-          <elm-section-header [sectionTitle]="'Line Items'">
-          </elm-section-header>
+          </div>
 
           <!-- LINE ITEM - LOOP -->
-          <div id="line-item-rows-container">
+          <div id="line-item-rows-container" formArrayName="lineItems">
+            <div class="row m-3  line-item-header">
+              <div class="col-1">Line Item</div>
+              <div class="col-2">Company Code</div>
+              <div class="col-2">Cost Center</div>
+              <div class="col-2">GL Account</div>
+              <div class="col-2">Line Net Amount</div>
+              <div class="col-3">Notes(optional)</div>
+            </div>
             <div *ngFor="let _ of form.lineItems.controls; index as i"
-                 class="line-item-row row"
+                 class="line-item-row row mx-3"
                  [formGroupName]="i">
 
-              <div class="d-flex flex-row col-2 align-items-stretch">
-                <!-- LINE ITEM - NUMBER -->
-                <div class="d-flex flex-column flex-shrink-1 justify-content-start">
-                  <label *ngIf="i === 0" class="fal-label invisible">
-                    #
-                  </label>
-                  <div class="fake-form-control line-item-number">
-                    {{i + 1}}
-                  </div>
+              <div class="col-1 text-center">
+                <!--<label *ngIf="i === 0" class="fal-label">
+                   Line item
+                </label>-->
+                {{i + 1}}
+                <!--<div class="fake-form-control line-item-number">
+                  {{i + 1}}
+                </div>-->
+              </div>   
+
+              <div class="col-2">
+                <!--<label *ngIf="i === 0" class="fal-label">
+                  Company Code
+                </label>-->
+                <input type="text"
+                       class="form-control"
+                       formControlName="companyCode"
+                       [placeholder]="form.companyCode.value"
+                       (keypress)="validateRegex($event)"
+                       maxlength="4"
+                       (focus)="focusLineItemElement(form.lineItemCompanyCode(i))"
+                       [ngClass]="form.lineItemCompanyCode(i).hasError('pattern') ? 'error' : ''"
+                />
+                <small class="error-text"
+                       *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
+                  {{specialCharErrorMessage}}
+                </small>
+                <ng-template #companyCodeError>
                   <small class="error-text invisible">
                     spacer
                   </small>
-                </div>
-
-                <!-- LINE ITEM - COMPANY CODE -->
-                <div class="flex-grow-1">
-                  <label *ngIf="i === 0" class="fal-label">
-                    Company Code
-                  </label>
-                  <input type="text"
-                         class="form-control"
-                         formControlName="companyCode"
-                         [placeholder]="form.companyCode.value"
-                         (keypress)="validateRegex($event)"
-                         maxlength="4"
-                         (focus)="focusLineItemElement(form.lineItemCompanyCode(i))"
-                         [ngClass]="form.lineItemCompanyCode(i).hasError('pattern') ? 'error' : ''"
-                  />
-                  <small class="error-text"
-                         *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
-                    {{specialCharErrorMessage}}
-                  </small>
-                  <ng-template #companyCodeError>
-                    <small class="error-text invisible">
-                      spacer
-                    </small>
-                  </ng-template>
-                </div>
+                </ng-template>
               </div>
+
+              
 
               <!-- LINE ITEM - COST CENTER -->
               <div class="col-2">
-                <label *ngIf="i === 0" class="fal-label">
+                <!--<label *ngIf="i === 0" class="fal-label">
                   Cost Center
-                </label>
+                </label>-->
                 <input type="text"
                        class="form-control"
                        formControlName="costCenter"
@@ -346,9 +373,9 @@
 
               <!-- LINE ITEM - GL ACCOUNT -->
               <div class="col-2">
-                <label *ngIf="i === 0" class="fal-label">
+                <!--<label *ngIf="i === 0" class="fal-label">
                   GL Account
-                </label>
+                </label>-->
                 <input type="text"
                        class="form-control"
                        formControlName="glAccount"
@@ -377,9 +404,9 @@
 
               <!-- LINE ITEM - NET AMOUNT -->
               <div class="col-2">
-                <label *ngIf="i === 0" class="fal-label">
+               <!-- <label *ngIf="i === 0" class="fal-label">
                   Line Net Amount
-                </label>
+                </label>-->
                 <app-fal-currency-input formControlName="lineItemNetAmount"
                                         [isDisabled]="readOnly"
                                         (focus)="focusLineItemElement(form.lineItemNetAmount(i))"
@@ -396,29 +423,30 @@
                 </small>
               </div>
 
-              <div class="d-flex col-4 align-items-start">
+              <div class="d-flex col-3 align-items-start">
                 <!-- LINE ITEM - NOTES -->
-                <div class="flex-grow-1">
+                <input type="text"
+                class="form-control"
+                formControlName="notes"
+                (focus)="form.forceValueChangeEvent(form.lineItemNotes(i))"
+                (keypress)="validateFreeTextRegex($event)"
+                maxlength="50"
+         />
+         <!--<small class="error-text invisible">
+           spacer
+         </small>-->
+                <!--<div class="flex-grow-1">
                   <label *ngIf="i === 0" class="fal-label">
                     Notes (optional)
                   </label>
-                  <input type="text"
-                         class="form-control"
-                         formControlName="notes"
-                         (focus)="form.forceValueChangeEvent(form.lineItemNotes(i))"
-                         (keypress)="validateFreeTextRegex($event)"
-                         maxlength="50"
-                  />
-                  <small class="error-text invisible">
-                    spacer
-                  </small>
-                </div>
+                 
+                </div>-->
 
                 <!-- LINE ITEM - REMOVE -->
                 <div class="flex-shrink-1">
-                  <label *ngIf="i === 0" class="fal-label invisible">
+                  <!--<label *ngIf="i === 0" class="fal-label invisible">
                     remove
-                  </label>
+                  </label>-->
                   <div>
                     <input type="button"
                            value="remove_circle"
@@ -449,7 +477,7 @@
                 <u>+ Add New Line Item</u>
               </elm-button>
             </div>
-            <div class="col-2">
+           <!-- <div class="col-2">
               <div class="fake-form-control line-item-total-amount">
                 ${{form.totalLineItemNetAmount | number : '1.2-2'}}
               </div>
@@ -457,6 +485,19 @@
             <div class="col-4">
               <div class="fake-form-control">
                 Line Net Amount Total
+              </div>
+            </div> -->
+          </div>
+
+          <div class="row mb-3 mx-3">
+            <div class="amount-summary-div col-3 offset-md-9 p-3 d-flex flex-column">
+              <div class="col-12 d-flex justify-content-between">
+                <span>Line Item Net Amount Total:</span>
+                <span>${{form.totalLineItemNetAmount | number : '1.2-2'}}</span>
+              </div>
+              <div class="col-12 d-flex justify-content-between">
+                <span>Invoice Net Amount:</span>
+                <span>${{form.amountOfInvoice?.value | number : '1.2-2'}}</span>
               </div>
             </div>
           </div>

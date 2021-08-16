@@ -367,8 +367,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
 
     public async onSaveButtonClick(): Promise<void> {
-        await this.saveInvoice();
-        await this.gotoInvoiceList();
+        await this.saveInvoice();        
     }
     
     private async saveInvoice(): Promise<string | null> {
@@ -546,6 +545,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
     private onSaveSuccess(invoiceNumber: string): void {
         // do nothing
+        this.gotoInvoiceList();
     }
 
     private async onSaveFailure(): Promise<void> {
