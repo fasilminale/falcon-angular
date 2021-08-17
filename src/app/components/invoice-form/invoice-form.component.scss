@@ -64,6 +64,10 @@
   border-color: $cardinal-red;
 }
 
+.error-div{
+  border: 1px solid $cardinal-red
+}
+
 ::ng-deep .form-control.error {
   border-color: $cardinal-red;
 }
