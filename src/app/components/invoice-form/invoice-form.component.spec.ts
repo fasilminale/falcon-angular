@@ -422,10 +422,12 @@ describe('InvoiceFormComponent', () => {
         spyOn(util, 'openErrorModal').and.returnValue(of(true));
         spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
         spyOn(component, 'validateInvoiceAmount').and.returnValue(false);
+        spyOn(component, 'gotoInvoiceList').and.stub();
         component.falconInvoiceNumber = value;
         component.validateInvoiceAmount();
         await component.onSaveButtonClick();
         expect(component.validateInvoiceAmount).toHaveBeenCalled();
+        expect(component.gotoInvoiceList).not.toHaveBeenCalled();
       });
     });
   });
@@ -521,8 +523,10 @@ describe('InvoiceFormComponent', () => {
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
+    spyOn(component, 'gotoInvoiceList').and.stub();
     component.form.amountOfInvoice.setValue('1');
     await component.onSaveButtonClick();
+    expect(component.gotoInvoiceList).toHaveBeenCalled();
     expect(component.resetForm).toHaveBeenCalled();
   });
 
