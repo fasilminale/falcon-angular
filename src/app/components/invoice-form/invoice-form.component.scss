@@ -50,6 +50,15 @@
   text-align: left;
 }
 
+.line-item-header {
+   background-color: #f6f6f6;
+   padding-top: 10px;
+   padding-bottom: 10px;
+ }
+.line-item-header > div{
+   font-size: 14px;
+}
+
 .line-item-row > div:first-child,
 .line-item-row > div:nth-last-child(2) {
   padding-right: 0em;
@@ -125,5 +134,28 @@
 
 ::ng-deep .nodisplay {
   display: none;
+}
+
+::ng-deep app-fal-radio-input#currency-input div[role="radiogroup"].form-control {
+  border: none;
+  padding-left: 0px;
+}
+
+::ng-deep  app-fal-radio-input#currency-input div[role="radiogroup"].form-control > div{
+  display: flex;
+}
+
+.override-stp-checkbox-div{
+  flex-grow: 0.5;
+  align-self: center;
+  margin-top: 35px;
+}
+
+.payment-terms-div{
+  flex-grow: 4
+}
+
+.amount-summary-div  {
+  background-color: #f6f6f6;
 }
 
