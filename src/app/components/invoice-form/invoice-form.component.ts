@@ -353,11 +353,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         try {
             if (invoiceNumber) {
                 await this.invoiceService.submitForApproval(invoiceNumber).toPromise();
+                await this.gotoInvoiceList();
             }
         } finally {
             this.loadingService.hideLoading();
         }
-        await this.gotoInvoiceList();
+       
     }
 
     public async onSaveButtonClick(): Promise<void> {
