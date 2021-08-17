@@ -140,13 +140,14 @@
   display: none;
 }
 
-::ng-deep app-fal-radio-input#currency-input div[role="radiogroup"].form-control {
-  border: none;
-  padding-left: 0px;
-}
-
-::ng-deep  app-fal-radio-input#currency-input div[role="radiogroup"].form-control > div{
-  display: flex;
+::ng-deep #currency-input {
+  div[role="radiogroup"].form-control {
+    border: none;
+    padding: 0px;
+    & > div {
+      display: flex;
+    }
+  }
 }
 
 .override-stp-checkbox-div{
@@ -162,4 +163,3 @@
 .amount-summary-div  {
   background-color: #f6f6f6;
 }
-
