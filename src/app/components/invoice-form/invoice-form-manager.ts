@@ -58,6 +58,8 @@ export class InvoiceFormManager {
     {value: 'ZN14', display: 'Pay in 14 days'}
   ];
 
+  public paymentTermSelectOptions = ['Pay Immediately', 'Pay in 14 days'];
+
   public totalLineItemNetAmount = 0;
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {

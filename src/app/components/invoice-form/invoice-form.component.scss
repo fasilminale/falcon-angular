@@ -50,6 +50,15 @@
   text-align: left;
 }
 
+.line-item-header {
+   background-color: #f6f6f6;
+   padding-top: 10px;
+   padding-bottom: 10px;
+ }
+.line-item-header > div{
+   font-size: 14px;
+}
+
 .line-item-row > div:first-child,
 .line-item-row > div:nth-last-child(2) {
   padding-right: 0em;
@@ -62,6 +71,10 @@
 
 ::ng-deep .error {
   border-color: $cardinal-red;
+}
+
+.error-div{
+  border: 1px solid $cardinal-red
 }
 
 ::ng-deep .form-control.error {
@@ -127,3 +140,26 @@
   display: none;
 }
 
+::ng-deep #currency-input {
+  div[role="radiogroup"].form-control {
+    border: none;
+    padding: 0px;
+    & > div {
+      display: flex;
+    }
+  }
+}
+
+.override-stp-checkbox-div{
+  flex-grow: 0.5;
+  align-self: center;
+  margin-top: 35px;
+}
+
+.payment-terms-div{
+  flex-grow: 4
+}
+
+.amount-summary-div  {
+  background-color: #f6f6f6;
+}
