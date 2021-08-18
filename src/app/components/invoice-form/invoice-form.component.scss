@@ -160,8 +160,22 @@
   flex-grow: 4
 }
 
+.amount-row{
+  padding-left: 20%;
+}
+
 .amount-summary-div  {
   background-color: $bkg-grey;
+  padding-left: 10px !important;
+  &>div {
+    text-align: right;
+    & span:nth-child(1) {
+      width: 80%;
+    }
+    & span:nth-child(2) {
+      width: 30%;
+    }
+  }
 }
 
 .line-item {
