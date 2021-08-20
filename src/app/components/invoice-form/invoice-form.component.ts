@@ -604,7 +604,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
         if (companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
             const dialogRef = this.util.openConfirmationModal({
                 title: `Review Changes`,
-                innerHtmlMessage: `You've changed company code(s)<br/><br/>
+                innerHtmlMessage: `You've made changes to company code(s)<br/><br/>
                 <strong>Are you sure you want to continue with the changes?</strong>`,
                 confirmButtonText: 'Yes, continue',
                 cancelButtonText: 'No, go back'
