@@ -13,7 +13,7 @@ describe('MasterDataPageComponent', () => {
   let component: MasterDataPageComponent;
   let fixture: ComponentFixture<MasterDataPageComponent>;
   let http: HttpTestingController;
-  let masterDataRows: Array<MasterDataRow>;
+  let masterDataRow: MasterDataRow;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -30,14 +30,12 @@ describe('MasterDataPageComponent', () => {
     http = TestBed.inject(HttpTestingController);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    masterDataRows = [
-      {
-        label: 'Business Units',
-        lastUpdated: '1970-01-01T10:00:00.000+0000',
-        endpoint: 'businessUnits',
-        hasDownloadableTemplate: true
-      }
-    ];
+    masterDataRow = new MasterDataRow({
+      label: 'Business Units',
+      lastUpdated: '1970-01-01T10:00:00.000+0000',
+      endpoint: 'businessUnits',
+      hasDownloadableTemplate: true
+    });
   });
 
   afterEach(() => {
@@ -45,7 +43,7 @@ describe('MasterDataPageComponent', () => {
   });
 
   it('should create', fakeAsync(() => {
-    http.expectOne(`${environment.baseServiceUrl}/v1/masterDataRows`).flush(masterDataRows);
+    http.expectOne(`${environment.baseServiceUrl}/v1/masterDataRows`).flush([masterDataRow]);
     tick();
     expect(component.masterDataRows.length).toEqual(1);
   }));
