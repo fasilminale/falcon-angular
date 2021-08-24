@@ -7,8 +7,10 @@ import {ManageMyTemplatesComponent} from './pages/manage-my-templates/manage-my-
 import {OktaAuthGuard} from '@okta/okta-angular';
 import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
+import {MasterDataPageComponent} from './pages/master-data-page/master-data-page.component';
 
 const routes: Routes = [
+  {path: 'master-data', component:  MasterDataPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoices', component: InvoiceListPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice/:falconInvoiceNumber', component: InvoiceDetailPageComponent, canActivate: [OktaAuthGuard]},

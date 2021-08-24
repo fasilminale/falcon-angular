@@ -17,6 +17,7 @@ import {ErrorService} from '../services/error-service';
 import {FakeAuthService} from '../services/auth-service';
 import {TimeService} from '../services/time-service';
 import {FilterService} from '../services/filter-service';
+import {MasterDataService} from '../services/master-data-service';
 
 @NgModule({
   declarations: [],
@@ -49,6 +50,7 @@ import {FilterService} from '../services/filter-service';
     TemplateService,
     UtilService,
     FilterService,
+    MasterDataService,
     InvoiceFormManager,
     RealSubscriptionManager.PROVIDER,
   ],
