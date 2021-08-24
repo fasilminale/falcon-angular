@@ -40,19 +40,17 @@ describe('InvoiceDetailPageComponent', () => {
       }
     ],
     milestones: [{
-      status: {
+      type: {
         key: 'CREATED',
-        statusLabel: 'Created',
-        milestoneLabel: 'Invoice Created'
+        label: 'Invoice Created'
       },
       timestamp: '2021-04-19T19:58:41.765Z',
       user: 'Falcon User',
       comments: ''
     }, {
-      status: {
+      type: {
         key: 'CREATED',
-        statusLabel: 'Created',
-        milestoneLabel: 'Invoice Created'
+        label: 'Invoice Created'
       },
       timestamp: '2021-04-20T20:58:41.765Z',
       user: 'Falcon User',

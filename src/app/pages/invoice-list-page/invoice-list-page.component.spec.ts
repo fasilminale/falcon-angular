@@ -60,8 +60,7 @@ describe('InvoiceListPageComponent', () => {
   };
   const invoiceStatuses: Array<StatusModel> = [
     {
-      statusLabel: 'Created',
-      milestoneLabel: 'Invoice Created',
+      label: 'Created',
       key: 'CREATED'
     }
   ];

@@ -10,6 +10,7 @@ import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.c
 import {Subscription} from 'rxjs';
 import {TimeService} from '../../services/time-service';
 import {Milestone} from '../../models/milestone/milestone-model';
+import {KeyedLabel} from '../../models/generic/keyed-label';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -54,9 +55,12 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  public invoiceStatusChange(status: KeyedLabel | null): void {
+    this.invoiceStatus = status?.label ?? '';
+  }
+
   public updateMilestones(milestones: Array<Milestone>): void {
     this.milestones = milestones;
-    this.invoiceStatus = this.milestones[0].status.statusLabel;
   }
 
   public toggleMilestones(): void {
