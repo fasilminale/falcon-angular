@@ -29,6 +29,10 @@ export class AppComponent implements OnInit {
     {
       label: 'Manage My Templates',
       click: () => this.router.navigate(['/templates'])
+    },
+    {
+      label: 'Master Data',
+      click: () => this.router.navigate(['/master-data'])
     }
   ];
 

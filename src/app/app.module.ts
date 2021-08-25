@@ -48,6 +48,8 @@ import {InvoiceFilterModalComponent} from './components/invoice-filter-modal/inv
 import {FilterService} from './services/filter-service';
 import {ChipComponent} from './components/chip/chip.component';
 import {MatChipsModule} from '@angular/material/chips';
+import {MasterDataPageComponent} from './pages/master-data-page/master-data-page.component';
+import {MasterDataService} from './services/master-data-service';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -114,7 +116,8 @@ const oktaConfig = {
     OktaCallbackComponent,
     LoggedOutPageComponent,
     InvoiceFilterModalComponent,
-    ChipComponent
+    ChipComponent,
+    MasterDataPageComponent
   ],
   imports: [
     BrowserModule,
@@ -149,6 +152,7 @@ const oktaConfig = {
     InvoiceService,
     RealAttachmentService.PROVIDER,
     TemplateService,
+    MasterDataService,
     UtilService,
     TimeService,
     ErrorService,
