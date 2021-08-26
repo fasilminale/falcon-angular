@@ -97,7 +97,7 @@ describe('InvoiceFormComponent', () => {
     ],
     status: {
       key: 'DELETED',
-      label: 'Invoice Deleted'
+      label: 'Deleted'
     },
     companyCode
   };
@@ -122,7 +122,10 @@ describe('InvoiceFormComponent', () => {
     ],
     milestones: [
       {
-        status: 'SUBMITTED',
+        type: {
+          key: 'SUBMITTED',
+          label: 'Submitted for Approval'
+        },
         user: 'Falcon System'
       }
     ],
@@ -133,7 +136,7 @@ describe('InvoiceFormComponent', () => {
     ],
     status: {
       key: 'SUBMITTED',
-      label: 'Submitted for Approval'
+      label: 'Submitted'
     }
   };
 
@@ -734,7 +737,7 @@ describe('InvoiceFormComponent', () => {
 
       describe(', given Submitted status', () => {
         beforeEach(() => {
-          testMilestone.status = {key: 'SUBMITTED'};
+          testMilestone.type = {key: 'SUBMITTED'};
         });
 
         it('should have label prefix "Creator"', () => {
@@ -744,7 +747,7 @@ describe('InvoiceFormComponent', () => {
 
       describe(', given Rejected status', () => {
         beforeEach(() => {
-          testMilestone.status = {key: 'REJECTED'};
+          testMilestone.type = {key: 'REJECTED'};
         });
 
         it('should have label prefix "Creator"', () => {

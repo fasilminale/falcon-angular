@@ -33,7 +33,7 @@ export class ChipComponent implements OnChanges {
   updateChipFilters(): void {
     this.chips = [];
     const statusForm = this.filtersModel.form.get('invoiceStatuses');
-    
+
     if (statusForm?.value.length > 0) {
       this.chips.push(
         this.formatArrayChip(
@@ -59,7 +59,7 @@ export class ChipComponent implements OnChanges {
   }
 
   getLabel(value: string, options: Array<StatusModel>): string {
-    return options.filter( option => option.key === value)[0].statusLabel;
+    return options.filter( option => option.key === value)[0].label;
   }
 
   getTooltips(formArray: FormArray, options: Array<StatusModel>): string {

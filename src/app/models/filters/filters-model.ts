@@ -14,14 +14,14 @@ export class FiltersModel {
   });
 
   public invoiceStatusOptions: Array<StatusModel> = [
-    {statusLabel: 'Approved', milestoneLabel: 'Approved', key: 'APPROVED'},
-    {statusLabel: 'Created', milestoneLabel: 'Invoice Created', key: 'CREATED'},
-    {statusLabel: 'Deleted', milestoneLabel: 'Invoice Deleted', key: 'DELETED'},
-    {statusLabel: 'Paid', milestoneLabel: 'Paid Invoice', key: 'PAID'},
-    {statusLabel: 'Pending Pay', milestoneLabel: 'Pending Payment by ERP', key: 'PENDING_PAY'},
-    {statusLabel: 'Rejected', milestoneLabel: 'Rejected', key: 'REJECTED'},
-    {statusLabel: 'Resubmitted', milestoneLabel: 'Re-Submitted for Approval', key: 'RESUBMITTED'},
-    {statusLabel: 'Submitted', milestoneLabel: 'Submitted for Approval', key: 'SUBMITTED'},
+    {label: 'Approved', key: 'APPROVED'},
+    {label: 'Created', key: 'CREATED'},
+    {label: 'Deleted', key: 'DELETED'},
+    {label: 'Paid', key: 'PAID'},
+    {label: 'Pending Pay', key: 'PENDING_PAY'},
+    {label: 'Rejected', key: 'REJECTED'},
+    {label: 'Resubmitted', key: 'RESUBMITTED'},
+    {label: 'Submitted', key: 'SUBMITTED'},
 
   ];
 

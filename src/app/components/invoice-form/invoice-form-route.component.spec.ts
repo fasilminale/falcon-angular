@@ -1,9 +1,9 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
-import { HttpTestingController} from '@angular/common/http/testing';
-import {MatSnackBar, } from '@angular/material/snack-bar';
-import {MatDialog, } from '@angular/material/dialog';
+import {HttpTestingController} from '@angular/common/http/testing';
+import {MatSnackBar,} from '@angular/material/snack-bar';
+import {MatDialog,} from '@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {ActivatedRoute, convertToParamMap, Router} from '@angular/router';
 import {TemplateService} from '../../services/template-service';
@@ -25,11 +25,11 @@ describe('InvoiceFormComponent ROUTING', () => {
       }
     ],
     milestones: [{
-      status: 'CREATED',
+      type: {key: 'CREATED', label: 'Invoice Created'},
       timestamp: '2021-04-19T19:58:41.765Z',
       user: 'Falcon User'
     }, {
-      status: 'CREATED',
+      type: {key: 'CREATED', label: 'Invoice Created'},
       timestamp: '2021-04-20T20:58:41.765Z',
       user: 'Falcon User'
     }],

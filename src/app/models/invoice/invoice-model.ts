@@ -43,7 +43,7 @@ export class InvoiceDataModel {
     this.status = json?.status
       ? new StatusModel(json.status)
       : new StatusModel();
-    this.statusLabel = this.status.statusLabel;
+    this.statusLabel = this.status.label;
     this.falconInvoiceNumber = json?.falconInvoiceNumber ?? '';
     this.externalInvoiceNumber = json?.externalInvoiceNumber ?? '';
     this.amountOfInvoice = json?.amountOfInvoice

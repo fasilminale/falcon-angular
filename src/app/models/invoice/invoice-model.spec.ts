@@ -26,8 +26,7 @@ describe('Invoice Model Tests', () => {
 
   const invoice = {
     status: {
-      statusLabel: 'Created',
-      milestoneLabel: 'Invoice Created',
+      label: 'Created',
       key: 'CREATED'
     },
     statusLabel: 'Created',
@@ -49,8 +48,7 @@ describe('Invoice Model Tests', () => {
 
   const expectedInvoice = {
     status: new StatusModel({
-      statusLabel: 'Created',
-      milestoneLabel: 'Invoice Created',
+      label: 'Created',
       key: 'CREATED'
     }),
     statusLabel: 'Created',

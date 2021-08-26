@@ -1,17 +1,11 @@
-export interface Status {
-  readonly statusLabel: string;
-  readonly milestoneLabel: string;
-  readonly key: string;
-}
+import {KeyedLabel} from '../generic/keyed-label';
 
-export class StatusModel implements Status {
-  public readonly statusLabel: string;
-  public readonly milestoneLabel: string;
+export class StatusModel implements KeyedLabel {
+  public readonly label: string;
   public readonly key: string;
 
   constructor(json?: any) {
-    this.statusLabel = json?.statusLabel ?? '';
-    this.milestoneLabel = json?.milestoneLabel ?? '';
+    this.label = json?.label ?? '';
     this.key = json?.key ?? '';
   }
 }

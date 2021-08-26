@@ -1,7 +1,7 @@
-import {Status} from '../invoice/status-model';
+import {KeyedLabel} from '../generic/keyed-label';
 
 export interface Milestone {
-  status: Status;
+  type: KeyedLabel;
   timestamp: string;
   user: string;
   comments: string;
