@@ -22,7 +22,7 @@
     "@angular/platform-browser": "11.0.x",
     "@angular/platform-browser-dynamic": "11.0.x",
     "@angular/router": "11.0.x",
-    "@elm/elm-styleguide-ui": "1.2.x",
+    "@elm/elm-styleguide-ui": "2.x",
     "jquery": "3.6.0",
     "karma-typescript": "5.x",
     "moment": "2.x",

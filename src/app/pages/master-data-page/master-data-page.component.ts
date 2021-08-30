@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
-import {ElmDataTableHeader} from '@elm/elm-styleguide-ui';
+import {ElmDataTableHeader, ModalService} from '@elm/elm-styleguide-ui';
 import {MasterDataService} from '../../services/master-data-service';
 import {TimeService} from '../../services/time-service';
+import {MasterDataUploadModalComponent} from '../../components/master-data-upload-modal/master-data-upload-modal.component';
 
 type MasterDataFields = 'label' | 'lastUpdated' | 'endpoint' | 'download';
 type MasterDataRow = { [field in MasterDataFields]: string };
@@ -20,7 +21,8 @@ export class MasterDataPageComponent {
   masterDataRows: MasterDataRow[] = [];
 
   constructor(private masterDataService: MasterDataService,
-              private timeService: TimeService) {
+              private timeService: TimeService,
+              private modalService: ModalService) {
     this.masterDataService.getMasterDataRows().subscribe((rows: MasterDataRow[]) => {
       this.masterDataRows = rows;
       this.masterDataRows.forEach(row => {
@@ -28,5 +30,14 @@ export class MasterDataPageComponent {
         row.download = 'CURRENT FILE';
       });
     });
+  }
+  openFileUploadModal(): void {
+    const configs = {
+      minWidth: '525px',
+      width: '33vw',
+      autoFocus: false,
+      data: {masterDataRows: this.masterDataRows}
+    };
+    this.modalService.openCustomModal(MasterDataUploadModalComponent, configs);
   }
 }
