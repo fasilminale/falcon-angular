@@ -5,7 +5,15 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {WebServices} from './services/web-services';
 import {HttpClientModule} from '@angular/common/http';
-import {ButtonModule, ContainersModule, DataTableModule, InputsModule, NavigationModule, ProgressModule} from '@elm/elm-styleguide-ui';
+import {
+  ButtonModule,
+  ContainersModule,
+  DataTableModule,
+  InputsModule,
+  ModalsModule,
+  NavigationModule,
+  ProgressModule, ServicesModule
+} from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-create-page.component';
@@ -50,6 +58,7 @@ import {ChipComponent} from './components/chip/chip.component';
 import {MatChipsModule} from '@angular/material/chips';
 import {MasterDataPageComponent} from './pages/master-data-page/master-data-page.component';
 import {MasterDataService} from './services/master-data-service';
+import {MasterDataUploadModalComponent} from './components/master-data-upload-modal/master-data-upload-modal.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -117,7 +126,8 @@ const oktaConfig = {
     LoggedOutPageComponent,
     InvoiceFilterModalComponent,
     ChipComponent,
-    MasterDataPageComponent
+    MasterDataPageComponent,
+    MasterDataUploadModalComponent
   ],
   imports: [
     BrowserModule,
@@ -142,7 +152,9 @@ const oktaConfig = {
     NgbModule,
     NgxCurrencyModule,
     InputMaskModule,
-    InputsModule
+    InputsModule,
+    ModalsModule,
+    ServicesModule
   ],
   providers: [
     WebServices,
