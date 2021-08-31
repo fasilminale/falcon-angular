@@ -1,7 +1,6 @@
 export enum ENV { DEV, QA, PROD, LOCAL };
 
 export class EnvironmentService {
-  jiraFeedbackCollectorId = 'd1383f5b';
   environment: Record<string, ENV> = {
     'http://localhost:4200': ENV.LOCAL,
     'https://elm-dev.cardinalhealth.net': ENV.DEV,
