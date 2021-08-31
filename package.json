@@ -23,6 +23,8 @@
     "@angular/platform-browser-dynamic": "11.0.x",
     "@angular/router": "11.0.x",
     "@elm/elm-styleguide-ui": "1.2.x",
+    "@types/file-saver": "^2.0.3",
+    "file-saver": "^2.0.5",
     "jquery": "3.6.0",
     "karma-typescript": "5.x",
     "moment": "2.x",

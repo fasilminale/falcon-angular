@@ -8,6 +8,7 @@ import {MasterDataRow} from '../../models/master-data-row/master-data-row';
 import {environment} from '../../../environments/environment';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {InvoiceListPageComponent} from '../invoice-list-page/invoice-list-page.component';
+import { EnvironmentService } from 'src/app/services/environment-service/environment-service';
 
 describe('MasterDataPageComponent', () => {
   let component: MasterDataPageComponent;
@@ -20,7 +21,8 @@ describe('MasterDataPageComponent', () => {
       imports: [
         RouterTestingModule,
         FalconTestingModule],
-      declarations: [MasterDataPageComponent]
+      declarations: [MasterDataPageComponent],
+      providers: [EnvironmentService]
     })
       .compileComponents();
   });

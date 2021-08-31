@@ -50,6 +50,7 @@ import {ChipComponent} from './components/chip/chip.component';
 import {MatChipsModule} from '@angular/material/chips';
 import {MasterDataPageComponent} from './pages/master-data-page/master-data-page.component';
 import {MasterDataService} from './services/master-data-service';
+import { EnvironmentService } from './services/environment-service/environment-service';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -161,6 +162,7 @@ const oktaConfig = {
     RealAuthService.PROVIDER,
     InvoiceFormManager,
     FilterService,
+    EnvironmentService,
     RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,
