@@ -10,9 +10,9 @@ export class EnvironmentService {
 
   getGCPStorageLink(origin: string = window.origin): string {
     switch (this.environment[origin]) {
-      case ENV.QA: return 'https://storage.googleapis.com/elm-falcon/master-data-templates/qa';
-      case ENV.PROD: return 'https://storage.googleapis.com/elm-falcon-prod/master-data-templates';
-      default: return 'https://storage.googleapis.com/elm-falcon/master-data-templates/dev';
+      case ENV.QA: return 'https://storage.googleapis.com/elm-chile/master-data-templates/qa';
+      case ENV.PROD: return 'https://storage.googleapis.com/elm-chile-prod/master-data-templates';
+      default: return 'https://storage.googleapis.com/elm-chile/master-data-templates/dev';
     }
   }
 }
