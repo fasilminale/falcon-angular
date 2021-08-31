@@ -1,0 +1,34 @@
+<elm-modal-header title="Upload File"></elm-modal-header>
+<elm-modal-body>
+  <form [formGroup]="this.form" (ngSubmit)="onSubmit()"
+        class="container">
+    <div class="elm-input errorSpacing">
+        <label class="elm-field-label1">Data Model</label>
+        <ng-select class="custom"
+                   [items]="data.masterDataRows"
+                   bindLabel="label"
+                   bindValue="endpoint"
+                   id="master-data-type-select"
+                   placeholder="Please Select"
+                   formControlName="masterDataTypeDropdown"
+                   (change)="handleDataTypeInput()">
+        </ng-select>
+    </div>
+    <div class="elm-input elm-text-input errorSpacing d-flex flex-column">
+        <label class="elm-field-label1">Select File</label>
+        <div class="input-group">
+          <input class="form-control"
+                 type="file"
+                 id="file"
+                 formControlName="fileSelector"
+                 (change)="handleFileInput($event)">
+        </div>
+      <div class="elm-input-subtext elm-field-sub1"> File format .csv</div>
+    </div>
+  </form>
+</elm-modal-body>
+<elm-modal-footer primaryButtonText="upload"
+                  (primaryButtonClick)="onSubmit()"
+                  [primaryButtonDisabled]="uploadButtonDisabled()"
+                  secondaryButtonText="cancel"
+                  (secondaryButtonClick)="dialogRef.close();"></elm-modal-footer>

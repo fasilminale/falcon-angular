@@ -30,6 +30,7 @@ import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscrip
 import {MatDialog} from '@angular/material/dialog';
 import {of} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
+import {KeyedLabel} from '../../models/generic/keyed-label';
 
 @Component({
     selector: 'app-invoice-form',
@@ -66,6 +67,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     @Output() toggleMilestones = new EventEmitter<void>();
     @Output() isDeletedInvoice = new EventEmitter<boolean>();
     @Output() isSubmittedInvoice = new EventEmitter<boolean>();
+    @Output() invoiceStatusChange = new EventEmitter<KeyedLabel | null>();
 
     /* CHILDREN */
     @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
@@ -120,11 +122,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
 
     public getCommentLabelPrefix(milestone: Milestone): string {
-        const status = milestone?.status;
-        if (status?.key && status.key === 'SUBMITTED') {
+        const type = milestone?.type;
+        if (type?.key && type.key === 'SUBMITTED') {
             return 'Creator';
         }
-        if (status?.key && status.key === 'REJECTED') {
+        if (type?.key && type.key === 'REJECTED') {
           return 'Rejection';
         }
         return 'General';
@@ -190,6 +192,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
                 .subscribe(
                     (invoice: any) => {
                         this.invoice = new InvoiceDataModel(invoice);
+                        this.invoiceStatusChange.emit(this.invoice?.status);
                         this.form.workType.setValue(invoice.workType);
                         this.form.companyCode.setValue(invoice.companyCode);
                         this.form.erpType.setValue(invoice.erpType);

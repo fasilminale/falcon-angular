@@ -5,7 +5,16 @@
 </div>
 <div>
   <elm-card>
-    <elm-section-header sectionTitle="Master Data"></elm-section-header>
+    <elm-section-header sectionTitle="Master Data">
+      <div class='col-12 d-flex justify-content-end align-items-center'>
+        <elm-button buttonStyle="primary"
+                    (buttonClick)="openFileUploadModal()"
+                    class="me-1">
+          <span class="material-icons  me-2">upload</span>
+          UPLOAD FILE
+        </elm-button>
+      </div>
+    </elm-section-header>
     <elm-data-table [data]="masterDataRows"
                     [headers]="headers"
                     [showPagination]="false"

@@ -1,11 +1,14 @@
 import {Component} from '@angular/core';
-import {ButtonClickedEvent, ElmDataTableHeader} from '@elm/elm-styleguide-ui';
+import {ElmDataTableHeader, ModalService, ButtonClickedEvent} from '@elm/elm-styleguide-ui';
 import {MasterDataService} from '../../services/master-data-service';
 import {TimeService} from '../../services/time-service';
+import {MasterDataUploadModalComponent} from '../../components/master-data-upload-modal/master-data-upload-modal.component';
 import { environment } from 'src/environments/environment';
 import {saveAs} from 'file-saver';
 import { EnvironmentService } from 'src/app/services/environment-service/environment-service';
+
 type MasterDataFields = 'label' | 'lastUpdated' | 'endpoint' | 'download' | 'downloadTemplate' | 'hasDownloadableTemplate';
+
 type MasterDataRow = { [field in MasterDataFields]: string };
 
 @Component({
@@ -18,17 +21,15 @@ export class MasterDataPageComponent {
     {header: 'label', label: 'Data Model'},
     {header: 'lastUpdated', label: 'Last Updated'},
     {header: 'download', label: 'Download', button: true, buttonStyle: 'text', prependIcon: 'description'},
-    {header: 'downloadTemplate', label: '', button: true, buttonStyle: 'text', prependIcon: 'download'},
+    {header: 'downloadTemplate', label: '', button: true, buttonStyle: 'text', prependIcon: 'download'}
   ];
   masterDataRows: MasterDataRow[] = [];
   webServices: any;
-  modalService: any;
 
-  constructor(
-    private masterDataService: MasterDataService,
-    private environmentService: EnvironmentService,
-    private timeService: TimeService
-    ) {
+  constructor(private masterDataService: MasterDataService,
+              private timeService: TimeService,
+              private environmentService: EnvironmentService,
+              private modalService: ModalService) {
     this.masterDataService.getMasterDataRows().subscribe((rows: MasterDataRow[]) => {
       this.masterDataRows = rows;
       this.masterDataRows.forEach(row => {
@@ -37,6 +38,16 @@ export class MasterDataPageComponent {
         row.downloadTemplate = !row.hasDownloadableTemplate ? '' : 'TEMPLATE';
       });
     });
+  }
+  
+  openFileUploadModal(): void {
+    const configs = {
+      minWidth: '525px',
+      width: '33vw',
+      autoFocus: false,
+      data: {masterDataRows: this.masterDataRows}
+    };
+    this.modalService.openCustomModal(MasterDataUploadModalComponent, configs);
   }
 
   downloadButtonClicked(buttonClickedEvent: ButtonClickedEvent): void {
@@ -64,5 +75,4 @@ export class MasterDataPageComponent {
     const blob = new Blob([data], {type: 'text/csv'});
     saveAs(blob, filename);
   }
-
 }
