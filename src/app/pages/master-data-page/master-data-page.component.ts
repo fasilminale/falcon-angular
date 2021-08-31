@@ -6,6 +6,7 @@ import {MasterDataUploadModalComponent} from '../../components/master-data-uploa
 import { environment } from 'src/environments/environment';
 import {saveAs} from 'file-saver';
 import { EnvironmentService } from 'src/app/services/environment-service/environment-service';
+import { WebServices } from 'src/app/services/web-services';
 
 type MasterDataFields = 'label' | 'lastUpdated' | 'endpoint' | 'download' | 'downloadTemplate' | 'hasDownloadableTemplate';
 
@@ -24,12 +25,12 @@ export class MasterDataPageComponent {
     {header: 'downloadTemplate', label: '', button: true, buttonStyle: 'text', prependIcon: 'download'}
   ];
   masterDataRows: MasterDataRow[] = [];
-  webServices: any;
 
   constructor(private masterDataService: MasterDataService,
               private timeService: TimeService,
               private environmentService: EnvironmentService,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private webServices: WebServices) {
     this.masterDataService.getMasterDataRows().subscribe((rows: MasterDataRow[]) => {
       this.masterDataRows = rows;
       this.masterDataRows.forEach(row => {
@@ -63,7 +64,7 @@ export class MasterDataPageComponent {
   }
 
   csvDownloadAPICall(endpoint: string): void {
-    this.webServices.httpGetFile(`${environment.baseServiceUrl}/v1/${endpoint}/csv`).subscribe(
+    this.webServices.httpGet(`${environment.baseServiceUrl}/v1/${endpoint}/csv`).subscribe(
       (data: any) => {
         const filename = endpoint + '.csv';
         this.saveCSVFile(data, filename);
