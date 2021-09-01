@@ -17,7 +17,8 @@
     </elm-section-header>
     <elm-data-table [data]="masterDataRows"
                     [headers]="headers"
-                    [showPagination]="false">
+                    [showPagination]="false"
+                    (buttonCLickEvent)="downloadButtonClicked($event)">
     </elm-data-table>
   </elm-card>
 </div>
