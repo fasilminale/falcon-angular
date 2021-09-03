@@ -1,10 +1,11 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef, DialogRole} from '@angular/material/dialog';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {MasterDataUploadResponseModel} from '../../models/master-data-upload-response/master-data-upload-response-model';
 import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
+import {MasterDataUploadErrorModalComponent} from '../master-data-upload-error-modal/master-data-upload-error-modal.component';
 
 export interface MasterDataUploadModalData {
   masterDataRows: [];
@@ -66,13 +67,25 @@ export class MasterDataUploadModalComponent {
           const message = '<strong>Upload Successful:</strong> Data Model Successfully Updated';
           this.toastService.openSuccessToast(message);
         } else {
-          // TODO: Error Modal - FAL-503
+          this.openUploadErrorModal(masterDataUploadResponse);
         }
         this.dialogRef.close();
       });
   }
   uploadButtonDisabled(): boolean {
     return !(this.fileToUpload !== null && this.isValidFileType && this.masterDataType.length > 0);
+  }
+
+  openUploadErrorModal(masterDataUploadResponse: MasterDataUploadResponseModel): void {
+    const roleType: DialogRole = 'alertdialog';
+    const dialogData = {
+      minWidth: '525px',
+      width: '33vw',
+      role: roleType,
+      autoFocus: false,
+      data: masterDataUploadResponse
+    };
+    this.modalService.openCustomModal(MasterDataUploadErrorModalComponent, dialogData);
   }
 }
 

@@ -1,0 +1,29 @@
+<elm-modal-header title="Upload Error"></elm-modal-header>
+<elm-modal-body>
+  <div class="response-error">
+    <div class="material-icons error-icon">warning_amber</div>
+    <div class="elm-div2">
+      <div style="margin-bottom: 12px; font-weight: bold">{{data.masterDataType}}</div>
+      {{data.generalErrorMessage}}
+      <div style="margin-top: 12px" *ngIf="data.base64ErrorFile != ''">
+        A copy of the file with errors listed has been created.<br>
+        Download error file, review, and upload again.
+      </div>
+    </div>
+  </div>
+</elm-modal-body>
+<div *ngIf="data.base64ErrorFile !== '' then addDownloadButton else justCloseButton"></div>
+<ng-template #justCloseButton>
+  <elm-modal-footer
+    primaryButtonText="close"
+    (primaryButtonClick)="dialogRef.close();">
+  </elm-modal-footer>
+</ng-template>
+<ng-template #addDownloadButton>
+  <elm-modal-footer
+    primaryButtonText="download"
+    (primaryButtonClick)="downloadFileFromBase64(this.data.masterDataType + '-UploadErrors.csv',this.data.base64ErrorFile,'text/csv')"
+    secondaryButtonText="close"
+    (secondaryButtonClick)="dialogRef.close();">
+  </elm-modal-footer>
+</ng-template>

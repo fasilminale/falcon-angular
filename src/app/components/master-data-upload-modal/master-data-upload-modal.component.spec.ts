@@ -45,8 +45,8 @@ describe('MasterDataUploadModalComponent', () => {
   beforeEach(() => {
     const blob = new Blob(['test'], {type: 'text/csv'}) as any;
     blob.lastModifiedDate = new Date();
-    blob.name = 'carrier.csv';
-    component.masterDataType = 'carrier';
+    blob.name = 'businessUnit.csv';
+    component.masterDataType = 'businessUnit';
     component.fileToUpload = blob as File;
   });
 
@@ -75,7 +75,7 @@ describe('MasterDataUploadModalComponent', () => {
       spyOn(component, 'postMasterDataFile').and.callThrough();
       component.onSubmit();
       fixture.detectChanges();
-      http.expectOne(`${environment.baseServiceUrl}/v1/carrier/upload`).flush({});
+      http.expectOne(`${environment.baseServiceUrl}/v1/businessUnit/upload`).flush({});
     });
   });
 
@@ -85,13 +85,25 @@ describe('MasterDataUploadModalComponent', () => {
       if (component.fileToUpload) {
         component.postMasterDataFile(component.fileToUpload, component.masterDataType);
         fixture.detectChanges();
-        http.expectOne(`${environment.baseServiceUrl}/v1/carrier/upload`).flush({
+        http.expectOne(`${environment.baseServiceUrl}/v1/businessUnit/upload`).flush({
           masterDataType: 'carrier',
           generalErrorMessage: '',
           base64ErrorFile: 'test'
         });
         expect(toast.openSuccessToast).toHaveBeenCalled();
       }
+    });
+    it('should open error modal', () => {
+      spyOn(modal, 'openCustomModal');
+      // @ts-ignore
+      component.postMasterDataFile(component.fileToUpload, component.masterDataType);
+      fixture.detectChanges();
+      http.expectOne(`${environment.baseServiceUrl}/v1/businessUnit/upload`).flush({
+        masterDataType: 'carrier',
+        generalErrorMessage: 'testError',
+        base64ErrorFile: 'test'
+      });
+      expect(modal.openCustomModal).toHaveBeenCalled();
     });
   });
 

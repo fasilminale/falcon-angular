@@ -1,0 +1,19 @@
+@import "node_modules/@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.response-error {
+  background-color: $error-red-bkg;
+  padding: 14px 16px;
+  border-radius: 5px;
+  display: flex;
+  margin-bottom: 8px;
+
+  .error-title {
+    padding-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .error-icon {
+    color: $error-red;
+    padding-right: 16px;
+  }
+}
