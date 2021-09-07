@@ -27,9 +27,7 @@ export class FalHttpInterceptor implements HttpInterceptor {
         if (errResponse.status != 422) {
           console.log(errResponse);
           const status = errResponse.status;
-          const message = errResponse.error?.error?.message // falcon error
-            ?? errResponse.error?.message // generic/okta error
-            ?? errResponse.message; // failsafe, this should always exist
+          const message = this.extractMessage(errResponse);
           const errorText = `status: ${status}, message: ${message}`;
           this.errorService.addError({status, message});
           this.loadingService.hideLoading();
@@ -38,4 +36,12 @@ export class FalHttpInterceptor implements HttpInterceptor {
         return throwError(errResponse);
       }));
   }
+
+  private extractMessage(errResponse: any): string {
+    return errResponse.error?.error?.message // falcon error
+      ?? errResponse.error?.message // generic/okta error
+      ?? errResponse.message // this should always exist
+      ?? 'N/A'; // failsafe, instead  of null
+  }
+
 }
