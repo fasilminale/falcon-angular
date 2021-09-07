@@ -40,7 +40,7 @@ export class FalHttpInterceptor implements HttpInterceptor {
   private extractMessage(errResponse: any): string {
     return errResponse.error?.error?.message // falcon error
       ?? errResponse.error?.message // generic/okta error
-      ?? errResponse.message // this should always exist
+      ?? errResponse.message // js generated message, should always exist
       ?? 'N/A'; // failsafe, instead  of null
   }
 
