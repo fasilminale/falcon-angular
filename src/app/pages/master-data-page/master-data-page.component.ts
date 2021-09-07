@@ -40,7 +40,7 @@ export class MasterDataPageComponent {
       });
     });
   }
-  
+
   openFileUploadModal(): void {
     const configs = {
       minWidth: '525px',
