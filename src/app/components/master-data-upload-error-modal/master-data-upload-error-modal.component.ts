@@ -11,6 +11,7 @@ export class MasterDataUploadErrorModalComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: MasterDataUploadResponseModel,
               public dialogRef: MatDialogRef<MasterDataUploadErrorModalComponent>) {
   }
+  public readonly SOME_DOCUMENTS_INSERTED_MESSAGE = 'Update partially failed due to file errors.';
   downloadFileFromBase64(fileName: string, data: any, fileFormat: string): void {
     const linkSource = 'data:' + fileFormat + ';base64,' + data;
     const downloadLink = document.createElement('a');

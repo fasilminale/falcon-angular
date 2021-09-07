@@ -1,4 +1,4 @@
-<elm-modal-header title="Upload Error"></elm-modal-header>
+<elm-modal-header title="{{data.generalErrorMessage && data.generalErrorMessage.includes(SOME_DOCUMENTS_INSERTED_MESSAGE) ? 'Partial Upload Error' : 'Upload Error'}}"></elm-modal-header>
 <elm-modal-body>
   <div class="response-error">
     <div class="material-icons error-icon">warning_amber</div>
