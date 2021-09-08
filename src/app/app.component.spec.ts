@@ -89,7 +89,7 @@ describe('AppComponent', () => {
       // Trigger Error
       errorService.addError({
         status: '401',
-        error: {message: 'test message'}
+        message: 'test message'
       });
     });
 
