@@ -64,7 +64,7 @@ export class AppComponent implements OnInit {
       const modalData: ErrorModalData = {
         title: 'Error',
         innerHtmlMessage: `<strong>Status:</strong> ${error.status}<br>` +
-          `${error.error.message}`
+          `${error.message}`
       };
       this.util.openErrorModal(modalData)
         .subscribe(() => {

@@ -25,13 +25,13 @@ export class OktaCallbackComponent implements OnInit {
         if (isAuthenticated) {
           this.router.navigate([this.okta.getOriginalUri()]).then();
         } else {
-          this.errorService.addError({status: '401', error: {message: 'An error occurred during login. Please try again'}});
+          this.errorService.addError({status: '401', message: 'An error occurred during login. Please try again'});
         }
         this.loadingService.hideLoading();
       }, 500);
     } catch (e) {
       console.log(e);
-      this.errorService.addError({status: '401', error: {message: 'An error occurred during login. Please try again'}});
+      this.errorService.addError({status: '401', message: 'An error occurred during login. Please try again'});
     }
   }
 }
