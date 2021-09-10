@@ -16,13 +16,10 @@
     </div>
     <div class="elm-input elm-text-input errorSpacing d-flex flex-column">
         <label class="elm-field-label1">Select File</label>
-        <div class="input-group">
-          <input class="form-control"
-                 type="file"
-                 id="file"
-                 formControlName="fileSelector"
-                 (change)="handleFileInput($event)">
-        </div>
+        <app-fal-file-input id="file"
+                            formControlName="fileSelector"
+                            accept=".csv">
+        </app-fal-file-input>
       <div class="elm-input-subtext elm-field-sub1"> File format .csv</div>
     </div>
   </form>

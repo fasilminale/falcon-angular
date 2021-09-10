@@ -61,10 +61,11 @@ describe('MasterDataUploadModalComponent', () => {
 
   describe('resetForm', () => {
     it('should reset the form', () => {
+      spyOn(component, 'resetForm').and.callThrough();
       component.form.get('masterDataTypeDropdown')?.setValue('1');
       component.form.get('fileSelector')?.setValue('');
       component.resetForm();
-      fixture.detectChanges();
+      expect(component.resetForm).toHaveBeenCalled();
       expect(component.form.get('masterDataTypeDropdown')?.value).toBeNull();
       expect(component.form.get('fileSelector')?.value).toBeNull();
     });
