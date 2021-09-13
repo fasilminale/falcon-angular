@@ -64,7 +64,7 @@ export class MasterDataPageComponent {
   }
 
   csvDownloadAPICall(endpoint: string): void {
-    this.webServices.httpGet(`${environment.baseServiceUrl}/v1/${endpoint}/csv`).subscribe(
+    this.webServices.httpGet(`${environment.baseServiceUrl}/v1/${endpoint}/csv`, {responseType: 'text'}).subscribe(
       (data: any) => {
         const filename = endpoint + '.csv';
         this.saveCSVFile(data, filename);

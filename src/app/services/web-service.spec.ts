@@ -35,6 +35,16 @@ describe('WebService Tests', () => {
     expect(response).toEqual(TEST_RESPONSE);
   });
 
+  it('should GET with options', async () => {
+    const promise = web.httpGet(TEST_URL, {}).toPromise();
+    const req = http.expectOne(TEST_URL);
+    req.flush(TEST_RESPONSE);
+    const response = await promise;
+    expect(req.request.method).toEqual('GET');
+    expect(req.request.body).toBeNull();
+    expect(response).toEqual(TEST_RESPONSE);
+  });
+
   it('should POST with body', async () => {
     const promise = web.httpPost(TEST_URL, TEST_BODY).toPromise();
     const req = http.expectOne(TEST_URL);
