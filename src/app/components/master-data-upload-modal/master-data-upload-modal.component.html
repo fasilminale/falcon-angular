@@ -18,7 +18,8 @@
         <label class="elm-field-label1">Select File</label>
         <app-fal-file-input id="file"
                             formControlName="fileSelector"
-                            accept=".csv">
+                            accept=".csv"
+                            (change)="handleFileInput($event)">
         </app-fal-file-input>
       <div class="elm-input-subtext elm-field-sub1"> File format .csv</div>
     </div>
