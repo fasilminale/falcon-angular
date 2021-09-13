@@ -79,7 +79,7 @@ describe('MasterDataPageComponent', () => {
     });
   });
 
-  
+
   describe('saveCSVFile', () => {
     it('should call saveAs', () => {
       const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.callFake(saveAs);
@@ -99,9 +99,10 @@ describe('MasterDataPageComponent', () => {
 
   describe('openFileUpload', () => {
     it('should open modal', () => {
-      const openModalSpy = spyOn(modalService, 'openCustomModal');
+      const openModalSpy = spyOn(modalService, 'openCustomModal').and.returnValue(of(true));
       component.openFileUploadModal();
       expect(openModalSpy).toHaveBeenCalled();
+      http.expectOne(`${environment.baseServiceUrl}/v1/masterDataRows`).flush([masterDataRow]);
     });
   });
 });
