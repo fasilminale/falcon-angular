@@ -31,14 +31,7 @@ export class MasterDataPageComponent {
               private environmentService: EnvironmentService,
               private modalService: ModalService,
               private webServices: WebServices) {
-    this.masterDataService.getMasterDataRows().subscribe((rows: MasterDataRow[]) => {
-      this.masterDataRows = rows;
-      this.masterDataRows.forEach(row => {
-        row.lastUpdated = timeService.convertFromApiTime(row.lastUpdated);
-        row.download = 'CURRENT FILE';
-        row.downloadTemplate = !row.hasDownloadableTemplate ? '' : 'TEMPLATE';
-      });
-    });
+    this.getMasterData();
   }
 
   openFileUploadModal(): void {
@@ -48,7 +41,20 @@ export class MasterDataPageComponent {
       autoFocus: false,
       data: {masterDataRows: this.masterDataRows}
     };
-    this.modalService.openCustomModal(MasterDataUploadModalComponent, configs);
+    this.modalService.openCustomModal(MasterDataUploadModalComponent, configs).subscribe(() => {
+      this.getMasterData();
+    });
+  }
+
+  getMasterData(): void {
+    this.masterDataService.getMasterDataRows().subscribe((rows: MasterDataRow[]) => {
+      this.masterDataRows = rows;
+      this.masterDataRows.forEach(row => {
+        row.lastUpdated = this.timeService.convertFromApiTime(row.lastUpdated);
+        row.download = 'CURRENT FILE';
+        row.downloadTemplate = !row.hasDownloadableTemplate ? '' : 'TEMPLATE';
+      });
+    });
   }
 
   downloadButtonClicked(buttonClickedEvent: ButtonClickedEvent): void {
