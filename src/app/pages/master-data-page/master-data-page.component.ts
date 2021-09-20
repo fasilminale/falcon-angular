@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import {saveAs} from 'file-saver';
 import { EnvironmentService } from 'src/app/services/environment-service/environment-service';
 import { WebServices } from 'src/app/services/web-services';
+import {Observable} from 'rxjs';
 
 type MasterDataFields = 'label' | 'lastUpdated' | 'endpoint' | 'download' | 'downloadTemplate' | 'hasDownloadableTemplate';
 
@@ -61,7 +62,11 @@ export class MasterDataPageComponent {
     if (buttonClickedEvent.header === 'download') {
       return this.csvDownloadAPICall(buttonClickedEvent.rowData.endpoint);
     } else if (buttonClickedEvent.header === 'downloadTemplate') {
-      this.downloadTemplate(`${this.environmentService.getGCPStorageLink()}/${buttonClickedEvent.rowData.endpoint}Template.xltx`);
+      this.templateDownloadAPICall(buttonClickedEvent.rowData.endpoint).subscribe(
+        (url) => {
+          this.downloadTemplate(url);
+        }
+      );
     }
   }
 
@@ -76,6 +81,10 @@ export class MasterDataPageComponent {
         this.saveCSVFile(data, filename);
       }
     );
+  }
+
+  templateDownloadAPICall(endpoint: string): Observable<string> {
+    return this.webServices.httpGet(`${environment.baseServiceUrl}/v1/${endpoint}/template`, {responseType: 'text'});
   }
 
   saveCSVFile(data: any, filename: string): void {
