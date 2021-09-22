@@ -62,9 +62,11 @@ describe('MasterDataPageComponent', () => {
         rowData: {endpoint: 'businessUnits'},
         header: 'downloadTemplate'
       };
+      const templateDownloadAPICall = spyOn(component, 'templateDownloadAPICall').and.returnValue(of('test url'));
       const downloadTemplateSpy = spyOn(component, 'downloadTemplate');
       component.downloadButtonClicked(buttonClickedEvent);
-      expect(downloadTemplateSpy).toHaveBeenCalledWith(`${enviromentService.getGCPStorageLink()}/businessUnitsTemplate.xltx`);
+      expect(templateDownloadAPICall).toHaveBeenCalled();
+      expect(downloadTemplateSpy).toHaveBeenCalled();
     });
   });
 
@@ -79,13 +81,20 @@ describe('MasterDataPageComponent', () => {
     });
   });
 
-
   describe('saveCSVFile', () => {
     it('should call saveAs', () => {
       const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.callFake(saveAs);
       component.saveCSVFile('test data', 'test filename');
       fixture.detectChanges();
       expect(saveAsSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('templateDownloadAPICall', () => {
+    it('should call templateDownloadAPICall', () => {
+      const templateDownloadAPICall = spyOn(component, 'templateDownloadAPICall').and.callThrough();
+      component.templateDownloadAPICall('businessUnit');
+      expect(templateDownloadAPICall).toHaveBeenCalled();
     });
   });
 
