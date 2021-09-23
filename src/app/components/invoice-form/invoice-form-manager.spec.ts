@@ -4,8 +4,8 @@ import {InvoiceFormManager} from './invoice-form-manager';
 import {AbstractControl, FormControl} from '@angular/forms';
 import Spy = jasmine.Spy;
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import { of } from 'rxjs';
-import { MasterDataService } from 'src/app/services/master-data-service';
+import {of} from 'rxjs';
+import {MasterDataService} from 'src/app/services/master-data-service';
 
 describe('InvoiceFormManager', () => {
 
