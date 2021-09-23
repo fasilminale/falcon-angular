@@ -13,4 +13,8 @@ export class MasterDataService {
   public getMasterDataRows(): Observable<any> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/masterDataRows`);
   }
+
+  public checkCompanyCode(companyCode: string): Observable<any>  {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/companyCode/${companyCode}`);
+  }
 }

@@ -4,24 +4,29 @@ import {InvoiceFormManager} from './invoice-form-manager';
 import {AbstractControl, FormControl} from '@angular/forms';
 import Spy = jasmine.Spy;
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import { of } from 'rxjs';
+import { MasterDataService } from 'src/app/services/master-data-service';
 
 describe('InvoiceFormManager', () => {
 
   let invoiceFormManager: InvoiceFormManager;
   let subscriptionManager: SubscriptionManager;
+  let masterDataService: MasterDataService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [FalconTestingModule]
     });
     subscriptionManager = TestBed.inject(SUBSCRIPTION_MANAGER);
+    masterDataService = TestBed.inject(MasterDataService);
     spyOn(subscriptionManager, 'manage').and.callThrough();
-    invoiceFormManager = new InvoiceFormManager(subscriptionManager);
+    invoiceFormManager = new InvoiceFormManager(subscriptionManager, masterDataService);
     // stub these so they don't trigger cascading events during tests
     // they are tested for their functionality in isolation.
     spyOn(invoiceFormManager, 'forceValueChangeEvent').and.stub();
     spyOn(invoiceFormManager, 'forceValueToUpperCase').and.callThrough();
     spyOn(invoiceFormManager, 'establishTouchLink').and.stub();
+    spyOn(masterDataService, 'checkCompanyCode').and.returnValue(of('TEST'));
   });
 
   function createSpyFormControl(): FormControl {

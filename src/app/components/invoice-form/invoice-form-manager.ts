@@ -1,9 +1,11 @@
 import {Inject, Injectable} from '@angular/core';
-import {AbstractControl, Form, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {filter} from 'rxjs/operators';
+import {AbstractControl, AsyncValidatorFn, Form, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {catchError, filter, map} from 'rxjs/operators';
 import {isFalsey} from '../../utils/predicates';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
+import { Observable, of, pipe } from 'rxjs';
+import { MasterDataService } from 'src/app/services/master-data-service';
 
 /* VALIDATORS */
 const {required, pattern} = Validators;
@@ -62,12 +64,16 @@ export class InvoiceFormManager {
 
   public totalLineItemNetAmount = 0;
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
+  constructor(
+    @Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
+    private masterDataService: MasterDataService) {
   }
 
   public init(): void {
     this.workType = new FormControl({value: null}, [required]);
-    this.companyCode = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
+    this.companyCode = new FormControl(null, 
+      { validators: Validators.compose([required, pattern(this.allowedCharacters)]), 
+        asyncValidators: Validators.composeAsync([this.validateCompanyCode()]), updateOn: 'blur'}); 
     this.erpType = new FormControl({value: null}, [required]);
     this.vendorNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
     this.externalInvoiceNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
@@ -229,5 +235,25 @@ export class InvoiceFormManager {
         const value = parseFloat(control.value) > 0;
         return value ? null : {isGreaterThanZero: {value: control.value}};
       };
+  }
+
+  validateCompanyCode(): AsyncValidatorFn {
+    
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      const companyCode = control.value;
+      if(companyCode) {
+        return this.masterDataService.checkCompanyCode(companyCode)
+        .pipe(
+          map(() => {
+            return of(null);
+          }),
+          catchError(() => {
+            return of({validateCompanyCode: {value: control.value}});
+          })
+        );
+      } else {
+        return of(null);
+      }
+    }// andswre call oin phone
   }
 }
