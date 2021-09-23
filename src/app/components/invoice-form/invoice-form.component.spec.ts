@@ -16,7 +16,7 @@ import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceFormManager, validateDate} from './invoice-form-manager';
 import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import { MasterDataService } from 'src/app/services/master-data-service';
+import {MasterDataService} from 'src/app/services/master-data-service';
 
 describe('InvoiceFormComponent', () => {
 
