@@ -16,6 +16,7 @@ import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceFormManager, validateDate} from './invoice-form-manager';
 import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import {MasterDataService} from 'src/app/services/master-data-service';
 
 describe('InvoiceFormComponent', () => {
 
@@ -33,6 +34,7 @@ describe('InvoiceFormComponent', () => {
   let fixture: ComponentFixture<InvoiceFormComponent>;
   let util: UtilService;
   let invoiceService: InvoiceService;
+  let masterDataService: MasterDataService;
   let attachmentService: AttachmentService;
   let templateService: TemplateService;
   let snackBar: MatSnackBar;
@@ -212,6 +214,7 @@ describe('InvoiceFormComponent', () => {
     snackBar = TestBed.inject(MatSnackBar);
     util = TestBed.inject(UtilService);
     invoiceService = TestBed.inject(InvoiceService);
+    masterDataService = TestBed.inject(MasterDataService);
     attachmentService = TestBed.inject(ATTACHMENT_SERVICE);
     templateService = TestBed.inject(TemplateService);
     loadingService = TestBed.inject(LoadingService);
@@ -220,6 +223,7 @@ describe('InvoiceFormComponent', () => {
     form = TestBed.inject(InvoiceFormManager);
     spyOn(form, 'establishTouchLink').and.stub();
     spyOn(form, 'forceValueChangeEvent').and.stub();
+    spyOn(masterDataService, 'checkCompanyCode').and.returnValue(of('TEST'));
     component = fixture.componentInstance;
     fixture.detectChanges();
     component.form.companyCode.setValue(companyCode);
@@ -255,6 +259,12 @@ describe('InvoiceFormComponent', () => {
     component.ngOnChanges({readOnly: new SimpleChange(null, component.readOnly, true)});
     fixture.detectChanges();
     expect(component.form.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
+    const element: HTMLElement = fixture.nativeElement;
+    const inputElemnt: HTMLInputElement | null= element.querySelector('#company-code-input');
+    inputElemnt?.focus();
+    fixture.componentInstance.form.companyCode.setValue('test');
+    inputElemnt?.focus();
+    fixture.detectChanges();
   });
 
   it('should show success snackbar on post', async () => {

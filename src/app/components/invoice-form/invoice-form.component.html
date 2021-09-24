@@ -74,7 +74,8 @@
                    [ngClass]="(form.companyCode.errors
                               && form.companyCode.hasError('required')
                               && form.companyCode.touched)
-                              || form.companyCode.hasError('pattern') ? 'error' : ''"
+                              || form.companyCode.hasError('pattern') 
+                              || form.companyCode.hasError('validateCompanyCode') ? 'error' : ''"
             />
             <small class="error-text"
                    *ngIf="form.companyCode.hasError('required')
@@ -84,6 +85,10 @@
             <small class="error-text"
                    *ngIf="form.companyCode.hasError('pattern')">
               {{specialCharErrorMessage}}
+            </small>
+            <small class="error-text"
+                   *ngIf="form.companyCode.hasError('validateCompanyCode')">
+                   Company code is invalid
             </small>
           </div>
 
