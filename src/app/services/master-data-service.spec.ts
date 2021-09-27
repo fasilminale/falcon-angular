@@ -42,4 +42,14 @@ describe('MasterDataService', () => {
       expect(web.httpGet).toHaveBeenCalled();
     }));
   });
+
+  describe('checkCompanyCode', () => {
+    it('should return response code', fakeAsync(() => {
+      const companyCode: string = 'Test'; 
+      spyOn(web, 'httpGet').and.returnValue(of(companyCode));
+      const result = masterDataService.checkCompanyCode(companyCode).toPromise();
+      expect(result).toBeTruthy();
+      expect(web.httpGet).toHaveBeenCalled();
+    }));
+  });
 });

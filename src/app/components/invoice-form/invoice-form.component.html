@@ -309,17 +309,20 @@
                        (keypress)="validateRegex($event)"
                        maxlength="4"
                        (focus)="focusLineItemElement(form.lineItemCompanyCode(i))"
-                       [ngClass]="form.lineItemCompanyCode(i).hasError('pattern') ? 'error' : ''"
+                       [ngClass]="(form.lineItemCompanyCode(i).hasError('pattern')
+                        || form.lineItemCompanyCode(i).hasError('validateCompanyCode')) ? 'error' : ''"
                 />
                 <small class="error-text"
                        *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
                   {{specialCharErrorMessage}}
                 </small>
                 <ng-template #companyCodeError>
-                  <small class="error-text invisible">
-                    spacer
-                  </small>
-                </ng-template>
+                  <small class="error-text"
+                         [ngClass]="{'invisible': !form.lineItemCompanyCode(i).hasError('validateCompanyCode')}">
+                  Company code is invalid
+                 </small>
+                 </ng-template>
+                
               </div>
 
               
