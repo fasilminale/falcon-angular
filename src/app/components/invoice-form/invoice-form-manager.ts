@@ -192,7 +192,8 @@ export class InvoiceFormManager {
   }
 
   public createEmptyLineItemGroup(): FormGroup {
-    const companyCode = new FormControl(null, [pattern(this.allowedCharacters)]);
+    const companyCode = new FormControl(null, { validators: Validators.compose([required, pattern(this.allowedCharacters)]), 
+      asyncValidators: Validators.composeAsync([this.validateCompanyCode()]), updateOn: 'blur'});
     const costCenter = new FormControl(null, [required, pattern(this.allowedCharacters)]);
     this.establishTouchLink(costCenter, companyCode);
     const glAccount = new FormControl(null, [required, pattern(this.allowedCharacters)]);

@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceFormComponent} from './invoice-form.component';
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {SimpleChange} from '@angular/core';
@@ -223,7 +223,7 @@ describe('InvoiceFormComponent', () => {
     form = TestBed.inject(InvoiceFormManager);
     spyOn(form, 'establishTouchLink').and.stub();
     spyOn(form, 'forceValueChangeEvent').and.stub();
-    spyOn(masterDataService, 'checkCompanyCode').and.returnValue(of('TEST'));
+  
     component = fixture.componentInstance;
     fixture.detectChanges();
     component.form.companyCode.setValue(companyCode);
@@ -254,6 +254,7 @@ describe('InvoiceFormComponent', () => {
   it('should be enabled editable fields', () => {
     component.readOnly = true;
     fixture.detectChanges();
+    spyOn(masterDataService, 'checkCompanyCode').and.returnValue(of('TEST'));
     component.form.invoiceFormGroup.controls.workType.disable();
     component.readOnly = false;
     component.ngOnChanges({readOnly: new SimpleChange(null, component.readOnly, true)});
@@ -356,12 +357,15 @@ describe('InvoiceFormComponent', () => {
     });
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.form.invoiceFormGroup.controls.companyCode.setValue('CODE');
+    fixture.detectChanges();
     (component.form.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
       .controls.companyCode.setValue('CODE');
     await component.onSaveButtonClick();
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
   });
+
+
 
   it('should allow valid alphabet values', () => {
     const result = component.validateRegex(validAlphabetValueEvent);
@@ -812,5 +816,28 @@ describe('InvoiceFormComponent', () => {
     component.focusAmountOfInvoice();
     const isDirty = component.uploadFormComponent?.formGroup.dirty;
     expect(isDirty).toBeTruthy();
+  });
+
+
+
+  it('should test if companyCode exists', () => {
+    spyOn(masterDataService, 'checkCompanyCode').and.returnValue(throwError('service failed'));
+    component.form.invoiceFormGroup.controls.companyCode.setValue('CODE');
+    fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    const inputElemnt: HTMLInputElement | null= element.querySelector('#company-code-input');
+    inputElemnt?.focus();
+    fixture.componentInstance.form.companyCode.setValue('test');
+    inputElemnt?.focus();
+    fixture.detectChanges();
+    expect(component.form.invoiceFormGroup.controls.companyCode.hasError('validateCompanyCode')).toBeTruthy();
+
+    inputElemnt?.focus();
+    fixture.componentInstance.form.companyCode.setValue(null);
+    component.form.invoiceFormGroup.controls.companyCode.setValue(null);
+    fixture.detectChanges();
+    inputElemnt?.blur();
+    fixture.detectChanges();
+    expect(component.form.invoiceFormGroup.controls.companyCode.hasError('validateCompanyCode')).toBeFalsy();
   });
 });
