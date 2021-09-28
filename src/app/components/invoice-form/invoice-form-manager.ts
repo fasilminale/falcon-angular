@@ -1,11 +1,21 @@
 import {Inject, Injectable} from '@angular/core';
-import {AbstractControl, AsyncValidatorFn, Form, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {catchError, filter, map} from 'rxjs/operators';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  Form,
+  FormArray,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
+import {catchError, filter, first, map, mergeMap} from 'rxjs/operators';
 import {isFalsey} from '../../utils/predicates';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
-import { Observable, of, pipe } from 'rxjs';
-import { MasterDataService } from 'src/app/services/master-data-service';
+import {Observable, of, pipe} from 'rxjs';
+import {MasterDataService} from 'src/app/services/master-data-service';
 
 /* VALIDATORS */
 const {required, pattern} = Validators;
@@ -71,9 +81,11 @@ export class InvoiceFormManager {
 
   public init(): void {
     this.workType = new FormControl({value: null}, [required]);
-    this.companyCode = new FormControl(null, 
-      { validators: Validators.compose([required, pattern(this.allowedCharacters)]), 
-        asyncValidators: Validators.composeAsync([this.validateCompanyCode()]), updateOn: 'blur'}); 
+    this.companyCode = new FormControl(null,
+      {
+        validators: Validators.compose([required, pattern(this.allowedCharacters)]),
+        asyncValidators: Validators.composeAsync([this.validateCompanyCode()]), updateOn: 'blur'
+      });
     this.erpType = new FormControl({value: null}, [required]);
     this.vendorNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
     this.externalInvoiceNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
@@ -89,17 +101,17 @@ export class InvoiceFormManager {
     this.lineItems = new FormArray([]);
     this.comments = new FormControl({value: null});
     this.invoiceFormGroup = new FormGroup({
-      workType: this.workType,
-      companyCode: this.companyCode,
-      erpType: this.erpType,
-      vendorNumber: this.vendorNumber,
-      externalInvoiceNumber: this.externalInvoiceNumber,
-      invoiceDate: this.invoiceDate,
-      amountOfInvoice: this.amountOfInvoice,
-      currency: this.currency,
-      comments: this.comments,
-      lineItems: this.lineItems
-    }
+        workType: this.workType,
+        companyCode: this.companyCode,
+        erpType: this.erpType,
+        vendorNumber: this.vendorNumber,
+        externalInvoiceNumber: this.externalInvoiceNumber,
+        invoiceDate: this.invoiceDate,
+        amountOfInvoice: this.amountOfInvoice,
+        currency: this.currency,
+        comments: this.comments,
+        lineItems: this.lineItems
+      }
     );
     this.selectedTemplate = new FormControl({value: null});
     this.invoiceFormGroup.enable();
@@ -192,8 +204,10 @@ export class InvoiceFormManager {
   }
 
   public createEmptyLineItemGroup(): FormGroup {
-    const companyCode = new FormControl(null, { validators: Validators.compose([required, pattern(this.allowedCharacters)]), 
-      asyncValidators: Validators.composeAsync([this.validateCompanyCode()]), updateOn: 'blur'});
+    const companyCode = new FormControl(null, {
+      validators: Validators.compose([pattern(this.allowedCharacters)]),
+      asyncValidators: Validators.composeAsync([this.validateCompanyCode()]), updateOn: 'blur'
+    });
     const costCenter = new FormControl(null, [required, pattern(this.allowedCharacters)]);
     this.establishTouchLink(costCenter, companyCode);
     const glAccount = new FormControl(null, [required, pattern(this.allowedCharacters)]);
@@ -221,40 +235,40 @@ export class InvoiceFormManager {
 
   validateInvoiceNetAmountSum() {
     const amountOfInvoice = this.invoiceFormGroup?.controls.amountOfInvoice?.value;
-    if(amountOfInvoice){
+    if (amountOfInvoice) {
       const value = parseFloat(amountOfInvoice);
-      if(value > 0 && value === this.totalLineItemNetAmount) {
+      if (value > 0 && value === this.totalLineItemNetAmount) {
         this.isInvoiceAmountValid = true;
       } else {
         this.isInvoiceAmountValid = false;
       }
-    } 
+    }
   }
 
   validateInvoiceNetAmount(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-        const value = parseFloat(control.value) > 0;
-        return value ? null : {isGreaterThanZero: {value: control.value}};
-      };
+      const value = parseFloat(control.value) > 0;
+      return value ? null : {isGreaterThanZero: {value: control.value}};
+    };
   }
 
   validateCompanyCode(): AsyncValidatorFn {
-    
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const companyCode = control.value;
-      if(companyCode) {
+      if (companyCode) {
         return this.masterDataService.checkCompanyCode(companyCode)
-        .pipe(
-          map(() => {
-            return of(null);
-          }),
-          catchError(() => {
-            return of({validateCompanyCode: {value: control.value}});
-          })
-        );
+          .pipe(
+            mergeMap(() => {
+              return of(null);
+            }),
+            catchError(() => {
+              return of({validateCompanyCode: {value: companyCode}});
+            })
+          );
       } else {
         return of(null);
       }
-    }
+    };
   }
+
 }
