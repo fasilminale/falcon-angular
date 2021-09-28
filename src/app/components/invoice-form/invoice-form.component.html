@@ -71,11 +71,7 @@
                    (keypress)="validateRegex($event)"
                    maxlength="4"
                    (focus)="form.forceValueChangeEvent(form.companyCode)"
-                   [ngClass]="(form.companyCode.errors
-                              && form.companyCode.hasError('required')
-                              && form.companyCode.touched)
-                              || form.companyCode.hasError('pattern') 
-                              || form.companyCode.hasError('validateCompanyCode') ? 'error' : ''"
+                   [ngClass]="form.companyCode.invalid && form.companyCode.touched ? 'error' : ''"
             />
             <small class="error-text"
                    *ngIf="form.companyCode.hasError('required')
@@ -88,7 +84,7 @@
             </small>
             <small class="error-text"
                    *ngIf="form.companyCode.hasError('validateCompanyCode')">
-                   Company code is invalid
+              Company code is invalid
             </small>
           </div>
 
@@ -190,7 +186,7 @@
                    *ngIf="form.invoiceDate.hasError('validateDate')">
               Invoice Date is invalid
             </small>
-          </div>          
+          </div>
         </div>
 
         <!-- UPLOAD DOCUMENT SECTION -->
@@ -204,82 +200,82 @@
 
         <!-- LINE ITEMS -->
         <elm-card id="line-items-card"
-                  
+
                   overflow="visible">
           <elm-section-header [sectionTitle]="'Invoice Amount'">
           </elm-section-header>
 
           <div class="row px-3">
             <!-- INVOICE AMOUNT -->
-          <div class="col-2">
-            <label for="invoice-amount-input" class="fal-label">
-              Invoice Net Amount
-            </label>
-            <app-fal-currency-input id="invoice-amount-input"
-                                    formControlName="amountOfInvoice"
-                                    [isDisabled]="readOnly"
-                                    (focus)="focusAmountOfInvoice()"
-                                    [isError]="!!(form.amountOfInvoice.errors
+            <div class="col-2">
+              <label for="invoice-amount-input" class="fal-label">
+                Invoice Net Amount
+              </label>
+              <app-fal-currency-input id="invoice-amount-input"
+                                      formControlName="amountOfInvoice"
+                                      [isDisabled]="readOnly"
+                                      (focus)="focusAmountOfInvoice()"
+                                      [isError]="!!(form.amountOfInvoice.errors
                                                   && (form.amountOfInvoice.hasError('required')
                                                   || form.amountOfInvoice.hasError('isGreaterThanZero'))
                                                   && form.amountOfInvoice.touched)
                                                   || !form.isInvoiceAmountValid">
-            </app-fal-currency-input>
-            <small class="error-text"
-                   *ngIf="(form.amountOfInvoice.hasError('required')
+              </app-fal-currency-input>
+              <small class="error-text"
+                     *ngIf="(form.amountOfInvoice.hasError('required')
                           || form.amountOfInvoice.hasError('isGreaterThanZero'))
                           && form.amountOfInvoice.touched">
-              Invoice Net Amount is required
-            </small>
-          </div>
+                Invoice Net Amount is required
+              </small>
+            </div>
 
-          <!-- CURRENCY -->
-          <div class="col-4 px-4 currency-div">
-            <label for="currency-input" class="fal-label">
-              Currency
-            </label>
-            <app-fal-radio-input id="currency-input"
-                                 formControlName="currency"
-                                 [options]="form.currencyOptions"
-                                 [isDisabled]="readOnly"
-                                 (focus)="form.forceValueChangeEvent(form.currency)"
-                                 [isError]="!!(form.currency.errors
+            <!-- CURRENCY -->
+            <div class="col-4 px-4 currency-div">
+              <label for="currency-input" class="fal-label">
+                Currency
+              </label>
+              <app-fal-radio-input id="currency-input"
+                                   formControlName="currency"
+                                   [options]="form.currencyOptions"
+                                   [isDisabled]="readOnly"
+                                   (focus)="form.forceValueChangeEvent(form.currency)"
+                                   [isError]="!!(form.currency.errors
                                                && form.currency.hasError('required')
                                                && form.currency.touched)">
-            </app-fal-radio-input>
-            <small class="error-text"
-                   *ngIf="form.currency.hasError('required')
+              </app-fal-radio-input>
+              <small class="error-text"
+                     *ngIf="form.currency.hasError('required')
                           && form.currency.touched">
-              Currency is required
-            </small>
-          </div>
-
-          <!-- OVERRIDE STANDARD PAYMENT TERMS -->
-          <div class="col-4 offset-md-2 d-flex" [formGroup]="form.osptFormGroup">
-            <label for="override-stp-checkbox"
-                   class="fal-label override-stp-checkbox-div">
-              <input id="override-stp-checkbox"
-                     type="checkbox"
-                     (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
-                     formControlName="isPaymentOverrideSelected"
-                     [attr.disabled]="readOnly ? true : null"
-              />
-              Override Standard Payment Terms
-            </label>
-            <div class="payment-terms-div">
-              <label class="fal-label">Payment terms</label>
-              <ng-select id="paymentTerms"
-              formControlName="paymentTerms"
-              [items]="form.paymentTermOptions"
-              bindLabel="display"
-              bindValue="value"
-              (change)="form.forceValueChangeEvent(form.osptFormGroup)"
-              [readonly]="readOnly || !form.isPaymentOverrideSelected.value"
-              placeholder="Select One...">
-   </ng-select>
+                Currency is required
+              </small>
             </div>
-            
-          </div>
+
+            <!-- OVERRIDE STANDARD PAYMENT TERMS -->
+            <div class="col-4 offset-md-2 d-flex" [formGroup]="form.osptFormGroup">
+              <label for="override-stp-checkbox"
+                     class="fal-label override-stp-checkbox-div">
+                <input id="override-stp-checkbox"
+                       type="checkbox"
+                       (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
+                       formControlName="isPaymentOverrideSelected"
+                       [attr.disabled]="readOnly ? true : null"
+                />
+                Override Standard Payment Terms
+              </label>
+              <div class="payment-terms-div">
+                <label class="fal-label">Payment terms</label>
+                <ng-select id="paymentTerms"
+                           formControlName="paymentTerms"
+                           [items]="form.paymentTermOptions"
+                           bindLabel="display"
+                           bindValue="value"
+                           (change)="form.forceValueChangeEvent(form.osptFormGroup)"
+                           [readonly]="readOnly || !form.isPaymentOverrideSelected.value"
+                           placeholder="Select One...">
+                </ng-select>
+              </div>
+
+            </div>
 
           </div>
 
@@ -299,7 +295,7 @@
 
               <div class="col-1 text-left line-item sn">
                 {{i + 1}}
-              </div>   
+              </div>
 
               <div class="col-2">
                 <input type="text"
@@ -309,8 +305,9 @@
                        (keypress)="validateRegex($event)"
                        maxlength="4"
                        (focus)="focusLineItemElement(form.lineItemCompanyCode(i))"
-                       [ngClass]="(form.lineItemCompanyCode(i).hasError('pattern')
-                        || form.lineItemCompanyCode(i).hasError('validateCompanyCode')) ? 'error' : ''"
+                       [ngClass]="form.lineItemCompanyCode(i).invalid
+                                  && form.lineItemCompanyCode(i).touched
+                                  ? 'error' : ''"
                 />
                 <small class="error-text"
                        *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
@@ -319,13 +316,12 @@
                 <ng-template #companyCodeError>
                   <small class="error-text"
                          [ngClass]="{'invisible': !form.lineItemCompanyCode(i).hasError('validateCompanyCode')}">
-                  Company code is invalid
-                 </small>
-                 </ng-template>
-                
+                    Company code is invalid
+                  </small>
+                </ng-template>
+
               </div>
 
-              
 
               <!-- LINE ITEM - COST CENTER -->
               <div class="col-2">
@@ -393,22 +389,22 @@
                                                       && form.lineItemNetAmount(i).touched) || !form.isInvoiceAmountValid">
                 </app-fal-currency-input>
                 <small class="error-text"
-                   *ngIf="!!(form.lineItemNetAmount(i).errors
+                       *ngIf="!!(form.lineItemNetAmount(i).errors
                    && (form.lineItemNetAmount(i).hasError('required') || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
                    && form.lineItemNetAmount(i).touched)">
-                          Line Net Amount is required
+                  Line Net Amount is required
                 </small>
               </div>
 
               <div class="d-flex col-3 align-items-start">
                 <!-- LINE ITEM - NOTES -->
                 <input type="text"
-                class="form-control"
-                formControlName="notes"
-                (focus)="form.forceValueChangeEvent(form.lineItemNotes(i))"
-                (keypress)="validateFreeTextRegex($event)"
-                maxlength="50"
-         />
+                       class="form-control"
+                       formControlName="notes"
+                       (focus)="form.forceValueChangeEvent(form.lineItemNotes(i))"
+                       (keypress)="validateFreeTextRegex($event)"
+                       maxlength="50"
+                />
 
                 <!-- LINE ITEM - REMOVE -->
                 <div class="flex-shrink-1">
@@ -446,7 +442,7 @@
 
           <div class="row mb-3 mx-3 amount-row">
             <div class="amount-summary-div col-3 offset-md-9 p-3 d-flex flex-column"
-            [ngClass]="!form.isInvoiceAmountValid  ? 'error-div' : ''">
+                 [ngClass]="!form.isInvoiceAmountValid  ? 'error-div' : ''">
               <div class="col-12 d-flex justify-content-between align-items-end">
                 <span>Line Item Net Amount Total:</span>
                 <span>${{form.totalLineItemNetAmount | number : '1.2-2'}}</span>
@@ -455,13 +451,13 @@
                 <span>Invoice Net Amount:</span>
                 <span>${{form.amountOfInvoice?.value | number : '1.2-2'}}</span>
               </div>
-              
+
             </div>
             <small class="error-text col-3 offset-md-9 px-0"
                    *ngIf="!form.isInvoiceAmountValid">
-                          Line Net Amount must equal Invoice Net Amount
-          </small>
-          </div>          
+              Line Net Amount must equal Invoice Net Amount
+            </small>
+          </div>
         </elm-card>
 
         <div class="col-6" style="padding-right: 44px">
