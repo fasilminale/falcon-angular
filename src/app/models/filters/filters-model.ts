@@ -17,12 +17,12 @@ export class FiltersModel {
     {label: 'Approved', key: 'APPROVED'},
     {label: 'Created', key: 'CREATED'},
     {label: 'Deleted', key: 'DELETED'},
+    {label: 'Pending Extract', key: 'PENDING_EXTRACT'},
     {label: 'Paid', key: 'PAID'},
     {label: 'Pending Pay', key: 'PENDING_PAY'},
     {label: 'Rejected', key: 'REJECTED'},
     {label: 'Resubmitted', key: 'RESUBMITTED'},
     {label: 'Submitted', key: 'SUBMITTED'},
-
   ];
 
   constructor() {
