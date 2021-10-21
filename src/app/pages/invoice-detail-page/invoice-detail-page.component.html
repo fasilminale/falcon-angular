@@ -43,7 +43,7 @@
                  [opened]="milestonesTabOpen">
       <mat-nav-list>
         <div class="milestone"
-             *ngFor="let milestone of this.milestones; index as i">
+             *ngFor="let milestone of milestones; index as i">
           <div class="elm-div2 milestone-label"> {{milestone.type.label}}</div>
           <div class="elm-div2 milestone-sub" *ngIf="!!milestone.paidDate">
             Paid Date: {{formatTimestamp(milestone.paidDate)}}

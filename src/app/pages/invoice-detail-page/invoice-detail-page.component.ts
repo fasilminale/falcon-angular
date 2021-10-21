@@ -60,8 +60,8 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   }
 
   public updateMilestones(milestones: Array<Milestone>): void {
-    this.milestones.sort((a, b) =>
-      this.timeService.compareTimestamps(a.timestamp, b.timestamp)
+    milestones.sort((a, b) =>
+      -this.timeService.compareTimestamps(a.timestamp, b.timestamp)
     );
     this.milestones = milestones;
   }
