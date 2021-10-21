@@ -4,5 +4,8 @@ export interface Milestone {
   type: KeyedLabel;
   timestamp: string;
   user: string;
-  comments: string;
+
+  // Optional Fields
+  comments?: string;
+  paidDate: string;
 }

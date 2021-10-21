@@ -1,5 +1,6 @@
 import {Inject, Injectable, Optional} from '@angular/core';
 import * as moment from 'moment-timezone';
+import {Moment} from 'moment/moment';
 
 export type formatType = 'imperial' | 'metric' | 'iso' | 'stopPage';
 
@@ -32,11 +33,19 @@ export class TimeService {
     return formattedTime.format(outputFormatString);
   }
 
-  get getTimezone(): string {
+  get getUserTimezone(): string {
     return this.timezone;
   }
 
+  public inUserTimezone(value: string): Moment {
+    return moment.tz(value, this.getUserTimezone);
+  }
+
   public formatTimestamp(value: string, format: string): string | undefined {
-    return moment.tz(value, this.timezone).format(format);
+    return this.inUserTimezone(value).format(format);
+  }
+
+  public compareTimestamps(a: string, b: string): number {
+    return moment(a, true).valueOf() - moment(b, true).valueOf();
   }
 }
