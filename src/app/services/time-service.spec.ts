@@ -27,7 +27,7 @@ describe('TimeService', () => {
       expect(actual).toEqual('07:01');
     });
     it('should get the timezone', () => {
-      const actual = time.getTimezone;
+      const actual = time.getUserTimezone;
       expect(actual).toEqual('America/New_York');
     });
   });
@@ -42,7 +42,7 @@ describe('TimeService', () => {
     });
     it('should format a timestamp using the set timezone', () => {
       const actual = time.formatTimestamp(testTimestamp, 'hh:mm');
-      const expected = moment.tz(testTimestamp, time.getTimezone).format('hh:mm');
+      const expected = moment.tz(testTimestamp, time.getUserTimezone).format('hh:mm');
       expect(actual).toEqual(expected);
     });
   });

@@ -11,17 +11,6 @@
 
       <div class="row me-0">
 
-        <div *ngIf="hasLatestMilestoneComments"
-             id="comment-container-parent"
-             class="col-12">
-          <fal-container id="comment-container" [isRejected]="commentLabelPrefix === 'Rejection'">
-            <strong>
-              {{commentLabelPrefix}} Comments:
-            </strong>
-            {{latestMilestoneComments}}
-          </fal-container>
-        </div>
-
         <div class="row col-12 col-lg-6 me-1">
 
           <!-- MY TEMPLATE SELECT -->
