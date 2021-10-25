@@ -7,5 +7,5 @@ export interface Milestone {
 
   // Optional Fields
   comments?: string;
-  paidDate: string;
+  paidDate?: string;
 }
