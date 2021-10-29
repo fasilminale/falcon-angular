@@ -1,0 +1,35 @@
+<div class="page-header">
+  <div class="d-flex flex-column justify-content-between me-2">
+    <div>
+      <div class="headline1">Invoice Extraction</div>
+    </div>
+  </div>
+</div>
+<elm-card>
+  <elm-section-header [sectionTitle]="this.invoiceCountLabel">
+    <div class="col-12">
+      <div class='d-flex justify-content-end align-items-center'>
+        <elm-button buttonStyle="primary"
+                    (buttonClick)="openFilter()"
+                    class="me-1">
+          <span class="material-icons  me-2">filter_list</span>
+          Filter
+        </elm-button>
+      </div>
+    </div>
+  </elm-section-header>
+  <cardinal-chip [totalResults]="paginationModel.total"
+                 [filtersModel]="this.filterService.invoiceFilterModel"
+                 (chipRemovedEvent)="this.resetTable()"></cardinal-chip>
+  <elm-data-table
+    tableType="clickable"
+    [data]="invoices"
+    [headers]="headers"
+    (pageChangedEvent)="pageChanged($event)"
+    (dataSelectedEvent)="rowClicked($event[0])"
+    (sortEvent)="sortChanged($event)"
+    [shouldSort]=true
+    [totalResults]="paginationModel.total"
+    [pageSizes]="paginationModel.pageSizes">
+  </elm-data-table>
+</elm-card>

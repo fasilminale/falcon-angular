@@ -1,0 +1,46 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  background-color: $cardinal-white;
+  margin: 0 -24px 24px;
+  padding: 0 24px 16px;
+  min-height: 120px;
+}
+
+.milestone {
+  margin: 16px;
+}
+
+.header-button {
+  flex-grow: 0;
+  flex-shrink: 2;
+  margin-left: 1em;
+}
+
+.side-nav-container {
+  background-color: unset;
+  z-index: 0;
+}
+
+.side-nav-content {
+  overflow: hidden;
+}
+
+.side-nav {
+  border-color: $cardinal-blue;
+  border-top: solid 1px $cardinal-blue;
+  border-top-left-radius: 0.25rem;
+  width: 25%;
+}
+
+.milestone-label {
+  color: $cardinal-black;
+}
+
+.milestone-sub {
+  color: $grey3;
+}
