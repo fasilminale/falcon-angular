@@ -22,10 +22,8 @@ export class InvoiceExtractionPageComponent implements OnInit {
   headers = InvoiceDataModel.invoiceTableHeaders;
   invoices: Array<InvoiceDataModel> = [];
   sortField = '';
-  searchValue = '';
-  createdByUser = false;
   selectedInvoiceStatuses: Array<string> = [];
-  invoiceCountLabel = 'Invoices';
+  invoiceCountLabel = 'Approved Invoices';
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
@@ -43,9 +41,6 @@ export class InvoiceExtractionPageComponent implements OnInit {
     this.getTableData(this.paginationModel.numberPerPage);
     this.route.queryParamMap.subscribe(queryParams => {
       const falconInvoiceNumber = queryParams.get('falconInvoiceNumber');
-      if (falconInvoiceNumber) {
-        this.snackBar.open(`Success! Falcon Invoice ${falconInvoiceNumber} has been deleted.`, 'close', {duration: 5 * 1000});
-      }
     });
   }
 
@@ -56,15 +51,11 @@ export class InvoiceExtractionPageComponent implements OnInit {
       page: this.paginationModel.pageIndex,
       sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
-      searchValue: this.searchValue,
-      createdByUser: this.createdByUser,
-      ...searchFilters,
+      invoiceStatuses: ["PENDING_PAY"],
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
-      this.invoiceCountLabel = this.createdByUser ? `My Invoices (${this.paginationModel.total})` :
-        (this.searchValue || this.selectedInvoiceStatuses.length > 0) ? `Invoices (${this.paginationModel.total})` :
-          'Invoices';
+      this.invoiceCountLabel = `Approved Invoices (${this.paginationModel.total})`;
       const invoiceArray: Array<InvoiceDataModel> = [];
       invoiceData.data.map((invoice: any) => {
         invoiceArray.push(new InvoiceDataModel(invoice));
@@ -88,39 +79,6 @@ export class InvoiceExtractionPageComponent implements OnInit {
     this.paginationModel.pageIndex = page.pageIndex + 1;
     this.paginationModel.numberPerPage = page.pageSize;
     this.getTableData(this.paginationModel.numberPerPage);
-  }
-
-  searchInvoices(searchValue: any): void {
-    this.searchValue = searchValue;
-    this.sortField = '';
-    this.resetTable();
-  }
-
-  changeCreatedByUser(): void {
-    this.createdByUser = !this.createdByUser;
-    this.sortField = '';
-    this.resetTable();
-  }
-
-  changeInvoiceStatus(statuses: Array<StatusModel>): void {
-    this.selectedInvoiceStatuses = statuses.map(status => status.key);
-    this.sortField = '';
-    this.resetTable();
-  }
-
-  openFilter(): void {
-    this.dialog.open(InvoiceFilterModalComponent, {
-      minWidth: '525px',
-      width: '33vw',
-      autoFocus: false,
-      position: {
-        right: '24px'
-      }
-    }).afterClosed().subscribe( response => {
-      if (response) {
-        this.resetTable();
-      }
-    });
   }
 
   resetTable(): void {
