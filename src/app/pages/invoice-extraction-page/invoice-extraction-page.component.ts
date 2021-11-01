@@ -24,6 +24,7 @@ export class InvoiceExtractionPageComponent implements OnInit {
   sortField = '';
   selectedInvoiceStatuses: Array<string> = [];
   invoiceCountLabel = 'Approved Invoices';
+  selectedInvoiceToExtract: InvoiceDataModel[] = [];
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
@@ -65,8 +66,13 @@ export class InvoiceExtractionPageComponent implements OnInit {
     });
   }
 
-  rowClicked(invoice: InvoiceDataModel): Promise<any> {
-    return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
+  //rowClicked(invoice: InvoiceDataModel): Promise<any> {
+    //return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
+  //}
+
+  extract(): void{
+    console.log("--------");
+    console.log(this.selectedInvoiceToExtract);
   }
 
   sortChanged(sort: any): void {
@@ -87,6 +93,10 @@ export class InvoiceExtractionPageComponent implements OnInit {
     } else {
       this.getTableData(this.paginationModel.numberPerPage);
     }
+  }
+
+  checkBoxes(): void {
+
   }
 
 }
