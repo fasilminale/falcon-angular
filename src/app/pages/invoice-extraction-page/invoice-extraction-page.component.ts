@@ -100,6 +100,11 @@ export class InvoiceExtractionPageComponent implements OnInit {
 
   }
 
+  private showSuccess(){
+    this.snackBar.open(`Success! All Invoices have been extracted for remittance.`, 'close', {duration: 5 * 1000});
+    this.getTableData(this.paginationModel.numberPerPage);
+  }
+
   public async extract(): Promise<void> {
     const dialogResult = await this.dialog.open(ConfirmationModalComponent,
       {
@@ -118,7 +123,7 @@ export class InvoiceExtractionPageComponent implements OnInit {
 
       const promises = this.selectedInvoiceToExtract
         .map(invoice => this.invoiceService.extract(invoice.falconInvoiceNumber).toPromise());
-      Promise.all(promises).then(result => (result)).catch(
+      Promise.all(promises).then(result => (this.showSuccess())).catch(
           error => this.utilService.openErrorModal({title: 'ben', innerHtmlMessage: 'schwem'})
       );
   }
