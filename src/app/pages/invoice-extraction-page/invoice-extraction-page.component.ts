@@ -6,11 +6,14 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {DataTableComponent} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, DataTableComponent} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from '../../services/filter-service';
+import {InvoiceService} from '../../services/invoice-service';
+import {UtilService} from "../../services/util-service";
+
 
 @Component({
   selector: 'app-invoice-extraction-page',
@@ -31,10 +34,12 @@ export class InvoiceExtractionPageComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private loadingService: LoadingService,
-    private webservice: WebServices,
+    private webService: WebServices,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     public filterService: FilterService,
+    private invoiceService: InvoiceService,
+    private utilService: UtilService
   ) {
   }
 
@@ -48,11 +53,11 @@ export class InvoiceExtractionPageComponent implements OnInit {
   getTableData(numberPerPage: number): void {
     this.loadingService.showLoading('Loading');
     const searchFilters = this.filterService.invoiceFilterModel.formatForSearch();
-    this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
+    this.webService.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
       sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
-      invoiceStatuses: ["PENDING_PAY"],
+      invoiceStatuses: ["APPROVED"],
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
@@ -70,10 +75,6 @@ export class InvoiceExtractionPageComponent implements OnInit {
     //return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
   //}
 
-  extract(): void{
-    console.log("--------");
-    console.log(this.selectedInvoiceToExtract);
-  }
 
   sortChanged(sort: any): void {
     this.paginationModel.sortOrder = sort.direction;
@@ -97,6 +98,29 @@ export class InvoiceExtractionPageComponent implements OnInit {
 
   checkBoxes(): void {
 
+  }
+
+  public async extract(): Promise<void> {
+    const dialogResult = await this.dialog.open(ConfirmationModalComponent,
+      {
+        autoFocus: false,
+        data: {
+          title: 'Extract Invoice(s)',
+          innerHtmlMessage: `You are about to extract ${this.selectedInvoiceToExtract.length} Invoice(s) for remittance.
+                 <br/><br/><strong>This action cannot be undone.</strong>`,
+          confirmButtonText: 'Extract Invoice(s)',
+          confirmButtonStyle: 'destructive',
+          cancelButtonText: 'Cancel'
+        }
+      })
+      .afterClosed()
+      .toPromise();
+
+      const promises = this.selectedInvoiceToExtract
+        .map(invoice => this.invoiceService.extract(invoice.falconInvoiceNumber).toPromise());
+      Promise.all(promises).then(result => (result)).catch(
+          error => this.utilService.openErrorModal({title: 'ben', innerHtmlMessage: 'schwem'})
+      );
   }
 
 }

@@ -130,5 +130,9 @@ export class InvoiceListPageComponent implements OnInit {
       this.getTableData(this.paginationModel.numberPerPage);
     }
   }
-  
+
+  routeToExtractPage(): void {
+    this.router.navigateByUrl('/invoice-extraction');
+  };
+
 }
