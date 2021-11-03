@@ -15,6 +15,7 @@ import {
   ProgressModule, ServicesModule
 } from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
+import {InvoiceExtractionPageComponent} from './pages/invoice-extraction-page/invoice-extraction-page.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-create-page.component';
 import {NgSelectModule} from '@ng-select/ng-select';
@@ -112,6 +113,7 @@ const oktaConfig = {
   declarations: [
     AppComponent,
     InvoiceListPageComponent,
+    InvoiceExtractionPageComponent,
     InvoiceCreatePageComponent,
     FalDateInputComponent,
     FalRadioInputComponent,

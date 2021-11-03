@@ -6,22 +6,30 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {DataTableComponent, ElmDataTableHeader} from '@elm/elm-styleguide-ui';
+import {
+  ButtonClickedEvent,
+  ConfirmationModalComponent,
+  DataTableComponent,
+  ElmDataTableHeader
+} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from '../../services/filter-service';
+import {InvoiceService} from '../../services/invoice-service';
+import {UtilService} from "../../services/util-service";
+
 
 @Component({
-  selector: 'app-invoice-list-page',
-  templateUrl: './invoice-list-page.component.html',
-  styleUrls: ['./invoice-list-page.component.scss']
+  selector: 'app-invoice-extraction-page',
+  templateUrl: './invoice-extraction-page.component.html',
+  styleUrls: ['./invoice-extraction-page.component.scss']
 })
-export class InvoiceListPageComponent implements OnInit {
+export class InvoiceExtractionPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
-  headers: Array<ElmDataTableHeader> =   [
+  headers: Array<ElmDataTableHeader> = [
     {header: 'statusLabel', label: 'Status'},
-    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end'},
+    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end', button: true, buttonStyle: 'link'},
     {header: 'externalInvoiceNumber', label: 'External Invoice Number', alignment: 'end'},
     {header: 'amountOfInvoice', label: 'Invoice Amount', alignment: 'end'},
     {header: 'currency', label: 'Currency'},
@@ -33,20 +41,21 @@ export class InvoiceListPageComponent implements OnInit {
   ];
   invoices: Array<InvoiceDataModel> = [];
   sortField = '';
-  searchValue = '';
-  createdByUser = false;
   selectedInvoiceStatuses: Array<string> = [];
-  invoiceCountLabel = 'Invoices';
+  invoiceCountLabel = 'Approved Invoices';
+  selectedInvoicesToExtract: InvoiceDataModel[] = [];
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private loadingService: LoadingService,
-    private webservice: WebServices,
+    private webService: WebServices,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     public filterService: FilterService,
+    private invoiceService: InvoiceService,
+    private utilService: UtilService
   ) {
   }
 
@@ -54,28 +63,21 @@ export class InvoiceListPageComponent implements OnInit {
     this.getTableData(this.paginationModel.numberPerPage);
     this.route.queryParamMap.subscribe(queryParams => {
       const falconInvoiceNumber = queryParams.get('falconInvoiceNumber');
-      if (falconInvoiceNumber) {
-        this.snackBar.open(`Success! Falcon Invoice ${falconInvoiceNumber} has been deleted.`, 'close', {duration: 5 * 1000});
-      }
     });
   }
 
   getTableData(numberPerPage: number): void {
     this.loadingService.showLoading('Loading');
     const searchFilters = this.filterService.invoiceFilterModel.formatForSearch();
-    this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
+    this.webService.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
       sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
-      searchValue: this.searchValue,
-      createdByUser: this.createdByUser,
-      ...searchFilters,
+      invoiceStatuses: ["APPROVED"],
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
-      this.invoiceCountLabel = this.createdByUser ? `My Invoices (${this.paginationModel.total})` :
-        (this.searchValue || this.selectedInvoiceStatuses.length > 0) ? `Invoices (${this.paginationModel.total})` :
-          'Invoices';
+      this.invoiceCountLabel = `Approved Invoices (${this.paginationModel.total})`;
       const invoiceArray: Array<InvoiceDataModel> = [];
       invoiceData.data.map((invoice: any) => {
         invoiceArray.push(new InvoiceDataModel(invoice));
@@ -85,8 +87,12 @@ export class InvoiceListPageComponent implements OnInit {
     });
   }
 
-  rowClicked(invoice: InvoiceDataModel): Promise<any> {
-    return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
+  buttonClicked(event : ButtonClickedEvent): void {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([`/invoice/${event.rowData.falconInvoiceNumber}`])
+    );
+
+    window.open(url, '_blank');
   }
 
   sortChanged(sort: any): void {
@@ -101,39 +107,6 @@ export class InvoiceListPageComponent implements OnInit {
     this.getTableData(this.paginationModel.numberPerPage);
   }
 
-  searchInvoices(searchValue: any): void {
-    this.searchValue = searchValue;
-    this.sortField = '';
-    this.resetTable();
-  }
-
-  changeCreatedByUser(): void {
-    this.createdByUser = !this.createdByUser;
-    this.sortField = '';
-    this.resetTable();
-  }
-
-  changeInvoiceStatus(statuses: Array<StatusModel>): void {
-    this.selectedInvoiceStatuses = statuses.map(status => status.key);
-    this.sortField = '';
-    this.resetTable();
-  }
-
-  openFilter(): void {
-    this.dialog.open(InvoiceFilterModalComponent, {
-      minWidth: '525px',
-      width: '33vw',
-      autoFocus: false,
-      position: {
-        right: '24px'
-      }
-    }).afterClosed().subscribe( response => {
-      if (response) {
-        this.resetTable();
-      }
-    });
-  }
-
   resetTable(): void {
     if (this.paginationModel.pageIndex !== 1) {
       this.dataTable.goToFirstPage();
@@ -142,8 +115,32 @@ export class InvoiceListPageComponent implements OnInit {
     }
   }
 
-  routeToExtractPage(): void {
-    this.router.navigateByUrl('/invoice-extraction');
-  };
+  private showSuccess(){
+    this.snackBar.open(`Success! All Invoices have been extracted for remittance.`, 'close', {duration: 5 * 1000});
+    this.getTableData(this.paginationModel.numberPerPage);
+  }
+
+  public async extract(): Promise<void> {
+    if(this.selectedInvoicesToExtract.length < 1){
+      return;
+    }
+    const dialogResult = await this.utilService.openConfirmationModal(
+        {
+          title: 'Extract Invoice(s)',
+          innerHtmlMessage: `You are about to extract ${this.selectedInvoicesToExtract.length} Invoice(s) for remittance.
+                   <br/><br/><strong>This action cannot be undone.</strong>`,
+          confirmButtonText: 'Extract Invoice(s)',
+          confirmButtonStyle: 'primary',
+          cancelButtonText: 'Cancel'
+        }
+      ).toPromise();
+
+      if(dialogResult) {
+        const promises = this.selectedInvoicesToExtract.map(
+          invoice => this.invoiceService.extract(invoice.falconInvoiceNumber).toPromise());
+
+        Promise.all(promises).then(result => (this.showSuccess()));
+      }
+  }
 
 }

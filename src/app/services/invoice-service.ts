@@ -71,4 +71,8 @@ export class InvoiceService {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}/submit-for-approval`);
   }
 
+  public extract(invoiceNumber: string): Observable<any> {
+    return this.web.httpPut(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}/extract`);
+  }
+
 }
