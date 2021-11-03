@@ -7,6 +7,8 @@ import {ErrorService} from './services/error-service';
 import {UtilService} from './services/util-service';
 import {of} from 'rxjs';
 import {FalconTestingModule} from './testing/falcon-testing.module';
+import {UserService} from './services/user-service';
+import {UserInfoModel} from './models/user-info/user-info-model';
 
 describe('AppComponent', () => {
   let router: Router;
@@ -14,6 +16,23 @@ describe('AppComponent', () => {
   let oktaService: OktaAuthService;
   let errorService: ErrorService;
   let util: UtilService;
+  let userService: UserService;
+
+  const writeUser = new UserInfoModel({
+    uid: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: 'FAL_INTERNAL_WRITE',
+  });
+
+  const techAdminUser = new UserInfoModel({
+    uid: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: 'FAL_INTERNAL_TECH_ADMIN',
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -30,14 +49,21 @@ describe('AppComponent', () => {
     oktaService = TestBed.inject(OktaAuthService);
     errorService = TestBed.inject(ErrorService);
     util = TestBed.inject(UtilService);
+    userService = TestBed.inject(UserService);
   });
 
-  describe('without initialization errors', () => {
+  describe('tech admin user view', () => {
     beforeEach(() => {
       // Create Component
       const fixture = TestBed.createComponent(AppComponent);
+      oktaService.$authenticationState = of(true);
+      spyOn(userService, 'getUserInfo').and.returnValue(of(techAdminUser));
       component = fixture.componentInstance;
       component.ngOnInit();
+    });
+
+    afterEach(() => {
+      TestBed.resetTestingModule();
     });
 
     it('should create the app', () => {
@@ -63,9 +89,13 @@ describe('AppComponent', () => {
       expect(navItem.click).toHaveBeenCalled();
     });
 
+    it('display correct number of nav buttons', () => {
+      expect(component.navBarItems.length).toEqual(2);
+    });
+
     it('should route from nav buttons', () => {
       spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
-      component.navBarItems.forEach(item => item.click());
+      component.navBarItems.forEach(item => item.click ? item.click() : null);
       expect(router.navigate).toHaveBeenCalledTimes(component.navBarItems.length);
     });
 
@@ -74,6 +104,35 @@ describe('AppComponent', () => {
       spyOn(oktaService, 'signOut').and.returnValue(Promise.resolve());
       component.logout();
       expect(oktaService.signOut).toHaveBeenCalled();
+    });
+  });
+
+  describe('write user view', () => {
+    beforeEach(() => {
+      // Create Component
+      const fixture = TestBed.createComponent(AppComponent);
+      oktaService.$authenticationState = of(true);
+      spyOn(userService, 'getUserInfo').and.returnValue(of(writeUser));
+      component = fixture.componentInstance;
+      component.ngOnInit();
+    });
+
+    afterEach(() => {
+      TestBed.resetTestingModule();
+    });
+
+    it('should create the app', () => {
+      expect(component).toBeTruthy();
+    });
+
+    it('display correct number of nav buttons', () => {
+      expect(component.navBarItems.length).toEqual(4);
+    });
+
+    it('should route from nav buttons', () => {
+      spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
+      component.navBarItems.forEach(item => item.click ? item.click() : null);
+      expect(router.navigate).toHaveBeenCalledTimes(component.navBarItems.length);
     });
   });
 
