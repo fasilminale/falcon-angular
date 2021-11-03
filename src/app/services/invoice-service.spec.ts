@@ -71,4 +71,10 @@ describe('InvoiceService', () => {
     expect(result).toEqual(invoice);
   });
 
+  it('should extract', async () => {
+    spyOn(web, 'httpPut').and.returnValue(of(invoice));
+    await invoiceService.extract(invoice.falconInvoiceNumber).toPromise();
+    expect(web.httpPut).toHaveBeenCalled();
+  });
+
 });

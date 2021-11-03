@@ -14,6 +14,8 @@ import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
+import { UtilService } from 'src/app/services/util-service';
+import {InvoiceService} from "../../services/invoice-service";
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -30,6 +32,7 @@ class DialogMock {
   }
 }
 
+
 describe('InvoiceExtractionPageComponent', () => {
   let component: InvoiceExtractionPageComponent;
   let fixture: ComponentFixture<InvoiceExtractionPageComponent>;
@@ -40,6 +43,8 @@ describe('InvoiceExtractionPageComponent', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
   let filterService: FilterService;
+  let utilService: UtilService;
+  let invoiceService: InvoiceService;
 
   const pageEvent = new PageEvent();
   pageEvent.pageSize = 30;
@@ -90,6 +95,8 @@ describe('InvoiceExtractionPageComponent', () => {
     router = TestBed.inject(Router);
     dialog = TestBed.inject(MatDialog);
     filterService = TestBed.inject(FilterService);
+    utilService = TestBed.inject(UtilService);
+    invoiceService = TestBed.inject(InvoiceService);
   });
 
   beforeEach(() => {
@@ -110,6 +117,16 @@ describe('InvoiceExtractionPageComponent', () => {
   it('should get table data', fakeAsync(() => {
     expect(component.invoices[0].falconInvoiceNumber).toEqual('1');
   }));
+
+  it('should Extract', async () => {
+      spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
+      spyOn(invoiceService, 'extract').and.returnValue(of({}));
+      spyOn(component, 'getTableData').and.stub();
+      component.selectedInvoicesToExtract = [{'falconInvoiceNumber': 'F0000000001'} as InvoiceDataModel];
+      let promise = component.extract();
+      await promise;
+      expect(invoiceService.extract).toHaveBeenCalledWith('F0000000001');
+  });
 
   it('should Page Change', fakeAsync(() => {
     spyOn(component, 'pageChanged').and.callThrough();
@@ -137,42 +154,6 @@ describe('InvoiceExtractionPageComponent', () => {
     expect(component.paginationModel.sortOrder).toEqual(sortEvent.direction);
   }));
 
-  it('should Search Invoices', fakeAsync(() => {
-    spyOn(component, 'searchInvoices').and.callThrough();
-    spyOn(component, 'getTableData').and.callThrough();
-    component.searchInvoices('1');
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
-    tick(150);
-    fixture.detectChanges();
-    expect(component.searchInvoices).toHaveBeenCalled();
-    expect(component.getTableData).toHaveBeenCalled();
-    expect(component.searchValue).toEqual('1');
-  }));
-
-  it('should Search Invoices by status', fakeAsync(() => {
-    spyOn(component, 'changeInvoiceStatus').and.callThrough();
-    spyOn(component, 'getTableData').and.callThrough();
-    component.changeInvoiceStatus(invoiceStatuses);
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
-    tick(150);
-    fixture.detectChanges();
-    expect(component.changeInvoiceStatus).toHaveBeenCalled();
-    expect(component.getTableData).toHaveBeenCalled();
-    expect(component.selectedInvoiceStatuses).toEqual(['CREATED']);
-  }));
-
-  it('should Search Invoices by created user', fakeAsync(() => {
-    spyOn(component, 'changeCreatedByUser').and.callThrough();
-    spyOn(component, 'getTableData').and.callThrough();
-    component.changeCreatedByUser();
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
-    tick(150);
-    fixture.detectChanges();
-    expect(component.changeCreatedByUser).toHaveBeenCalled();
-    expect(component.getTableData).toHaveBeenCalled();
-    expect(component.createdByUser).toEqual(true);
-  }));
-
   it('should init with invoices from api', () => {
     component.getTableData(pageEvent.pageSize);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)
@@ -181,32 +162,7 @@ describe('InvoiceExtractionPageComponent', () => {
       .toEqual(invoiceData.data[0].falconInvoiceNumber);
   });
 
-  it('should route to an invoice', fakeAsync(() => {
-    const invoice = new InvoiceDataModel({falconInvoiceNumber: '1'});
-    const navigateSpy = spyOn(router, 'navigate');
-    component.rowClicked(invoice);
-    expect(navigateSpy).toHaveBeenCalledWith(['/invoice/1']);
-  }));
 
-  describe('openFilter', () => {
-    function openModal(): void {
-      spyOn(component, 'openFilter').and.callThrough();
-      component.openFilter();
-      fixture.detectChanges();
-      fixture.whenStable().then(() => {
-        const dialogDiv = document.querySelector('mat-dialog-container');
-        const applyButton = dialogDiv?.querySelector('#apply-filter');
-        const mouseEvent = new MouseEvent('click');
-        applyButton?.dispatchEvent(mouseEvent);
-      });
-      tick(150);
-    }
 
-    it('should call resetTable on apply', fakeAsync(() => {
-      spyOn(component, 'resetTable').and.callThrough();
-      openModal();
-      http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
-      expect(component.resetTable).toHaveBeenCalled();
-    }));
-  });
+
 });

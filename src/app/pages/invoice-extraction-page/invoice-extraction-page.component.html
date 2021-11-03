@@ -11,6 +11,7 @@
       <div class='d-flex justify-content-end align-items-center'>
         <elm-button buttonStyle="primary"
                     (buttonClick)="extract()"
+                    [isDisabled]="this.selectedInvoicesToExtract.length < 1"
                     class="me-1">
 
           EXTRACT INVOICE(S)
@@ -26,7 +27,8 @@
     [data]="invoices"
     [headers]="headers"
     (pageChangedEvent)="pageChanged($event)"
-    (dataSelectedEvent)="this.selectedInvoiceToExtract = $event"
+    (buttonCLickEvent)="buttonClicked($event)"
+    (dataSelectedEvent)="this.selectedInvoicesToExtract = $event"
     (sortEvent)="sortChanged($event)"
     [shouldSort]=true
     [totalResults]="paginationModel.total"

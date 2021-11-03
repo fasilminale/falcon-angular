@@ -6,7 +6,12 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {ConfirmationModalComponent, DataTableComponent} from '@elm/elm-styleguide-ui';
+import {
+  ButtonClickedEvent,
+  ConfirmationModalComponent,
+  DataTableComponent,
+  ElmDataTableHeader
+} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
@@ -22,12 +27,23 @@ import {UtilService} from "../../services/util-service";
 })
 export class InvoiceExtractionPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
-  headers = InvoiceDataModel.invoiceTableHeaders;
+  headers: Array<ElmDataTableHeader> = [
+    {header: 'statusLabel', label: 'Status'},
+    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end', button: true, buttonStyle: 'link'},
+    {header: 'externalInvoiceNumber', label: 'External Invoice Number', alignment: 'end'},
+    {header: 'amountOfInvoice', label: 'Invoice Amount', alignment: 'end'},
+    {header: 'currency', label: 'Currency'},
+    {header: 'vendorNumber', label: 'Vendor Number', alignment: 'end'},
+    {header: 'invoiceDate', label: 'Invoice Date'},
+    {header: 'createdBy', label: 'Created By'},
+    {header: 'companyCode', label: 'Company Code', alignment: 'end'},
+    {header: 'standardPaymentTermsOverride', label: 'Override'}
+  ];
   invoices: Array<InvoiceDataModel> = [];
   sortField = '';
   selectedInvoiceStatuses: Array<string> = [];
   invoiceCountLabel = 'Approved Invoices';
-  selectedInvoiceToExtract: InvoiceDataModel[] = [];
+  selectedInvoicesToExtract: InvoiceDataModel[] = [];
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(
@@ -71,10 +87,13 @@ export class InvoiceExtractionPageComponent implements OnInit {
     });
   }
 
-  //rowClicked(invoice: InvoiceDataModel): Promise<any> {
-    //return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
-  //}
+  buttonClicked(event : ButtonClickedEvent): void {
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([`/invoice/${event.rowData.falconInvoiceNumber}`])
+    );
 
+    window.open(url, '_blank');
+  }
 
   sortChanged(sort: any): void {
     this.paginationModel.sortOrder = sort.direction;
@@ -96,36 +115,32 @@ export class InvoiceExtractionPageComponent implements OnInit {
     }
   }
 
-  checkBoxes(): void {
-
-  }
-
   private showSuccess(){
     this.snackBar.open(`Success! All Invoices have been extracted for remittance.`, 'close', {duration: 5 * 1000});
     this.getTableData(this.paginationModel.numberPerPage);
   }
 
   public async extract(): Promise<void> {
-    const dialogResult = await this.dialog.open(ConfirmationModalComponent,
-      {
-        autoFocus: false,
-        data: {
+    if(this.selectedInvoicesToExtract.length < 1){
+      return;
+    }
+    const dialogResult = await this.utilService.openConfirmationModal(
+        {
           title: 'Extract Invoice(s)',
-          innerHtmlMessage: `You are about to extract ${this.selectedInvoiceToExtract.length} Invoice(s) for remittance.
-                 <br/><br/><strong>This action cannot be undone.</strong>`,
+          innerHtmlMessage: `You are about to extract ${this.selectedInvoicesToExtract.length} Invoice(s) for remittance.
+                   <br/><br/><strong>This action cannot be undone.</strong>`,
           confirmButtonText: 'Extract Invoice(s)',
-          confirmButtonStyle: 'destructive',
+          confirmButtonStyle: 'primary',
           cancelButtonText: 'Cancel'
         }
-      })
-      .afterClosed()
-      .toPromise();
+      ).toPromise();
 
-      const promises = this.selectedInvoiceToExtract
-        .map(invoice => this.invoiceService.extract(invoice.falconInvoiceNumber).toPromise());
-      Promise.all(promises).then(result => (this.showSuccess())).catch(
-          error => this.utilService.openErrorModal({title: 'ben', innerHtmlMessage: 'schwem'})
-      );
+      if(dialogResult) {
+        const promises = this.selectedInvoicesToExtract.map(
+          invoice => this.invoiceService.extract(invoice.falconInvoiceNumber).toPromise());
+
+        Promise.all(promises).then(result => (this.showSuccess()));
+      }
   }
 
 }

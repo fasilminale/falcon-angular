@@ -9,8 +9,7 @@
 <elm-card>
   <elm-section-header [sectionTitle]="this.invoiceCountLabel">
     <div class="col-12">
-
-      <div class='d-flex justify-content-end align-items-center'>
+      <div class='d-flex justify-content-between align-items-center'>
         <elm-button id="cancel-button"
                     buttonType="button"
                     buttonStyle="text"
@@ -18,7 +17,6 @@
                     (buttonClick)="routeToExtractPage()">
           <u>Extract Approved Invoices for Remittance</u>
         </elm-button>
-
         <elm-button buttonStyle="primary"
                     (buttonClick)="openFilter()"
                     class="me-1">
