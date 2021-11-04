@@ -18,6 +18,7 @@ import {FakeAuthService} from '../services/auth-service';
 import {TimeService} from '../services/time-service';
 import {FilterService} from '../services/filter-service';
 import {MasterDataService} from '../services/master-data-service';
+import {UserService} from '../services/user-service';
 
 @NgModule({
   declarations: [],
@@ -52,6 +53,7 @@ import {MasterDataService} from '../services/master-data-service';
     FilterService,
     MasterDataService,
     InvoiceFormManager,
+    UserService,
     RealSubscriptionManager.PROVIDER,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

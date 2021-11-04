@@ -11,6 +11,8 @@ import {Subscription} from 'rxjs';
 import {TimeService} from '../../services/time-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {KeyedLabel} from '../../models/generic/keyed-label';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {UserService} from '../../services/user-service';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -24,6 +26,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @ViewChild(InvoiceFormComponent) invoiceForm?: InvoiceFormComponent;
 
+  public userInfo: UserInfoModel | undefined;
   public readOnly = true;
   public milestonesTabOpen = false;
   public isDeletedInvoice = false;
@@ -39,7 +42,8 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
                      private route: ActivatedRoute,
                      private dialog: MatDialog,
                      private snackBar: MatSnackBar,
-                     private timeService: TimeService) {
+                     private timeService: TimeService,
+                     public userService: UserService) {
   }
 
   public ngOnInit(): void {
@@ -49,6 +53,9 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
         this.falconInvoiceNumber = newFalconInvoiceNumber ? newFalconInvoiceNumber : '';
       })
     );
+    this.userService.getUserInfo().subscribe(userInfo => {
+      this.userInfo = new UserInfoModel(userInfo);
+    });
   }
 
   public ngOnDestroy(): void {

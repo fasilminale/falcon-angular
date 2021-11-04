@@ -16,6 +16,7 @@ import {By} from '@angular/platform-browser';
 import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-manager';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import {UserService} from '../../services/user-service';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -27,6 +28,16 @@ describe('InvoiceDetailPageComponent', () => {
     afterClosed: of(false),
     close: null
   });
+
+  const USER_INFO_SPY = jasmine.createSpyObj(['getUserInfo']);
+
+  const userInfo = {
+    firstName: 'test',
+    lastName: 'user',
+    email: 'test@test.com',
+    uid: '12345',
+    role: 'FAL_INTERNAL_TECH_ADIMN'
+  };
 
   const falconInvoiceNumber = 'F0000000001';
   const invoiceResponse = {
@@ -73,6 +84,7 @@ describe('InvoiceDetailPageComponent', () => {
   let time: TimeService;
   let templateService: TemplateService;
   let form: InvoiceFormManager;
+  let userService: UserService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -93,8 +105,10 @@ describe('InvoiceDetailPageComponent', () => {
     loadingService = TestBed.inject(LoadingService);
     time = TestBed.inject(TimeService);
     templateService = TestBed.inject(TemplateService);
+    userService = TestBed.inject(UserService);
     spyOn(templateService, 'getTemplates').and.returnValue(of([]));
     spyOn(templateService, 'getTemplateByName').and.returnValue(of({lineItems: []} as unknown as Template));
+    spyOn(userService, 'getUserInfo').and.returnValue(of(userInfo));
     form = TestBed.inject(InvoiceFormManager);
     spyOn(form, 'establishTouchLink').and.stub();
     spyOn(form, 'forceValueChangeEvent').and.stub();
