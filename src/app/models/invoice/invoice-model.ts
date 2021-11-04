@@ -7,19 +7,6 @@ import {Milestone} from '../milestone/milestone-model';
 
 export class InvoiceDataModel {
 
-  static invoiceTableHeaders: Array<ElmDataTableHeader> = [
-    {header: 'statusLabel', label: 'Status'},
-    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end'},
-    {header: 'externalInvoiceNumber', label: 'External Invoice Number', alignment: 'end'},
-    {header: 'amountOfInvoice', label: 'Invoice Amount', alignment: 'end'},
-    {header: 'currency', label: 'Currency'},
-    {header: 'vendorNumber', label: 'Vendor Number', alignment: 'end'},
-    {header: 'invoiceDate', label: 'Invoice Date'},
-    {header: 'createdBy', label: 'Created By'},
-    {header: 'companyCode', label: 'Company Code', alignment: 'end'},
-    {header: 'standardPaymentTermsOverride', label: 'Override'}
-  ];
-
   static dateFormat = 'MM/DD/YYYY';
 
   status: StatusModel;

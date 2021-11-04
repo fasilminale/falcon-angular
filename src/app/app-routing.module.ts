@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
+import {InvoiceExtractionPageComponent} from './pages/invoice-extraction-page/invoice-extraction-page.component';
 import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-create-page.component';
 import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
 import {ManageMyTemplatesComponent} from './pages/manage-my-templates/manage-my-templates.component';
@@ -13,6 +14,7 @@ import {RoleGuard} from './components/role-guard/role-guard';
 const routes: Routes = [
   {path: 'master-data', component:  MasterDataPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoices', component: InvoiceListPageComponent, canActivate: [OktaAuthGuard]},
+  {path: 'invoice-extraction', component: InvoiceExtractionPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {
     roles: ['FAL_INTERNAL_WRITE']
   }},

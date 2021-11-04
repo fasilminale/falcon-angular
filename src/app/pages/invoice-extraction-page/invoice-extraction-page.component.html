@@ -1,29 +1,21 @@
 <div class="page-header">
   <div class="d-flex flex-column justify-content-between me-2">
     <div>
-      <div class="headline1">Invoice List</div>
+      <div class="headline1">Invoice Extraction</div>
     </div>
   </div>
-  <app-search (submitEvent)="searchInvoices($event)"></app-search>
 </div>
 <elm-card>
   <elm-section-header [sectionTitle]="this.invoiceCountLabel">
     <div class="col-12">
-      <div class='d-flex justify-content-between align-items-center'>
-        <elm-button id="cancel-button"
-                    buttonType="button"
-                    buttonStyle="text"
-                    class="flex-shrink-1"
-                    (buttonClick)="routeToExtractPage()">
-          <u>Extract Approved Invoices for Remittance</u>
-        </elm-button>
+      <div class='d-flex justify-content-end align-items-center'>
         <elm-button buttonStyle="primary"
-                    (buttonClick)="openFilter()"
+                    (buttonClick)="extract()"
+                    [isDisabled]="this.selectedInvoicesToExtract.length < 1"
                     class="me-1">
-          <span class="material-icons  me-2">filter_list</span>
-          Filter
-        </elm-button>
 
+          EXTRACT INVOICE(S)
+        </elm-button>
       </div>
     </div>
   </elm-section-header>
@@ -31,11 +23,12 @@
                  [filtersModel]="this.filterService.invoiceFilterModel"
                  (chipRemovedEvent)="this.resetTable()"></cardinal-chip>
   <elm-data-table
-    tableType="clickable"
+    tableType="multiSelect"
     [data]="invoices"
     [headers]="headers"
     (pageChangedEvent)="pageChanged($event)"
-    (dataSelectedEvent)="rowClicked($event[0])"
+    (buttonCLickEvent)="buttonClicked($event)"
+    (dataSelectedEvent)="this.selectedInvoicesToExtract = $event"
     (sortEvent)="sortChanged($event)"
     [shouldSort]=true
     [totalResults]="paginationModel.total"
