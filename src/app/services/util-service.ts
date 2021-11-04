@@ -5,6 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {TemplateInputModalComponent} from '../components/template-input-modal/template-input-modal.component';
+import {Router} from "@angular/router";
 
 @Injectable()
 export class UtilService {
@@ -57,6 +58,13 @@ export class UtilService {
       ErrorModalComponent,
       {autoFocus: false, data})
       .afterClosed();
+  }
+
+  public openInNewTab(router: Router, namedRoute: any) {
+    let newRelativeUrl = router.serializeUrl(router.createUrlTree([namedRoute]));
+    let baseUrl = window.location.href.replace(router.url, '');
+
+    window.open('#' + newRelativeUrl, '_blank');
   }
 
 }

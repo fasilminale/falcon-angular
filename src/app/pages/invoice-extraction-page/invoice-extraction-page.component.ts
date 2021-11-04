@@ -18,6 +18,7 @@ import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal
 import {FilterService} from '../../services/filter-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {UtilService} from "../../services/util-service";
+import {WindowService} from "../../services/window-service/window-service";
 
 
 @Component({
@@ -55,7 +56,8 @@ export class InvoiceExtractionPageComponent implements OnInit {
     private dialog: MatDialog,
     public filterService: FilterService,
     private invoiceService: InvoiceService,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private windowService: WindowService
   ) {
   }
 
@@ -88,11 +90,7 @@ export class InvoiceExtractionPageComponent implements OnInit {
   }
 
   buttonClicked(event : ButtonClickedEvent): void {
-    const url = this.router.serializeUrl(
-      this.router.createUrlTree([`/invoice/${event.rowData.falconInvoiceNumber}`])
-    );
-
-    window.open(url, '_blank');
+    this.windowService.openInNewWindow(`invoice/${event.rowData.falconInvoiceNumber}`);
   }
 
   sortChanged(sort: any): void {
