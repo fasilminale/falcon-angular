@@ -59,14 +59,6 @@ export class UtilService {
       {autoFocus: false, data})
       .afterClosed();
   }
-
-  public openInNewTab(router: Router, namedRoute: any) {
-    let newRelativeUrl = router.serializeUrl(router.createUrlTree([namedRoute]));
-    let baseUrl = window.location.href.replace(router.url, '');
-
-    window.open('#' + newRelativeUrl, '_blank');
-  }
-
 }
 
 export type ConfirmationModalData = {
