@@ -50,7 +50,7 @@ describe('InvoiceExtractionPageComponent', () => {
   let utilService: UtilService;
   let invoiceService: InvoiceService;
   let windowService: WindowService;
-  let enviromentService: EnvironmentService;
+  let environmentService: EnvironmentService;
 
   const pageEvent = new PageEvent();
   pageEvent.pageSize = 30;
@@ -105,7 +105,7 @@ describe('InvoiceExtractionPageComponent', () => {
     utilService = TestBed.inject(UtilService);
     invoiceService = TestBed.inject(InvoiceService);
     windowService = TestBed.inject(WindowService);
-    enviromentService = TestBed.inject(EnvironmentService);
+    environmentService = TestBed.inject(EnvironmentService);
   });
 
   beforeEach(() => {
