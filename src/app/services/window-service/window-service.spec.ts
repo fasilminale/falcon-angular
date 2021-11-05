@@ -30,18 +30,18 @@ describe('WindowService', () => {
     it('should open a new window with context root /', () => {
       spyOn(environmentService, 'getContextRoot').and.returnValue('/');
 
-      service.openInNewWindow('loads');
-      expect(window.open).toHaveBeenCalledWith('/loads', '_blank');
+      service.openInNewWindow('invoices');
+      expect(window.open).toHaveBeenCalledWith('/invoices', '_blank');
     });
 
-    it('should open a new window with context root /chile', () => {
+    it('should open a new window with context root /falcon', () => {
       spyOn(environmentService, 'getContextRoot').and.returnValue('/falcon');
 
-      service.openInNewWindow('loads');
-      expect(window.open).toHaveBeenCalledWith('/chile/loads', '_blank');
+      service.openInNewWindow('invoices');
+      expect(window.open).toHaveBeenCalledWith('/falcon/invoices', '_blank');
     });
 
-    it('should open a new window with context root /chile and multiple components', () => {
+    it('should open a new window with context root /falcon and multiple components', () => {
       spyOn(environmentService, 'getContextRoot').and.returnValue('/falcon');
 
       service.openInNewWindow('F00001');

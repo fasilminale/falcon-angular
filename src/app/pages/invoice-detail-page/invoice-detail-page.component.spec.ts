@@ -29,8 +29,6 @@ describe('InvoiceDetailPageComponent', () => {
     close: null
   });
 
-  const USER_INFO_SPY = jasmine.createSpyObj(['getUserInfo']);
-
   const userInfo = {
     firstName: 'test',
     lastName: 'user',
