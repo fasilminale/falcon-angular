@@ -10,6 +10,7 @@ import { EnvironmentService } from 'src/app/services/environment-service/environ
 import { of } from 'rxjs';
 import { WebServices } from 'src/app/services/web-services';
 import * as saveAsFunctions from 'file-saver';
+import {UserService} from '../../services/user-service';
 
 describe('MasterDataPageComponent', () => {
   let component: MasterDataPageComponent;
@@ -19,6 +20,15 @@ describe('MasterDataPageComponent', () => {
   let masterDataRow: MasterDataRow;
   let enviromentService: EnvironmentService;
   let webServices: WebServices;
+  let userService: UserService;
+
+  const userInfo = {
+    firstName: 'test',
+    lastName: 'user',
+    email: 'test@test.com',
+    uid: '12345',
+    role: 'FAL_INTERNAL_TECH_ADIMN'
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -37,6 +47,7 @@ describe('MasterDataPageComponent', () => {
     modalService = TestBed.inject(ModalService);
     enviromentService = TestBed.inject(EnvironmentService);
     webServices = TestBed.inject(WebServices);
+    userService = TestBed.inject(UserService);
     component = fixture.componentInstance;
     fixture.detectChanges();
     masterDataRow = new MasterDataRow({
@@ -45,6 +56,7 @@ describe('MasterDataPageComponent', () => {
       endpoint: 'businessUnits',
       hasDownloadableTemplate: true
     });
+    http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(userInfo);
     http.expectOne(`${environment.baseServiceUrl}/v1/masterDataRows`).flush([masterDataRow]);
   });
 

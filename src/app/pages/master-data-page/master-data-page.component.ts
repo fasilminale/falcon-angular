@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ElmDataTableHeader, ModalService, ButtonClickedEvent} from '@elm/elm-styleguide-ui';
 import {MasterDataService} from '../../services/master-data-service';
 import {TimeService} from '../../services/time-service';
@@ -8,6 +8,8 @@ import {saveAs} from 'file-saver';
 import { EnvironmentService } from 'src/app/services/environment-service/environment-service';
 import { WebServices } from 'src/app/services/web-services';
 import {Observable} from 'rxjs';
+import {UserService} from '../../services/user-service';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 type MasterDataFields = 'label' | 'lastUpdated' | 'endpoint' | 'download' | 'downloadTemplate' | 'hasDownloadableTemplate';
 
@@ -18,7 +20,8 @@ type MasterDataRow = { [field in MasterDataFields]: string };
   templateUrl: './master-data-page.component.html',
   styleUrls: ['./master-data-page.component.scss']
 })
-export class MasterDataPageComponent {
+export class MasterDataPageComponent implements OnInit {
+  public userInfo: UserInfoModel | undefined;
   headers: Array<ElmDataTableHeader> = [
     {header: 'label', label: 'Data Model'},
     {header: 'lastUpdated', label: 'Last Updated'},
@@ -31,8 +34,15 @@ export class MasterDataPageComponent {
               private timeService: TimeService,
               private environmentService: EnvironmentService,
               private modalService: ModalService,
-              private webServices: WebServices) {
+              private webServices: WebServices,
+              public userService: UserService) {
     this.getMasterData();
+  }
+
+  ngOnInit(): void {
+    this.userService.getUserInfo().subscribe(userInfo => {
+      this.userInfo = new UserInfoModel(userInfo);
+    });
   }
 
   openFileUploadModal(): void {
