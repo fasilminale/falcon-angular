@@ -1,5 +1,10 @@
+import { Injectable } from '@angular/core';
+
 export enum ENV { DEV, QA, PROD, LOCAL };
 
+@Injectable({
+  providedIn: 'root'
+})
 export class EnvironmentService {
   environment: Record<string, ENV> = {
     'http://localhost:4200': ENV.LOCAL,
@@ -14,5 +19,20 @@ export class EnvironmentService {
       case ENV.PROD: return 'https://storage.googleapis.com/elm-chile-prod/master-data-templates';
       default: return 'https://storage.googleapis.com/elm-chile/master-data-templates/dev';
     }
+  }
+
+  getInDev(origin: string = window.origin): boolean {
+    return (this.environment[origin] === ENV.DEV || this.getInLocal(origin));
+  }
+
+  getInLocal(origin: string = window.origin): boolean {
+    return this.environment[origin] === ENV.LOCAL;
+  }
+
+  getContextRoot(origin: string = window.origin): string {
+    if (this.getInLocal(origin)) {
+      return '/';
+    }
+    return '/falcon';
   }
 }

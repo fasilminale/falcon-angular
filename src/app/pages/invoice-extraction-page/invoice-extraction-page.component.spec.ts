@@ -16,6 +16,10 @@ import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import { UtilService } from 'src/app/services/util-service';
 import {InvoiceService} from "../../services/invoice-service";
+import { WindowService } from 'src/app/services/window-service/window-service';
+import {EnvironmentService} from "../../services/environment-service/environment-service";
+import {ButtonClickedEvent} from "@elm/elm-styleguide-ui";
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -45,6 +49,8 @@ describe('InvoiceExtractionPageComponent', () => {
   let filterService: FilterService;
   let utilService: UtilService;
   let invoiceService: InvoiceService;
+  let windowService: WindowService;
+  let environmentService: EnvironmentService;
 
   const pageEvent = new PageEvent();
   pageEvent.pageSize = 30;
@@ -76,6 +82,7 @@ describe('InvoiceExtractionPageComponent', () => {
         FalconTestingModule,
         RouterTestingModule,
       ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
       declarations: [InvoiceExtractionPageComponent],
       providers: [
         {
@@ -97,6 +104,8 @@ describe('InvoiceExtractionPageComponent', () => {
     filterService = TestBed.inject(FilterService);
     utilService = TestBed.inject(UtilService);
     invoiceService = TestBed.inject(InvoiceService);
+    windowService = TestBed.inject(WindowService);
+    environmentService = TestBed.inject(EnvironmentService);
   });
 
   beforeEach(() => {
@@ -104,10 +113,21 @@ describe('InvoiceExtractionPageComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
+
   });
 
   afterEach(() => {
     http.verify();
+  });
+
+  describe('openLoadInNewTab', () => {
+    it('should test window open event', () => {
+      const newWindowSpy = spyOn(windowService, 'openInNewWindow').and.stub();
+      const invoice = new InvoiceDataModel({falconInvoiceNumber: 'F0000000001'});
+      const event: ButtonClickedEvent = {rowData: invoice, rowIndex: 0, header: ''};
+      component.buttonClicked(event);
+      expect(newWindowSpy).toHaveBeenCalledWith('invoice/F0000000001');
+    });
   });
 
   it('should create', () => {

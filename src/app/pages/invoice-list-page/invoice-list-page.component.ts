@@ -143,7 +143,7 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   routeToExtractPage(): void {
-    this.router.navigateByUrl('/invoice-extraction');
+    this.router.navigate(['/invoice-extraction']);
   };
 
 }

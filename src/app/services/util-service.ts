@@ -5,6 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {TemplateInputModalComponent} from '../components/template-input-modal/template-input-modal.component';
+import {Router} from "@angular/router";
 
 @Injectable()
 export class UtilService {
@@ -58,7 +59,6 @@ export class UtilService {
       {autoFocus: false, data})
       .afterClosed();
   }
-
 }
 
 export type ConfirmationModalData = {
