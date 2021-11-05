@@ -5,19 +5,19 @@ import { UserInfoModel } from './user-info-model';
 
 describe('Project Model Tests', () => {
 
-  const expectedEmptyUserInfo: { firstName: string; lastName: string; uid: string; role: string; email: string } = {
+  const expectedEmptyUserInfo: { firstName: string; lastName: string; login: string; role: string; email: string } = {
     firstName: '',
     lastName: '',
     email: '',
-    uid: '',
+    login: '',
     role: ''
   };
 
-  const expectedUserInfo: { firstName: string; lastName: string; uid: string; role: string; email: string } = {
+  const expectedUserInfo: { firstName: string; lastName: string; login: string; role: string; email: string } = {
     firstName: 'test',
     lastName: 'user',
     email: 'test@test.com',
-    uid: '',
+    login: 'test@test.com',
     role: 'FAL_INTERNAL_WRITE'
   };
 
@@ -25,7 +25,7 @@ describe('Project Model Tests', () => {
     firstName: 'test',
     lastName: 'user',
     email: 'test@test.com',
-    uid: '',
+    login: 'test@test.com',
     role: 'FAL_INTERNAL_WRITE'
   };
 
@@ -43,7 +43,7 @@ describe('Project Model Tests', () => {
   });
 
   function compareUserInfo(userInfo1: UserInfoModel, userInfo2: UserInfoModel): void {
-    expect(userInfo1.uid).toEqual(userInfo2.uid);
+    expect(userInfo1.login).toEqual(userInfo2.login);
     expect(userInfo1.firstName).toEqual(userInfo2.firstName);
     expect(userInfo1.lastName).toEqual(userInfo2.lastName);
     expect(userInfo1.role).toEqual(userInfo2.role);
