@@ -9,6 +9,8 @@
       <div class='col-12 d-flex justify-content-end align-items-center'>
         <elm-button buttonStyle="primary"
                     (buttonClick)="openFileUploadModal()"
+                    [isDisabled]="this.userInfo?.role !== 'FAL_INTERNAL_TECH_ADMIN' &&
+                                  this.userInfo?.role !== 'FAL_INTERNAL_BUSINESS_ADMIN'"
                     class="me-1">
           <span class="material-icons  me-2">upload</span>
           UPLOAD FILE
