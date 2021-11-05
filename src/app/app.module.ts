@@ -63,6 +63,7 @@ import {MasterDataUploadModalComponent} from './components/master-data-upload-mo
 import {EnvironmentService} from './services/environment-service/environment-service';
 import {MasterDataUploadErrorModalComponent} from './components/master-data-upload-error-modal/master-data-upload-error-modal.component';
 import {WindowService} from './services/window-service/window-service';
+import {RoleGuard} from './components/role-guard/role-guard';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -181,6 +182,7 @@ const oktaConfig = {
     FilterService,
     EnvironmentService,
     WindowService,
+    RoleGuard,
     RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,

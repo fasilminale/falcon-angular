@@ -5,7 +5,7 @@ export class UserInfoModel implements UserInfo {
   private mFirstName = '';
   private mLastName = '';
   private mEmail = '';
-  private mUid = '';
+  private mLogin = '';
   private mRole = '';
 
   get firstName(): string {
@@ -36,16 +36,16 @@ export class UserInfoModel implements UserInfo {
     this.mEmail = value;
   }
 
-  get uid(): string {
-    return this.mUid;
+  get login(): string {
+    return this.mLogin;
   }
-  set uid(value: string) {
-    this.mUid = value;
+  set login(value: string) {
+    this.mLogin = value;
   }
 
   constructor(json?: any) {
-    if (json?.uid) {
-      this.uid = json.uid;
+    if (json?.login) {
+      this.login = json.login;
     }
 
     if (json?.firstName) {

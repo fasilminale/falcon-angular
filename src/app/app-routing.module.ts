@@ -9,14 +9,19 @@ import {OktaAuthGuard} from '@okta/okta-angular';
 import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 import {MasterDataPageComponent} from './pages/master-data-page/master-data-page.component';
+import {RoleGuard} from './components/role-guard/role-guard';
 
 const routes: Routes = [
   {path: 'master-data', component:  MasterDataPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoices', component: InvoiceListPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice-extraction', component: InvoiceExtractionPageComponent, canActivate: [OktaAuthGuard]},
-  {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard]},
+  {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {
+    roles: ['FAL_INTERNAL_WRITE']
+  }},
   {path: 'invoice/:falconInvoiceNumber', component: InvoiceDetailPageComponent, canActivate: [OktaAuthGuard]},
-  {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard]},
+  {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {
+    roles: ['FAL_INTERNAL_WRITE']
+  }},
   {path: 'login/callback', component: OktaCallbackComponent},
   {path: 'logged-out', component:  LoggedOutPageComponent},
   {path: '', redirectTo: '/invoices', pathMatch: 'full'},
