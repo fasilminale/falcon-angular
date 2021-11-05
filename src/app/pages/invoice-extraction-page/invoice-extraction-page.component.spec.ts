@@ -16,10 +16,10 @@ import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import { UtilService } from 'src/app/services/util-service';
 import {InvoiceService} from "../../services/invoice-service";
-import { WindowService } from 'src/app/services/window-service/window-service';
 import {EnvironmentService} from "../../services/environment-service/environment-service";
 import {ButtonClickedEvent} from "@elm/elm-styleguide-ui";
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { WindowService } from 'src/app/services/window-service/window-service';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {

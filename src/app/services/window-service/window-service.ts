@@ -19,7 +19,6 @@ export class WindowService {
         ...urlComponents,
       ], {queryParams})
     );
-    console.log('-----' + serializedUrl);
     window.open(serializedUrl, '_blank');
   }
 }
