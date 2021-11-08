@@ -64,6 +64,7 @@
       <app-invoice-form [falconInvoiceNumber]="falconInvoiceNumber"
                         [enableMilestones]="true"
                         [readOnly]="readOnly"
+                        [userInfo]="userInfo"
                         (updateMilestones)="updateMilestones($event)"
                         (toggleMilestones)="toggleMilestones()"
                         (isDeletedInvoice)="disableInvoice($event)"

@@ -17,6 +17,7 @@ import {InvoiceFormManager, validateDate} from './invoice-form-manager';
 import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MasterDataService} from 'src/app/services/master-data-service';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 describe('InvoiceFormComponent', () => {
 
@@ -199,6 +200,14 @@ describe('InvoiceFormComponent', () => {
     new Template({name: 'test2'})
   ];
 
+  const userInfo = {
+    firstName: 'test',
+    lastName: 'user',
+    email: 'test@test.com',
+    login: 'test@test.com',
+    role: 'FAL_INTERNAL_WRITE'
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -223,8 +232,9 @@ describe('InvoiceFormComponent', () => {
     form = TestBed.inject(InvoiceFormManager);
     spyOn(form, 'establishTouchLink').and.stub();
     spyOn(form, 'forceValueChangeEvent').and.stub();
-  
+
     component = fixture.componentInstance;
+    component.userInfo = new UserInfoModel(userInfo);
     fixture.detectChanges();
     component.form.companyCode.setValue(companyCode);
     component.form.vendorNumber.setValue(vendorNumber);

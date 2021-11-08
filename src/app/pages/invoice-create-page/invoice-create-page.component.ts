@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {UserService} from '../../services/user-service';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 @Component({
   selector: 'app-invoice-create-page',
@@ -7,9 +9,14 @@ import {Component, OnInit} from '@angular/core';
 })
 export class InvoiceCreatePageComponent implements OnInit {
 
-  public constructor() {
+  public userInfo: UserInfoModel | undefined;
+
+  public constructor(public userService: UserService) {
   }
 
   public ngOnInit(): void {
+    this.userService.getUserInfo().subscribe(userInfo => {
+      this.userInfo = new UserInfoModel(userInfo);
+    });
   }
 }

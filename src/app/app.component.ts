@@ -85,17 +85,13 @@ export class AppComponent implements OnInit {
 
   public buildNavBar(): void {
     // Create Invoice Header
-    if (this.userInfo?.role === 'FAL_INTERNAL_WRITE') {
-      this.navBarItems.push({label: 'Create Invoice', click: () => this.router.navigate(['/invoice/create'])});
-    }
+    this.navBarItems.push({label: 'Create Invoice', click: () => this.router.navigate(['/invoice/create'])});
 
     // Invoice List Header
     this.navBarItems.push({label: 'Invoice List', click: () => this.router.navigate(['/invoices'])});
 
     // Manage Templates Header
-    if (this.userInfo?.role === 'FAL_INTERNAL_WRITE') {
-      this.navBarItems.push({label: 'Manage My Templates', click: () => this.router.navigate(['/templates'])});
-    }
+    this.navBarItems.push({label: 'Manage My Templates', click: () => this.router.navigate(['/templates'])});
 
     // Master Data Header
     this.navBarItems.push({label: 'Master Data', click: () => this.router.navigate(['/master-data'])});
