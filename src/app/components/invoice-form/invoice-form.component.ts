@@ -31,6 +31,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {of} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 @Component({
   selector: 'app-invoice-form',
@@ -61,6 +62,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   @Input() enableMilestones = false;
   @Input() readOnly = false;
   @Input() falconInvoiceNumber = '';
+  @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
 
   /* OUTPUTS */
   @Output() updateMilestones = new EventEmitter<Array<Milestone>>();
@@ -266,6 +268,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.markFormAsPristine();
     this.form.invoiceFormGroup.markAsUntouched();
     this.form.isInvoiceAmountValid = true;
+    if (this.userInfo?.role !== 'FAL_INTERNAL_WRITE') {
+      this.form.invoiceFormGroup.disable();
+      this.form.osptFormGroup.disable();
+      this.form.lineItems.disable();
+    }
   }
 
   private async resetTemplateOptions(): Promise<void> {
@@ -599,6 +606,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.form.currency.enable();
     this.form.lineItems.enable();
     this.form.comments.enable();
+    if (!this.falconInvoiceNumber) {
+      this.markFormAsPristine();
+      this.form.invoiceFormGroup.markAsUntouched();
+      this.form.isInvoiceAmountValid = true;
+    }
   }
 
   public async checkCompanyCode(): Promise<string | null> {
