@@ -19,6 +19,7 @@ import {FilterService} from '../../services/filter-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {UtilService} from "../../services/util-service";
 import {WindowService} from "../../services/window-service/window-service";
+import {Sort} from '@angular/material/sort';
 
 
 @Component({
@@ -93,7 +94,7 @@ export class InvoiceExtractionPageComponent implements OnInit {
     this.windowService.openInNewWindow(`invoice/${event.rowData.falconInvoiceNumber}`);
   }
 
-  sortChanged(sort: any): void {
+  sortChanged(sort: Sort): void {
     this.paginationModel.sortOrder = sort.direction;
     this.sortField = sort.active;
     this.resetTable();
