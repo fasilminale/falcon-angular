@@ -90,7 +90,7 @@ describe('AppComponent', () => {
     });
 
     it('display correct number of nav buttons', () => {
-      expect(component.navBarItems.length).toEqual(4);
+      expect(component.navBarItems.length).toEqual(2);
     });
 
     it('should route from nav buttons', () => {
