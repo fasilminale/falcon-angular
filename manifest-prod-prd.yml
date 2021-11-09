@@ -1,16 +1,17 @@
 applications:
   - name: elm-falcon-ui
+    instances: 2
     routes:
-      - route: https://elm-falcon-ui-patient-gecko.apps.cf.np.gc.cahcloud.net
+      - route: https://elm-falcon-ui-appreciative-kudu.apps.cf.gc.cahcloud.net/
     env:
-      baseServiceUrl: https://elm-falcon-patient-gecko.apps.cf.np.gc.cahcloud.net
+      baseServiceUrl: https://elm-falcon-appreciative-kudu.apps.cf.gc.cahcloud.net
     disk_quota: 256M
     memory: 128M
     buildpack: nginx_buildpack
     path: ./elm-falcon-ui.zip
     metadata:
       annotations:
-        contact: "bj.hanley@cardinalhealth.com friat.hadush@cardinalhealth.com"
+        contact: "G-EIT-ELM-RUN@cardinalhealth.com"
       labels:
         APMID: "27191"
         environment: "PROD"
