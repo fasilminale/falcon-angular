@@ -268,11 +268,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.markFormAsPristine();
     this.form.invoiceFormGroup.markAsUntouched();
     this.form.isInvoiceAmountValid = true;
-    if (this.userInfo?.role !== 'FAL_INTERNAL_WRITE') {
-      this.form.invoiceFormGroup.disable();
-      this.form.osptFormGroup.disable();
-      this.form.lineItems.disable();
-    }
   }
 
   private async resetTemplateOptions(): Promise<void> {
@@ -606,11 +601,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.form.currency.enable();
     this.form.lineItems.enable();
     this.form.comments.enable();
-    if (!this.falconInvoiceNumber) {
-      this.markFormAsPristine();
-      this.form.invoiceFormGroup.markAsUntouched();
-      this.form.isInvoiceAmountValid = true;
-    }
   }
 
   public async checkCompanyCode(): Promise<string | null> {
