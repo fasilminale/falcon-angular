@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, CUSTOM_ELEMENTS_SCHEMA, Inject, OnInit} from '@angular/core';
 import {LoadingService} from './services/loading-service';
 import {Router} from '@angular/router';
-import {ErrorModalData, MenuItem, NavbarItem} from '@elm/elm-styleguide-ui';
+import {ErrorModalData, NavbarItem} from '@elm/elm-styleguide-ui';
 import {ErrorService} from './services/error-service';
 import {OktaAuthService} from '@okta/okta-angular';
 import {AUTH_SERVICE, AuthService} from './services/auth-service';
@@ -16,17 +16,17 @@ import {UserService} from './services/user-service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  logoUrl = '../../../assets/Cardinal_Health_logo.svg';
+  logoAlt = 'Cardinal Health Logo';
   userInfo: UserInfoModel = new UserInfoModel();
   title = 'elm-falcon-ui';
   dataLoading = true;
   label = '';
-  userMenuItems: Array<MenuItem> = [];
+  userMenuItems: Array<NavbarItem> = [];
   navBarItems: Array<NavbarItem> = [];
 
-  public navItemClicked(item: NavbarItem): void {
-    if (item.click) {
-      item.click();
-    }
+  public navItemClicked(event: () => any): void {
+    event();
   }
 
   constructor(private loadingService: LoadingService,
@@ -85,15 +85,15 @@ export class AppComponent implements OnInit {
 
   public buildNavBar(): void {
     // Create Invoice Header
-    this.navBarItems.push({label: 'Create Invoice', click: () => this.router.navigate(['/invoice/create'])});
+    this.navBarItems.push({label: 'Create Invoice', action: () => this.router.navigate(['/invoice/create'])});
 
     // Invoice List Header
-    this.navBarItems.push({label: 'Invoice List', click: () => this.router.navigate(['/invoices'])});
+    this.navBarItems.push({label: 'Invoice List', action: () => this.router.navigate(['/invoices'])});
 
     // Manage Templates Header
-    this.navBarItems.push({label: 'Manage My Templates', click: () => this.router.navigate(['/templates'])});
+    this.navBarItems.push({label: 'Manage My Templates', action: () => this.router.navigate(['/templates'])});
 
     // Master Data Header
-    this.navBarItems.push({label: 'Master Data', click: () => this.router.navigate(['/master-data'])});
+    this.navBarItems.push({label: 'Master Data', action: () => this.router.navigate(['/master-data'])});
   }
 }

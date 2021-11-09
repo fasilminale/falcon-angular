@@ -81,12 +81,12 @@ describe('AppComponent', () => {
     it('should click provided nav item', () => {
       const navItem = {
         label: 'test',
-        click: () => {
+        action: () => {
         }
       };
-      spyOn(navItem, 'click');
-      component.navItemClicked(navItem);
-      expect(navItem.click).toHaveBeenCalled();
+      spyOn(navItem, 'action');
+      component.navItemClicked(navItem.action);
+      expect(navItem.action).toHaveBeenCalled();
     });
 
     it('display correct number of nav buttons', () => {
@@ -95,7 +95,7 @@ describe('AppComponent', () => {
 
     it('should route from nav buttons', () => {
       spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
-      component.navBarItems.forEach(item => item.click ? item.click() : null);
+      component.navBarItems.forEach(item => item.action ? item.action() : null);
       expect(router.navigate).toHaveBeenCalledTimes(component.navBarItems.length);
     });
 
@@ -131,7 +131,7 @@ describe('AppComponent', () => {
 
     it('should route from nav buttons', () => {
       spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
-      component.navBarItems.forEach(item => item.click ? item.click() : null);
+      component.navBarItems.forEach(item => item.action ? item.action() : null);
       expect(router.navigate).toHaveBeenCalledTimes(component.navBarItems.length);
     });
   });
