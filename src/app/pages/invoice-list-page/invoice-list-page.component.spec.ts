@@ -14,6 +14,7 @@ import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
+import {Sort} from '@angular/material/sort';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -48,7 +49,7 @@ describe('InvoiceListPageComponent', () => {
   const sortEvent = {
     active: 'externalInvoiceNumber',
     direction: 'desc'
-  };
+  } as Sort;
 
   const invoiceData = {
     total: 1,

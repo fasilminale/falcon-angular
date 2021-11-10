@@ -11,6 +11,7 @@ import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from '../../services/filter-service';
+import {Sort} from '@angular/material/sort';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -89,7 +90,7 @@ export class InvoiceListPageComponent implements OnInit {
     return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
   }
 
-  sortChanged(sort: any): void {
+  sortChanged(sort: Sort): void {
     this.paginationModel.sortOrder = sort.direction;
     this.sortField = sort.active;
     this.resetTable();

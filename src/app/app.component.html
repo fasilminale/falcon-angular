@@ -4,14 +4,16 @@
 <div class="app">
   <div *ngIf="authService.isAuthenticated()" class="page-header">
     <elm-navbar headerTitle="FALCON"
-                logoUrl="/assets/ELM_logo.svg"
-                [NavBarItems]="navBarItems"
+                [logoUrl]="logoUrl"
+                [logoAlt]="logoAlt"
+                [navBarItems]="navBarItems"
+                [userMenuItems]="userMenuItems"
                 [user]="authService.getUserInfo()"
                 [showLogout]="true"
                 (logoutClickEvent)="logout()"
                 [showFeedback]="true"
-                (itemClickEvent)="navItemClicked($event)"
-                [userMenuItems]="userMenuItems"
+                [showNotifications]="false"
+                (actionClickEvent)="navItemClicked($event)"
     >
     </elm-navbar>
   </div>

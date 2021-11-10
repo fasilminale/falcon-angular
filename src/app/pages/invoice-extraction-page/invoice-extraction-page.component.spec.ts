@@ -20,6 +20,7 @@ import {EnvironmentService} from "../../services/environment-service/environment
 import {ButtonClickedEvent} from "@elm/elm-styleguide-ui";
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { WindowService } from 'src/app/services/window-service/window-service';
+import {Sort} from '@angular/material/sort';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -59,7 +60,7 @@ describe('InvoiceExtractionPageComponent', () => {
   const sortEvent = {
     active: 'externalInvoiceNumber',
     direction: 'desc'
-  };
+  } as Sort;
 
   const invoiceData = {
     total: 1,
