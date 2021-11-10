@@ -86,7 +86,7 @@ const getOktaConfig = () => {
     }
     case 'https://elm.cardinalhealth.net': {
       return {
-        clientId: '0oayu5waixuCGIDbo0h7',
+        clientId: '0oaksn42jfaPtbrWa1t7',
         issuer: 'https://identity.cardinalhealth.net/',
         redirectUri: 'https://elm.cardinalhealth.net/falcon/login/callback',
         logoutUrl: 'https://elm.cardinalhealth.net/falcon/logged-out'
