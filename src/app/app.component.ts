@@ -1,4 +1,4 @@
-import {Component, CUSTOM_ELEMENTS_SCHEMA, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {LoadingService} from './services/loading-service';
 import {Router} from '@angular/router';
 import {ErrorModalData, NavbarItem} from '@elm/elm-styleguide-ui';
@@ -85,13 +85,17 @@ export class AppComponent implements OnInit {
 
   public buildNavBar(): void {
     // Create Invoice Header
-    this.navBarItems.push({label: 'Create Invoice', action: () => this.router.navigate(['/invoice/create'])});
+    if (this.userInfo?.role === 'FAL_INTERNAL_WRITE') {
+      this.navBarItems.push({label: 'Create Invoice', action: () => this.router.navigate(['/invoice/create'])});
+    }
 
     // Invoice List Header
     this.navBarItems.push({label: 'Invoice List', action: () => this.router.navigate(['/invoices'])});
 
     // Manage Templates Header
-    this.navBarItems.push({label: 'Manage My Templates', action: () => this.router.navigate(['/templates'])});
+    if (this.userInfo?.role === 'FAL_INTERNAL_WRITE') {
+      this.navBarItems.push({label: 'Manage My Templates', action: () => this.router.navigate(['/templates'])});
+    }
 
     // Master Data Header
     this.navBarItems.push({label: 'Master Data', action: () => this.router.navigate(['/master-data'])});
