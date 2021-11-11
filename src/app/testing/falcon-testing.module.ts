@@ -19,6 +19,7 @@ import {TimeService} from '../services/time-service';
 import {FilterService} from '../services/filter-service';
 import {MasterDataService} from '../services/master-data-service';
 import {UserService} from '../services/user-service';
+import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 
 @NgModule({
   declarations: [],
@@ -35,6 +36,8 @@ import {UserService} from '../services/user-service';
     MatSnackBar,
     MatDialog,
     LoadingService,
+    ModalService,
+    ToastService,
 
     // PROVIDE FAKE
     FakeAttachmentService.PROVIDER,
