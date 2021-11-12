@@ -13,6 +13,7 @@ import {Milestone} from '../../models/milestone/milestone-model';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
+import {ElmUamRoles} from '../../utils/elm-uam-roles';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -35,6 +36,9 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   public milestones: Array<Milestone> = [];
   public invoiceStatus = '';
 
+  private readonly requiredPermissions = [ElmUamRoles.ALLOW_ALL_ACCESS, ElmUamRoles.ALLOW_MASTER_DATA_UPLOAD];
+  public hasInvoiceWrite = false;
+
   private subscriptions: Array<Subscription> = [];
 
   public constructor(private webService: WebServices,
@@ -55,6 +59,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
     );
     this.userService.getUserInfo().subscribe(userInfo => {
       this.userInfo = new UserInfoModel(userInfo);
+      this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
     });
   }
 

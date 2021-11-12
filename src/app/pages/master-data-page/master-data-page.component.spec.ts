@@ -27,7 +27,10 @@ describe('MasterDataPageComponent', () => {
     lastName: 'user',
     email: 'test@test.com',
     uid: '12345',
-    role: 'FAL_INTERNAL_TECH_ADIMN'
+    role: 'FAL_INTERNAL_TECH_ADIMN',
+    permissions: [
+      'falRestrictInvoiceWrite'
+    ]
   };
 
   beforeEach(async () => {

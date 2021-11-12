@@ -8,7 +8,7 @@
 </div>
 <elm-card>
   <elm-section-header [sectionTitle]="this.invoiceCountLabel">
-    <div class="col-12">
+    <div *ngIf="hasInvoiceWrite" class="col-12">
       <div class='d-flex justify-content-between align-items-center'>
         <elm-button id="cancel-button"
                     buttonType="button"

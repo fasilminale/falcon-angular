@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 import { WebServices } from './web-services';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -33,4 +33,12 @@ describe('UserService', () => {
     await userService.getUserInfo().toPromise();
     expect(web.httpGet).toHaveBeenCalled();
   });
+
+  it('should get cached user info', fakeAsync( () => {
+    spyOn(web, 'httpGet').and.returnValue(of(''));
+    userService.getUserInfo().toPromise();
+    tick();
+    userService.getUserInfo().toPromise();
+    expect(web.httpGet).toHaveBeenCalledTimes(1);
+  }));
 });

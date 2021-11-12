@@ -9,6 +9,7 @@ import {UtilService} from './services/util-service';
 import {filter, mergeMap, repeatWhen, take, tap} from 'rxjs/operators';
 import {UserInfoModel} from './models/user-info/user-info-model';
 import {UserService} from './services/user-service';
+import {ElmUamRoles} from './utils/elm-uam-roles';
 
 @Component({
   selector: 'app-root',
@@ -84,8 +85,10 @@ export class AppComponent implements OnInit {
   }
 
   public buildNavBar(): void {
+    const requiredPermissions = [ElmUamRoles.ALLOW_ALL_ACCESS, ElmUamRoles.ALLOW_INVOICE_WRITE];
+
     // Create Invoice Header
-    if (this.userInfo?.role === 'FAL_INTERNAL_WRITE') {
+    if (requiredPermissions.some(permission => this.userInfo?.permissions.includes(permission))) {
       this.navBarItems.push({label: 'Create Invoice', action: () => this.router.navigate(['/invoice/create'])});
     }
 
@@ -93,7 +96,7 @@ export class AppComponent implements OnInit {
     this.navBarItems.push({label: 'Invoice List', action: () => this.router.navigate(['/invoices'])});
 
     // Manage Templates Header
-    if (this.userInfo?.role === 'FAL_INTERNAL_WRITE') {
+    if (requiredPermissions.some(permission => this.userInfo?.permissions.includes(permission))) {
       this.navBarItems.push({label: 'Manage My Templates', action: () => this.router.navigate(['/templates'])});
     }
 

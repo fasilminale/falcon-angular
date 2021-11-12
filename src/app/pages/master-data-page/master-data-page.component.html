@@ -7,8 +7,7 @@
   <elm-card>
     <elm-section-header sectionTitle="Master Data">
       <div class='col-12 d-flex justify-content-end align-items-center'>
-        <div *ngIf="this.userInfo?.role === 'FAL_INTERNAL_TECH_ADMIN' ||
-                                  this.userInfo?.role === 'FAL_INTERNAL_BUSINESS_ADMIN'">
+        <div *ngIf="hasMasterDataUpload">
           <elm-button buttonStyle="primary"
                       (buttonClick)="openFileUploadModal()"
                       class="me-1">

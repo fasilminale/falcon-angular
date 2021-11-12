@@ -7,6 +7,7 @@ export class UserInfoModel implements UserInfo {
   private mEmail = '';
   private mLogin = '';
   private mRole = '';
+  private mPermissions: string[] = [];
 
   get firstName(): string {
     return this.mFirstName;
@@ -43,6 +44,13 @@ export class UserInfoModel implements UserInfo {
     this.mLogin = value;
   }
 
+  get permissions(): string[] {
+    return this.mPermissions;
+  }
+  set permissions(value: string[]) {
+    this.mPermissions = value;
+  }
+
   constructor(json?: any) {
     if (json?.login) {
       this.login = json.login;
@@ -63,5 +71,13 @@ export class UserInfoModel implements UserInfo {
     if (json?.role) {
       this.role = json.role;
     }
+
+    if (json?.permissions) {
+      this.permissions = json.permissions;
+    }
+  }
+
+  hasPermission(permissions: string[]): boolean {
+    return permissions.some(permission => this.mPermissions.includes(permission));
   }
 }
