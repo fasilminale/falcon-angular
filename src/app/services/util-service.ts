@@ -1,17 +1,14 @@
 import {Injectable} from '@angular/core';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {ConfirmationModalComponent, ErrorModalComponent} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {TemplateInputModalComponent} from '../components/template-input-modal/template-input-modal.component';
-import {Router} from "@angular/router";
 
 @Injectable()
 export class UtilService {
 
-  constructor(private snackBar: MatSnackBar,
-              private dialog: MatDialog) {
+  constructor(private dialog: MatDialog) {
   }
 
   public toNumber(value: any): number {
@@ -21,10 +18,6 @@ export class UtilService {
     } else {
       return Number(value);
     }
-  }
-
-  public openSnackBar(message: string): void {
-    this.snackBar.open(message, 'close', {duration: 5 * 1000});
   }
 
   public openConfirmationModal(data: ConfirmationModalData): Observable<boolean> {

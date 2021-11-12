@@ -1,13 +1,11 @@
 import {TestBed} from '@angular/core/testing';
 import {UtilService} from './util-service';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {of} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 
 describe('UtilService', () => {
 
-  let snackbar: MatSnackBar;
   let util: UtilService;
   let dialog: MatDialog;
 
@@ -35,9 +33,8 @@ describe('UtilService', () => {
     TestBed.configureTestingModule({
       imports: [FalconTestingModule],
     });
-    snackbar = TestBed.inject(MatSnackBar);
     dialog = TestBed.inject(MatDialog);
-    util = new UtilService(snackbar, dialog);
+    util = new UtilService(dialog);
   });
 
   it('should create', () => {
