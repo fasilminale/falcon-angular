@@ -237,4 +237,22 @@ describe('InvoiceDetailPageComponent', () => {
     });
   });
 
+  it('should display the edit', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    component.hasInvoiceWrite = true;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#edit-button'));
+    expect(deleteBtn).not.toBeNull();
+  });
+
+  it('should not display the edit button', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    component.hasInvoiceWrite = false;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#edit-button'));
+    expect(deleteBtn).toBeNull();
+  });
+
 });

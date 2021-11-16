@@ -8,7 +8,8 @@
     <elm-section-header sectionTitle="Master Data">
       <div class='col-12 d-flex justify-content-end align-items-center'>
         <div *ngIf="hasMasterDataUpload">
-          <elm-button buttonStyle="primary"
+          <elm-button id="master-data-upload-button"
+                      buttonStyle="primary"
                       (buttonClick)="openFileUploadModal()"
                       class="me-1">
             <span class="material-icons  me-2">upload</span>

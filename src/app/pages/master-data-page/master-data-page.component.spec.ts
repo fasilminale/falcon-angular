@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 import { WebServices } from 'src/app/services/web-services';
 import * as saveAsFunctions from 'file-saver';
 import {UserService} from '../../services/user-service';
+import {By} from '@angular/platform-browser';
 
 describe('MasterDataPageComponent', () => {
   let component: MasterDataPageComponent;
@@ -128,5 +129,19 @@ describe('MasterDataPageComponent', () => {
       expect(openModalSpy).toHaveBeenCalled();
       http.expectOne(`${environment.baseServiceUrl}/v1/masterDataRows`).flush([masterDataRow]);
     });
+  });
+
+  it('should display the upload button', () => {
+    component.hasMasterDataUpload = true;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#master-data-upload-button'));
+    expect(deleteBtn).not.toBeNull();
+  });
+
+  it('should not display the upload button', () => {
+    component.hasMasterDataUpload = false;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#master-data-upload-button'));
+    expect(deleteBtn).toBeNull();
   });
 });

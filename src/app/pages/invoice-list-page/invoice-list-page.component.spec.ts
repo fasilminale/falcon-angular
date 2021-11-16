@@ -16,6 +16,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
 import {UserService} from '../../services/user-service';
+import {By} from '@angular/platform-browser';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -224,5 +225,19 @@ describe('InvoiceListPageComponent', () => {
       http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
       expect(component.resetTable).toHaveBeenCalled();
     }));
+  });
+
+  it('should display the extract invoice remittance button', () => {
+    component.hasInvoiceWrite = true;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#extract-invoice-button'));
+    expect(deleteBtn).not.toBeNull();
+  });
+
+  it('should not display the extract invoice remittance button', () => {
+    component.hasInvoiceWrite = false;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#extract-invoice-button'));
+    expect(deleteBtn).toBeNull();
   });
 });
