@@ -1,0 +1,136 @@
+<div [formGroup]="formGroup">
+  <div class="headline2">Trip Information</div>
+  <div class="row">
+    <div class="col-4">
+      <label for="tripIdInput"
+             class="fal-label">
+        Trip ID
+      </label>
+      <elm-text-input id="tripIdInput"
+                      formControlName="tripId">
+      </elm-text-input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <label for="invoiceDateInput"
+             class="fal-label">
+        Invoice Date
+      </label>
+      <elm-date-picker id="invoiceDateInput"
+                       class="fal-label"
+                       labelPosition="top"
+                       formControlName="invoiceDate">
+      </elm-date-picker>
+    </div>
+    <div class="col-4">
+      <label for="pickUpDateInput"
+             class="fal-label">
+        Pick up Date
+      </label>
+      <elm-date-picker id="pickUpDateInput"
+                       class="fal-label"
+                       labelPosition="top"
+                       formControlName="pickUpDate">
+      </elm-date-picker>
+    </div>
+    <div class="col-4">
+      <label for="deliveryDateInput"
+             class="fal-label">
+        Delivery Date
+      </label>
+      <elm-date-picker id="deliveryDateInput"
+                       class="fal-label"
+                       labelPosition="top"
+                       formControlName="deliveryDate">
+      </elm-date-picker>
+    </div>
+    <div class="col-4">
+      <label for="proTrackingNumberInput"
+             class="fal-label">
+        PRO/Tracking Number
+      </label>
+      <elm-text-input id="proTrackingNumberInput"
+                      formControlName="proTrackingNumber">
+      </elm-text-input>
+    </div>
+    <div class="col-4">
+      <label for="bolNumberInput"
+             class="fal-label">
+        BOL Number
+      </label>
+      <elm-text-input id="bolNumberInput"
+                      formControlName="bolNumber">
+      </elm-text-input>
+    </div>
+    <div class="col-4">
+      <label for="freightPaymentTermsInput"
+             class="fal-label">
+        Freight Payment Terms
+      </label>
+      <ng-select id="freightPaymentTermsInput"
+                 [items]="['Prepaid', 'Collect', 'Third Party']"
+                 formControlName="freightPaymentTerms">
+      </ng-select>
+    </div>
+    <div class="col-4">
+      <label for="carrierInput"
+             class="fal-label">
+        Carrier
+      </label>
+      <ng-select id="carrierInput"
+                 [items]="['FED (Fedex)']"
+                 formControlName="carrier">
+      </ng-select>
+    </div>
+    <div class="col-4">
+      <label for="carrierModeInput"
+             class="fal-label">
+        Carrier Mode
+      </label>
+      <ng-select id="carrierModeInput"
+                 [items]="['LTL (LTL)']"
+                 formControlName="carrierMode">
+      </ng-select>
+    </div>
+    <div class="col-4">
+      <label for="serviceLevelInput"
+             class="fal-label">
+        Service Level
+      </label>
+      <ng-select id="serviceLevelInput"
+                 [items]="['OD (Ground)']"
+                 formControlName="serviceLevel">
+      </ng-select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label for="originAddressCard"
+             class="cardLabel">
+        Origin Address
+      </label>
+      <elm-card id="originAddressCard">
+        Placeholder
+      </elm-card>
+    </div>
+    <div class="col">
+      <label class="cardLabel"
+             for="destinationAddressCard">
+        Destination Address
+      </label>
+      <elm-card id="destinationAddressCard">
+        Placeholder
+      </elm-card>
+    </div>
+    <div class="col">
+      <label class="cardLabel"
+             for="billToAddressCard">
+        Bill to Address
+      </label>
+      <elm-card id="billToAddressCard">
+        Placeholder
+      </elm-card>
+    </div>
+  </div>
+</div>

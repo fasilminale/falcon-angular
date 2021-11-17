@@ -1,0 +1,88 @@
+<div class="page-header">
+  <div>
+    <div class="headline1">
+      <span>Invoice {{falconInvoiceNumber}}</span>
+    </div>
+    <div class="headline3">Status: {{invoiceStatus}}</div>
+  </div>
+  <div class="d-flex justify-content-end header-button">
+    <div class="col-12 d-flex justify-content-end">
+      <elm-button id="cancel-button"
+                  buttonType="button"
+                  buttonStyle="text"
+                  class="flex-shrink-1"
+                  [isDisabled]="this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
+                  (buttonClick)="clickSaveAsTemplateButton()">
+        <u>Save as Template</u>
+      </elm-button>
+      <elm-button id="delete-button"
+                  buttonType="button"
+                  buttonStyle="secondary"
+                  class="flex-shrink-1 header-button"
+                  [isDisabled]="isDeletedInvoice
+                                || isSubmittedInvoice
+                                || this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
+                  (buttonClick)="clickDeleteButton()">
+        Delete
+      </elm-button>
+      <elm-button id="edit-button"
+                  buttonType="button"
+                  buttonStyle="primary"
+                  class="flex-shrink-1 header-button"
+                  [isDisabled]="isEditMode
+                                || isDeletedInvoice
+                                || isSubmittedInvoice
+                                || this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
+                  (buttonClick)="clickEditButton()">
+        Edit
+      </elm-button>
+    </div>
+  </div>
+</div>
+
+<elm-card>
+  <mat-sidenav-container class="side-nav-container"
+                         [hasBackdrop]="false">
+    <mat-sidenav class="side-nav"
+                 [fixedInViewport]="false"
+                 mode="side" position="end"
+                 [opened]="isMilestoneTabOpen">
+      <!-- Milestone Panel -->
+      <app-milestone-panel [milestones]="milestones">
+      </app-milestone-panel>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="side-nav-content">
+      <form [formGroup]="invoiceFormGroup">
+        <elm-button *ngIf="showMilestoneToggleButton"
+                    id="milestones-button"
+                    class="milestone-button"
+                    (buttonClick)="clickMilestoneToggleButton()"
+                    mat-dialog-close>
+          Milestones
+        </elm-button>
+
+        <!-- Invoice Overview -->
+        <app-invoice-overview>
+        </app-invoice-overview>
+        <hr/>
+
+        <!-- Trip Information -->
+        <app-trip-information [formGroup]="tripInformationFormGroup"
+                              [loadTripInformation$]="loadTripInformation$.asObservable()">
+        </app-trip-information>
+        <hr/>
+
+        <!-- Cost Breakdown -->
+        <app-cost-breakdown>
+        </app-cost-breakdown>
+        <hr/>
+
+        <!-- Allocation -->
+        <app-allocation>
+        </app-allocation>
+
+      </form>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</elm-card>

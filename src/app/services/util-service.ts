@@ -5,7 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {TemplateInputModalComponent} from '../components/template-input-modal/template-input-modal.component';
-import {Router} from "@angular/router";
+import {Milestone} from '../models/milestone/milestone-model';
 
 @Injectable()
 export class UtilService {
@@ -21,6 +21,17 @@ export class UtilService {
     } else {
       return Number(value);
     }
+  }
+
+  public getCommentLabelPrefix(milestone: Milestone): string {
+    const type = milestone?.type;
+    if (type?.key && type.key === 'SUBMITTED') {
+      return 'Creator';
+    }
+    if (type?.key && type.key === 'REJECTED') {
+      return 'Rejection';
+    }
+    return 'General';
   }
 
   public openSnackBar(message: string): void {

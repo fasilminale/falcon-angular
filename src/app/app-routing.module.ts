@@ -10,6 +10,7 @@ import {OktaCallbackComponent} from './components/okta-callback/okta-callback.co
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 import {MasterDataPageComponent} from './pages/master-data-page/master-data-page.component';
 import {RoleGuard} from './components/role-guard/role-guard';
+import {InvoiceEditPageComponent} from './pages/invoice-edit-page/invoice-edit-page.component';
 
 const routes: Routes = [
   {path: 'master-data', component:  MasterDataPageComponent, canActivate: [OktaAuthGuard]},
@@ -18,6 +19,7 @@ const routes: Routes = [
   {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {
     roles: ['FAL_INTERNAL_WRITE']
   }},
+  {path: 'invoice/:falconInvoiceNumber/test', component: InvoiceEditPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice/:falconInvoiceNumber', component: InvoiceDetailPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {
     roles: ['FAL_INTERNAL_WRITE']

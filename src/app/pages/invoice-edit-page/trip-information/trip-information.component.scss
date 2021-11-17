@@ -1,0 +1,7 @@
+@import "node_modules/@elm/elm-styleguide-ui/src/styles/cardinal-fonts";
+
+.cardLabel {
+  @extend .headline3;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}

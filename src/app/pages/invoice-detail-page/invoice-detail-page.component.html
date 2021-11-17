@@ -42,22 +42,8 @@
                  [fixedInViewport]="false"
                  mode="side" position="end"
                  [opened]="milestonesTabOpen">
-      <mat-nav-list>
-        <div class="milestone"
-             *ngFor="let milestone of milestones; index as i">
-          <div class="elm-div2 milestone-label"> {{milestone.type.label}}</div>
-          <div class="elm-div2 milestone-sub" *ngIf="!!milestone.paidDate">
-            Paid Date: {{formatTimestamp(milestone.paidDate)}}
-          </div>
-          <div class="elm-div2 milestone-sub" *ngIf="!!milestone.comments">
-            {{!!invoiceForm ? invoiceForm.getCommentLabelPrefix(milestone) : ''}}
-            Comments: "{{milestone.comments}}"
-          </div>
-          <div class="elm-field-sub1 milestone-sub">
-            {{formatTimestamp(milestone.timestamp)}} by {{milestone.user}}
-          </div>
-        </div>
-      </mat-nav-list>
+      <app-milestone-panel [milestones]="milestones">
+      </app-milestone-panel>
     </mat-sidenav>
 
     <mat-sidenav-content class="side-nav-content">

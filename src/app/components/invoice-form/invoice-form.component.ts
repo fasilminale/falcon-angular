@@ -120,18 +120,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   get commentLabelPrefix(): string {
-    return this.getCommentLabelPrefix(this.latestMilestone);
-  }
-
-  public getCommentLabelPrefix(milestone: Milestone): string {
-    const type = milestone?.type;
-    if (type?.key && type.key === 'SUBMITTED') {
-      return 'Creator';
-    }
-    if (type?.key && type.key === 'REJECTED') {
-      return 'Rejection';
-    }
-    return 'General';
+    return this.util.getCommentLabelPrefix(this.latestMilestone);
   }
 
   /* METHODS */
@@ -637,7 +626,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     return isCompanyCodeChanged;
   }
 
-  public focusInvoiceDate() {
+  public focusInvoiceDate(): void {
     this.form.forceValueChangeEvent(this.form.invoiceDate);
     if (this.uploadFormComponent) {
       this.uploadFormComponent.pristine = false;
@@ -645,12 +634,12 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  public focusAmountOfInvoice() {
+  public focusAmountOfInvoice(): void {
     this.focusInvoiceDate();
     this.form.forceValueChangeEvent(this.form.amountOfInvoice);
   }
 
-  public focusLineItemElement(formControl: AbstractControl) {
+  public focusLineItemElement(formControl: AbstractControl): void {
     this.focusInvoiceDate();
     this.form.forceValueChangeEvent(formControl);
   }
