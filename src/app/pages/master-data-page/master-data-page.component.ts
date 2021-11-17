@@ -31,7 +31,7 @@ export class MasterDataPageComponent implements OnInit {
   ];
   masterDataRows: MasterDataRow[] = [];
 
-  private readonly requiredPermissions = [ElmUamRoles.ALLOW_ALL_ACCESS, ElmUamRoles.ALLOW_MASTER_DATA_UPLOAD];
+  private readonly requiredPermissions = [ElmUamRoles.ALLOW_MASTER_DATA_UPLOAD];
   public hasMasterDataUpload = false;
 
   constructor(private masterDataService: MasterDataService,

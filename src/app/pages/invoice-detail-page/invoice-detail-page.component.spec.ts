@@ -227,23 +227,30 @@ describe('InvoiceDetailPageComponent', () => {
     const deleteInvoiceSpy = spyOn(component, 'deleteInvoice');
 
     fixture.detectChanges();
-    const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
-    deleteBtn.buttonClick.emit();
-    fixture.detectChanges();
     fixture.whenStable().then(() => {
-      expect(deleteInvoiceSpy).toHaveBeenCalled();
-      spyOn(router, 'navigate').and.stub();
-      spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+      const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
+      deleteBtn.buttonClick.emit();
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        expect(deleteInvoiceSpy).toHaveBeenCalled();
+        spyOn(router, 'navigate').and.stub();
+        spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+      });
     });
   });
 
-  it('should display the edit', () => {
+  it('should display the edit button', async () => {
+    component.hasInvoiceWrite = true;
+    component.isDeletedInvoice = false;
+    component.isSubmittedInvoice = false;
+    component.readOnly = false;
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
       .flush(invoiceResponse);
-    component.hasInvoiceWrite = true;
     fixture.detectChanges();
-    const deleteBtn = fixture.debugElement.query(By.css('#edit-button'));
-    expect(deleteBtn).not.toBeNull();
+    fixture.whenStable().then(() => {
+      const editBtn = fixture.debugElement.query(By.css('#edit-button')).context as ElmButtonComponent;
+      expect(editBtn).not.toBeNull();
+    });
   });
 
   it('should not display the edit button', () => {
@@ -251,8 +258,10 @@ describe('InvoiceDetailPageComponent', () => {
       .flush(invoiceResponse);
     component.hasInvoiceWrite = false;
     fixture.detectChanges();
-    const deleteBtn = fixture.debugElement.query(By.css('#edit-button'));
-    expect(deleteBtn).toBeNull();
+    fixture.whenStable().then(() => {
+      const editBtn = fixture.debugElement.query(By.css('#edit-button')).context as ElmButtonComponent;
+      expect(editBtn).toBeNull();
+    });
   });
 
 });
