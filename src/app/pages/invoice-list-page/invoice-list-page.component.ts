@@ -12,6 +12,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
+import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {UserService} from '../../services/user-service';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -19,6 +22,7 @@ import {Sort} from '@angular/material/sort';
   styleUrls: ['./invoice-list-page.component.scss']
 })
 export class InvoiceListPageComponent implements OnInit {
+  public userInfo: UserInfoModel | undefined;
   paginationModel: PaginationModel = new PaginationModel();
   headers: Array<ElmDataTableHeader> =   [
     {header: 'statusLabel', label: 'Status'},
@@ -40,6 +44,9 @@ export class InvoiceListPageComponent implements OnInit {
   invoiceCountLabel = 'Invoices';
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
+  private readonly requiredPermissions = [ElmUamRoles.ALLOW_ALL_ACCESS, ElmUamRoles.ALLOW_INVOICE_WRITE];
+  public hasInvoiceWrite = false;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -48,6 +55,7 @@ export class InvoiceListPageComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     public filterService: FilterService,
+    public userService: UserService
   ) {
   }
 
@@ -58,6 +66,10 @@ export class InvoiceListPageComponent implements OnInit {
       if (falconInvoiceNumber) {
         this.snackBar.open(`Success! Falcon Invoice ${falconInvoiceNumber} has been deleted.`, 'close', {duration: 5 * 1000});
       }
+    });
+    this.userService.getUserInfo().subscribe(userInfo => {
+      this.userInfo = new UserInfoModel(userInfo);
+      this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);;
     });
   }
 

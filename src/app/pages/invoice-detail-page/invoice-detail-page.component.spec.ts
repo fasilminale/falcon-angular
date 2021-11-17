@@ -34,7 +34,10 @@ describe('InvoiceDetailPageComponent', () => {
     lastName: 'user',
     email: 'test@test.com',
     uid: '12345',
-    role: 'FAL_INTERNAL_TECH_ADIMN'
+    role: 'FAL_INTERNAL_WRITE',
+    permissions: [
+      'falAllowInvoiceAccess'
+    ]
   };
 
   const falconInvoiceNumber = 'F0000000001';
@@ -216,12 +219,14 @@ describe('InvoiceDetailPageComponent', () => {
 
   it('should click delete button', async () => {
     component.isDeletedInvoice = false;
+    component.hasInvoiceWrite = true;
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
       .flush(invoiceResponse);
     spyOn(router, 'navigate').and.stub();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     const deleteInvoiceSpy = spyOn(component, 'deleteInvoice');
 
+    fixture.detectChanges();
     const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
     deleteBtn.buttonClick.emit();
     fixture.detectChanges();
@@ -230,6 +235,24 @@ describe('InvoiceDetailPageComponent', () => {
       spyOn(router, 'navigate').and.stub();
       spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     });
+  });
+
+  it('should display the edit', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    component.hasInvoiceWrite = true;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#edit-button'));
+    expect(deleteBtn).not.toBeNull();
+  });
+
+  it('should not display the edit button', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    component.hasInvoiceWrite = false;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#edit-button'));
+    expect(deleteBtn).toBeNull();
   });
 
 });

@@ -5,20 +5,25 @@ import { UserInfoModel } from './user-info-model';
 
 describe('Project Model Tests', () => {
 
-  const expectedEmptyUserInfo: { firstName: string; lastName: string; login: string; role: string; email: string } = {
+  const expectedEmptyUserInfo: { firstName: string; lastName: string; login: string; role: string; email: string; permissions: string[] } = {
     firstName: '',
     lastName: '',
     email: '',
     login: '',
-    role: ''
+    role: '',
+    permissions: []
   };
 
-  const expectedUserInfo: { firstName: string; lastName: string; login: string; role: string; email: string } = {
+  const expectedUserInfo: { firstName: string; lastName: string; login: string; role: string; email: string; permissions: string[] } = {
     firstName: 'test',
     lastName: 'user',
     email: 'test@test.com',
     login: 'test@test.com',
-    role: 'FAL_INTERNAL_WRITE'
+    role: 'FAL_INTERNAL_ALL',
+    permissions: [
+      'falAllowAllAccess',
+      'falAllowTestAccess'
+    ]
   };
 
   const userInfoJson = {
@@ -26,7 +31,11 @@ describe('Project Model Tests', () => {
     lastName: 'user',
     email: 'test@test.com',
     login: 'test@test.com',
-    role: 'FAL_INTERNAL_WRITE'
+    role: 'FAL_INTERNAL_ALL',
+    permissions: [
+      'falAllowAllAccess',
+      'falAllowTestAccess'
+    ]
   };
 
   let testEmptyUserInfo: UserInfoModel;
@@ -47,6 +56,7 @@ describe('Project Model Tests', () => {
     expect(userInfo1.firstName).toEqual(userInfo2.firstName);
     expect(userInfo1.lastName).toEqual(userInfo2.lastName);
     expect(userInfo1.role).toEqual(userInfo2.role);
+    expect(userInfo1.permissions).toEqual(userInfo2.permissions);
   }
 
   it('empty user should equal test model', () => {

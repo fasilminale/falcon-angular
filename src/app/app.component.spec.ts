@@ -24,6 +24,7 @@ describe('AppComponent', () => {
     lastName: '',
     email: '',
     role: 'FAL_INTERNAL_WRITE',
+    permissions: ['falAllowInvoiceWrite']
   });
 
   const techAdminUser = new UserInfoModel({
@@ -32,6 +33,7 @@ describe('AppComponent', () => {
     lastName: '',
     email: '',
     role: 'FAL_INTERNAL_TECH_ADMIN',
+    permissions: ['falRestrictInvoiceWrite']
   });
 
   beforeEach(async () => {

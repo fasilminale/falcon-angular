@@ -13,12 +13,12 @@ export class RoleGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
     return this.userService.getUserInfo().toPromise().then(result => {
       const userInfo = new UserInfoModel(result);
-      const roles = route.data.roles as Array<string>;
+      const permissions = route.data.permissions as Array<string>;
 
       let allowed = false;
 
-      for (const role of roles) {
-        if (userInfo?.role === role ) {
+      for (const permission of permissions) {
+        if (userInfo?.permissions.includes(permission) ) {
           allowed = true;
           break;
         }

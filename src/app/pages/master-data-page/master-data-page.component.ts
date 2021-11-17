@@ -10,6 +10,7 @@ import { WebServices } from 'src/app/services/web-services';
 import {Observable} from 'rxjs';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {ElmUamRoles} from '../../utils/elm-uam-roles';
 
 type MasterDataFields = 'label' | 'lastUpdated' | 'endpoint' | 'download' | 'downloadTemplate' | 'hasDownloadableTemplate';
 
@@ -30,6 +31,9 @@ export class MasterDataPageComponent implements OnInit {
   ];
   masterDataRows: MasterDataRow[] = [];
 
+  private readonly requiredPermissions = [ElmUamRoles.ALLOW_ALL_ACCESS, ElmUamRoles.ALLOW_MASTER_DATA_UPLOAD];
+  public hasMasterDataUpload = false;
+
   constructor(private masterDataService: MasterDataService,
               private timeService: TimeService,
               private environmentService: EnvironmentService,
@@ -42,6 +46,7 @@ export class MasterDataPageComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getUserInfo().subscribe(userInfo => {
       this.userInfo = new UserInfoModel(userInfo);
+      this.hasMasterDataUpload = this.userInfo.hasPermission(this.requiredPermissions);;
     });
   }
 
