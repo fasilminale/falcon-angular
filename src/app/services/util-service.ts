@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {ConfirmationModalComponent, ErrorModalComponent} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
@@ -10,8 +9,7 @@ import {Milestone} from '../models/milestone/milestone-model';
 @Injectable()
 export class UtilService {
 
-  constructor(private snackBar: MatSnackBar,
-              private dialog: MatDialog) {
+  constructor(private dialog: MatDialog) {
   }
 
   public toNumber(value: any): number {
@@ -34,10 +32,6 @@ export class UtilService {
     return 'General';
   }
 
-  public openSnackBar(message: string): void {
-    this.snackBar.open(message, 'close', {duration: 5 * 1000});
-  }
-
   public openConfirmationModal(data: ConfirmationModalData): Observable<boolean> {
     return this.dialog.open(
       ConfirmationModalComponent,
@@ -55,7 +49,7 @@ export class UtilService {
     return this.dialog.open(
       TemplateInputModalComponent,
       {autoFocus: false, data: {
-        isPaymentOverrideSelected: isPaymentOverrideSelected? isPaymentOverrideSelected: false
+        isPaymentOverrideSelected: isPaymentOverrideSelected ? isPaymentOverrideSelected : false
       }}
     )
       .afterClosed()

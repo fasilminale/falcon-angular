@@ -19,6 +19,7 @@ describe('RoleGuard', () => {
     lastName: '',
     email: '',
     role: 'FAL_INTERNAL_WRITE',
+    permissions: ['falAllowInvoiceWrite']
   });
 
   const techAdminUser = new UserInfoModel({
@@ -27,6 +28,7 @@ describe('RoleGuard', () => {
     lastName: '',
     email: '',
     role: 'FAL_INTERNAL_TECH_ADMIN',
+    permissions: ['falRestrictInvoiceWrite']
   });
 
   let router: any;
@@ -46,7 +48,7 @@ describe('RoleGuard', () => {
         { provide: ActivatedRoute,
           useValue: {
             data: {
-              roles: [ 'FAL_INTERNAL_TECH_ADMIN' ]
+              permissions: [ 'falAllowInvoiceWrite' ]
             }
           }
         }
@@ -64,7 +66,7 @@ describe('RoleGuard', () => {
   });
 
   it('should instantiate service', fakeAsync(() => {
-    spyOn(userService, 'getUserInfo').and.returnValue(of(techAdminUser));
+    spyOn(userService, 'getUserInfo').and.returnValue(of(writeUser));
     guard = new RoleGuard(router, userService);
 
     expect(guard).toBeTruthy();
@@ -73,7 +75,7 @@ describe('RoleGuard', () => {
   }));
 
   it('should route if unguarded', () => {
-    spyOn(userService, 'getUserInfo').and.returnValue(of(techAdminUser));
+    spyOn(userService, 'getUserInfo').and.returnValue(of(writeUser));
     guard = new RoleGuard(router, userService);
     guard.canActivate(activatedRoute, router).then(result => {
       expect(result).toBeTruthy();
@@ -81,7 +83,7 @@ describe('RoleGuard', () => {
   });
 
   it('should not route if guarded', () => {
-    spyOn(userService, 'getUserInfo').and.returnValue(of(writeUser));
+    spyOn(userService, 'getUserInfo').and.returnValue(of(techAdminUser));
     guard = new RoleGuard(router, userService);
     guard.canActivate(activatedRoute, router).then(result => {
       expect(result).toBeFalsy();

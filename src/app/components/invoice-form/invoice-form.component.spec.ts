@@ -18,6 +18,7 @@ import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MasterDataService} from 'src/app/services/master-data-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {ToastService} from '@elm/elm-styleguide-ui';
 
 describe('InvoiceFormComponent', () => {
 
@@ -30,19 +31,6 @@ describe('InvoiceFormComponent', () => {
   const glAccount = '1234';
   const costCenter = '2345';
   const currency = 'USD';
-
-  let component: InvoiceFormComponent;
-  let fixture: ComponentFixture<InvoiceFormComponent>;
-  let util: UtilService;
-  let invoiceService: InvoiceService;
-  let masterDataService: MasterDataService;
-  let attachmentService: AttachmentService;
-  let templateService: TemplateService;
-  let snackBar: MatSnackBar;
-  let router: Router;
-  let loadingService: LoadingService;
-  let dialog: MatDialog;
-  let form: InvoiceFormManager;
 
   const validNumericValueEvent = {
     keyCode: '048', // The character '0'
@@ -208,6 +196,20 @@ describe('InvoiceFormComponent', () => {
     role: 'FAL_INTERNAL_WRITE'
   };
 
+  let component: InvoiceFormComponent;
+  let fixture: ComponentFixture<InvoiceFormComponent>;
+  let util: UtilService;
+  let toast: ToastService;
+  let invoiceService: InvoiceService;
+  let masterDataService: MasterDataService;
+  let attachmentService: AttachmentService;
+  let templateService: TemplateService;
+  let snackBar: MatSnackBar;
+  let router: Router;
+  let loadingService: LoadingService;
+  let dialog: MatDialog;
+  let form: InvoiceFormManager;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -222,6 +224,9 @@ describe('InvoiceFormComponent', () => {
     router = TestBed.inject(Router);
     snackBar = TestBed.inject(MatSnackBar);
     util = TestBed.inject(UtilService);
+    toast = TestBed.inject(ToastService);
+    spyOn(toast, 'openSuccessToast').and.stub();
+    spyOn(toast, 'openErrorToast').and.stub();
     invoiceService = TestBed.inject(InvoiceService);
     masterDataService = TestBed.inject(MasterDataService);
     attachmentService = TestBed.inject(ATTACHMENT_SERVICE);
@@ -271,26 +276,25 @@ describe('InvoiceFormComponent', () => {
     fixture.detectChanges();
     expect(component.form.invoiceFormGroup.controls.workType.enabled).toBeTruthy();
     const element: HTMLElement = fixture.nativeElement;
-    const inputElemnt: HTMLInputElement | null= element.querySelector('#company-code-input');
-    inputElemnt?.focus();
+    const inputElement: HTMLInputElement | null = element.querySelector('#company-code-input');
+    inputElement?.focus();
     fixture.componentInstance.form.companyCode.setValue('test');
-    inputElemnt?.focus();
+    inputElement?.focus();
     fixture.detectChanges();
   });
 
   it('should show success snackbar on post', async () => {
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     await component.onSaveButtonClick();
     fixture.detectChanges();
-    expect(util.openSnackBar)
-      .toHaveBeenCalledWith(`Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been created.`);
+    expect(toast.openSuccessToast).toHaveBeenCalledWith(
+      `Success! Falcon Invoice ${invoiceResponse.falconInvoiceNumber} has been created.`
+    );
   });
 
   it('should show failure snackbar on failed post', async () => {
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openErrorModal').and.returnValue(of());
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(
@@ -305,7 +309,6 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should show success snackbar on put', async () => {
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
@@ -313,12 +316,12 @@ describe('InvoiceFormComponent', () => {
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSaveButtonClick();
     fixture.detectChanges();
-    expect(util.openSnackBar)
-      .toHaveBeenCalledWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`);
+    expect(toast.openSuccessToast).toHaveBeenCalledWith(
+      `Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`
+    );
   });
 
   it('should show failure snackbar on failed put', async () => {
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
@@ -329,14 +332,9 @@ describe('InvoiceFormComponent', () => {
     component.falconInvoiceNumber = 'F0000000010';
     await component.onSaveButtonClick();
     fixture.detectChanges();
-    expect(util.openSnackBar)
-      .toHaveBeenCalledWith('Failure, invoice was not updated!');
-  });
-
-  it('should called material snackbar when openSnackBar method called', () => {
-    spyOn(snackBar, 'open').and.stub();
-    util.openSnackBar('test message');
-    expect(snackBar.open).toHaveBeenCalled();
+    expect(toast.openErrorToast).toHaveBeenCalledWith(
+      'Failure, invoice was not updated!'
+    );
   });
 
   it('should enable remove button after going up to more than one line item', () => {
@@ -374,7 +372,6 @@ describe('InvoiceFormComponent', () => {
     expect(requestInvoice.lineItems.length).toEqual(1);
     expect(requestInvoice.lineItems[0].companyCode).toEqual('CODE');
   });
-
 
 
   it('should allow valid alphabet values', () => {
@@ -582,24 +579,24 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should call save template and confirm save', async () => {
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openTemplateInputModal').and.returnValue(of(template));
     spyOn(templateService, 'createTemplate').and.returnValue(of(templateResponse));
     await component.saveTemplate();
     fixture.detectChanges();
-    expect(util.openSnackBar)
-      .toHaveBeenCalledWith(`Success! Template saved as ${templateResponse.name}.`);
+    expect(toast.openSuccessToast).toHaveBeenCalledWith(
+      `Success! Template saved as ${templateResponse.name}.`
+    );
   });
 
   it('should call save template and fail to save', async () => {
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(util, 'openTemplateInputModal').and.returnValue(of(template));
     templateService.createTemplate({} as TemplateToSave);
     spyOn(templateService, 'createTemplate').and.returnValue(of(null));
     await component.saveTemplate();
     fixture.detectChanges();
-    expect(util.openSnackBar)
-      .toHaveBeenCalledWith('Failure, template was not created.');
+    expect(toast.openErrorToast).toHaveBeenCalledWith(
+      'Failure, template was not created.'
+    );
   });
 
   it('should load template', async () => {
@@ -829,13 +826,12 @@ describe('InvoiceFormComponent', () => {
   });
 
 
-
   it('should test if companyCode exists', () => {
     spyOn(masterDataService, 'checkCompanyCode').and.returnValue(throwError('service failed'));
     component.form.invoiceFormGroup.controls.companyCode.setValue('CODE');
     fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
-    const inputElemnt: HTMLInputElement | null= element.querySelector('#company-code-input');
+    const inputElemnt: HTMLInputElement | null = element.querySelector('#company-code-input');
     inputElemnt?.focus();
     fixture.componentInstance.form.companyCode.setValue('test');
     inputElemnt?.focus();

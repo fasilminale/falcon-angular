@@ -17,12 +17,11 @@ const routes: Routes = [
   {path: 'invoices', component: InvoiceListPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice-extraction', component: InvoiceExtractionPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {
-    roles: ['FAL_INTERNAL_WRITE']
+    permissions: ['falAllowAllAccess', 'falAllowInvoiceWrite']
   }},
   {path: 'invoice/:falconInvoiceNumber/test', component: InvoiceEditPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice/:falconInvoiceNumber', component: InvoiceDetailPageComponent, canActivate: [OktaAuthGuard]},
-  {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {
-    roles: ['FAL_INTERNAL_WRITE']
+  {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {permissions: ['falAllowAllAccess', 'falAllowInvoiceWrite']
   }},
   {path: 'login/callback', component: OktaCallbackComponent},
   {path: 'logged-out', component:  LoggedOutPageComponent},

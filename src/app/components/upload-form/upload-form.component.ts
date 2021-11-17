@@ -2,6 +2,7 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@an
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
+import {ToastService} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-upload-form',
@@ -29,7 +30,8 @@ export class UploadFormComponent implements OnInit, OnChanges {
   public externalAttachment = false;
   public attachments: Array<Attachment> = [];
 
-  constructor(private util: UtilService) {
+  constructor(private util: UtilService,
+              private toast: ToastService) {
     this.attachmentType = new FormControl(null, [Validators.required]);
     this.file = new FormControl(null, [Validators.required]);
     this.formGroup = new FormGroup({
@@ -149,7 +151,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
       }
       this.externalAttachment = this.validateExternalAttachment();
       console.log(this.externalAttachment);
-      this.util.openSnackBar(`Success! ${attachment.file.name} was removed.`);
+      this.toast.openSuccessToast(`Success! ${attachment.file.name} was removed.`);
       this.formGroup.markAsDirty();
     }
   }

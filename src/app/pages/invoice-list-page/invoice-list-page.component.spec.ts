@@ -15,6 +15,8 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
+import {UserService} from '../../services/user-service';
+import {By} from '@angular/platform-browser';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -41,6 +43,18 @@ describe('InvoiceListPageComponent', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
   let filterService: FilterService;
+  let userService: UserService;
+
+  const userInfo = {
+    firstName: 'test',
+    lastName: 'user',
+    email: 'test@test.com',
+    uid: '12345',
+    role: 'FAL_INTERNAL_TECH_ADIMN',
+    permissions: [
+      'falRestrictInvoiceWrite'
+    ]
+  };
 
   const pageEvent = new PageEvent();
   pageEvent.pageSize = 30;
@@ -90,6 +104,7 @@ describe('InvoiceListPageComponent', () => {
     snackBar = TestBed.inject(MatSnackBar);
     router = TestBed.inject(Router);
     dialog = TestBed.inject(MatDialog);
+    userService = TestBed.inject(UserService);
     filterService = TestBed.inject(FilterService);
   });
 
@@ -97,6 +112,7 @@ describe('InvoiceListPageComponent', () => {
     fixture = TestBed.createComponent(InvoiceListPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(userInfo);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
   });
 
@@ -209,5 +225,19 @@ describe('InvoiceListPageComponent', () => {
       http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
       expect(component.resetTable).toHaveBeenCalled();
     }));
+  });
+
+  it('should display the extract invoice remittance button', () => {
+    component.hasInvoiceWrite = true;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#extract-invoice-button'));
+    expect(deleteBtn).not.toBeNull();
+  });
+
+  it('should not display the extract invoice remittance button', () => {
+    component.hasInvoiceWrite = false;
+    fixture.detectChanges();
+    const deleteBtn = fixture.debugElement.query(By.css('#extract-invoice-button'));
+    expect(deleteBtn).toBeNull();
   });
 });

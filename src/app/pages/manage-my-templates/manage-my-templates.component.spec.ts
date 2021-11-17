@@ -10,6 +10,7 @@ import {Template} from 'src/app/models/template/template-model';
 import {of, throwError} from 'rxjs';
 import {MatTableModule} from '@angular/material/table';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import {ToastService} from '@elm/elm-styleguide-ui';
 
 describe('ManageMyTemplatesComponent', () => {
   const updatedTemplate: Template = new Template({
@@ -27,6 +28,7 @@ describe('ManageMyTemplatesComponent', () => {
   let fixture: ComponentFixture<ManageMyTemplatesComponent>;
   let apiService: TemplateService;
   let util: UtilService;
+  let toast: ToastService;
   let http: HttpTestingController;
   let dialog: MatDialog;
   let template: Template;
@@ -46,6 +48,9 @@ describe('ManageMyTemplatesComponent', () => {
     http = TestBed.inject(HttpTestingController);
     apiService = TestBed.inject(TemplateService);
     util = TestBed.inject(UtilService);
+    toast = TestBed.inject(ToastService);
+    spyOn(toast, 'openSuccessToast').and.stub();
+    spyOn(toast, 'openErrorToast').and.stub();
     dialog = TestBed.inject(MatDialog);
     fixture.detectChanges();
     template = new Template({
@@ -94,31 +99,31 @@ describe('ManageMyTemplatesComponent', () => {
   it('should not enable edit template, if another template is already editing', fakeAsync(() => {
     component.editedTemplate = templateData[1];
     component.editTemplate(template);
-    const temp = component.editedTemplate;
-    expect(temp).toEqual(templateData[0]);
+    expect(component.editedTemplate).toEqual(templateData[0]);
   }));
 
   it('should update template', () => {
     template.isDisable = false;
-    spyOn(util, 'openSnackBar').and.stub();
-    const spy = spyOn(apiService, 'updateTemplate').and.returnValue(of(updatedTemplate));
+    spyOn(apiService, 'updateTemplate').and.returnValue(of(updatedTemplate));
     component.updateTemplate(template);
     const createdDate = template.createdDate;
     expect(createdDate).toEqual(updatedTemplate.createdDate);
-    expect(util.openSnackBar).toHaveBeenCalledWith(`Success! Template has been updated.`);
+    expect(toast.openSuccessToast).toHaveBeenCalledWith(
+      `Success! Template has been updated.`
+    );
   });
 
   it('should update template failed', () => {
     template.isDisable = false;
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 404}));
     component.updateTemplate(template);
-    expect(util.openSnackBar).toHaveBeenCalledWith(`Failure! Template not saved.`);
+    expect(toast.openErrorToast).toHaveBeenCalledWith(
+      `Failure! Template not saved.`
+    );
   });
 
   it('should update template failed with error code 422', () => {
     template.isDisable = false;
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 422}));
     component.updateTemplate(template);
     const isError = template.isError;
@@ -128,30 +133,31 @@ describe('ManageMyTemplatesComponent', () => {
   it('should not update for invalid name', () => {
     template.isDisable = false;
     template.name = '';
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(apiService, 'updateTemplate').and.returnValue(throwError({status: 404}));
     component.updateTemplate(template);
-    expect(util.openSnackBar).toHaveBeenCalledTimes(0);
+    // TODO write better expectations for this test...
+    expect(toast.openSuccessToast).not.toHaveBeenCalled();
+    expect(toast.openErrorToast).not.toHaveBeenCalled();
   });
 
   it('should cancel edit template', fakeAsync(() => {
     template.isDisable = false;
     component.cancelTemplate(template);
-    const isDisable = template.isDisable;
-    expect(isDisable).toBeTruthy();
+    expect(template.isDisable).toBeTrue();
   }));
 
-  it('should delete template from list on confiramtion', () => {
+  it('should delete template from list on confirmation', () => {
     component.templates = templateData;
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     spyOn(apiService, 'deleteTemplate').and.returnValue(of({status: 200}));
-    spyOn(util, 'openSnackBar').and.stub();
     spyOn(component.templateTable, 'renderRows');
     component.deleteTemplate(template);
     expect(component.templates.length).toEqual(1);
 
     expect(component.templateTable.renderRows).toHaveBeenCalled();
-    expect(util.openSnackBar).toHaveBeenCalledWith(`Success! ${template.name} has been deleted.`);
+    expect(toast.openSuccessToast).toHaveBeenCalledWith(
+      `Success! ${template.name} has been deleted.`
+    );
   });
 
   it('should not delete template from list on confiramtion', () => {
@@ -160,8 +166,9 @@ describe('ManageMyTemplatesComponent', () => {
     spyOn(apiService, 'deleteTemplate').and.callFake(() => {
       return throwError({status: 404});
     });
-    spyOn(util, 'openSnackBar').and.stub();
     component.deleteTemplate(template);
-    expect(util.openSnackBar).toHaveBeenCalledWith(`Failure! ${template.name} failed to delete.`);
+    expect(toast.openErrorToast).toHaveBeenCalledWith(
+      `Failure! ${template.name} failed to delete.`
+    );
   });
 });

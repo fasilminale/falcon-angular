@@ -6,12 +6,11 @@
     <div class="headline3">Status: {{invoiceStatus}}</div>
   </div>
   <div class="d-flex justify-content-end header-button">
-    <div class="col-12 d-flex justify-content-end">
+    <div *ngIf="hasInvoiceWrite" class="col-12 d-flex justify-content-end">
       <elm-button id="cancel-button"
                   buttonType="button"
                   buttonStyle="text"
                   class="flex-shrink-1"
-                  [isDisabled]="this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
                   (buttonClick)="saveAsTemplate()">
         <u>Save as Template</u>
       </elm-button>
@@ -19,7 +18,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="isDeletedInvoice || isSubmittedInvoice || this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
+                  [isDisabled]="isDeletedInvoice || isSubmittedInvoice"
                   (buttonClick)="deleteInvoice()">
         Delete
       </elm-button>
@@ -27,7 +26,7 @@
                   buttonType="button"
                   buttonStyle="primary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="!readOnly || isDeletedInvoice || isSubmittedInvoice || this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
+                  [isDisabled]="!readOnly || isDeletedInvoice || isSubmittedInvoice"
                   (buttonClick)="editInvoice()">
         Edit
       </elm-button>

@@ -32,6 +32,7 @@ import {of} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {ToastService} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-invoice-form',
@@ -82,6 +83,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     private invoiceService: InvoiceService,
     private templateService: TemplateService,
     private util: UtilService,
+    private toast: ToastService,
     private router: Router,
     public form: InvoiceFormManager,
     @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
@@ -540,19 +542,19 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
 
   private async onSaveFailure(): Promise<void> {
     if (this.isOnEditPage) {
-      this.util.openSnackBar(`Failure, invoice was not updated!`);
+      this.toast.openErrorToast('Failure, invoice was not updated!');
     } else {
       await this.showSystemErrorModal();
     }
   }
 
   private onAttachSuccess(invoiceNumber: string): void {
-    this.util.openSnackBar(`Success! Falcon Invoice ${invoiceNumber} has been ${this.isOnEditPage ? 'updated' : 'created'}.`);
+    this.toast.openSuccessToast(`Success! Falcon Invoice ${invoiceNumber} has been ${this.isOnEditPage ? 'updated' : 'created'}.`);
   }
 
   private async onAttachFailure(): Promise<void> {
     if (this.isOnEditPage) {
-      this.util.openSnackBar(`One or more documents failed to attach!`);
+      this.toast.openErrorToast(`One or more documents failed to attach!`);
     } else {
       await this.showSystemErrorModal();
     }
@@ -568,11 +570,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   private onSaveTemplateSuccess(templateName: string): void {
-    this.util.openSnackBar(`Success! Template saved as ${templateName}.`);
+    this.toast.openSuccessToast(`Success! Template saved as ${templateName}.`);
   }
 
   private onSaveTemplateFailure(): void {
-    this.util.openSnackBar(`Failure, template was not created.`);
+    this.toast.openErrorToast('Failure, template was not created.');
   }
 
   public toggleSidenav(): void {
