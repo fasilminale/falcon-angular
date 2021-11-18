@@ -95,9 +95,9 @@ export class TripInformationComponent implements AfterViewInit {
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
     this.subscriptionManager.manage(observable.subscribe(t => {
       this._tripIdControl.setValue(t.tripId);
-      // this._invoiceDateControl.setValue(t.invoiceDate);
-      // this._pickUpDateControl.setValue(t.pickUpDate);
-      // this._deliveryDateControl.setValue(t.deliveryDate);
+      this._invoiceDateControl.setValue(t.invoiceDate);
+      this._pickUpDateControl.setValue(t.pickUpDate);
+      this._deliveryDateControl.setValue(t.deliveryDate);
       this._proTrackingNumberControl.setValue(t.proTrackingNumber);
       this._bolNumberControl.setValue(t.bolNumber);
       this._freightPaymentTermsControl.setValue(t.freightPaymentTerms);

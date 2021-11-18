@@ -11,6 +11,7 @@ import {Subject} from 'rxjs';
 import {Invoice} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
+import {SubjectValue} from '../../utils/subject-value';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -25,14 +26,13 @@ export class InvoiceEditPageComponent implements OnInit {
   public userInfo?: UserInfo;
   public isDeletedInvoice = false;
   public isSubmittedInvoice = false;
-  public isEditMode = false;
   public isMilestoneTabOpen = false;
   public showMilestoneToggleButton = true;
   public invoiceFormGroup: FormGroup;
   public tripInformationFormGroup: FormGroup;
 
+  public isEditMode$ = new SubjectValue(false);
   public loadTripInformation$ = new Subject<TripInformation>();
-  public updateIsEditMode$ = new Subject<boolean>();
 
   constructor(private util: UtilService,
               private route: ActivatedRoute,
@@ -88,8 +88,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickEditButton(): void {
-    this.isEditMode = !this.isEditMode;
-    this.updateIsEditMode$.next(this.isEditMode);
+    this.isEditMode$.value = !this.isEditMode$.value;
   }
 
   clickMilestoneToggleButton(): void {

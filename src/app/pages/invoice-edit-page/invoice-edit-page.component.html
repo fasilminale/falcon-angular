@@ -27,7 +27,7 @@
                   buttonType="button"
                   buttonStyle="primary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="isEditMode
+                  [isDisabled]="isEditMode$.value
                                 || isDeletedInvoice
                                 || isSubmittedInvoice"
                   (buttonClick)="clickEditButton()">
@@ -67,7 +67,7 @@
         <!-- Trip Information -->
         <app-trip-information [formGroup]="tripInformationFormGroup"
                               [loadTripInformation$]="loadTripInformation$.asObservable()"
-                              [updateIsEditMode$]="updateIsEditMode$.asObservable()">
+                              [updateIsEditMode$]="isEditMode$.asObservable()">
         </app-trip-information>
         <hr/>
 
