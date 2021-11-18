@@ -2,8 +2,9 @@ import {StatusModel} from './status-model';
 import * as moment from 'moment';
 import {LineItem} from '../line-item/line-item-model';
 import {formatCurrency} from '@angular/common';
-import {ElmDataTableHeader} from '@elm/elm-styleguide-ui';
 import {Milestone} from '../milestone/milestone-model';
+import {Attachment} from './attachment-model';
+import {KeyedLabel} from '../generic/keyed-label';
 
 export class InvoiceDataModel {
 
@@ -54,3 +55,24 @@ export class InvoiceDataModel {
   }
 
 }
+
+export interface Invoice {
+  falconInvoiceNumber: string;
+  failedToCreate: boolean;
+  status: KeyedLabel;
+  createdBy: string;
+  workType: string;
+  externalInvoiceNumber: string;
+  invoiceDate: string;
+  companyCode: string;
+  erpType: string;
+  vendorNumber: string;
+  amountOfInvoice: number;
+  currency: string;
+  standardPaymentTermsOverride: string;
+  lineItems: Array<LineItem>;
+  milestones: Array<Milestone>;
+  attachments: Array<Attachment>;
+  comments: string;
+}
+

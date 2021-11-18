@@ -3,6 +3,7 @@ import {catchError, mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
+import {Invoice} from '../models/invoice/invoice-model';
 
 @Injectable()
 export class InvoiceService {
@@ -52,7 +53,7 @@ export class InvoiceService {
       : this.createInvoice(invoice);
   }
 
-  public getInvoice(invoiceNumber: string): Observable<any> {
+  public getInvoice(invoiceNumber: string): Observable<Invoice> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}`);
   }
 

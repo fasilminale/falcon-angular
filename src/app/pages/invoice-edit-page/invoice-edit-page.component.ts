@@ -5,12 +5,12 @@ import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
-import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {Subject} from 'rxjs';
-import {mergeMap} from 'rxjs/operators';
-import {TripInformation} from './trip-information/trip-information.component';
+import {Invoice} from '../../models/invoice/invoice-model';
+import {StatusUtil} from '../../models/invoice/status-model';
+import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -20,7 +20,7 @@ import {TripInformation} from './trip-information/trip-information.component';
 export class InvoiceEditPageComponent implements OnInit {
 
   public falconInvoiceNumber = '';
-  public invoiceStatus = 'Fake';
+  public invoiceStatus = '';
   public milestones: Array<Milestone> = [];
   public userInfo?: UserInfo;
   public isDeletedInvoice = false;
@@ -32,6 +32,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public tripInformationFormGroup: FormGroup;
 
   public loadTripInformation$ = new Subject<TripInformation>();
+  public updateIsEditMode$ = new Subject<boolean>();
 
   constructor(private util: UtilService,
               private route: ActivatedRoute,
@@ -47,7 +48,7 @@ export class InvoiceEditPageComponent implements OnInit {
   ngOnInit(): void {
     this.subscriptions.manage(
       this.route.paramMap.subscribe(p => this.handleRouteParams(p)),
-      this.userService.getUserInfo().subscribe(u => this.handleUserInfo(u))
+      this.userService.getUserInfo().subscribe(u => this.loadUserInfo(u))
     );
   }
 
@@ -56,49 +57,48 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.falconInvoiceNumber) {
       this.subscriptions.manage(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
-          .subscribe(i => this.handleInvoice(i))
+          .subscribe(i => this.loadInvoice(i))
       );
     }
   }
 
-  private handleInvoice(invoice: any): void {
+  private loadInvoice(invoice: Invoice): void {
+    this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
+    this.isSubmittedInvoice = StatusUtil.isSubmitted(invoice.status);
+    this.invoiceStatus = invoice.status.label;
     this.loadTripInformation$.next({
       tripId: 'N/A',
       invoiceDate: new Date(invoice.invoiceDate),
-      pickUpDate: new Date(),
-      deliveryDate: new Date(),
       proTrackingNumber: 'N/A',
       bolNumber: 'N/A',
-      freightPaymentTerms: 'N/A',
-      carrier: {name: 'N/A', scac: 'N/A'},
-      carrierMode: {name: 'N/A', code: 'N/A'},
-      serviceLevel: {name: 'N/A', code: 'N/A'}
+      freightPaymentTerms: FreightPaymentTerms.PREPAID,
     });
   }
 
-  private handleUserInfo(newUserInfo: UserInfo): void {
+  private loadUserInfo(newUserInfo: UserInfo): void {
     this.userInfo = newUserInfo;
   }
 
-  async clickSaveAsTemplateButton(): Promise<void> {
-    return this.showNotYetImplementedModal('Save As Template');
+  clickSaveAsTemplateButton(): void {
+    this.showNotYetImplementedModal('Save As Template');
   }
 
-  async clickDeleteButton(): Promise<void> {
-    return this.showNotYetImplementedModal('Delete Invoice');
+  clickDeleteButton(): void {
+    this.showNotYetImplementedModal('Delete Invoice');
   }
 
-  async clickEditButton(): Promise<void> {
-    return this.showNotYetImplementedModal('Edit Switch');
+  clickEditButton(): void {
+    this.isEditMode = !this.isEditMode;
+    this.updateIsEditMode$.next(this.isEditMode);
   }
 
-  async clickMilestoneToggleButton(): Promise<void> {
+  clickMilestoneToggleButton(): void {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
-  private async showNotYetImplementedModal(title: string): Promise<void> {
-    return this.util.openErrorModal({
+  private showNotYetImplementedModal(title: string): void {
+    this.subscriptions.manage(this.util.openErrorModal({
       title, innerHtmlMessage: 'Not Yet Implemented On This Page'
-    }).toPromise();
+    }).subscribe());
   }
 }

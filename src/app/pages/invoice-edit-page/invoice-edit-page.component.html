@@ -11,7 +11,6 @@
                   buttonType="button"
                   buttonStyle="text"
                   class="flex-shrink-1"
-                  [isDisabled]="this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
                   (buttonClick)="clickSaveAsTemplateButton()">
         <u>Save as Template</u>
       </elm-button>
@@ -20,8 +19,7 @@
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
                   [isDisabled]="isDeletedInvoice
-                                || isSubmittedInvoice
-                                || this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
+                                || isSubmittedInvoice"
                   (buttonClick)="clickDeleteButton()">
         Delete
       </elm-button>
@@ -31,8 +29,7 @@
                   class="flex-shrink-1 header-button"
                   [isDisabled]="isEditMode
                                 || isDeletedInvoice
-                                || isSubmittedInvoice
-                                || this.userInfo?.role !== 'FAL_INTERNAL_WRITE'"
+                                || isSubmittedInvoice"
                   (buttonClick)="clickEditButton()">
         Edit
       </elm-button>
@@ -69,7 +66,8 @@
 
         <!-- Trip Information -->
         <app-trip-information [formGroup]="tripInformationFormGroup"
-                              [loadTripInformation$]="loadTripInformation$.asObservable()">
+                              [loadTripInformation$]="loadTripInformation$.asObservable()"
+                              [updateIsEditMode$]="updateIsEditMode$.asObservable()">
         </app-trip-information>
         <hr/>
 
