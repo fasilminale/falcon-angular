@@ -19,10 +19,9 @@ describe('Project Model Tests', () => {
     lastName: 'user',
     email: 'test@test.com',
     login: 'test@test.com',
-    role: 'FAL_INTERNAL_ALL',
+    role: 'FAL_INTERNAL_NONPROD_ALL_ACCESS',
     permissions: [
-      'falAllowAllAccess',
-      'falAllowTestAccess'
+      'falAllowAllAccess'
     ]
   };
 
@@ -31,10 +30,9 @@ describe('Project Model Tests', () => {
     lastName: 'user',
     email: 'test@test.com',
     login: 'test@test.com',
-    role: 'FAL_INTERNAL_ALL',
+    role: 'FAL_INTERNAL_NONPROD_ALL_ACCESS',
     permissions: [
-      'falAllowAllAccess',
-      'falAllowTestAccess'
+      'falAllowAllAccess'
     ]
   };
 

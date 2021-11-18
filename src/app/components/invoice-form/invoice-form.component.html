@@ -474,7 +474,7 @@
             <u>Cancel</u>
           </elm-button>
 
-          <div class="flex-shrink-1">
+          <div *ngIf="userInfo?.hasPermission(requiredPermissions) && editableInvoice" class="flex-shrink-1">
             <!-- SAVE -->
             <elm-button id="save-button"
                         buttonType="button"
