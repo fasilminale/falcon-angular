@@ -2,7 +2,7 @@ import {AfterViewInit, Component, Inject, Input} from '@angular/core';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
-import {FREIGHT_PAYMENT_TERM_OPTIONS, FreightPaymentTerms, TripInformation} from '../../../models/invoice/trip-information-model';
+import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {Carrier, CarrierUtils} from '../../../models/master-data-models/carrier-model';
@@ -17,36 +17,38 @@ import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-model
 })
 export class TripInformationComponent implements AfterViewInit {
 
-  private _formGroup = new FormGroup({});
-  private _tripIdControl = new FormControl();
-  private _invoiceDateControl = new FormControl();
-  private _pickUpDateControl = new FormControl();
-  private _deliveryDateControl = new FormControl();
-  private _proTrackingNumberControl = new FormControl();
-  private _bolNumberControl = new FormControl();
-  private _freightPaymentTermsControl = new FormControl();
-  private _carrierControl = new FormControl();
-  private _carrierModeControl = new FormControl();
-  private _serviceLevelControl = new FormControl();
-  private _editableFormArray = new FormArray([
-    this._invoiceDateControl,
-    this._pickUpDateControl,
-    this._deliveryDateControl,
-    this._proTrackingNumberControl,
-    this._bolNumberControl,
-    this._freightPaymentTermsControl,
-    this._carrierControl,
-    this._carrierModeControl,
-    this._serviceLevelControl
-  ]);
-
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
   public carrierOptions: Array<SelectOption<Carrier>> = [];
   public carrierModeOptions: Array<SelectOption<CarrierModeCode>> = [];
   public serviceLevelOptions: Array<SelectOption<ServiceLevel>> = [];
 
+  public tripIdControl = new FormControl();
+  public invoiceDateControl = new FormControl();
+  public pickUpDateControl = new FormControl();
+  public deliveryDateControl = new FormControl();
+  public proTrackingNumberControl = new FormControl();
+  public bolNumberControl = new FormControl();
+  public freightPaymentTermsControl = new FormControl();
+  public carrierControl = new FormControl();
+  public carrierModeControl = new FormControl();
+  public serviceLevelControl = new FormControl();
+
+  private _formGroup = new FormGroup({});
+  private _editableFormArray = new FormArray([
+    this.invoiceDateControl,
+    this.pickUpDateControl,
+    this.deliveryDateControl,
+    this.proTrackingNumberControl,
+    this.bolNumberControl,
+    this.freightPaymentTermsControl,
+    this.carrierControl,
+    this.carrierModeControl,
+    this.serviceLevelControl
+  ]);
+
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private masterData: MasterDataService) {
+    this.formGroup = this._formGroup;
   }
 
   ngAfterViewInit(): void {
@@ -67,16 +69,16 @@ export class TripInformationComponent implements AfterViewInit {
   }
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
-    givenFormGroup.setControl('tripId', this._tripIdControl);
-    givenFormGroup.setControl('invoiceDate', this._invoiceDateControl);
-    givenFormGroup.setControl('pickUpDate', this._pickUpDateControl);
-    givenFormGroup.setControl('deliveryDate', this._deliveryDateControl);
-    givenFormGroup.setControl('proTrackingNumber', this._proTrackingNumberControl);
-    givenFormGroup.setControl('bolNumber', this._bolNumberControl);
-    givenFormGroup.setControl('freightPaymentTerms', this._freightPaymentTermsControl);
-    givenFormGroup.setControl('carrier', this._carrierControl);
-    givenFormGroup.setControl('carrierMode', this._carrierModeControl);
-    givenFormGroup.setControl('serviceLevel', this._serviceLevelControl);
+    givenFormGroup.setControl('tripId', this.tripIdControl);
+    givenFormGroup.setControl('invoiceDate', this.invoiceDateControl);
+    givenFormGroup.setControl('pickUpDate', this.pickUpDateControl);
+    givenFormGroup.setControl('deliveryDate', this.deliveryDateControl);
+    givenFormGroup.setControl('proTrackingNumber', this.proTrackingNumberControl);
+    givenFormGroup.setControl('bolNumber', this.bolNumberControl);
+    givenFormGroup.setControl('freightPaymentTerms', this.freightPaymentTermsControl);
+    givenFormGroup.setControl('carrier', this.carrierControl);
+    givenFormGroup.setControl('carrierMode', this.carrierModeControl);
+    givenFormGroup.setControl('serviceLevel', this.serviceLevelControl);
     this._formGroup = givenFormGroup;
   }
 
@@ -94,16 +96,16 @@ export class TripInformationComponent implements AfterViewInit {
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
     this.subscriptionManager.manage(observable.subscribe(t => {
-      this._tripIdControl.setValue(t.tripId);
-      this._invoiceDateControl.setValue(t.invoiceDate);
-      this._pickUpDateControl.setValue(t.pickUpDate);
-      this._deliveryDateControl.setValue(t.deliveryDate);
-      this._proTrackingNumberControl.setValue(t.proTrackingNumber);
-      this._bolNumberControl.setValue(t.bolNumber);
-      this._freightPaymentTermsControl.setValue(t.freightPaymentTerms);
-      this._carrierControl.setValue(t.carrier);
-      this._carrierModeControl.setValue(t.carrierMode);
-      this._serviceLevelControl.setValue(t.serviceLevel);
+      this.tripIdControl.setValue(t.tripId);
+      this.invoiceDateControl.setValue(t.invoiceDate);
+      this.pickUpDateControl.setValue(t.pickUpDate);
+      this.deliveryDateControl.setValue(t.deliveryDate);
+      this.proTrackingNumberControl.setValue(t.proTrackingNumber);
+      this.bolNumberControl.setValue(t.bolNumber);
+      this.freightPaymentTermsControl.setValue(t.freightPaymentTerms);
+      this.carrierControl.setValue(t.carrier);
+      this.carrierModeControl.setValue(t.carrierMode);
+      this.serviceLevelControl.setValue(t.serviceLevel);
     }));
   }
 

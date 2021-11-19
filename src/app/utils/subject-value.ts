@@ -8,10 +8,10 @@ export class SubjectValue<T> {
   constructor(initialValue: T) {
     this._value = initialValue;
     this.value = initialValue;
-    this._subject.subscribe(v => this._value = v);
   }
 
   set value(newValue: T) {
+    this._value = newValue;
     this._subject.next(newValue);
   }
 

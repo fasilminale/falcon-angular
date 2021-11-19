@@ -69,7 +69,7 @@ export interface Invoice {
   vendorNumber: string;
   amountOfInvoice: number;
   currency: string;
-  standardPaymentTermsOverride: string;
+  standardPaymentTermsOverride?: string;
   lineItems: Array<LineItem>;
   milestones: Array<Milestone>;
   attachments: Array<Attachment>;

@@ -1,5 +1,6 @@
 import {Carrier} from '../master-data-models/carrier-model';
 import {CarrierModeCode} from '../master-data-models/carrier-mode-code-model';
+import {ServiceLevel} from '../master-data-models/service-level-model';
 
 export interface TripInformation {
   tripId: string;
@@ -11,7 +12,7 @@ export interface TripInformation {
   freightPaymentTerms: FreightPaymentTerms;
   carrier?: Carrier;
   carrierMode?: CarrierModeCode;
-  serviceLevel?: { name: string, code: string };
+  serviceLevel?: ServiceLevel;
 }
 
 export enum FreightPaymentTerms {
