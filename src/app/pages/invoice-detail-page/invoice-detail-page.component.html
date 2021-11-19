@@ -21,9 +21,10 @@
                   (buttonClick)="deleteInvoice()">
         Delete
       </elm-button>
-      <elm-button *ngIf="!(!readOnly || isDeletedInvoice || isSubmittedInvoice)" id="edit-button"
+      <elm-button *ngIf="!(isDeletedInvoice || isSubmittedInvoice)" id="edit-button"
                   buttonType="button"
                   buttonStyle="primary"
+                  [isDisabled]="!readOnly"
                   class="flex-shrink-1 header-button"
                   (buttonClick)="editInvoice()">
         Edit
