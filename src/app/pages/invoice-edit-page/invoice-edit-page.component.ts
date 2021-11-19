@@ -88,11 +88,11 @@ export class InvoiceEditPageComponent implements OnInit {
     this.showNotYetImplementedModal('Delete Invoice');
   }
 
-  clickEditButton(): void {
+  clickToggleEditMode(): void {
     this.isEditMode$.value = !this.isEditMode$.value;
   }
 
-  clickMilestoneToggleButton(): void {
+  clickToggleMilestoneTab(): void {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 

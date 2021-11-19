@@ -30,7 +30,7 @@
                   [isDisabled]="isEditMode$.value
                                 || isDeletedInvoice
                                 || isSubmittedInvoice"
-                  (buttonClick)="clickEditButton()">
+                  (buttonClick)="clickToggleEditMode()">
         Edit
       </elm-button>
     </div>
@@ -54,7 +54,7 @@
         <elm-button *ngIf="showMilestoneToggleButton"
                     id="milestones-button"
                     class="milestone-button"
-                    (buttonClick)="clickMilestoneToggleButton()"
+                    (buttonClick)="clickToggleMilestoneTab()"
                     mat-dialog-close>
           Milestones
         </elm-button>
