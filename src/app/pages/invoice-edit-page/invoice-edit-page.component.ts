@@ -63,6 +63,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   private loadInvoice(invoice: Invoice): void {
+    this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
     this.isSubmittedInvoice = StatusUtil.isSubmitted(invoice.status);
     this.invoiceStatus = invoice.status.label;
