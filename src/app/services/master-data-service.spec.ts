@@ -2,10 +2,10 @@ import {fakeAsync, TestBed} from '@angular/core/testing';
 import {HttpTestingController} from '@angular/common/http/testing';
 import {WebServices} from './web-services';
 import {MasterDataService} from './master-data-service';
-import {environment} from '../../environments/environment';
 import {of} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 import {MasterDataRow} from '../models/master-data-row/master-data-row';
+import {environment} from '../../environments/environment';
 
 describe('MasterDataService', () => {
   let http: HttpTestingController;
@@ -34,7 +34,7 @@ describe('MasterDataService', () => {
     http.verify();
   });
 
-  describe('getBusinessUnit', () => {
+  describe('#getBusinessUnit', () => {
     it('should return businessUnit', fakeAsync(() => {
       spyOn(web, 'httpGet').and.returnValue(of(masterDataRows));
       const result = masterDataService.getMasterDataRows().toPromise();
@@ -43,13 +43,41 @@ describe('MasterDataService', () => {
     }));
   });
 
-  describe('checkCompanyCode', () => {
+  describe('#checkCompanyCode', () => {
     it('should return response code', fakeAsync(() => {
-      const companyCode: string = 'Test'; 
+      const companyCode = 'Test';
       spyOn(web, 'httpGet').and.returnValue(of(companyCode));
       const result = masterDataService.checkCompanyCode(companyCode).toPromise();
       expect(result).toBeTruthy();
       expect(web.httpGet).toHaveBeenCalled();
     }));
   });
+
+  describe('#getCarriers', () => {
+    it('should call api', async () => {
+      spyOn(web, 'httpGet').and.returnValue(of([]));
+      const carriers = await masterDataService.getCarriers().toPromise();
+      expect(carriers).toEqual([]);
+      expect(web.httpGet).toHaveBeenCalledWith(`${environment.baseServiceUrl}/v1/carriers`);
+    });
+  });
+
+  describe('#getCarrierModeCodes', () => {
+    it('should call api', async () => {
+      spyOn(web, 'httpGet').and.returnValue(of([]));
+      const carrierModes = await masterDataService.getCarrierModeCodes().toPromise();
+      expect(carrierModes).toEqual([]);
+      expect(web.httpGet).toHaveBeenCalledWith(`${environment.baseServiceUrl}/v1/carrierModeCodes`);
+    });
+  });
+
+  describe('#getServiceLevels', () => {
+    it('should call api', async () => {
+      spyOn(web, 'httpGet').and.returnValue(of([]));
+      const serviceLevels = await masterDataService.getServiceLevels().toPromise();
+      expect(serviceLevels).toEqual([]);
+      expect(web.httpGet).toHaveBeenCalledWith(`${environment.baseServiceUrl}/v1/serviceLevels`);
+    });
+  });
+
 });

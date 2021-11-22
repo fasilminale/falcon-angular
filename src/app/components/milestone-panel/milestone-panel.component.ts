@@ -8,15 +8,12 @@ import {TimeService} from '../../services/time-service';
   templateUrl: './milestone-panel.component.html',
   styleUrls: ['./milestone-panel.component.scss']
 })
-export class MilestonePanelComponent implements OnInit {
+export class MilestonePanelComponent {
 
   @Input() public milestones: Array<Milestone> = [];
 
   constructor(public util: UtilService,
               private timeService: TimeService) {
-  }
-
-  ngOnInit(): void {
   }
 
   public formatTimestamp(value: string): string | undefined {
