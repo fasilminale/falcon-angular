@@ -85,7 +85,7 @@ export class AppComponent implements OnInit {
   }
 
   public buildNavBar(): void {
-    const requiredPermissions = [ElmUamRoles.ALLOW_ALL_ACCESS, ElmUamRoles.ALLOW_INVOICE_WRITE];
+    const requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
 
     // Create Invoice Header
     if (requiredPermissions.some(permission => this.userInfo?.permissions.includes(permission))) {

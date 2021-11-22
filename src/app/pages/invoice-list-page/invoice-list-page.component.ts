@@ -44,7 +44,7 @@ export class InvoiceListPageComponent implements OnInit {
   invoiceCountLabel = 'Invoices';
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
-  private readonly requiredPermissions = [ElmUamRoles.ALLOW_ALL_ACCESS, ElmUamRoles.ALLOW_INVOICE_WRITE];
+  private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
 
   constructor(

@@ -37,7 +37,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   public milestones: Array<Milestone> = [];
   public invoiceStatus = '';
 
-  private readonly requiredPermissions = [ElmUamRoles.ALLOW_ALL_ACCESS, ElmUamRoles.ALLOW_MASTER_DATA_UPLOAD];
+  private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
 
   private subscriptions: Array<Subscription> = [];
