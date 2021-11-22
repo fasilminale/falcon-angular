@@ -10,17 +10,13 @@ import {CarrierModeCode, TripType} from '../../../models/master-data-models/carr
 import {ServiceLevel} from '../../../models/master-data-models/service-level-model';
 import {FormGroup} from '@angular/forms';
 import {FreightPaymentTerms, TripInformation} from '../../../models/invoice/trip-information-model';
-import Spy = jasmine.Spy;
+import {asSpy} from '../../../testing/test-utils.spec';
 
 describe('TripInformationComponent', () => {
 
   let component: TripInformationComponent;
   let fixture: ComponentFixture<TripInformationComponent>;
   let masterDataService: MasterDataService;
-
-  function asSpy(f: any): Spy {
-    return f as Spy;
-  }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

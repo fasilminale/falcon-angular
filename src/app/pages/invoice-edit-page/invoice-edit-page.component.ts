@@ -1,5 +1,4 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {UserInfo} from '@elm/elm-styleguide-ui';
 import {UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
@@ -12,6 +11,7 @@ import {Invoice} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
+import {FalUserInfo} from '../../models/user-info/user-info-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -23,7 +23,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public falconInvoiceNumber = '';
   public invoiceStatus = '';
   public milestones: Array<Milestone> = [];
-  public userInfo?: UserInfo;
+  public userInfo?: FalUserInfo;
   public isDeletedInvoice = false;
   public isSubmittedInvoice = false;
   public isMilestoneTabOpen = false;
@@ -76,7 +76,7 @@ export class InvoiceEditPageComponent implements OnInit {
     });
   }
 
-  private loadUserInfo(newUserInfo: UserInfo): void {
+  private loadUserInfo(newUserInfo: FalUserInfo): void {
     this.userInfo = newUserInfo;
   }
 
