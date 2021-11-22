@@ -20,8 +20,13 @@
       <elm-date-picker id="invoiceDateInput"
                        class="fal-label"
                        labelPosition="top"
-                       formControlName="invoiceDate">
+                       formControlName="invoiceDate"
+                       [errorSpacing]="invoiceDateControl.valid">
       </elm-date-picker>
+      <small class="inputError"
+             *ngIf="invoiceDateControl.invalid">
+        Invoice Date is required
+      </small>
     </div>
     <div class="col-4">
       <label for="pickUpDateInput"
@@ -31,8 +36,13 @@
       <elm-date-picker id="pickUpDateInput"
                        class="fal-label"
                        labelPosition="top"
-                       formControlName="pickUpDate">
+                       formControlName="pickUpDate"
+                       [errorSpacing]="pickUpDateControl.valid">
       </elm-date-picker>
+      <small class="inputError"
+             *ngIf="pickUpDateControl.invalid">
+        Pick up Date is required
+      </small>
     </div>
     <div class="col-4">
       <label for="deliveryDateInput"
@@ -42,8 +52,13 @@
       <elm-date-picker id="deliveryDateInput"
                        class="fal-label"
                        labelPosition="top"
-                       formControlName="deliveryDate">
+                       formControlName="deliveryDate"
+                       [errorSpacing]="deliveryDateControl.valid">
       </elm-date-picker>
+      <small class="inputError"
+             *ngIf="deliveryDateControl.invalid">
+        Delivery Date is required
+      </small>
     </div>
     <div class="col-4">
       <label for="proTrackingNumberInput"
@@ -51,8 +66,13 @@
         PRO/Tracking Number
       </label>
       <elm-text-input id="proTrackingNumberInput"
-                      formControlName="proTrackingNumber">
+                      formControlName="proTrackingNumber"
+                      [errorSpacing]="proTrackingNumberControl.valid">
       </elm-text-input>
+      <small class="inputError"
+             *ngIf="proTrackingNumberControl.invalid">
+        PRO/Tracking Number is required
+      </small>
     </div>
     <div class="col-4">
       <label for="bolNumberInput"
@@ -60,8 +80,13 @@
         BOL Number
       </label>
       <elm-text-input id="bolNumberInput"
-                      formControlName="bolNumber">
+                      formControlName="bolNumber"
+                      [errorSpacing]="bolNumberControl.valid">
       </elm-text-input>
+      <small class="inputError"
+             *ngIf="bolNumberControl.invalid">
+        BOL Number is required
+      </small>
     </div>
     <div class="col-4">
       <label for="freightPaymentTermsInput"
@@ -70,8 +95,13 @@
       </label>
       <ng-select id="freightPaymentTermsInput"
                  [items]="freightPaymentTermOptions"
-                 formControlName="freightPaymentTerms">
+                 formControlName="freightPaymentTerms"
+                 [ngClass]="{'error': freightPaymentTermsControl.invalid}">
       </ng-select>
+      <small class="inputError"
+             *ngIf="freightPaymentTermsControl.invalid">
+        Freight Payment Terms is required
+      </small>
     </div>
     <div class="col-4">
       <label for="carrierInput"
@@ -82,8 +112,13 @@
                  [items]="carrierOptions"
                  bindLabel="label"
                  bindValue="value"
-                 formControlName="carrier">
+                 formControlName="carrier"
+                 [ngClass]="{'error': carrierControl.invalid}">
       </ng-select>
+      <small class="inputError"
+             *ngIf="carrierControl.invalid">
+        Carrier is required
+      </small>
     </div>
     <div class="col-4">
       <label for="carrierModeInput"
@@ -94,8 +129,13 @@
                  [items]="carrierModeOptions"
                  bindLabel="label"
                  bindValue="value"
-                 formControlName="carrierMode">
+                 formControlName="carrierMode"
+                 [ngClass]="{'error': carrierModeControl.invalid}">
       </ng-select>
+      <small class="inputError"
+             *ngIf="carrierModeControl.invalid">
+        Carrier Mode is required
+      </small>
     </div>
     <div class="col-4">
       <label for="serviceLevelInput"
@@ -106,8 +146,13 @@
                  [items]="serviceLevelOptions"
                  bindLabel="label"
                  bindValue="value"
-                 formControlName="serviceLevel">
+                 formControlName="serviceLevel"
+                 [ngClass]="{'error':serviceLevelControl.invalid}">
       </ng-select>
+      <small class="inputError"
+             *ngIf="serviceLevelControl.invalid">
+        Service Level is required
+      </small>
     </div>
   </div>
   <div class="row">

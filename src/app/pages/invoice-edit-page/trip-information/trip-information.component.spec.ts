@@ -67,7 +67,7 @@ describe('TripInformationComponent', () => {
       };
       beforeEach(() => {
         asSpy(masterDataService.getCarriers).and.returnValue(of([CARRIER]));
-        component.ngAfterViewInit();
+        component.ngOnInit();
       });
       it('should have carrier option', () => {
         expect(component.carrierOptions).toEqual([{
@@ -88,7 +88,7 @@ describe('TripInformationComponent', () => {
       };
       beforeEach(() => {
         asSpy(masterDataService.getCarrierModeCodes).and.returnValue(of([CARRIER_MODE]));
-        component.ngAfterViewInit();
+        component.ngOnInit();
       });
       it('should have carrier mode option', () => {
         expect(component.carrierModeOptions).toEqual([{
@@ -107,7 +107,7 @@ describe('TripInformationComponent', () => {
       };
       beforeEach(() => {
         asSpy(masterDataService.getServiceLevels).and.returnValue(of([SERVICE_LEVEL]));
-        component.ngAfterViewInit();
+        component.ngOnInit();
       });
       it('should have carrier mode option', () => {
         expect(component.serviceLevelOptions).toEqual([{
