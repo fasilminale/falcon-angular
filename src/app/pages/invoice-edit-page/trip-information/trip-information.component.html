@@ -20,13 +20,12 @@
       <elm-date-picker id="invoiceDateInput"
                        class="fal-label"
                        labelPosition="top"
-                       formControlName="invoiceDate"
-                       [errorSpacing]="invoiceDateControl.valid">
+                       formControlName="invoiceDate">
       </elm-date-picker>
-      <small class="inputError"
-             *ngIf="invoiceDateControl.invalid">
+      <elm-input-subtext *ngIf="invoiceDateControl.invalid"
+                         [isError]="true">
         Invoice Date is required
-      </small>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="pickUpDateInput"
@@ -36,13 +35,12 @@
       <elm-date-picker id="pickUpDateInput"
                        class="fal-label"
                        labelPosition="top"
-                       formControlName="pickUpDate"
-                       [errorSpacing]="pickUpDateControl.valid">
+                       formControlName="pickUpDate">
       </elm-date-picker>
-      <small class="inputError"
-             *ngIf="pickUpDateControl.invalid">
+      <elm-input-subtext *ngIf="pickUpDateControl.invalid"
+                         [isError]="true">
         Pick up Date is required
-      </small>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="deliveryDateInput"
@@ -52,13 +50,12 @@
       <elm-date-picker id="deliveryDateInput"
                        class="fal-label"
                        labelPosition="top"
-                       formControlName="deliveryDate"
-                       [errorSpacing]="deliveryDateControl.valid">
+                       formControlName="deliveryDate">
       </elm-date-picker>
-      <small class="inputError"
-             *ngIf="deliveryDateControl.invalid">
+      <elm-input-subtext *ngIf="deliveryDateControl.invalid"
+                         [isError]="true">
         Delivery Date is required
-      </small>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="proTrackingNumberInput"
@@ -66,13 +63,12 @@
         PRO/Tracking Number
       </label>
       <elm-text-input id="proTrackingNumberInput"
-                      formControlName="proTrackingNumber"
-                      [errorSpacing]="proTrackingNumberControl.valid">
+                      formControlName="proTrackingNumber">
       </elm-text-input>
-      <small class="inputError"
-             *ngIf="proTrackingNumberControl.invalid">
+      <elm-input-subtext *ngIf="proTrackingNumberControl.invalid"
+                         [isError]="true">
         PRO/Tracking Number is required
-      </small>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="bolNumberInput"
@@ -80,13 +76,12 @@
         BOL Number
       </label>
       <elm-text-input id="bolNumberInput"
-                      formControlName="bolNumber"
-                      [errorSpacing]="bolNumberControl.valid">
+                      formControlName="bolNumber">
       </elm-text-input>
-      <small class="inputError"
-             *ngIf="bolNumberControl.invalid">
+      <elm-input-subtext *ngIf="bolNumberControl.invalid"
+                         [isError]="true">
         BOL Number is required
-      </small>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="freightPaymentTermsInput"
@@ -98,10 +93,10 @@
                  formControlName="freightPaymentTerms"
                  [ngClass]="{'error': freightPaymentTermsControl.invalid}">
       </ng-select>
-      <small class="inputError"
-             *ngIf="freightPaymentTermsControl.invalid">
+      <elm-input-subtext *ngIf="freightPaymentTermsControl.invalid"
+                         [isError]="true">
         Freight Payment Terms is required
-      </small>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="carrierInput"
@@ -115,10 +110,10 @@
                  formControlName="carrier"
                  [ngClass]="{'error': carrierControl.invalid}">
       </ng-select>
-      <small class="inputError"
-             *ngIf="carrierControl.invalid">
+      <elm-input-subtext *ngIf="carrierControl.invalid"
+                         [isError]="true">
         Carrier is required
-      </small>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="carrierModeInput"
@@ -132,10 +127,10 @@
                  formControlName="carrierMode"
                  [ngClass]="{'error': carrierModeControl.invalid}">
       </ng-select>
-      <small class="inputError"
-             *ngIf="carrierModeControl.invalid">
+      <elm-input-subtext *ngIf="carrierModeControl.invalid"
+                         [isError]="true">
         Carrier Mode is required
-      </small>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="serviceLevelInput"
@@ -149,10 +144,10 @@
                  formControlName="serviceLevel"
                  [ngClass]="{'error':serviceLevelControl.invalid}">
       </ng-select>
-      <small class="inputError"
-             *ngIf="serviceLevelControl.invalid">
+      <elm-input-subtext *ngIf="serviceLevelControl.invalid"
+                         [isError]="true">
         Service Level is required
-      </small>
+      </elm-input-subtext>
     </div>
   </div>
   <div class="row">
