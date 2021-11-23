@@ -1,7 +1,10 @@
 import {UserInfo} from '@elm/elm-styleguide-ui';
 
-export class UserInfoModel implements UserInfo {
+export interface FalUserInfo extends UserInfo {
+  permissions: string[];
+}
 
+export class UserInfoModel implements FalUserInfo {
   private mFirstName = '';
   private mLastName = '';
   private mEmail = '';
@@ -12,6 +15,7 @@ export class UserInfoModel implements UserInfo {
   get firstName(): string {
     return this.mFirstName;
   }
+
   set firstName(value: string) {
     this.mFirstName = value;
   }
@@ -19,6 +23,7 @@ export class UserInfoModel implements UserInfo {
   get lastName(): string {
     return this.mLastName;
   }
+
   set lastName(value: string) {
     this.mLastName = value;
   }
@@ -26,6 +31,7 @@ export class UserInfoModel implements UserInfo {
   get role(): string {
     return this.mRole;
   }
+
   set role(value: string) {
     this.mRole = value;
   }
@@ -33,6 +39,7 @@ export class UserInfoModel implements UserInfo {
   get email(): string {
     return this.mEmail;
   }
+
   set email(value: string) {
     this.mEmail = value;
   }
@@ -40,6 +47,7 @@ export class UserInfoModel implements UserInfo {
   get login(): string {
     return this.mLogin;
   }
+
   set login(value: string) {
     this.mLogin = value;
   }
@@ -47,6 +55,7 @@ export class UserInfoModel implements UserInfo {
   get permissions(): string[] {
     return this.mPermissions;
   }
+
   set permissions(value: string[]) {
     this.mPermissions = value;
   }

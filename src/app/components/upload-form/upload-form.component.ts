@@ -28,7 +28,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
 
   /* FIELDS */
   public externalAttachment = false;
-  public attachments: Array<Attachment> = [];
+  public attachments: Array<StagedAttachment> = [];
 
   constructor(private util: UtilService,
               private toast: ToastService) {
@@ -180,7 +180,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
   }
 }
 
-export interface Attachment {
+export interface StagedAttachment {
   file: File;
   type: string;
   uploadError: boolean;

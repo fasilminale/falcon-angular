@@ -1,0 +1,28 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-fonts";
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.cardLabel {
+  @extend .headline3;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.error {
+  margin-bottom: 24px;
+}
+
+::ng-deep .error {
+  border-color: $cardinal-red;
+}
+
+::ng-deep .form-control.error {
+  border-color: $cardinal-red;
+}
+
+.app-fal-date-input.error ::ng-deep .form-control {
+  border-color: $cardinal-red;
+}
+
+.ng-select.error ::ng-deep .ng-select-container {
+  border-color: $cardinal-red;
+}

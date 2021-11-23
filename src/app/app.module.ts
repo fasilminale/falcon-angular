@@ -46,7 +46,7 @@ import {RealAttachmentService} from './services/attachment-service';
 import {InputMaskModule} from 'racoon-mask-raw';
 import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
 import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
-import {AuthService, RealAuthService} from './services/auth-service';
+import {RealAuthService} from './services/auth-service';
 import {ErrorService} from './services/error-service';
 import {FalHttpInterceptor} from './services/fal-http-interceptor';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
@@ -64,6 +64,12 @@ import {EnvironmentService} from './services/environment-service/environment-ser
 import {MasterDataUploadErrorModalComponent} from './components/master-data-upload-error-modal/master-data-upload-error-modal.component';
 import {WindowService} from './services/window-service/window-service';
 import {RoleGuard} from './components/role-guard/role-guard';
+import { InvoiceEditPageComponent } from './pages/invoice-edit-page/invoice-edit-page.component';
+import { MilestonePanelComponent } from './components/milestone-panel/milestone-panel.component';
+import { InvoiceOverviewComponent } from './pages/invoice-edit-page/invoice-overview/invoice-overview.component';
+import { TripInformationComponent } from './pages/invoice-edit-page/trip-information/trip-information.component';
+import { CostBreakdownComponent } from './pages/invoice-edit-page/cost-breakdown/cost-breakdown.component';
+import { AllocationComponent } from './pages/invoice-edit-page/allocation/allocation.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -134,7 +140,13 @@ const oktaConfig = {
     ChipComponent,
     MasterDataPageComponent,
     MasterDataUploadModalComponent,
-    MasterDataUploadErrorModalComponent
+    MasterDataUploadErrorModalComponent,
+    InvoiceEditPageComponent,
+    MilestonePanelComponent,
+    InvoiceOverviewComponent,
+    TripInformationComponent,
+    CostBreakdownComponent,
+    AllocationComponent
   ],
   imports: [
     BrowserModule,

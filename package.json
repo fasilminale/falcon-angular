@@ -24,7 +24,7 @@
     "@angular/router": "11.0.x",
     "@types/file-saver": "^2.0.3",
     "file-saver": "^2.0.5",
-    "@elm/elm-styleguide-ui": "4.1.5",
+    "@elm/elm-styleguide-ui": "4.1.6",
     "jquery": "3.6.0",
     "karma-typescript": "5.x",
     "moment": "2.x",

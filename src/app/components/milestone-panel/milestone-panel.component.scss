@@ -1,0 +1,13 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.milestone {
+  margin: 16px;
+}
+
+.milestone-label {
+  color: $cardinal-black;
+}
+
+.milestone-sub {
+  color: $grey3;
+}

@@ -1,0 +1,182 @@
+<div [formGroup]="formGroup">
+  <div class="headline2">Trip Information</div>
+  <div class="row">
+    <div class="col-4">
+      <label for="tripIdInput"
+             class="fal-label">
+        Trip ID
+      </label>
+      <elm-text-input id="tripIdInput"
+                      formControlName="tripId">
+      </elm-text-input>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <label for="invoiceDateInput"
+             class="fal-label">
+        Invoice Date
+      </label>
+      <elm-date-picker id="invoiceDateInput"
+                       class="fal-label"
+                       labelPosition="top"
+                       formControlName="invoiceDate">
+      </elm-date-picker>
+      <elm-input-subtext *ngIf="invoiceDateControl.invalid"
+                         [isError]="true">
+        Invoice Date is required
+      </elm-input-subtext>
+    </div>
+    <div class="col-4">
+      <label for="pickUpDateInput"
+             class="fal-label">
+        Pick up Date
+      </label>
+      <elm-date-picker id="pickUpDateInput"
+                       class="fal-label"
+                       labelPosition="top"
+                       formControlName="pickUpDate">
+      </elm-date-picker>
+      <elm-input-subtext *ngIf="pickUpDateControl.invalid"
+                         [isError]="true">
+        Pick up Date is required
+      </elm-input-subtext>
+    </div>
+    <div class="col-4">
+      <label for="deliveryDateInput"
+             class="fal-label">
+        Delivery Date
+      </label>
+      <elm-date-picker id="deliveryDateInput"
+                       class="fal-label"
+                       labelPosition="top"
+                       formControlName="deliveryDate">
+      </elm-date-picker>
+      <elm-input-subtext *ngIf="deliveryDateControl.invalid"
+                         [isError]="true">
+        Delivery Date is required
+      </elm-input-subtext>
+    </div>
+    <div class="col-4">
+      <label for="proTrackingNumberInput"
+             class="fal-label">
+        PRO/Tracking Number
+      </label>
+      <elm-text-input id="proTrackingNumberInput"
+                      formControlName="proTrackingNumber">
+      </elm-text-input>
+      <elm-input-subtext *ngIf="proTrackingNumberControl.invalid"
+                         [isError]="true">
+        PRO/Tracking Number is required
+      </elm-input-subtext>
+    </div>
+    <div class="col-4">
+      <label for="bolNumberInput"
+             class="fal-label">
+        BOL Number
+      </label>
+      <elm-text-input id="bolNumberInput"
+                      formControlName="bolNumber">
+      </elm-text-input>
+      <elm-input-subtext *ngIf="bolNumberControl.invalid"
+                         [isError]="true">
+        BOL Number is required
+      </elm-input-subtext>
+    </div>
+    <div class="col-4">
+      <label for="freightPaymentTermsInput"
+             class="fal-label">
+        Freight Payment Terms
+      </label>
+      <ng-select id="freightPaymentTermsInput"
+                 [items]="freightPaymentTermOptions"
+                 formControlName="freightPaymentTerms"
+                 [ngClass]="{'error': freightPaymentTermsControl.invalid}">
+      </ng-select>
+      <elm-input-subtext *ngIf="freightPaymentTermsControl.invalid"
+                         [isError]="true">
+        Freight Payment Terms is required
+      </elm-input-subtext>
+    </div>
+    <div class="col-4">
+      <label for="carrierInput"
+             class="fal-label">
+        Carrier
+      </label>
+      <ng-select id="carrierInput"
+                 [items]="carrierOptions"
+                 bindLabel="label"
+                 bindValue="value"
+                 formControlName="carrier"
+                 [ngClass]="{'error': carrierControl.invalid}">
+      </ng-select>
+      <elm-input-subtext *ngIf="carrierControl.invalid"
+                         [isError]="true">
+        Carrier is required
+      </elm-input-subtext>
+    </div>
+    <div class="col-4">
+      <label for="carrierModeInput"
+             class="fal-label">
+        Carrier Mode
+      </label>
+      <ng-select id="carrierModeInput"
+                 [items]="carrierModeOptions"
+                 bindLabel="label"
+                 bindValue="value"
+                 formControlName="carrierMode"
+                 [ngClass]="{'error': carrierModeControl.invalid}">
+      </ng-select>
+      <elm-input-subtext *ngIf="carrierModeControl.invalid"
+                         [isError]="true">
+        Carrier Mode is required
+      </elm-input-subtext>
+    </div>
+    <div class="col-4">
+      <label for="serviceLevelInput"
+             class="fal-label">
+        Service Level
+      </label>
+      <ng-select id="serviceLevelInput"
+                 [items]="serviceLevelOptions"
+                 bindLabel="label"
+                 bindValue="value"
+                 formControlName="serviceLevel"
+                 [ngClass]="{'error':serviceLevelControl.invalid}">
+      </ng-select>
+      <elm-input-subtext *ngIf="serviceLevelControl.invalid"
+                         [isError]="true">
+        Service Level is required
+      </elm-input-subtext>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label for="originAddressCard"
+             class="cardLabel">
+        Origin Address
+      </label>
+      <elm-card id="originAddressCard">
+        Placeholder
+      </elm-card>
+    </div>
+    <div class="col">
+      <label class="cardLabel"
+             for="destinationAddressCard">
+        Destination Address
+      </label>
+      <elm-card id="destinationAddressCard">
+        Placeholder
+      </elm-card>
+    </div>
+    <div class="col">
+      <label class="cardLabel"
+             for="billToAddressCard">
+        Bill to Address
+      </label>
+      <elm-card id="billToAddressCard">
+        Placeholder
+      </elm-card>
+    </div>
+  </div>
+</div>

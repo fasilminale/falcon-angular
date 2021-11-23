@@ -19,6 +19,8 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MasterDataService} from 'src/app/services/master-data-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ToastService} from '@elm/elm-styleguide-ui';
+import {Invoice} from '../../models/invoice/invoice-model';
+import {LineItem} from '../../models/line-item/line-item-model';
 
 describe('InvoiceFormComponent', () => {
 
@@ -68,29 +70,32 @@ describe('InvoiceFormComponent', () => {
     }
   };
 
-  const invoiceResponse = {
+  const invoiceResponse: Invoice = {
     falconInvoiceNumber: 'F0000000001',
+    failedToCreate: false,
+    status: {
+      key: 'DELETED',
+      label: 'Deleted'
+    },
+    createdBy: 'Test User',
+    workType: 'Work Type',
+    externalInvoiceNumber: 'ExtInv1',
+    invoiceDate: new Date().toISOString(),
+    companyCode,
+    erpType: 'TPM',
+    vendorNumber: '1234',
     amountOfInvoice: 2999.99,
-    attachments: [
-      {
-        file: {
-          name: 'test'
-        }
-      }
-    ],
-    milestones: [] as Array<any>,
+    currency: 'USD',
     lineItems: [
       {
         lineItemNetAmount: 2999.99,
         lineItemNumber: '1',
         companyCode: 'test'
-      }
+      } as LineItem
     ],
-    status: {
-      key: 'DELETED',
-      label: 'Deleted'
-    },
-    companyCode
+    milestones: [],
+    attachments: [],
+    comments: 'some comment'
   };
 
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -101,61 +106,71 @@ describe('InvoiceFormComponent', () => {
     afterClosed: of(false),
     close: null
   });
-  const submittedInvoiceResponse = {
+
+  const submittedInvoiceResponse: Invoice = {
     falconInvoiceNumber: 'F0000000002',
-    amountOfInvoice: 2999.99,
-    attachments: [
-      {
-        file: {
-          name: 'test'
-        }
-      }
-    ],
-    milestones: [
-      {
-        type: {
-          key: 'SUBMITTED',
-          label: 'Submitted for Approval'
-        },
-        user: 'Falcon System'
-      }
-    ],
-    lineItems: [
-      {
-        lineItemNetAmount: 2999.99
-      }
-    ],
+    failedToCreate: false,
     status: {
       key: 'SUBMITTED',
       label: 'Submitted'
-    }
-  };
-
-  const createdInvoiceResponse = {
-    falconInvoiceNumber: 'F0000000002',
+    },
+    createdBy: 'Test User',
+    workType: 'Work Type',
+    externalInvoiceNumber: 'ExtInv1',
+    invoiceDate: new Date().toISOString(),
+    companyCode,
+    erpType: 'TPM',
+    vendorNumber: '1234',
     amountOfInvoice: 2999.99,
-    attachments: [
-      {
-        file: {
-          name: 'test'
-        }
-      }
-    ],
-    milestones: [
-      {
-        status: 'CREATED',
-        user: 'Falcon System'
-      }
-    ],
+    currency: 'USD',
     lineItems: [
       {
         lineItemNetAmount: 2999.99
-      }
+      } as LineItem
     ],
+    milestones: [{
+      timestamp: new Date().toISOString(),
+      type: {
+        key: 'SUBMITTED',
+        label: 'Submitted for Approval'
+      },
+      user: 'Falcon System'
+    }],
+    attachments: [],
+    comments: 'some comment'
+  };
+
+  const createdInvoiceResponse: Invoice = {
+    falconInvoiceNumber: 'F0000000002',
+    failedToCreate: false,
     status: {
       key: 'CREATED',
-      label: 'Invoice Created'
-    }
+      label: 'Created'
+    },
+    createdBy: 'Test User',
+    workType: 'Work Type',
+    externalInvoiceNumber: 'ExtInv1',
+    invoiceDate: new Date().toISOString(),
+    companyCode,
+    erpType: 'TPM',
+    vendorNumber: '1234',
+    amountOfInvoice: 2999.99,
+    currency: 'USD',
+    lineItems: [
+      {
+        lineItemNetAmount: 2999.99
+      } as LineItem
+    ],
+    milestones: [{
+      timestamp: new Date().toISOString(),
+      type: {
+        key: 'CREATED',
+        label: 'Invoice Created'
+      },
+      user: 'Falcon System'
+    }],
+    attachments: [],
+    comments: 'some comment'
   };
 
   const template: TemplateToSave = {

@@ -125,18 +125,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   }
 
   get commentLabelPrefix(): string {
-    return this.getCommentLabelPrefix(this.latestMilestone);
-  }
-
-  public getCommentLabelPrefix(milestone: Milestone): string {
-    const type = milestone?.type;
-    if (type?.key && type.key === 'SUBMITTED') {
-      return 'Creator';
-    }
-    if (type?.key && type.key === 'REJECTED') {
-      return 'Rejection';
-    }
-    return 'General';
+    return this.util.getCommentLabelPrefix(this.latestMilestone);
   }
 
   /* METHODS */

@@ -14,6 +14,7 @@ import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {UtilService} from '../../services/util-service';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -47,7 +48,8 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
                      private dialog: MatDialog,
                      private snackBar: MatSnackBar,
                      private timeService: TimeService,
-                     public userService: UserService) {
+                     public userService: UserService,
+                     public util: UtilService) {
   }
 
   public ngOnInit(): void {
