@@ -175,39 +175,6 @@ describe('InvoiceEditPageComponent', () => {
     getUserInfo$.next(testUser);
   });
 
-  it('#clickSaveAsTemplateButton has not been implemented', done => {
-    // Setup
-    const errorModal$ = new Subject<boolean>();
-    asSpy(utilService.openErrorModal).and.returnValue(errorModal$.asObservable());
-    component.clickSaveAsTemplateButton();
-    // Assertions
-    errorModal$.subscribe(() => {
-      expect(utilService.openErrorModal).toHaveBeenCalledWith({
-        title: 'Save As Template',
-        innerHtmlMessage: 'Not Yet Implemented On This Page'
-      });
-      done();
-    });
-    // Run Test
-    errorModal$.next(false);
-  });
-
-  it('#clickDeleteButton has not been implemented', done => {
-    // Setup
-    const errorModal$ = new Subject<boolean>();
-    asSpy(utilService.openErrorModal).and.returnValue(errorModal$.asObservable());
-    component.clickDeleteButton();
-    // Assertions
-    errorModal$.subscribe(() => {
-      expect(utilService.openErrorModal).toHaveBeenCalledWith({
-        title: 'Delete Invoice',
-        innerHtmlMessage: 'Not Yet Implemented On This Page'
-      });
-      done();
-    });
-    // Run Test
-    errorModal$.next(false);
-  });
 
   it('#clickToggleEditMode should toggle isEditMode$', () => {
     const initialValue = component.isEditMode$.value;
@@ -219,6 +186,42 @@ describe('InvoiceEditPageComponent', () => {
     const initialValue = component.isMilestoneTabOpen;
     component.clickToggleMilestoneTab();
     expect(component.isMilestoneTabOpen).toEqual(!initialValue);
+  });
+
+  describe('Not Implemented Button:', () => {
+    const createHasNotBeenImplementedTest = (title: string, fnToTest: () => unknown) => {
+      return (done: DoneFn) => {
+        // Setup
+        const errorModal$ = new Subject<boolean>();
+        asSpy(utilService.openErrorModal).and.returnValue(errorModal$.asObservable());
+        fnToTest();
+        // Assertions
+        errorModal$.subscribe(() => {
+          expect(utilService.openErrorModal).toHaveBeenCalledWith({
+            title,
+            innerHtmlMessage: 'Not Yet Implemented On This Page'
+          });
+          done();
+        });
+        // Run Test
+        errorModal$.next(false);
+      };
+    };
+    it('#clickSaveAsTemplateButton', createHasNotBeenImplementedTest(
+      'Save As Template', () => component.clickSaveAsTemplateButton()
+    ));
+    it('#clickDeleteButton', createHasNotBeenImplementedTest(
+      'Delete Invoice', () => component.clickDeleteButton()
+    ));
+    it('#clickCancelButton', createHasNotBeenImplementedTest(
+      'Cancel Editing', () => component.clickCancelButton()
+    ));
+    it('#clickSaveButton', createHasNotBeenImplementedTest(
+      'Save Invoice', () => component.clickSaveButton()
+    ));
+    it('#clickSubmitForApprovalButton', createHasNotBeenImplementedTest(
+      'Submit For Approval', () => component.clickSubmitForApprovalButton()
+    ));
   });
 
 });

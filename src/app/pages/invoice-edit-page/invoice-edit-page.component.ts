@@ -105,7 +105,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickSubmitForApprovalButton(): void {
-    this.showNotYetImplementedModal('Submit for Approval');
+    this.showNotYetImplementedModal('Submit For Approval');
   }
 
   private showNotYetImplementedModal(title: string): void {
