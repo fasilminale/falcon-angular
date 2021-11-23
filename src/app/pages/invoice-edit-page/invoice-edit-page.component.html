@@ -7,7 +7,7 @@
   </div>
   <div class="d-flex justify-content-end header-button">
     <div class="col-12 d-flex justify-content-end">
-      <elm-button id="cancel-button"
+      <elm-button id="save-as-template-button"
                   buttonType="button"
                   buttonStyle="text"
                   class="flex-shrink-1"
@@ -79,6 +79,43 @@
         <!-- Allocation -->
         <app-allocation>
         </app-allocation>
+        <hr/>
+
+        <!-- FORM FOOTER -->
+        <div id="form-footer"
+             class="d-flex justify-content-between">
+
+          <!-- CANCEL -->
+          <elm-button id="cancel-button"
+                      buttonType="button"
+                      buttonStyle="text"
+                      class="flex-shrink-1"
+                      (buttonClick)="clickCancelButton()">
+            <u>Cancel</u>
+          </elm-button>
+
+          <div class="flex-shrink-1">
+            <!-- SAVE -->
+            <elm-button id="save-button"
+                        buttonType="button"
+                        buttonStyle="secondary"
+                        class="fake-form-control"
+                        [isDisabled]="!isEditMode$.value || invoiceFormGroup.invalid"
+                        (buttonClick)="clickSaveButton()">
+              Save
+            </elm-button>
+
+            <!-- SUBMIT FOR APPROVAL -->
+            <elm-button id="submit-for-approval-button"
+                        buttonType="button"
+                        buttonStyle="primary"
+                        class="fake-form-control"
+                        [isDisabled]="!isEditMode$.value || invoiceFormGroup.invalid"
+                        (buttonClick)="clickSubmitForApprovalButton()">
+              Submit for Approval
+            </elm-button>
+          </div>
+        </div>
 
       </form>
     </mat-sidenav-content>
