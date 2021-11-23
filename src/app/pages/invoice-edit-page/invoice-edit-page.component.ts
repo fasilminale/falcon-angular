@@ -96,6 +96,18 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
+  clickCancelButton(): void {
+    this.showNotYetImplementedModal('Cancel Editing');
+  }
+
+  clickSaveButton(): void {
+    this.showNotYetImplementedModal('Save Invoice');
+  }
+
+  clickSubmitForApprovalButton(): void {
+    this.showNotYetImplementedModal('Submit for Approval');
+  }
+
   private showNotYetImplementedModal(title: string): void {
     this.subscriptions.manage(this.util.openErrorModal({
       title, innerHtmlMessage: 'Not Yet Implemented On This Page'
