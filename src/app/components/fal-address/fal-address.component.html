@@ -1,0 +1,106 @@
+
+ <div class="row p-3" [formGroup]="formGroup">
+    <div *ngIf="showShippingItemField" class="col-md-12">
+      <label for="shippingPoint"
+             class="shippingPoint">
+        Shipping Point(Optional)
+      </label>
+      <ng-select id="shippingPoint"
+                 [items]="shippingPointItems"
+                 formControlName="shippingPoint"
+                >
+      </ng-select>
+    </div>
+    <div class="col-md-12 pt-3">
+        <label for="country"
+               class="country">
+          Country
+        </label>
+        <elm-text-input id="country"
+                        formControlName="country">
+        </elm-text-input>
+      </div>
+      <div class="col-md-12">
+        <label for="name"
+               class="name">
+          Name
+        </label>
+        <elm-text-input id="name"
+                        formControlName="name">
+        </elm-text-input>
+      </div>
+
+      <div class="col-md-12">
+        <label for="streetAddress"
+               class="streetAddress">
+            Street Address
+        </label>
+        <elm-text-input id="streetAddress"
+                        formControlName="streetAddress">
+        </elm-text-input>
+      </div>
+      <div class="col-md-12">
+        <label for="streetAddress2"
+               class="streetAddress2">
+            Street Address 2
+        </label>
+        <elm-text-input id="streetAddress2"
+                        formControlName="streetAddress2">
+        </elm-text-input>
+      </div>
+
+      <div class="col">
+        <label for="city"
+               class="city">
+            City
+        </label>
+        <elm-text-input id="city"
+                        formControlName="city">
+        </elm-text-input>
+      </div>
+      <div class="col">
+        <label for="state"
+               class="state">
+            State/Province
+        </label>
+        <elm-text-input id="state"
+                        formControlName="state">
+        </elm-text-input>
+      </div>
+
+      <div class="col">
+        <label for="zipCode"
+               class="zipCode">
+            Zip Code
+        </label>
+        <elm-text-input id="zipCode"
+                        formControlName="zipCode">
+        </elm-text-input>
+        <elm-input-subtext *ngIf="formGroup.get('zipCode')?.invalid"
+                         [isError]="true">
+        Zip code must be of 5 length
+      </elm-input-subtext>
+      </div>
+
+      <div *ngIf="showPickupDate" class="col-md-12">
+        <label for="pickUpDateInput"
+             class="fal-label">
+        Pick up Date
+      </label>
+      <elm-date-picker id="pickUpDateInput"
+                       class="fal-label"
+                       labelPosition="top"
+                       formControlName="pickUpDate">
+      </elm-date-picker>
+      <elm-input-subtext *ngIf="formGroup.get('pickUpDate')?.invalid"
+                         [isError]="true">
+        Pick up Date is required
+      </elm-input-subtext>
+
+      </div>
+
+      
+
+
+
+</div>

@@ -157,7 +157,12 @@
         Origin Address
       </label>
       <elm-card id="originAddressCard">
-        Placeholder
+        <app-fal-address
+        [showPickupDate]="true"
+         [formGroup]="originAddressFormGroup"
+         [isEditMode$]="isEditMode$.asObservable()">
+
+        </app-fal-address> 
       </elm-card>
     </div>
     <div class="col">
@@ -166,7 +171,11 @@
         Destination Address
       </label>
       <elm-card id="destinationAddressCard">
-        Placeholder
+        <app-fal-address
+         
+         [formGroup]="destinationAddressFormGroup"
+         [isEditMode$]="isEditMode$.asObservable()">
+         </app-fal-address>
       </elm-card>
     </div>
     <div class="col">
@@ -175,7 +184,12 @@
         Bill to Address
       </label>
       <elm-card id="billToAddressCard">
-        Placeholder
+        <app-fal-address
+        [formGroup]="billToAddressFormGroup"
+        [isEditMode$]="isEditMode$.asObservable()"
+        [showShippingItemField]="false"
+        >
+      </app-fal-address>
       </elm-card>
     </div>
   </div>

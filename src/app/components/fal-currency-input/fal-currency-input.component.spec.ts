@@ -1,6 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FalCurrencyInputComponent, Selectable} from './fal-currency-input.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import { FalAddressComponent } from '../fal-address/fal-address.component';
 
 describe('FalCurrencyInputComponent', () => {
   let component: FalCurrencyInputComponent;
@@ -17,7 +18,7 @@ describe('FalCurrencyInputComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
-      declarations: [FalCurrencyInputComponent]
+      declarations: [FalCurrencyInputComponent, FalAddressComponent]
     }).compileComponents();
     fixture = TestBed.createComponent(FalCurrencyInputComponent);
     component = fixture.componentInstance;
