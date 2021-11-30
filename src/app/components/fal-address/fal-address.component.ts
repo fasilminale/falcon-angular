@@ -1,58 +1,39 @@
-import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
-const {required, minLength} = Validators;
+const { minLength} = Validators;
 
 @Component({
   selector: 'app-fal-address',
   templateUrl: './fal-address.component.html',
   styleUrls: ['./fal-address.component.scss']
 })
-export class FalAddressComponent implements OnInit, OnChanges {
+export class FalAddressComponent implements OnInit {
 
   shippingPointItems = [
     'Home',
     'Office'
   ];
 
-  @Input() formGroup = new FormGroup({});
+  public _formGroup = new FormGroup({});
+
+  @Input() set formGroup (newFormGroup: FormGroup) {
+    newFormGroup.setControl('name', new FormControl())
+    newFormGroup.setControl('country', new FormControl())
+    newFormGroup.setControl('city', new FormControl())
+    newFormGroup.setControl('zipCode', new FormControl('', [minLength(5)]))
+    newFormGroup.setControl('state', new FormControl())
+    newFormGroup.setControl('streetAddress', new FormControl())
+    newFormGroup.setControl('streetAddress2', new FormControl())
+    newFormGroup.setControl('shippingPoint', new FormControl())
+    this._formGroup = newFormGroup;
+    this._formGroup.disable();
+  }
 
   @Input() showShippingItemField = true;
 
-  @Input() showPickupDate = false;
-
-  @Input() set isEditMode$(observable: Observable<boolean>)  {
-    this.subscriptionManager.manage(observable.subscribe(
-      isEditMode => {
-        if(isEditMode) {
-          this.formGroup.enable();
-        } else {
-          this.formGroup.disable();
-        }
-      }));
-  }
-
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { }
+  constructor() { }
 
   ngOnInit(): void {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if(changes.formGroup) {
-      this.formGroup = new FormGroup({
-        name: new FormControl(),
-        country: new FormControl(),
-        city: new FormControl(),
-        zipCode: new FormControl('', [minLength(5)]),
-        state: new FormControl(),
-        streetAddress: new FormControl(),
-        streetAddress2: new FormControl(),
-        shippingPoint: new FormControl(),
-        pickUpDate: new FormControl({}, [required])
-      });
-      this.formGroup.disable();
-    }
   }
 
 }

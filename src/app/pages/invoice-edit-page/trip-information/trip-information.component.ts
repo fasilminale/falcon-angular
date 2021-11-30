@@ -50,9 +50,10 @@ export class TripInformationComponent implements OnInit {
     this.carrierControl,
     this.carrierModeControl,
     this.serviceLevelControl,
+    this.originAddressFormGroup,
+    this.destinationAddressFormGroup,
+    this.billToAddressFormGroup
   ]);
-
-  isEditMode$ = new SubjectValue(false);
 
  
 
@@ -97,24 +98,11 @@ export class TripInformationComponent implements OnInit {
   }
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
-    // this.subscriptionManager.manage(observable.subscribe(
-    //   isEditMode => isEditMode
-    //     ? this._editableFormArray.enable() 
-    //     : this._editableFormArray.disable()
-    // ));
-   
     this.subscriptionManager.manage(observable.subscribe(
-      isEditMode => {
-        this.isEditMode$.value = isEditMode;
-        if(isEditMode) {
-          this._editableFormArray.enable();
-          this.originAddressFormGroup.enable();
-
-        } else {
-          this._editableFormArray.disable();
-          this.originAddressFormGroup.disable();
-        }
-      }));
+      isEditMode => isEditMode
+        ? this._editableFormArray.enable() 
+        : this._editableFormArray.disable()
+    ));
   }
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
