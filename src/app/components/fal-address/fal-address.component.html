@@ -1,6 +1,6 @@
 
  <div class="row p-3" [formGroup]="_formGroup">
-    <div *ngIf="showShippingItemField" class="col-md-12">
+    <div *ngIf="showShippingItemField" class="col-md-12 mb-30">
       <label for="shippingPoint"
              class="shippingPoint">
         Shipping Point(Optional)
@@ -11,7 +11,7 @@
                 >
       </ng-select>
     </div>
-    <div class="col-md-12 pt-3">
+    <div class="col-md-12">
         <label for="country"
                class="country">
           Country
@@ -78,7 +78,7 @@
         </elm-text-input>
         <elm-input-subtext *ngIf="_formGroup.get('zipCode')?.invalid"
                          [isError]="true">
-        Zip code must be of 5 length
+        Zip code must contain 5 digits
       </elm-input-subtext>
       </div>
 
