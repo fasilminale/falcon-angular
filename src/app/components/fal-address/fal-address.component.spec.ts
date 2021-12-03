@@ -26,4 +26,17 @@ describe('FalAddressComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  
+  it('should set form group', () => {
+    component.formGroup = new FormGroup({});
+    expect(component._formGroup.get('name')).toBeDefined();
+    expect(component._formGroup.get('country')).toBeDefined();
+    expect(component._formGroup.get('city')).toBeDefined();
+    expect(component._formGroup.get('zipCode')).toBeDefined();
+    expect(component._formGroup.get('state')).toBeDefined();
+    expect(component._formGroup.get('streetAddress')).toBeDefined();
+    expect(component._formGroup.get('streetAddress2')).toBeDefined();
+    expect(component._formGroup.get('shippingPoint')).toBeDefined();
+    expect(component._formGroup.get('dummyFormField')).toBeNull();
+  });
 });
