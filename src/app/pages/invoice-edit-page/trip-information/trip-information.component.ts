@@ -9,6 +9,7 @@ import {Carrier, CarrierUtils} from '../../../models/master-data-models/carrier-
 import {map} from 'rxjs/operators';
 import {CarrierModeCode, CarrierModeCodeUtils} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
+import { SubjectValue } from 'src/app/utils/subject-value';
 
 const {required} = Validators;
 
@@ -36,6 +37,9 @@ export class TripInformationComponent implements OnInit {
   public serviceLevelControl = new FormControl({}, [required]);
 
   private _formGroup = new FormGroup({});
+  public originAddressFormGroup = new FormGroup({});
+  public destinationAddressFormGroup = new FormGroup({});
+  public billToAddressFormGroup = new FormGroup({});
   private _editableFormArray = new FormArray([
     this.invoiceDateControl,
     this.pickUpDateControl,
@@ -45,8 +49,13 @@ export class TripInformationComponent implements OnInit {
     this.freightPaymentTermsControl,
     this.carrierControl,
     this.carrierModeControl,
-    this.serviceLevelControl
+    this.serviceLevelControl,
+    this.originAddressFormGroup,
+    this.destinationAddressFormGroup,
+    this.billToAddressFormGroup
   ]);
+
+ 
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private masterData: MasterDataService) {
@@ -81,6 +90,9 @@ export class TripInformationComponent implements OnInit {
     givenFormGroup.setControl('carrier', this.carrierControl);
     givenFormGroup.setControl('carrierMode', this.carrierModeControl);
     givenFormGroup.setControl('serviceLevel', this.serviceLevelControl);
+    givenFormGroup.setControl('originAddress', this.originAddressFormGroup);
+    givenFormGroup.setControl('destinationAddress', this.destinationAddressFormGroup);
+    givenFormGroup.setControl('billToAddress', this.billToAddressFormGroup);
     this._formGroup = givenFormGroup;
   }
 
@@ -91,7 +103,7 @@ export class TripInformationComponent implements OnInit {
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
       isEditMode => isEditMode
-        ? this._editableFormArray.enable()
+        ? this._editableFormArray.enable() 
         : this._editableFormArray.disable()
     ));
   }

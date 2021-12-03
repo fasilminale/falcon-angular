@@ -253,15 +253,4 @@ describe('InvoiceDetailPageComponent', () => {
     });
   });
 
-  it('should not display the edit button', () => {
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(invoiceResponse);
-    component.hasInvoiceWrite = false;
-    fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      const editBtn = fixture.debugElement.query(By.css('#edit-button')).context as ElmButtonComponent;
-      expect(editBtn).toBeNull();
-    });
-  });
-
 });

@@ -157,7 +157,11 @@
         Origin Address
       </label>
       <elm-card id="originAddressCard">
-        Placeholder
+        <app-fal-address
+         [formGroup]="originAddressFormGroup"
+         >
+
+        </app-fal-address> 
       </elm-card>
     </div>
     <div class="col">
@@ -166,7 +170,9 @@
         Destination Address
       </label>
       <elm-card id="destinationAddressCard">
-        Placeholder
+        <app-fal-address
+         [formGroup]="destinationAddressFormGroup">
+         </app-fal-address>
       </elm-card>
     </div>
     <div class="col">
@@ -175,7 +181,11 @@
         Bill to Address
       </label>
       <elm-card id="billToAddressCard">
-        Placeholder
+        <app-fal-address
+        [formGroup]="billToAddressFormGroup"
+        [showShippingItemField]="false"
+        >
+      </app-fal-address>
       </elm-card>
     </div>
   </div>

@@ -26,3 +26,7 @@
 .ng-select.error ::ng-deep .ng-select-container {
   border-color: $cardinal-red;
 }
+::ng-deep .elm-card {
+  height: 91%;
+  overflow: hidden !important;
+}

@@ -53,7 +53,7 @@ describe('TripInformationComponent', () => {
       expect(component.serviceLevelOptions).toEqual([]);
     });
     it('should have controls in formGroup', () => {
-      expect(Object.keys(component.formGroup.controls).length).toBe(10);
+      expect(Object.keys(component.formGroup.controls).length).toBe(13);
     });
   });
 
