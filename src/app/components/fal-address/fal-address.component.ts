@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-const { minLength} = Validators;
+const { minLength, required } = Validators;
 
 @Component({
   selector: 'app-fal-address',
@@ -17,14 +17,14 @@ export class FalAddressComponent implements OnInit {
   public _formGroup = new FormGroup({});
 
   @Input() set formGroup (newFormGroup: FormGroup) {
-    newFormGroup.setControl('name', new FormControl())
-    newFormGroup.setControl('country', new FormControl())
-    newFormGroup.setControl('city', new FormControl())
-    newFormGroup.setControl('zipCode', new FormControl('', [minLength(5)]))
-    newFormGroup.setControl('state', new FormControl())
-    newFormGroup.setControl('streetAddress', new FormControl())
+    newFormGroup.setControl('name', new FormControl('', [required]))
+    newFormGroup.setControl('country', new FormControl('', [required]))
+    newFormGroup.setControl('city', new FormControl('', [required]))
+    newFormGroup.setControl('zipCode', new FormControl('', [required, minLength(5)]))
+    newFormGroup.setControl('state', new FormControl('', [required]))
+    newFormGroup.setControl('streetAddress', new FormControl('', [required]))
     newFormGroup.setControl('streetAddress2', new FormControl())
-    newFormGroup.setControl('shippingPoint', new FormControl())
+    newFormGroup.setControl('shippingPoint', new FormControl('', [required]))
     this._formGroup = newFormGroup;
     this._formGroup.disable();
   }

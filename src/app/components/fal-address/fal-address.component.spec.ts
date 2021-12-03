@@ -23,11 +23,8 @@ describe('FalAddressComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create and set form group', () => {
     expect(component).toBeTruthy();
-  });
-  
-  it('should set form group', () => {
     component.formGroup = new FormGroup({});
     expect(component._formGroup.get('name')).toBeDefined();
     expect(component._formGroup.get('country')).toBeDefined();

@@ -90,6 +90,9 @@ export class TripInformationComponent implements OnInit {
     givenFormGroup.setControl('carrier', this.carrierControl);
     givenFormGroup.setControl('carrierMode', this.carrierModeControl);
     givenFormGroup.setControl('serviceLevel', this.serviceLevelControl);
+    givenFormGroup.setControl('originAddress', this.originAddressFormGroup);
+    givenFormGroup.setControl('destinationAddress', this.destinationAddressFormGroup);
+    givenFormGroup.setControl('billToAddress', this.billToAddressFormGroup);
     this._formGroup = givenFormGroup;
   }
 

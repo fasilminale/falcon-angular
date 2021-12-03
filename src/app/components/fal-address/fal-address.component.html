@@ -10,6 +10,10 @@
                  formControlName="shippingPoint"
                 >
       </ng-select>
+      <elm-input-subtext *ngIf="_formGroup.get('shippingPoint')?.errors?.required"
+                         [isError]="true">
+        Shipping point is required
+      </elm-input-subtext>
     </div>
     <div class="col-md-12">
         <label for="country"
@@ -19,6 +23,10 @@
         <elm-text-input id="country"
                         formControlName="country">
         </elm-text-input>
+        <elm-input-subtext *ngIf="_formGroup.get('country')?.errors?.required"
+                         [isError]="true">
+        Country is required
+      </elm-input-subtext>
       </div>
       <div class="col-md-12">
         <label for="name"
@@ -28,6 +36,10 @@
         <elm-text-input id="name"
                         formControlName="name">
         </elm-text-input>
+        <elm-input-subtext *ngIf="_formGroup.get('name')?.errors?.required"
+                         [isError]="true">
+        Name is required
+      </elm-input-subtext>
       </div>
 
       <div class="col-md-12">
@@ -38,6 +50,10 @@
         <elm-text-input id="streetAddress"
                         formControlName="streetAddress">
         </elm-text-input>
+        <elm-input-subtext *ngIf="_formGroup.get('streetAddress')?.errors?.required"
+                         [isError]="true">
+        Street address is required
+      </elm-input-subtext>
       </div>
       <div class="col-md-12">
         <label for="streetAddress2"
@@ -57,6 +73,10 @@
         <elm-text-input id="city"
                         formControlName="city">
         </elm-text-input>
+        <elm-input-subtext *ngIf="_formGroup.get('city')?.errors?.required"
+                         [isError]="true">
+        City is required
+      </elm-input-subtext>
       </div>
       <div class="col">
         <label for="state"
@@ -66,6 +86,10 @@
         <elm-text-input id="state"
                         formControlName="state">
         </elm-text-input>
+        <elm-input-subtext *ngIf="_formGroup.get('state')?.errors?.required"
+                         [isError]="true">
+        State is required
+      </elm-input-subtext>
       </div>
 
       <div class="col">
