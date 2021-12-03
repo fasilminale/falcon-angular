@@ -3,7 +3,7 @@
     <div *ngIf="showShippingItemField" class="col-md-12 mb-30">
       <label for="shippingPoint"
              class="shippingPoint">
-        Shipping Point(Optional)
+        Shipping Point(optional)
       </label>
       <ng-select id="shippingPoint"
                  [items]="shippingPointItems"
@@ -58,7 +58,7 @@
       <div class="col-md-12">
         <label for="streetAddress2"
                class="streetAddress2">
-            Street Address 2
+            Street Address 2(optional)
         </label>
         <elm-text-input id="streetAddress2"
                         formControlName="streetAddress2">
@@ -95,7 +95,7 @@
       <div class="col">
         <label for="zipCode"
                class="zipCode">
-            Zip Code
+            Zip/Postal Code
         </label>
         <elm-text-input id="zipCode"
                         formControlName="zipCode">
