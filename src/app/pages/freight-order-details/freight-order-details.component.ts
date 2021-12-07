@@ -7,12 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FreightOrderDetailsComponent implements OnInit {
 
-
-
   freightOrders: any[] = [];
   freightOrderTitle = '';
   constructor() { 
-  
   }
 
   ngOnInit(): void {
