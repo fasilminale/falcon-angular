@@ -239,18 +239,4 @@ describe('InvoiceDetailPageComponent', () => {
     });
   });
 
-  it('should display the edit button', async () => {
-    component.hasInvoiceWrite = true;
-    component.isDeletedInvoice = false;
-    component.isSubmittedInvoice = false;
-    component.readOnly = false;
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(invoiceResponse);
-    fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      const editBtn = fixture.debugElement.query(By.css('#edit-button')).context as ElmButtonComponent;
-      expect(editBtn).not.toBeNull();
-    });
-  });
-
 });
