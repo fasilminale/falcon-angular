@@ -71,6 +71,7 @@ import { TripInformationComponent } from './pages/invoice-edit-page/trip-informa
 import { CostBreakdownComponent } from './pages/invoice-edit-page/cost-breakdown/cost-breakdown.component';
 import { AllocationComponent } from './pages/invoice-edit-page/allocation/allocation.component';
 import { FalAddressComponent } from './components/fal-address/fal-address.component';
+import { FreightOrderDetailsComponent } from './pages/freight-order-details/freight-order-details.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -148,7 +149,8 @@ const oktaConfig = {
     TripInformationComponent,
     CostBreakdownComponent,
     AllocationComponent,
-    FalAddressComponent
+    FalAddressComponent,
+    FreightOrderDetailsComponent
   ],
   imports: [
     BrowserModule,

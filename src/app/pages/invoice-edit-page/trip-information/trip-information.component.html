@@ -189,4 +189,22 @@
       </elm-card>
     </div>
   </div>
+
+  <!--Freight orders section starts here-->
+  <div class="row mt-3">
+      <div class="col-md-12" (click)="toggleFreightOrderDetailsSection()">
+        <span class="accordion-header" *ngIf="!showFreightOrderSection">
+          <span class="material-icons">keyboard_arrow_down</span>
+          <span class="accordian-link-text">Show Freight Order Details</span>
+        </span>
+        <span class="accordion-header" *ngIf="showFreightOrderSection">
+          <span class="material-icons">keyboard_arrow_up</span>
+          <span class="accordian-link-text">Hide Freight Order Details</span>
+        </span>
+      </div>
+
+      <div id="freightOrderSectionDiv" *ngIf="showFreightOrderSection" class="col-md-12 mt-3">
+          <app-freight-order-details></app-freight-order-details>
+      </div>
+  </div>
 </div>

@@ -30,3 +30,19 @@
   height: 91%;
   overflow: hidden !important;
 }
+
+#freightOrderSectionDiv {
+  height: 300px;
+}
+
+.accordion-header {
+  display: flex;
+  color: $elm-blue-dark;
+
+  .accordian-link-text {
+    text-transform: uppercase;
+    text-decoration: underline;
+    cursor: pointer;
+    
+  }
+}

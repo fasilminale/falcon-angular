@@ -54,6 +54,8 @@ export class TripInformationComponent implements OnInit {
     this.destinationAddressFormGroup,
     this.billToAddressFormGroup
   ]);
+  
+  public showFreightOrderSection = false;
 
  
 
@@ -121,6 +123,10 @@ export class TripInformationComponent implements OnInit {
       this.carrierModeControl.setValue(t.carrierMode ?? undefined);
       this.serviceLevelControl.setValue(t.serviceLevel ?? undefined);
     }));
+  }
+
+  toggleFreightOrderDetailsSection() {
+    this.showFreightOrderSection = !this.showFreightOrderSection; 
   }
 
 }
