@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { InvoiceService } from 'src/app/services/invoice-service';
 
 @Component({
   selector: 'app-freight-order-details',
@@ -7,12 +8,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FreightOrderDetailsComponent implements OnInit {
 
+  displayedColumns: string[] = ['freightOrderNumber', 'tmsLoadId', 'warehouse', 'grossWeight', 'volume', 'pallets', 'actions'];
+
+
   freightOrders: any[] = [];
   freightOrderTitle = '';
-  constructor() { 
+  constructor(private invoiceService: InvoiceService) { 
+  
   }
 
   ngOnInit(): void {
-    this.freightOrderTitle = `Freight Orders in Trip (${this.freightOrders.length})`
+    this.invoiceService.getFreightOrderDetails()
+      .subscribe(freightOrders => {
+         this.freightOrders = freightOrders;
+         this.freightOrderTitle = `Freight Orders in Trip (${this.freightOrders.length})`
+      })
   }
+
+  editFreightOrder(freightOrder: any) {
+    freightOrder.isDisable = false;
+  }
+
 }

@@ -26,6 +26,15 @@ describe('FreightOrderDetailsComponent', () => {
   });
 
   it('should set freight order title', () => {
-   expect(component.freightOrderTitle).toBe('Freight Orders in Trip (0)');
+   expect(component.freightOrderTitle).toBe('Freight Orders in Trip (1)');
   });
+
+  it('edit freight orders', () => {
+    const freightOrder = {
+      isDisable: true
+    };
+    component.editFreightOrder(freightOrder);
+    expect(freightOrder.isDisable).toBe(false);
+   });
+
 });
