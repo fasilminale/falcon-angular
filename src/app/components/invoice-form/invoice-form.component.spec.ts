@@ -20,7 +20,7 @@ import {MasterDataService} from 'src/app/services/master-data-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import {Invoice} from '../../models/invoice/invoice-model';
-import {LineItem} from '../../models/line-item/line-item-model';
+import {ManualLineItem} from '../../models/line-item/line-item-model';
 
 describe('InvoiceFormComponent', () => {
 
@@ -91,7 +91,7 @@ describe('InvoiceFormComponent', () => {
         lineItemNetAmount: 2999.99,
         lineItemNumber: '1',
         companyCode: 'test'
-      } as LineItem
+      } as ManualLineItem
     ],
     milestones: [],
     attachments: [],
@@ -126,7 +126,7 @@ describe('InvoiceFormComponent', () => {
     lineItems: [
       {
         lineItemNetAmount: 2999.99
-      } as LineItem
+      } as ManualLineItem
     ],
     milestones: [{
       timestamp: new Date().toISOString(),
@@ -159,7 +159,7 @@ describe('InvoiceFormComponent', () => {
     lineItems: [
       {
         lineItemNetAmount: 2999.99
-      } as LineItem
+      } as ManualLineItem
     ],
     milestones: [{
       timestamp: new Date().toISOString(),

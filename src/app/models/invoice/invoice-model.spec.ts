@@ -5,7 +5,7 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('Invoice Model Tests', () => {
 
-  const expectedEmptyInvoice: InvoiceDataModel = {
+  const expectedEmptyInvoice = {
     status: new StatusModel(),
     statusLabel: '',
     falconInvoiceNumber: '',
@@ -79,7 +79,7 @@ describe('Invoice Model Tests', () => {
     prototypeInvoice = new InvoiceDataModel(invoice);
   });
 
-  function compareInvoice(data1: InvoiceDataModel, data2: InvoiceDataModel): void {
+  function compareInvoice(data1: InvoiceDataModel, data2: any): void {
     expect(data1.status).toEqual(data2.status);
     expect(data1.statusLabel).toEqual(data2.statusLabel);
     expect(data1.falconInvoiceNumber).toEqual(data2.falconInvoiceNumber);

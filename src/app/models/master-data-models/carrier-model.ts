@@ -15,6 +15,16 @@ export interface Carrier {
   currencyCode?: string;
 }
 
+export interface CarrierReference {
+  name: string;
+  scac: string;
+}
+
+export const EMPTY_CARRIER_REFERENCE: CarrierReference = {
+  name: '',
+  scac: ''
+};
+
 export enum TenderMethod {
   EDI_API = 'EDI_API',
   EMAIL = 'EMAIL',
@@ -23,16 +33,21 @@ export enum TenderMethod {
 
 export class CarrierUtils {
 
-  static toOptions(carriers: Array<Carrier>): Array<SelectOption<Carrier>> {
+  static toOptions(carriers: Array<CarrierReference>): Array<SelectOption<CarrierReference>> {
     return carriers.map(CarrierUtils.toOption);
   }
 
-  static toOption(carrier: Carrier): SelectOption<Carrier> {
+  static toOption(carrier: CarrierReference): SelectOption<CarrierReference> {
     return {
-      label: `${carrier.scac} (${carrier.name})`,
+      label: CarrierUtils.toDisplayLabel(carrier),
       value: carrier
     };
   }
 
+  static toDisplayLabel(carrier?: CarrierReference): string {
+    return carrier
+      ? `${carrier.scac} (${carrier.name})`
+      : '';
+  }
 }
 

@@ -5,11 +5,11 @@ import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subsc
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
-import {Carrier, CarrierUtils} from '../../../models/master-data-models/carrier-model';
+import {Carrier, CarrierReference, CarrierUtils} from '../../../models/master-data-models/carrier-model';
 import {map} from 'rxjs/operators';
-import {CarrierModeCode, CarrierModeCodeUtils} from '../../../models/master-data-models/carrier-mode-code-model';
+import {CarrierModeCode, CarrierModeCodeReference, CarrierModeCodeUtils} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
-import { SubjectValue } from 'src/app/utils/subject-value';
+import {SubjectValue} from 'src/app/utils/subject-value';
 
 const {required} = Validators;
 
@@ -21,8 +21,8 @@ const {required} = Validators;
 export class TripInformationComponent implements OnInit {
 
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
-  public carrierOptions: Array<SelectOption<Carrier>> = [];
-  public carrierModeOptions: Array<SelectOption<CarrierModeCode>> = [];
+  public carrierOptions: Array<SelectOption<CarrierReference>> = [];
+  public carrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
   public serviceLevelOptions: Array<SelectOption<ServiceLevel>> = [];
 
   public tripIdControl = new FormControl();
@@ -54,10 +54,9 @@ export class TripInformationComponent implements OnInit {
     this.destinationAddressFormGroup,
     this.billToAddressFormGroup
   ]);
-  
+
   public showFreightOrderSection = false;
 
- 
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private masterData: MasterDataService) {
@@ -105,7 +104,7 @@ export class TripInformationComponent implements OnInit {
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
       isEditMode => isEditMode
-        ? this._editableFormArray.enable() 
+        ? this._editableFormArray.enable()
         : this._editableFormArray.disable()
     ));
   }
@@ -125,8 +124,8 @@ export class TripInformationComponent implements OnInit {
     }));
   }
 
-  toggleFreightOrderDetailsSection() {
-    this.showFreightOrderSection = !this.showFreightOrderSection; 
+  toggleFreightOrderDetailsSection(): void {
+    this.showFreightOrderSection = !this.showFreightOrderSection;
   }
 
 }
