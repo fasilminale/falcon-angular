@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {LoadingService} from './services/loading-service';
 import {Router} from '@angular/router';
-import {ErrorModalData, NavbarItem} from '@elm/elm-styleguide-ui';
+import {ErrorModalData, FeedbackCollectorService, NavbarItem} from '@elm/elm-styleguide-ui';
 import {ErrorService} from './services/error-service';
 import {OktaAuthService} from '@okta/okta-angular';
 import {AUTH_SERVICE, AuthService} from './services/auth-service';
@@ -10,6 +10,7 @@ import {filter, mergeMap, repeatWhen, take, tap} from 'rxjs/operators';
 import {UserInfoModel} from './models/user-info/user-info-model';
 import {UserService} from './services/user-service';
 import {ElmUamRoles} from './utils/elm-uam-roles';
+import {environment} from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -36,7 +37,8 @@ export class AppComponent implements OnInit {
               private errorService: ErrorService,
               private oktaService: OktaAuthService,
               private util: UtilService,
-              private userService: UserService) {
+              private userService: UserService,
+              public feedbackService: FeedbackCollectorService) {
     this.loadingService.loadingSubject.subscribe((args) => {
       this.dataLoading = args[0] as boolean;
       this.label = args[1] as string;
@@ -44,22 +46,22 @@ export class AppComponent implements OnInit {
     this.initializeErrors();
   }
 
-  public async ngOnInit(): Promise<void> {
+  public ngOnInit(): void {
     this.dataLoading = false;
-
     const authReq = this.oktaService.$authenticationState;
     authReq.pipe(
       repeatWhen(isAuthenticated => isAuthenticated),
       filter(data => data),
       take(1),
-      mergeMap( () => {
+      mergeMap(() => {
         return this.userService.getUserInfo();
       }),
-      tap( userInfo => {
+      tap(userInfo => {
         this.userInfo = new UserInfoModel(userInfo);
         this.buildNavBar();
       })
     ).subscribe();
+    this.feedbackService.initLoad(environment.jiraFeedbackCollectorId).then();
   }
 
   public initializeErrors(): void {
