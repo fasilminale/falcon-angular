@@ -11,7 +11,7 @@
                 [user]="authService.getUserInfo()"
                 [showLogout]="true"
                 (logoutClickEvent)="logout()"
-                [showFeedback]="true"
+                [showFeedback]="feedbackService.allScriptsLoaded"
                 [showNotifications]="false"
                 (actionClickEvent)="navItemClicked($event)"
     >
