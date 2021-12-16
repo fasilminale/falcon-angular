@@ -46,23 +46,22 @@ export class AppComponent implements OnInit {
     this.initializeErrors();
   }
 
-  public async ngOnInit(): Promise<void> {
+  public ngOnInit(): void {
     this.dataLoading = false;
-
     const authReq = this.oktaService.$authenticationState;
     authReq.pipe(
       repeatWhen(isAuthenticated => isAuthenticated),
       filter(data => data),
       take(1),
-      mergeMap( () => {
+      mergeMap(() => {
         return this.userService.getUserInfo();
       }),
-      tap( userInfo => {
+      tap(userInfo => {
         this.userInfo = new UserInfoModel(userInfo);
         this.buildNavBar();
       })
     ).subscribe();
-    await this.feedbackService.initLoad(environment.jiraFeedbackCollectorId);
+    this.feedbackService.initLoad(environment.jiraFeedbackCollectorId).then();
   }
 
   public initializeErrors(): void {
