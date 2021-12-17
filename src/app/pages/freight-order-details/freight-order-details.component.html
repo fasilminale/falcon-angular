@@ -44,18 +44,17 @@
       <ng-container matColumnDef="actions">
         <th id="actions" class="px-3" mat-header-cell *matHeaderCellDef> Action </th>
         <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <span *ngIf="freightOrder.isDisable ; else submit" role="button" class="disabled material-icons material-icons-outlined"
-            (click)="editFreightOrder(freightOrder)">
+          <span *ngIf="freightOrder.isDisable ; else submit" role="button" class="disabled material-icons material-icons-outlined">
             edit
           </span>
           <span *ngIf="freightOrder.isDisable" role="button" class="disabled material-icons material-icons-outlined">
             delete
           </span>
           <ng-template #submit>
-            <span role="button" class="material-icons material-icons-outlined" (click)="updateFreightOrder(freightOrder)">
+            <span role="button" class="material-icons material-icons-outlined">
               done
             </span>
-            <span role="button" class="material-icons material-icons-outlined" (click)="cancelFreightOrder(freightOrder)">
+            <span role="button" class="material-icons material-icons-outlined">
               block
             </span>
           </ng-template>
