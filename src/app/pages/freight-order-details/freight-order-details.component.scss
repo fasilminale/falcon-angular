@@ -1,0 +1,10 @@
+.mat-header-cell {
+    font-size: inherit;
+    color: inherit;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: no-drop;
+    pointer-events: none;
+}

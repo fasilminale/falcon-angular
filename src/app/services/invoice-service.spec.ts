@@ -77,4 +77,10 @@ describe('InvoiceService', () => {
     expect(web.httpPut).toHaveBeenCalled();
   });
 
+  it('should get invoice details', async () => {
+    const freightOrders = await invoiceService.getFreightOrderDetails().toPromise();
+    expect(freightOrders.length).toBe(1);
+
+  });
+
 });
