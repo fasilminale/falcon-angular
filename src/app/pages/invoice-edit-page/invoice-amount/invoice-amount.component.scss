@@ -1,0 +1,47 @@
+
+::ng-deep #currency-input {
+    div[role="radiogroup"].form-control {
+      border: none;
+      padding: 0px;
+      & > div {
+        display: flex;
+      }
+    }
+  }
+
+  .text-right{
+    text-align: right;
+  }
+
+  .text-bold {
+    font-weight: 700;
+  }
+
+  .override-stp-checkbox-div{
+    flex-grow: 0.5;
+    align-self: center;
+    margin-top: 35px;
+  }
+
+  .payment-terms-div{
+    flex-grow: 4
+  }
+
+  .cost-breakdown-item-header {
+    background-color: #f6f6f6;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+ .cost-breakdown-item-header > div{
+    font-size: 14px;
+ }
+
+ .cost-breakdown-item-row{
+   margin-bottom: 15px;
+ }
+
+ .cost-breakdown-total-div {
+
+    background-color:#f6f6f6;
+
+ }

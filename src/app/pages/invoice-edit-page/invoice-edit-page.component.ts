@@ -30,6 +30,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public showMilestoneToggleButton = true;
   public invoiceFormGroup: FormGroup;
   public tripInformationFormGroup: FormGroup;
+  public invoiceAmountFormGroup: FormGroup;
 
   public isEditMode$ = new SubjectValue(false);
   public loadTripInformation$ = new Subject<TripInformation>();
@@ -40,8 +41,10 @@ export class InvoiceEditPageComponent implements OnInit {
               private invoiceService: InvoiceService,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
     this.tripInformationFormGroup = new FormGroup({});
+    this.invoiceAmountFormGroup = new FormGroup({});
     this.invoiceFormGroup = new FormGroup({
-      tripInformation: this.tripInformationFormGroup
+      tripInformation: this.tripInformationFormGroup,
+      invoiceAmount: this.invoiceAmountFormGroup
     });
   }
 

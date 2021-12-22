@@ -71,6 +71,13 @@
         </app-trip-information>
         <hr/>
 
+        <app-invoice-amount
+         [formGroup]="invoiceAmountFormGroup"
+         [updateIsEditMode$]="isEditMode$.asObservable()"
+         >
+        </app-invoice-amount>
+        <hr>
+
         <!-- Cost Breakdown -->
         <app-cost-breakdown>
         </app-cost-breakdown>

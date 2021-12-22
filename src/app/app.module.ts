@@ -72,6 +72,7 @@ import { CostBreakdownComponent } from './pages/invoice-edit-page/cost-breakdown
 import { AllocationComponent } from './pages/invoice-edit-page/allocation/allocation.component';
 import { FalAddressComponent } from './components/fal-address/fal-address.component';
 import { FreightOrderDetailsComponent } from './pages/freight-order-details/freight-order-details.component';
+import { InvoiceAmountComponent } from './pages/invoice-edit-page/invoice-amount/invoice-amount.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -151,6 +152,7 @@ const oktaConfig = {
     AllocationComponent,
     FalAddressComponent,
     FreightOrderDetailsComponent,
+    InvoiceAmountComponent
   ],
   imports: [
     BrowserModule,
