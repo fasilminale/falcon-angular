@@ -9,14 +9,10 @@ import {of} from 'rxjs';
 import {FalconTestingModule} from './testing/falcon-testing.module';
 import {UserService} from './services/user-service';
 import {UserInfoModel} from './models/user-info/user-info-model';
+import {FeedbackCollectorService} from '@elm/elm-styleguide-ui';
 
 describe('AppComponent', () => {
-  let router: Router;
-  let component: AppComponent;
-  let oktaService: OktaAuthService;
-  let errorService: ErrorService;
-  let util: UtilService;
-  let userService: UserService;
+
 
   const writeUser = new UserInfoModel({
     uid: '',
@@ -36,11 +32,29 @@ describe('AppComponent', () => {
     permissions: ['falRestrictInvoiceWrite']
   });
 
+  const MOCK_FEEDBACK_COLLECTOR_SERVICE = {
+    initLoad: () => of(true).toPromise(),
+    allScriptsLoaded: true,
+  };
+
+  let router: Router;
+  let component: AppComponent;
+  let oktaService: OktaAuthService;
+  let errorService: ErrorService;
+  let util: UtilService;
+  let userService: UserService;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         FalconTestingModule,
         AppModule,
+      ],
+      providers: [
+        {
+          provide: FeedbackCollectorService,
+          useValue: MOCK_FEEDBACK_COLLECTOR_SERVICE
+        }
       ],
       declarations: [
         AppComponent

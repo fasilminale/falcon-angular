@@ -24,17 +24,17 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 export class InvoiceListPageComponent implements OnInit {
   public userInfo: UserInfoModel | undefined;
   paginationModel: PaginationModel = new PaginationModel();
-  headers: Array<ElmDataTableHeader> =   [
+  headers: Array<ElmDataTableHeader> = [
     {header: 'statusLabel', label: 'Status'},
-    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end'},
-    {header: 'externalInvoiceNumber', label: 'External Invoice Number', alignment: 'end'},
-    {header: 'amountOfInvoice', label: 'Invoice Amount', alignment: 'end'},
-    {header: 'currency', label: 'Currency'},
-    {header: 'vendorNumber', label: 'Vendor Number', alignment: 'end'},
+    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number'},
+    {header: 'invoiceReference', label: 'Invoice Reference'},
+    {header: 'carrierDisplay', label: 'Carrier'},
+    {header: 'carrierModeDisplay', label: 'Carrier Mode'},
+    {header: 'businessUnit', label: 'Business Unit'},
     {header: 'invoiceDate', label: 'Invoice Date'},
-    {header: 'createdBy', label: 'Created By'},
-    {header: 'companyCode', label: 'Company Code', alignment: 'end'},
-    {header: 'standardPaymentTermsOverride', label: 'Override'}
+    {header: 'paymentDue', label: 'Payment Due'},
+    {header: 'amountOfInvoice', label: 'Invoice Net Amount', alignment: 'end'},
+    {header: 'currency', label: 'Currency'},
   ];
   invoices: Array<InvoiceDataModel> = [];
   sortField = '';
@@ -69,7 +69,7 @@ export class InvoiceListPageComponent implements OnInit {
     });
     this.userService.getUserInfo().subscribe(userInfo => {
       this.userInfo = new UserInfoModel(userInfo);
-      this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);;
+      this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
     });
   }
 
@@ -140,7 +140,7 @@ export class InvoiceListPageComponent implements OnInit {
       position: {
         right: '24px'
       }
-    }).afterClosed().subscribe( response => {
+    }).afterClosed().subscribe(response => {
       if (response) {
         this.resetTable();
       }
@@ -157,6 +157,6 @@ export class InvoiceListPageComponent implements OnInit {
 
   routeToExtractPage(): void {
     this.router.navigate(['/invoice-extraction']);
-  };
+  }
 
 }

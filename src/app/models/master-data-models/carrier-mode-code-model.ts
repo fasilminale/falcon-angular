@@ -7,6 +7,16 @@ export interface CarrierModeCode {
   tripType: TripType;
 }
 
+export interface CarrierModeCodeReference {
+  reportKeyMode: string;
+  reportModeDescription: string;
+}
+
+export const EMPTY_CARRIER_MODE_CODE_REFERENCE: CarrierModeCodeReference = {
+  reportKeyMode: '',
+  reportModeDescription: ''
+};
+
 export enum TripType {
   LOAD = 'LOAD',
   ROUTE = 'ROUTE',
@@ -16,15 +26,21 @@ export enum TripType {
 
 export class CarrierModeCodeUtils {
 
-  static toOptions(carrierModeCodes: Array<CarrierModeCode>): Array<SelectOption<CarrierModeCode>> {
+  static toOptions(carrierModeCodes: Array<CarrierModeCodeReference>): Array<SelectOption<CarrierModeCodeReference>> {
     return carrierModeCodes.map(CarrierModeCodeUtils.toOption);
   }
 
-  static toOption(carrierModeCode: CarrierModeCode): SelectOption<CarrierModeCode> {
+  static toOption(carrierModeCode: CarrierModeCodeReference): SelectOption<CarrierModeCodeReference> {
     return {
-      label: `${carrierModeCode.reportModeDescription} (${carrierModeCode.reportKeyMode})`,
+      label: CarrierModeCodeUtils.toDisplayLabel(carrierModeCode),
       value: carrierModeCode
     };
+  }
+
+  static toDisplayLabel(carrierModeCode?: CarrierModeCodeReference): string {
+    return carrierModeCode
+      ? `${carrierModeCode.reportModeDescription} (${carrierModeCode.reportKeyMode})`
+      : '';
   }
 
 }

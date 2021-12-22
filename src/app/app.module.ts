@@ -8,7 +8,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {
   ButtonModule,
   ContainersModule,
-  DataTableModule,
+  DataTableModule, FeedbackCollectorService,
   InputsModule,
   ModalsModule,
   NavigationModule,
@@ -179,7 +179,7 @@ const oktaConfig = {
     InputMaskModule,
     InputsModule,
     ModalsModule,
-    ServicesModule
+    ServicesModule,
   ],
   providers: [
     WebServices,
@@ -204,6 +204,7 @@ const oktaConfig = {
     RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,
+    FeedbackCollectorService,
   ],
   bootstrap: [
     AppComponent

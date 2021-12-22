@@ -4,6 +4,7 @@ import {Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
 import {Invoice} from '../models/invoice/invoice-model';
+import { FreightOrder } from '../models/invoice/freight-model';
 
 @Injectable()
 export class InvoiceService {
@@ -74,6 +75,18 @@ export class InvoiceService {
 
   public extract(invoiceNumber: string): Observable<any> {
     return this.web.httpPut(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}/extract`);
+  }
+
+  public getFreightOrderDetails(): Observable<FreightOrder[]> {
+    return of([{
+      freightOrderNumber: '123456789',
+      tmsLoadId: '000000000012',
+      warehouse: 'Test warehouse',
+      grossWeight: 0,
+      volume: 0,
+      pallets: 0,
+      isDisable: true
+    }]);
   }
 
 }
