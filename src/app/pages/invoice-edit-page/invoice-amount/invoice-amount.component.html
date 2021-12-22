@@ -1,0 +1,162 @@
+<div [formGroup]="_formGroup">
+  <!--Invoice amount div starts-->
+  <span class="headline2">Invoice amount</span>
+  <div class="invoice-amount-div row px-1">
+    <!-- INVOICE AMOUNT -->
+    <div class="col-2">
+      <label for="invoice-amount-input" class="fal-label">
+        Invoice Net Amount
+      </label>
+      <app-fal-currency-input id="invoice-amount-input"
+                              formControlName="amountOfInvoice"
+                              [isDisabled]="readOnlyForm"
+                             >
+      </app-fal-currency-input>
+    </div>
+
+    <!-- CURRENCY -->
+    <div class="col-2 px-4 currency-div">
+      <label for="currency-input" class="fal-label">
+        Currency
+      </label>
+      <app-fal-radio-input id="currency-input"
+                           formControlName="currency"
+                           [options]="currencyOptions"
+                           [isDisabled]="readOnlyForm"
+                           >
+      </app-fal-radio-input>
+    </div>
+
+    <div class="col-2">
+        <label for="mileage" class="fal-label">
+            Mileage
+        </label>
+        <input id="mileage"
+            class="form-control"
+            formControlName="mileage"
+            [attr.disabled]="readOnlyForm? '': null"
+        />
+       
+      </div>
+
+    <!-- OVERRIDE STANDARD PAYMENT TERMS -->
+    <div class="col-4 offset-md-2 d-flex" [formGroup]="overridePaymentTermsFormGroup">
+      <label for="override-stp-checkbox"
+             class="fal-label override-stp-checkbox-div">
+        <input id="override-stp-checkbox"
+               type="checkbox"
+               formControlName="isPaymentOverrideSelected"
+               [attr.disabled]="readOnlyForm? '': null"
+        />
+        Override Standard Payment Terms
+      </label>
+      <div class="payment-terms-div">
+        <label class="fal-label">Payment terms</label>
+        <ng-select id="paymentTerms"
+                   formControlName="paymentTerms"
+                   [items]="paymentTermOptions"
+                   bindLabel="display"
+                   bindValue="value"
+                   [readonly]="readOnlyForm || !overridePaymentTermsFormGroup?.get('isPaymentOverrideSelected')?.value"
+                   placeholder="Select One...">
+        </ng-select>
+      </div>
+
+    </div>
+
+  </div>
+  <!--Invoice amount div ends-->
+
+
+  
+  <!--new change starts--> <!--cost breakdown div starts-->
+  <div class="cost-breakdown-div my-3" formArrayName="costBreakdownItems">
+    <div class="col-12">Cost breakdown</div>
+  <div class="row my-3 mx-0 cost-breakdown-item-header">
+    <div class="col-3">Charge</div>
+    <div class="col-2">Rate</div>
+    <div class="col-3">Type</div>
+    <div class="col-2">Quantity</div>
+    <div class="col-2">Total</div>
+  </div>
+  <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
+  <div *ngFor="let _ of costBreakdownItemsControls; index as i"
+       class="cost-breakdown-item-row row"
+       [formGroupName]="i">
+
+    <!-- Cost breakdown item- Charge -->
+    <div class="col-3">
+      <input type="text"
+             class="form-control"
+             formControlName="charge"
+             maxlength="4"
+             [attr.disabled]="readOnlyForm ? '': null"
+      />
+    </div>
+
+
+    <!-- Cost breakdown item - Rate -->
+    <div class="col-2">
+      
+      <app-fal-currency-input formControlName="rate"
+                              [isDisabled]="readOnlyForm"
+                             >
+      </app-fal-currency-input>
+    </div>
+
+    <!-- Cost breakdown item - Type -->
+    <div class="col-3">
+      <ng-select id="paymentTerms"
+                   formControlName="type"
+                   [items]="costBreakdownTypes"
+                   bindLabel="display"
+                   bindValue="value"
+                   [readonly]="readOnlyForm"
+                   placeholder="Select One...">
+        </ng-select>
+    </div>
+
+    <!-- Cost breakdown item - Quantity -->
+    <div class="col-2">
+      <input type="text"
+             class="form-control"
+             formControlName="quantity"
+             maxlength="10"
+             [attr.disabled]="readOnlyForm ? '': null"
+      />
+    </div>
+
+    <!-- Cost breakdown item - totalAmount -->
+    <div class="col-2">
+      <app-fal-currency-input 
+      formControlName="totalAmount"
+      [isDisabled]="readOnlyForm"
+      (keyup)="updateTotalInvoiceAmount()"
+     >
+    </app-fal-currency-input>
+    </div>
+
+
+  </div>
+</ng-container>
+
+  <div class="cost-breakdown-total-div my-5 p-3 offset-md-9" *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
+    <div class="row" *ngFor="let _ of costBreakdownItemsControls">
+      <div class="row d-flex justify-content-between">
+        <span class="px-3 col-md-6 text-right">{{_.get('charge')?.value}} total:</span>
+        <span class="col-md-6 text-right">{{_.get('totalAmount')?.value | currency}}</span>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="row d-flex justify-content-between">
+      <span class="px-3 col-md-6 text-right text-bold">Invoice Net Amount:</span>
+      <span class="col-md-6 text-right text-bold">{{totalInvoiceAmount | currency}}</span>
+    </div>
+    </div>
+  
+  </div>
+
+  </div>
+  <!--new change ends-->
+
+</div>
