@@ -8,3 +8,15 @@
     cursor: no-drop;
     pointer-events: none;
 }
+
+tr.mat-row {
+    height: 54px;
+}
+
+td.mat-cell, th.mat-header-cell{
+    border-bottom-color: #dedcd5;
+}
+
+th.mat-header-cell {
+    background-color: #f6f6f6;
+}
