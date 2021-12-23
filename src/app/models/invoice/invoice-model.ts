@@ -68,6 +68,7 @@ export class InvoiceDataModel {
   billOfLadingNumber: string;
   vendorPaymentTermsOverride: string;
   paymentDue: string;
+  paymentDueDisplay: string;
   segment: string;
   businessUnit: string;
   shippingPoint: string;
@@ -147,6 +148,17 @@ export class InvoiceDataModel {
     this.billOfLadingNumber = json?.billOfLadingNumber ?? '';
     this.vendorPaymentTermsOverride = json?.vendorPaymentTermsOverride ?? '';
     this.paymentDue = date(json?.paymentDue);
+    if (this.standardPaymentTermsOverride === 'Immediately') {
+      this.paymentDueDisplay = 'IMMEDIATE';
+    } else if (this.standardPaymentTermsOverride === '14 Day') {
+      this.paymentDueDisplay = moment(this.invoiceDate)
+        .add(14, 'days')
+        .format(InvoiceDataModel.dateFormat);
+    } else {
+      this.paymentDueDisplay = moment(this.invoiceDate)
+        .add(30, 'days')
+        .format(InvoiceDataModel.dateFormat);
+    }
     this.segment = json?.segment ?? '';
     this.businessUnit = json?.businessUnit ?? '';
     this.shippingPoint = json?.shippingPoint ?? '';

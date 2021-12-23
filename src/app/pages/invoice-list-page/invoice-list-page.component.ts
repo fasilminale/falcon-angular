@@ -32,7 +32,7 @@ export class InvoiceListPageComponent implements OnInit {
     {header: 'carrierModeDisplay', label: 'Carrier Mode'},
     {header: 'businessUnit', label: 'Business Unit'},
     {header: 'invoiceDate', label: 'Invoice Date'},
-    {header: 'paymentDue', label: 'Payment Due'},
+    {header: 'paymentDueDisplay', label: 'Payment Due'},
     {header: 'amountOfInvoice', label: 'Invoice Net Amount', alignment: 'end'},
     {header: 'currency', label: 'Currency'},
   ];
@@ -86,9 +86,11 @@ export class InvoiceListPageComponent implements OnInit {
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
-      this.invoiceCountLabel = this.createdByUser ? `My Invoices (${this.paginationModel.total})` :
-        (this.searchValue || this.selectedInvoiceStatuses.length > 0) ? `Invoices (${this.paginationModel.total})` :
-          'Invoices';
+      this.invoiceCountLabel = this.createdByUser
+        ? `My Invoices (${this.paginationModel.total})`
+        : (this.searchValue || this.selectedInvoiceStatuses.length > 0)
+          ? `Invoices (${this.paginationModel.total})`
+          : 'Invoices';
       const invoiceArray: Array<InvoiceDataModel> = [];
       invoiceData.data.map((invoice: any) => {
         invoiceArray.push(new InvoiceDataModel(invoice));
