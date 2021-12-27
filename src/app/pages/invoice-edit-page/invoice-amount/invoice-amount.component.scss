@@ -34,6 +34,11 @@
   }
  .cost-breakdown-item-header > div{
     font-size: 14px;
+    font-weight: 700;
+    
+    &:last-child{
+      text-align: right;
+    }
  }
 
  .cost-breakdown-item-row{
