@@ -1,77 +1,57 @@
 <div [formGroup]="_formGroup">
-<div formArrayName="invoiceAllocations">
+  <div formArrayName="invoiceAllocations">
     <span class="headline2">Invoice allocation</span>
     <div class="col-12 my-3">Allocation breakdown</div>
-  <div class="row my-3 mx-0 invoice-allocation-header">
-    <div class="col-2">Allocation %</div>
-    <div class="col-2">Warehouse</div>
-    <div class="col-2">GL Cost Center</div>
-    <div class="col-2">GL Account</div>
-    <div class="col-2">GL Company Code</div>
-    <div class="col-2">Allocation Amount</div>
+    <div class="row my-3 mx-0 invoice-allocation-header">
+      <div class="col-2">Allocation %</div>
+      <div class="col-2">Warehouse</div>
+      <div class="col-2">GL Cost Center</div>
+      <div class="col-2">GL Account</div>
+      <div class="col-2">GL Company Code</div>
+      <div class="col-2">Allocation Amount</div>
+    </div>
+    <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0">
+      <div *ngFor="let _ of invoiceAllocationsControls; index as i" class="invoice-allocation-row row"
+        [formGroupName]="i">
+
+        <!-- Invoice allocation- allocationPercentage -->
+        <div class="col-2">
+          <input type="text" class="form-control" formControlName="allocationPercentage"
+            [attr.disabled]="readOnlyForm? '': null" />
+        </div>
+
+        <!-- Invoice allocation - warehouse -->
+        <div class="col-2">
+
+          <input type="text" class="form-control" formControlName="warehouse"
+            [attr.disabled]="readOnlyForm? '': null" />
+        </div>
+
+        <!-- Invoice allocation - glCostCenter -->
+        <div class="col-2">
+          <input type="text" class="form-control" formControlName="glCostCenter"
+            [attr.disabled]="readOnlyForm? '': null" />
+        </div>
+
+        <!-- Invoice allocation - glAccount -->
+        <div class="col-2">
+          <input type="text" class="form-control" formControlName="glAccount"
+            [attr.disabled]="readOnlyForm? '': null" />
+
+        </div>
+
+        <!-- Invoice allocation - glCompanyCode -->
+        <div class="col-2">
+          <input type="text" class="form-control" formControlName="glCompanyCode"
+            [attr.disabled]="readOnlyForm? '': null" />
+        </div>
+
+        <!-- Invoice allocation - allocationAmount -->
+        <div class="col-2 allocation-amount-div">
+          <span class="allocation-amount-text">{{_.get('allocationAmount')?.value | currency}}</span>
+        </div>
+
+      </div>
+    </ng-container>
   </div>
-  <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0">
-  <div  *ngFor="let _ of invoiceAllocationsControls; index as i"
-       class="invoice-allocation-row row"
-       [formGroupName]="i">
-
-    <!-- Invoice allocation- allocationPercentage -->
-    <div class="col-2">
-      <input type="text"
-             class="form-control"
-             formControlName="allocationPercentage"
-             [attr.disabled]="readOnlyForm? '': null"
-           
-      />
-    </div>
-
-
-    <!-- Invoice allocation - warehouse -->
-    <div class="col-2">
-      
-        <input type="text"
-            class="form-control"
-            formControlName="warehouse"
-            [attr.disabled]="readOnlyForm? '': null"
-        />
-    </div>
-
-    <!-- Invoice allocation - glCostCenter -->
-    <div class="col-2">
-        <input type="text"
-        class="form-control"
-        formControlName="glCostCenter"
-        [attr.disabled]="readOnlyForm? '': null"
-       
-    />
-    </div>
-
-    <!-- Invoice allocation - glAccount -->
-    <div class="col-2">
-        <input type="text"
-        class="form-control"
-        formControlName="glAccount"
-        [attr.disabled]="readOnlyForm? '': null"
-    />
-    
-    </div>
-
-    <!-- Invoice allocation - glCompanyCode -->
-    <div class="col-2">
-        <input type="text"
-        class="form-control"
-        formControlName="glCompanyCode"
-        [attr.disabled]="readOnlyForm? '': null"
-    />
-    </div>
-
-    <!-- Invoice allocation - allocationAmount -->
-    <div class="col-2 allocation-amount-div">
-        <span class="allocation-amount-text">{{_.get('allocationAmount')?.value | currency}}</span>
-    </div>
-
-
-  </div>
-  </ng-container>
-</div>
 </div>
