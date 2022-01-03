@@ -45,6 +45,4 @@ export class InvoiceAllocationComponent implements OnInit {
     return this._formGroup.get('invoiceAllocations') ? (this._formGroup.get('invoiceAllocations') as FormArray).controls: new FormArray([]).controls;
   }
 
-  
-
 }
