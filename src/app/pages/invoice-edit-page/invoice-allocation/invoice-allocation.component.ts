@@ -12,7 +12,7 @@ export class InvoiceAllocationComponent implements OnInit {
 
   _formArray = new FormArray([]);
   _formGroup = new FormGroup({});
-  readOnlyForm = true;
+  isEditMode = true;
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
     const formGroup = new FormGroup({});
@@ -32,7 +32,7 @@ export class InvoiceAllocationComponent implements OnInit {
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
-      isEditMode => this.readOnlyForm = !isEditMode
+      isEditMode => this.isEditMode = !isEditMode
     ));
   }
 

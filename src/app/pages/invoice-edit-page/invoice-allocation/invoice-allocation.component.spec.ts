@@ -49,14 +49,14 @@ describe('InvoiceAllocationComponent', () => {
 
     it('(edit mode = true) should enable editable forms', done => {
       isEditMode$.subscribe(() => {
-        expect(component.readOnlyForm).toBeFalse();
+        expect(component.isEditMode).toBeFalse();
         done();
       });
       isEditMode$.next(true);
     });
     it('(edit mode = false) should disable editable forms', done => {
       isEditMode$.subscribe(() => {
-        expect(component.readOnlyForm).toBeTrue();
+        expect(component.isEditMode).toBeTrue();
         done();
       });
       isEditMode$.next(false);
