@@ -79,8 +79,11 @@
         <hr>
 
         <!-- Allocation -->
-        <app-allocation>
-        </app-allocation>
+        <app-invoice-allocation 
+        [formGroup]="invoiceFormGroup"
+        [updateIsEditMode$]="isEditMode$.asObservable()"
+        >
+        </app-invoice-allocation>
         <hr/>
 
         <!-- FORM FOOTER -->
