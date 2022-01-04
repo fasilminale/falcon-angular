@@ -77,7 +77,7 @@ export class InvoiceAmountComponent implements OnInit {
         totalAmount: new FormControl(300)
     }));
     this.costBreakdownItems.controls.push(new FormGroup({
-      charge: new FormControl('Detention'),
+      charge: new FormControl('Accessorial'),
       rate: new FormControl(),
       type: new FormControl(),
       quantity: new FormControl(),
