@@ -7,7 +7,7 @@ import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscrip
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {Subject} from 'rxjs';
-import {Invoice} from '../../models/invoice/invoice-model';
+import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
@@ -27,6 +27,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public isDeletedInvoice = false;
   public isSubmittedInvoice = false;
   public isMilestoneTabOpen = false;
+  public isAutoInvoice = false;
   public showMilestoneToggleButton = true;
   public invoiceFormGroup: FormGroup;
   public tripInformationFormGroup: FormGroup;
@@ -60,15 +61,16 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.falconInvoiceNumber) {
       this.subscriptions.manage(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
-          .subscribe(i => this.loadInvoice(i))
+          .subscribe(i  => this.loadInvoice(i))
       );
     }
   }
 
-  private loadInvoice(invoice: Invoice): void {
+  private loadInvoice(invoice: InvoiceDataModel): void {
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
     this.isSubmittedInvoice = StatusUtil.isSubmitted(invoice.status);
+    this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
     this.loadTripInformation$.next({
       tripId: 'N/A',

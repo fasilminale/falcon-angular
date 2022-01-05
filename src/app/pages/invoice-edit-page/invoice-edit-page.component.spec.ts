@@ -130,6 +130,15 @@ describe('InvoiceEditPageComponent', () => {
         // Run Test
         routeParamMap$.next(mockParams);
       });
+      it('should not be auto invoice', done => {
+        // Assertions
+        routeParamMap$.subscribe(() => {
+          expect(component.isAutoInvoice).toBeFalse();
+          done();
+        });
+        // Run Test
+        routeParamMap$.next(mockParams);
+      });
       it('should load status', done => {
         // Assertions
         routeParamMap$.subscribe(() => {
