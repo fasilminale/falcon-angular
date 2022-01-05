@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
-import {ActivatedRoute, ParamMap} from '@angular/router';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
@@ -37,6 +37,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadTripInformation$ = new Subject<TripInformation>();
 
   constructor(private util: UtilService,
+              private router: Router,
               private route: ActivatedRoute,
               private userService: UserService,
               private invoiceService: InvoiceService,
@@ -102,7 +103,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickCancelButton(): void {
-    this.showNotYetImplementedModal('Cancel Editing');
+    this.router.navigate(['/invoices']);
   }
 
   clickSaveButton(): void {
