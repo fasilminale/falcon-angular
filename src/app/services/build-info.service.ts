@@ -5,7 +5,6 @@ import {environment} from '../../environments/environment';
 import {UtilService} from './util-service';
 import {mergeMap} from 'rxjs/operators';
 import {TimeService} from './time-service';
-import {InvoiceDataModel} from '../models/invoice/invoice-model';
 
 @Injectable()
 export class BuildInfoService {
@@ -19,7 +18,7 @@ export class BuildInfoService {
     return this.web.httpGet(`${environment.baseServiceUrl}/actuator/info`);
   }
 
-  openBuildInfoModal(): Observable<boolean> {
+  openBuildInfoModal(): Observable<any> {
     return this.getBuildInfo().pipe(mergeMap(
       info => {
         const formatTime = this.time.formatTimestamp(info.git.commit.time, 'MM/DD/YY HH:mm z');

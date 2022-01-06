@@ -49,9 +49,8 @@ export class UtilService {
     return this.dialog.open(
       TemplateInputModalComponent,
       {
-        autoFocus: false, data: {
-          isPaymentOverrideSelected: isPaymentOverrideSelected ? isPaymentOverrideSelected : false
-        }
+        autoFocus: false,
+        data: {isPaymentOverrideSelected: !!isPaymentOverrideSelected}
       }
     )
       .afterClosed()
