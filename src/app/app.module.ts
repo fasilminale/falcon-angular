@@ -74,6 +74,7 @@ import { FalAddressComponent } from './components/fal-address/fal-address.compon
 import { FreightOrderDetailsComponent } from './pages/freight-order-details/freight-order-details.component';
 import { InvoiceAmountComponent } from './pages/invoice-edit-page/invoice-amount/invoice-amount.component';
 import { InvoiceAllocationComponent } from './pages/invoice-edit-page/invoice-allocation/invoice-allocation.component';
+import {BuildInfoService} from './services/build-info.service';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -207,6 +208,7 @@ const oktaConfig = {
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,
     FeedbackCollectorService,
+    BuildInfoService,
   ],
   bootstrap: [
     AppComponent
