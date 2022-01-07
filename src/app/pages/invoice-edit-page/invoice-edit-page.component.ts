@@ -2,12 +2,12 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
-import {ActivatedRoute, ParamMap} from '@angular/router';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {Subject} from 'rxjs';
-import {Invoice} from '../../models/invoice/invoice-model';
+import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
@@ -27,6 +27,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public isDeletedInvoice = false;
   public isSubmittedInvoice = false;
   public isMilestoneTabOpen = false;
+  public isAutoInvoice = false;
   public showMilestoneToggleButton = true;
   public invoiceFormGroup: FormGroup;
   public tripInformationFormGroup: FormGroup;
@@ -36,6 +37,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadTripInformation$ = new Subject<TripInformation>();
 
   constructor(private util: UtilService,
+              private router: Router,
               private route: ActivatedRoute,
               private userService: UserService,
               private invoiceService: InvoiceService,
@@ -60,15 +62,16 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.falconInvoiceNumber) {
       this.subscriptions.manage(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
-          .subscribe(i => this.loadInvoice(i))
+          .subscribe(i  => this.loadInvoice(i))
       );
     }
   }
 
-  private loadInvoice(invoice: Invoice): void {
+  private loadInvoice(invoice: InvoiceDataModel): void {
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
     this.isSubmittedInvoice = StatusUtil.isSubmitted(invoice.status);
+    this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
     this.loadTripInformation$.next({
       tripId: 'N/A',
@@ -100,7 +103,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickCancelButton(): void {
-    this.showNotYetImplementedModal('Cancel Editing');
+    this.router.navigate(['/invoices']);
   }
 
   clickSaveButton(): void {
