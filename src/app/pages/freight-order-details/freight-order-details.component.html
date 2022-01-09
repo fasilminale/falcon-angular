@@ -12,13 +12,29 @@
   
       <ng-container matColumnDef="tmsLoadId">
         <th id="tmsLoadId" mat-header-cell *matHeaderCellDef> TMS Load ID </th>
-        <td mat-cell class="col-md-2" *matCellDef="let freightOrder"> {{freightOrder.tmsLoadId}}</td>
+        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.tmsLoadId}}</td>
       </ng-container>
   
       <ng-container matColumnDef="warehouse">
         <th id="warehouse" mat-header-cell *matHeaderCellDef> Warehouse</th>
-        <td mat-cell class="col-md-2" *matCellDef="let freightOrder"> {{freightOrder.warehouse}}</td>
+        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.warehouse}}</td>
       </ng-container>
+
+      <ng-container matColumnDef="sequence">
+        <th id="sequence" mat-header-cell *matHeaderCellDef> Sequence</th>
+        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.sequence}}</td>
+      </ng-container>      
+
+      <ng-container matColumnDef="stopId">
+        <th id="stopId" mat-header-cell *matHeaderCellDef> Stop ID</th>
+        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.stopId}}</td>
+      </ng-container> 
+
+      <ng-container matColumnDef="destination">
+        <th id="destination" mat-header-cell *matHeaderCellDef> Destination</th>
+        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.destination}}</td>
+      </ng-container> 
+
       <ng-container matColumnDef="grossWeight">
         <th id="grossWeight" class="px-3" mat-header-cell *matHeaderCellDef>Gross Weight</th>
         <td class="px-3" mat-cell *matCellDef="let freightOrder">
