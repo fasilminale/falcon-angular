@@ -19,7 +19,7 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MasterDataService} from 'src/app/services/master-data-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ToastService} from '@elm/elm-styleguide-ui';
-import {Invoice} from '../../models/invoice/invoice-model';
+import {Invoice, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ManualLineItem} from '../../models/line-item/line-item-model';
 
 describe('InvoiceFormComponent', () => {
@@ -70,7 +70,7 @@ describe('InvoiceFormComponent', () => {
     }
   };
 
-  const invoiceResponse: Invoice = {
+  const invoiceResponse: InvoiceDataModel = new InvoiceDataModel({
     falconInvoiceNumber: 'F0000000001',
     failedToCreate: false,
     status: {
@@ -84,7 +84,7 @@ describe('InvoiceFormComponent', () => {
     companyCode,
     erpType: 'TPM',
     vendorNumber: '1234',
-    amountOfInvoice: 2999.99,
+    amountOfInvoice: '2999.99',
     currency: 'USD',
     lineItems: [
       {
@@ -96,7 +96,7 @@ describe('InvoiceFormComponent', () => {
     milestones: [],
     attachments: [],
     comments: 'some comment'
-  };
+  });
 
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
     afterClosed: of(true),
@@ -107,7 +107,7 @@ describe('InvoiceFormComponent', () => {
     close: null
   });
 
-  const submittedInvoiceResponse: Invoice = {
+  const submittedInvoiceResponse: InvoiceDataModel = new InvoiceDataModel({
     falconInvoiceNumber: 'F0000000002',
     failedToCreate: false,
     status: {
@@ -121,7 +121,7 @@ describe('InvoiceFormComponent', () => {
     companyCode,
     erpType: 'TPM',
     vendorNumber: '1234',
-    amountOfInvoice: 2999.99,
+    amountOfInvoice: '2999.99',
     currency: 'USD',
     lineItems: [
       {
@@ -138,9 +138,9 @@ describe('InvoiceFormComponent', () => {
     }],
     attachments: [],
     comments: 'some comment'
-  };
+  });
 
-  const createdInvoiceResponse: Invoice = {
+  const createdInvoiceResponse: InvoiceDataModel = new InvoiceDataModel({
     falconInvoiceNumber: 'F0000000002',
     failedToCreate: false,
     status: {
@@ -154,7 +154,7 @@ describe('InvoiceFormComponent', () => {
     companyCode,
     erpType: 'TPM',
     vendorNumber: '1234',
-    amountOfInvoice: 2999.99,
+    amountOfInvoice: '2999.99',
     currency: 'USD',
     lineItems: [
       {
@@ -171,7 +171,7 @@ describe('InvoiceFormComponent', () => {
     }],
     attachments: [],
     comments: 'some comment'
-  };
+  });
 
   const template: TemplateToSave = {
     name: 'testTemplate',

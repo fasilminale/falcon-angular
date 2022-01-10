@@ -20,7 +20,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InvoiceCreatePageComponent} from './pages/invoice-create-page/invoice-create-page.component';
 import {NgSelectModule} from '@ng-select/ng-select';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {NgbDatepickerModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDatepickerModule, NgbModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.component';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
@@ -74,6 +74,8 @@ import { FalAddressComponent } from './components/fal-address/fal-address.compon
 import { FreightOrderDetailsComponent } from './pages/freight-order-details/freight-order-details.component';
 import { InvoiceAmountComponent } from './pages/invoice-edit-page/invoice-amount/invoice-amount.component';
 import { InvoiceAllocationComponent } from './pages/invoice-edit-page/invoice-allocation/invoice-allocation.component';
+import { InfoIconTooltipComponent } from './components/info-icon-tooltip/info-icon-tooltip.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {BuildInfoService} from './services/build-info.service';
 
 const getOktaConfig = () => {
@@ -155,7 +157,8 @@ const oktaConfig = {
     FalAddressComponent,
     FreightOrderDetailsComponent,
     InvoiceAmountComponent,
-    InvoiceAllocationComponent
+    InvoiceAllocationComponent,
+    InfoIconTooltipComponent
   ],
   imports: [
     BrowserModule,
@@ -176,8 +179,10 @@ const oktaConfig = {
     MatSidenavModule,
     MatListModule,
     MatTableModule,
+    MatTooltipModule,
     MatChipsModule,
     NgbModule,
+    NgbTooltipModule,
     NgxCurrencyModule,
     InputMaskModule,
     InputsModule,

@@ -19,7 +19,8 @@
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
                   [isDisabled]="isDeletedInvoice
-                                || isSubmittedInvoice"
+                                || isSubmittedInvoice
+                                || isAutoInvoice"
                   (buttonClick)="clickDeleteButton()">
         Delete
       </elm-button>
@@ -29,7 +30,8 @@
                   class="flex-shrink-1 header-button"
                   [isDisabled]="isEditMode$.value
                                 || isDeletedInvoice
-                                || isSubmittedInvoice"
+                                || isSubmittedInvoice
+                                || isAutoInvoice"
                   (buttonClick)="clickToggleEditMode()">
         Edit
       </elm-button>
@@ -60,7 +62,10 @@
         </elm-button>
 
         <!-- Invoice Overview -->
-        <app-invoice-overview>
+        <app-invoice-overview
+          [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
+        
+        >
         </app-invoice-overview>
         <hr/>
 
@@ -105,7 +110,7 @@
                         buttonType="button"
                         buttonStyle="secondary"
                         class="fake-form-control"
-                        [isDisabled]="!isEditMode$.value || invoiceFormGroup.invalid"
+                        [isDisabled]="!isEditMode$.value || invoiceFormGroup.invalid || isAutoInvoice"
                         (buttonClick)="clickSaveButton()">
               Save
             </elm-button>
@@ -115,7 +120,7 @@
                         buttonType="button"
                         buttonStyle="primary"
                         class="fake-form-control"
-                        [isDisabled]="!isEditMode$.value || invoiceFormGroup.invalid"
+                        [isDisabled]="!isEditMode$.value || invoiceFormGroup.invalid || isAutoInvoice"
                         (buttonClick)="clickSubmitForApprovalButton()">
               Submit for Approval
             </elm-button>

@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {InvoiceEditPageComponent} from './invoice-edit-page.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {ActivatedRoute, ParamMap} from '@angular/router';
+import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {of, Subject} from 'rxjs';
 import {InvoiceService} from '../../services/invoice-service';
 import {MockParamMap} from '../../testing/test-utils';
@@ -10,7 +10,7 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
-import {Invoice} from '../../models/invoice/invoice-model';
+import {Invoice, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {UtilService} from '../../services/util-service';
 
 describe('InvoiceEditPageComponent', () => {
@@ -18,6 +18,7 @@ describe('InvoiceEditPageComponent', () => {
   let component: InvoiceEditPageComponent;
   let fixture: ComponentFixture<InvoiceEditPageComponent>;
 
+  let router: Router;
   let route: ActivatedRoute;
   let routeParamMap$: Subject<ParamMap>;
   let invoiceService: InvoiceService;
@@ -29,6 +30,10 @@ describe('InvoiceEditPageComponent', () => {
       imports: [FalconTestingModule],
       declarations: [InvoiceEditPageComponent]
     }).compileComponents();
+
+    // Mock Router
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate');
 
     // Mock ActivatedRoute
     route = TestBed.inject(ActivatedRoute);
@@ -130,6 +135,15 @@ describe('InvoiceEditPageComponent', () => {
         // Run Test
         routeParamMap$.next(mockParams);
       });
+      it('should not be auto invoice', done => {
+        // Assertions
+        routeParamMap$.subscribe(() => {
+          expect(component.isAutoInvoice).toBeFalse();
+          done();
+        });
+        // Run Test
+        routeParamMap$.next(mockParams);
+      });
       it('should load status', done => {
         // Assertions
         routeParamMap$.subscribe(() => {
@@ -188,6 +202,11 @@ describe('InvoiceEditPageComponent', () => {
     expect(component.isMilestoneTabOpen).toEqual(!initialValue);
   });
 
+  it('#clickCancelButton should call router to navigate to invoice list', () => {
+    component.clickCancelButton();
+    expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
+  });
+
   describe('Not Implemented Button:', () => {
     const createHasNotBeenImplementedTest = (title: string, fnToTest: () => unknown) => {
       return (done: DoneFn) => {
@@ -212,9 +231,6 @@ describe('InvoiceEditPageComponent', () => {
     ));
     it('#clickDeleteButton', createHasNotBeenImplementedTest(
       'Delete Invoice', () => component.clickDeleteButton()
-    ));
-    it('#clickCancelButton', createHasNotBeenImplementedTest(
-      'Cancel Editing', () => component.clickCancelButton()
     ));
     it('#clickSaveButton', createHasNotBeenImplementedTest(
       'Save Invoice', () => component.clickSaveButton()

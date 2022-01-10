@@ -1,9 +1,9 @@
 import {WebServices} from './web-services';
-import {catchError, mergeMap} from 'rxjs/operators';
+import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {Invoice} from '../models/invoice/invoice-model';
+import {InvoiceDataModel} from '../models/invoice/invoice-model';
 import { FreightOrder } from '../models/invoice/freight-model';
 
 @Injectable()
@@ -54,7 +54,7 @@ export class InvoiceService {
       : this.createInvoice(invoice);
   }
 
-  public getInvoice(invoiceNumber: string): Observable<Invoice> {
+  public getInvoice(invoiceNumber: string): Observable<InvoiceDataModel> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}`);
   }
 
@@ -82,6 +82,9 @@ export class InvoiceService {
       freightOrderNumber: '123456789',
       tmsLoadId: '000000000012',
       warehouse: 'Test warehouse',
+      sequence: '0290',
+      stopId: '403567',
+      destination: 'Customer 2125 Chestnut St San Fransisco, CA',
       grossWeight: 0,
       volume: 0,
       pallets: 0,

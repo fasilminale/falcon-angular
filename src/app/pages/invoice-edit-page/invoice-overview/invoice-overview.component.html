@@ -1,2 +1,81 @@
 <div class="headline2">Invoice Overview</div>
-<div>PLACEHOLDER</div>
+
+<elm-card>
+    <div class="row px-5 py-4">
+        <div class="col-md-8 py-3">
+            <div class="row mb-3">
+                <div class="col invoice-info ">
+                    <span class="label-text">Invoice Net amount</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.invoiceNetAmount | currency}}</span>
+                </div>
+        
+                <div class="col invoice-info ">
+                    <span class="label-text">Invoice Date</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.invoiceDate | date}}</span>
+                </div>
+                <div class="col invoice-info">
+                    <span class="label-text">Payment Due</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.invoiceDate | date}}</span>
+                </div>
+                <div class="col invoice-info">
+                    <span class="label-text">Freight Payment Terms</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.freightPaymentTerms}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col invoice-info">
+                    <span class="label-text">Bill to Address</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.billToAddress}}</span>
+                </div>
+        
+                <div class="col invoice-info">
+                    <span class="label-text">Carrier</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.carrier}}</span>
+                </div>
+                <div class="col invoice-info">
+                    <span class="label-text">Carrier Mode</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.carrierMode}}</span>
+                </div>
+                <div class="col invoice-info">
+                    <span class="label-text">Business Unit</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.businessUnit}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex align-items-center">
+                <span class="remittance-header">Remittance Information</span>
+                <app-info-icon-tooltip
+                [fontSize]="'20px'"
+                [tooltipMessage]="'Estimated Total Cost is based \non available carrier data'"></app-info-icon-tooltip>
+            </div>
+            <div class="remittance-info-div">
+                <div class="row">
+                    <span class="col-7 label-text">ERP Invoice Number</span>
+                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber : 'NA'}}</span>
+                </div>
+                <div class="row">
+                    <span class="col-7 label-text">ERP Remittance Number</span>
+                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpRemittanceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpRemittanceNumber : 'NA'}}</span>
+                </div>
+                <div class="row">
+                    <span class="col-7 label-text">Vendor ID</span>
+                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.vendorId ? invoiceOverviewDetail?.remittanceInformation?.vendorId : 'NA'}}</span>
+                </div>
+                <div class="row">
+                    <span class="col-7 label-text">Amount of Payment</span>
+                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.amountOfPayment ? invoiceOverviewDetail?.remittanceInformation?.amountOfPayment: 'NA'}}</span>
+                </div>
+                <div class="row">
+                    <span class="col-7 label-text">Date of Payment</span>
+                    <span class="col-5 value-text"><span class="col value-text">{{ invoiceOverviewDetail?.remittanceInformation?.dateOfPayment ? invoiceOverviewDetail?.remittanceInformation?.dateOfPayment: 'NA'}}</span>
+                </span>
+                </div>
+               
+
+            </div>
+
+        </div>
+
+    </div>
+</elm-card>
