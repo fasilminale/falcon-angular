@@ -11,7 +11,7 @@ import {UserInfoModel} from './models/user-info/user-info-model';
 import {UserService} from './services/user-service';
 import {ElmUamRoles} from './utils/elm-uam-roles';
 import {environment} from '../environments/environment';
-import {BuildInfoService} from './services/build-info.service';
+import {BuildInfoService} from './services/build-info-service';
 
 @Component({
   selector: 'app-root',

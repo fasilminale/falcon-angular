@@ -10,6 +10,7 @@ import {FalconTestingModule} from './testing/falcon-testing.module';
 import {UserService} from './services/user-service';
 import {UserInfoModel} from './models/user-info/user-info-model';
 import {FeedbackCollectorService} from '@elm/elm-styleguide-ui';
+import {BuildInfoService} from './services/build-info-service';
 
 describe('AppComponent', () => {
 
@@ -43,6 +44,7 @@ describe('AppComponent', () => {
   let errorService: ErrorService;
   let util: UtilService;
   let userService: UserService;
+  let buildInfoService: BuildInfoService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -66,6 +68,8 @@ describe('AppComponent', () => {
     errorService = TestBed.inject(ErrorService);
     util = TestBed.inject(UtilService);
     userService = TestBed.inject(UserService);
+    buildInfoService = TestBed.inject(BuildInfoService);
+    spyOn(buildInfoService, 'openBuildInfoModal').and.returnValue(of(false));
   });
 
   describe('tech admin user view', () => {
@@ -113,6 +117,11 @@ describe('AppComponent', () => {
       spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
       component.navBarItems.forEach(item => item.action ? item.action() : null);
       expect(router.navigate).toHaveBeenCalledTimes(component.navBarItems.length);
+    });
+
+    it('should be able to run user action items', () => {
+      component.userMenuItems.forEach(item => item.action ? item.action() : null);
+      expect(buildInfoService.openBuildInfoModal).toHaveBeenCalled();
     });
 
     it('should logout', () => {

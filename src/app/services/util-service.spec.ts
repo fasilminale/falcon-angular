@@ -11,7 +11,8 @@ describe('UtilService', () => {
 
   const testModalData = {
     title: 'Test Modal',
-    innerHtmlMessage: 'I\'m a test modal'
+    innerHtmlMessage: 'I\'m a test modal',
+    primaryButtonText: 'Close',
   };
 
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -19,12 +20,7 @@ describe('UtilService', () => {
     close: null
   });
 
-  const MOCK_CANCEL_DIALOG = jasmine.createSpyObj({
-    afterClosed: of(false),
-    close: null
-  });
-
-  const MOCK_CLOSE_ERROR_DIALOG = jasmine.createSpyObj({
+  const MOCK_CLOSE_DIALOG = jasmine.createSpyObj({
     afterClosed: of(false),
     close: null
   });
@@ -64,15 +60,22 @@ describe('UtilService', () => {
   });
 
   it('openConfirmationModal should cancel', async () => {
-    spyOn(dialog, 'open').and.returnValue(MOCK_CANCEL_DIALOG);
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
     const result = await util.openConfirmationModal(testModalData).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeFalse();
   });
 
   it('openErrorModal should close', async () => {
-    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_ERROR_DIALOG);
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
     const result = await util.openErrorModal(testModalData).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeFalse();
+  });
+
+  it('openGenericModal should close', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
+    const result = await util.openGenericModal(testModalData).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeFalse();
   });
