@@ -28,7 +28,12 @@
    margin-right: 5px
 }
 
-:host ::ng-deep elm-card .elm-card {
+// #backrgound-grey{
+//     background-color: #f6f6f6;
+// }
+
+
+:host ::ng-deep #backrgound-grey .elm-card {
     background-color: #f6f6f6;
     
 }
