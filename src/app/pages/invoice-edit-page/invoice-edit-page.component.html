@@ -62,7 +62,10 @@
         </elm-button>
 
         <!-- Invoice Overview -->
-        <app-invoice-overview>
+        <app-invoice-overview
+          [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
+        
+        >
         </app-invoice-overview>
         <hr/>
 
