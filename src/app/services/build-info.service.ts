@@ -23,7 +23,7 @@ export class BuildInfoService {
       info => {
         const formatTime = this.time.formatTimestamp(info.git.commit.time, 'MM/DD/YY HH:mm z');
         return this.util.openGenericModal({
-          title: 'Build Info',
+          title: 'About',
           innerHtmlMessage:
             '<table>' +
             `<tr><td align="right"><strong>Branch:&nbsp;</strong></td><td>${info.git.branch}</td></tr>` +

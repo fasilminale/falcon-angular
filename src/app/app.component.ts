@@ -109,7 +109,7 @@ export class AppComponent implements OnInit {
 
     // User Menu Items
     this.userMenuItems.push({
-      label: 'Build Info',
+      label: 'About',
       action: () => this.buildInfoService.openBuildInfoModal().toPromise().then()
     });
   }
