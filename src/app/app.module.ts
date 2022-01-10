@@ -76,6 +76,7 @@ import { InvoiceAmountComponent } from './pages/invoice-edit-page/invoice-amount
 import { InvoiceAllocationComponent } from './pages/invoice-edit-page/invoice-allocation/invoice-allocation.component';
 import { InfoIconTooltipComponent } from './components/info-icon-tooltip/info-icon-tooltip.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {BuildInfoService} from './services/build-info.service';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -212,6 +213,7 @@ const oktaConfig = {
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,
     FeedbackCollectorService,
+    BuildInfoService,
   ],
   bootstrap: [
     AppComponent

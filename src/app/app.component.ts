@@ -11,6 +11,7 @@ import {UserInfoModel} from './models/user-info/user-info-model';
 import {UserService} from './services/user-service';
 import {ElmUamRoles} from './utils/elm-uam-roles';
 import {environment} from '../environments/environment';
+import {BuildInfoService} from './services/build-info.service';
 
 @Component({
   selector: 'app-root',
@@ -38,7 +39,8 @@ export class AppComponent implements OnInit {
               private oktaService: OktaAuthService,
               private util: UtilService,
               private userService: UserService,
-              public feedbackService: FeedbackCollectorService) {
+              public feedbackService: FeedbackCollectorService,
+              private buildInfoService: BuildInfoService) {
     this.loadingService.loadingSubject.subscribe((args) => {
       this.dataLoading = args[0] as boolean;
       this.label = args[1] as string;
@@ -104,5 +106,11 @@ export class AppComponent implements OnInit {
 
     // Master Data Header
     this.navBarItems.push({label: 'Master Data', action: () => this.router.navigate(['/master-data'])});
+
+    // User Menu Items
+    this.userMenuItems.push({
+      label: 'About',
+      action: () => this.buildInfoService.openBuildInfoModal().toPromise().then()
+    });
   }
 }
