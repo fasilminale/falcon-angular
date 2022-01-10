@@ -12,6 +12,7 @@ import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
+import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -35,6 +36,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
   public isEditMode$ = new SubjectValue(false);
   public loadTripInformation$ = new Subject<TripInformation>();
+  public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
 
   constructor(private util: UtilService,
               private router: Router,
@@ -80,6 +82,23 @@ export class InvoiceEditPageComponent implements OnInit {
       bolNumber: 'N/A',
       freightPaymentTerms: FreightPaymentTerms.PREPAID,
     });
+    this.loadInvoiceOverviewDetail$.next({
+      invoiceNetAmount: 6600,
+      invoiceDate: new Date(),
+      businessUnit: 'GPSC',
+      billToAddress: 'Customer Name, 2125 Chestnut St San Fransisco, CA 94123,United States',
+      paymentDue: new Date(),
+      carrier: 'Fedex',
+      carrierMode: 'Air',
+      freightPaymentTerms: FreightPaymentTerms.PREPAID,
+      remittanceInformation: {
+        erpInvoiceNumber: 'ERP1000',
+  erpRemittanceNumber: 'ERP2000',
+    vendorId: 'FED100',
+    amountOfPayment: 600,
+   
+      }
+    })
   }
 
   private loadUserInfo(newUserInfo: FalUserInfo): void {

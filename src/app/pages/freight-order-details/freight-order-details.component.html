@@ -59,7 +59,7 @@
   
       <ng-container matColumnDef="actions">
         <th id="actions" class="px-3" mat-header-cell *matHeaderCellDef> Action </th>
-        <td class="px-3" mat-cell *matCellDef="let freightOrder">
+        <td class="px-3 col-md-1" mat-cell *matCellDef="let freightOrder">
           <span *ngIf="freightOrder.isDisable ; else submit" role="button" class="disabled material-icons material-icons-outlined">
             edit
           </span>
