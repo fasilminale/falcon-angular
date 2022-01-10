@@ -8,7 +8,7 @@ import { InvoiceService } from 'src/app/services/invoice-service';
 })
 export class FreightOrderDetailsComponent implements OnInit {
 
-  displayedColumns: string[] = ['freightOrderNumber', 'tmsLoadId', 'warehouse', 'grossWeight', 'volume', 'pallets', 'actions'];
+  displayedColumns: string[] = ['freightOrderNumber', 'tmsLoadId', 'warehouse', 'sequence','stopId','destination','grossWeight', 'volume', 'pallets', 'actions'];
 
 
   freightOrders: any[] = [];
