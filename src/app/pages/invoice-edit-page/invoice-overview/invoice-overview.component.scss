@@ -1,6 +1,5 @@
 .invoice-info {
     display:flex;
-    justify-content: center;
     flex-direction: column;
     
 }
@@ -31,4 +30,8 @@
 :host ::ng-deep elm-card .elm-card {
     background-color: #f6f6f6;
     
+}
+
+.invoice-info-first-row{
+ margin-bottom: 2.5rem;
 }
