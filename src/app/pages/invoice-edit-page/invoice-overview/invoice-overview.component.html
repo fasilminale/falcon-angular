@@ -1,9 +1,9 @@
-<div class="headline2">Invoice Overview</div>
+<div class="headline2 mb-3">Invoice Overview</div>
 
 <elm-card id="backrgound-grey">
-    <div class="row px-5 py-4">
-        <div class="col-md-8 py-3">
-            <div class="row mb-3">
+    <div class="row p-4">
+        <div class="col-md-8">
+            <div class="row invoice-info-first-row">
                 <div class="col invoice-info ">
                     <span class="label-text">Invoice Net amount</span>
                     <span class="value-text">{{invoiceOverviewDetail?.invoiceNetAmount | currency}}</span>
@@ -11,11 +11,11 @@
         
                 <div class="col invoice-info ">
                     <span class="label-text">Invoice Date</span>
-                    <span class="value-text">{{invoiceOverviewDetail?.invoiceDate | date}}</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.invoiceDate | date: 'MM-dd-yyyy zzz'}}</span>
                 </div>
                 <div class="col invoice-info">
                     <span class="label-text">Payment Due</span>
-                    <span class="value-text">{{invoiceOverviewDetail?.invoiceDate | date}}</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.invoiceDate | date: 'MM-dd-yyyy zzz'}}</span>
                 </div>
                 <div class="col invoice-info">
                     <span class="label-text">Freight Payment Terms</span>
@@ -43,13 +43,14 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center mb-3">
                 <span class="remittance-header">Remittance Information</span>
                 <app-info-icon-tooltip
                 [fontSize]="'20px'"
                 [tooltipMessage]="'Remittance information is not available until payment of invoice in ERP'"></app-info-icon-tooltip>
             </div>
             <div class="remittance-info-div">
+                
                 <div class="row">
                     <span class="col-7 label-text">ERP Invoice Number</span>
                     <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber : 'NA'}}</span>

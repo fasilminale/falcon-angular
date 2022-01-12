@@ -1,6 +1,5 @@
 .invoice-info {
     display:flex;
-    justify-content: center;
     flex-direction: column;
     
 }
@@ -28,12 +27,11 @@
    margin-right: 5px
 }
 
-// #backrgound-grey{
-//     background-color: #f6f6f6;
-// }
-
-
 :host ::ng-deep #backrgound-grey .elm-card {
     background-color: #f6f6f6;
     
+}
+
+.invoice-info-first-row{
+ margin-bottom: 2.5rem;
 }
