@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ConfirmationModalComponent, ErrorModalComponent} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, ElmGenericModalData, ErrorModalComponent, GenericModalComponent} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
@@ -55,9 +55,10 @@ export class UtilService {
   public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {
     return this.dialog.open(
       TemplateInputModalComponent,
-      {autoFocus: false, data: {
-        isPaymentOverrideSelected: isPaymentOverrideSelected ? isPaymentOverrideSelected : false
-      }}
+      {
+        autoFocus: false,
+        data: {isPaymentOverrideSelected: !!isPaymentOverrideSelected}
+      }
     )
       .afterClosed()
       .pipe(mergeMap<any, Observable<Template>>(
@@ -71,6 +72,14 @@ export class UtilService {
       {autoFocus: false, data})
       .afterClosed();
   }
+
+  public openGenericModal(data: ElmGenericModalData): Observable<any> {
+    return this.dialog.open(
+      GenericModalComponent,
+      {autoFocus: false, data})
+      .afterClosed();
+  }
+
 }
 
 export type ConfirmationModalData = {

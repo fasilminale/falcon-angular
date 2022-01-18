@@ -27,7 +27,7 @@ export class InvoiceAmountComponent implements OnInit {
     {display: 'Per hour', value: 'perHour'}, 
     {display: 'Flat', value: 'flat'}, 
     { display: 'Per mile', value: 'perMile'}, 
-    {display: 'NA', value: ''}];
+    {display: 'N/A', value: ''}];
 
     totalInvoiceAmount = 0;
     //nc
