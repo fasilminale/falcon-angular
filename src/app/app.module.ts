@@ -76,6 +76,7 @@ import { InvoiceAmountComponent } from './pages/invoice-edit-page/invoice-amount
 import { InvoiceAllocationComponent } from './pages/invoice-edit-page/invoice-allocation/invoice-allocation.component';
 import { InfoIconTooltipComponent } from './components/info-icon-tooltip/info-icon-tooltip.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { FalDeleteModalComponent } from './components/fal-delete-modal/fal-delete-modal.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -157,7 +158,8 @@ const oktaConfig = {
     FreightOrderDetailsComponent,
     InvoiceAmountComponent,
     InvoiceAllocationComponent,
-    InfoIconTooltipComponent
+    InfoIconTooltipComponent,
+    FalDeleteModalComponent
   ],
   imports: [
     BrowserModule,

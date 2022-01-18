@@ -10,7 +10,7 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
-import {Invoice, InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {Invoice} from '../../models/invoice/invoice-model';
 import {UtilService} from '../../services/util-service';
 
 describe('InvoiceEditPageComponent', () => {
@@ -44,6 +44,8 @@ describe('InvoiceEditPageComponent', () => {
     // Mock Invoice Service
     invoiceService = TestBed.inject(InvoiceService);
     spyOn(invoiceService, 'getInvoice').and.returnValue(of());
+    spyOn(invoiceService, 'deleteInvoice').and.returnValue(of());
+    spyOn(invoiceService, 'deleteInvoiceWithReason').and.returnValue(of());
 
     // Mock User Service
     userService = TestBed.inject(UserService);
@@ -52,6 +54,8 @@ describe('InvoiceEditPageComponent', () => {
     // Mock Util Service
     utilService = TestBed.inject(UtilService);
     spyOn(utilService, 'openErrorModal').and.returnValue(of());
+    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
+    spyOn(utilService, 'openDeleteModal').and.returnValue(of('deleteReason'));
 
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
@@ -207,6 +211,50 @@ describe('InvoiceEditPageComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
   });
 
+  it('#clickDeleteButton', done => {
+    const deleteInvoice$ = new Subject<any>();
+    asSpy(invoiceService.deleteInvoice).and.returnValue(deleteInvoice$.asObservable());
+    const confirmationModal$ = new Subject<boolean>();
+    asSpy(utilService.openConfirmationModal).and.returnValue(confirmationModal$.asObservable());
+
+    component.clickDeleteButton();
+
+    confirmationModal$.subscribe(() => {
+      expect(utilService.openConfirmationModal).toHaveBeenCalled();
+      deleteInvoice$.next();
+    });
+
+    deleteInvoice$.subscribe(() => {
+      expect(invoiceService.deleteInvoice).toHaveBeenCalled();
+      done();
+    });
+
+    confirmationModal$.next(true);
+  });
+
+  it('#clickDeleteButton with deleted reason', done => {
+    component.isAutoInvoice = true;
+    component.isApprovedInvoice = true;
+    const deleteInvoiceWithReason$ = new Subject<any>();
+    asSpy(invoiceService.deleteInvoiceWithReason).and.returnValue(deleteInvoiceWithReason$.asObservable());
+    const deleteModal$ = new Subject<string>();
+    asSpy(utilService.openDeleteModal).and.returnValue(deleteModal$.asObservable());
+
+    component.clickDeleteButton();
+
+    deleteModal$.subscribe(() => {
+      expect(utilService.openDeleteModal).toHaveBeenCalled();
+      deleteInvoiceWithReason$.next();
+    });
+
+    deleteInvoiceWithReason$.subscribe(() => {
+      expect(invoiceService.deleteInvoiceWithReason).toHaveBeenCalled();
+      done();
+    });
+
+    deleteModal$.next('deleteReason');
+  });
+
   describe('Not Implemented Button:', () => {
     const createHasNotBeenImplementedTest = (title: string, fnToTest: () => unknown) => {
       return (done: DoneFn) => {
@@ -228,9 +276,6 @@ describe('InvoiceEditPageComponent', () => {
     };
     it('#clickSaveAsTemplateButton', createHasNotBeenImplementedTest(
       'Save As Template', () => component.clickSaveAsTemplateButton()
-    ));
-    it('#clickDeleteButton', createHasNotBeenImplementedTest(
-      'Delete Invoice', () => component.clickDeleteButton()
     ));
     it('#clickSaveButton', createHasNotBeenImplementedTest(
       'Save Invoice', () => component.clickSaveButton()

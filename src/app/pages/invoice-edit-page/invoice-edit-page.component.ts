@@ -6,13 +6,15 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
 import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -27,6 +29,8 @@ export class InvoiceEditPageComponent implements OnInit {
   public userInfo?: FalUserInfo;
   public isDeletedInvoice = false;
   public isSubmittedInvoice = false;
+  public isApprovedInvoice = false;
+  public isRejectedInvoice = false;
   public isMilestoneTabOpen = false;
   public isAutoInvoice = false;
   public showMilestoneToggleButton = true;
@@ -41,8 +45,10 @@ export class InvoiceEditPageComponent implements OnInit {
   constructor(private util: UtilService,
               private router: Router,
               private route: ActivatedRoute,
+              private snackBar: MatSnackBar,
               private userService: UserService,
               private invoiceService: InvoiceService,
+              private dialog: MatDialog,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
@@ -73,6 +79,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
     this.isSubmittedInvoice = StatusUtil.isSubmitted(invoice.status);
+    this.isApprovedInvoice = StatusUtil.isApproved(invoice.status);
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
     this.loadTripInformation$.next({
@@ -96,7 +103,7 @@ export class InvoiceEditPageComponent implements OnInit {
   erpRemittanceNumber: 'ERP2000',
     vendorId: 'FED100',
     amountOfPayment: 600,
-   
+
       }
     })
   }
@@ -110,7 +117,34 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickDeleteButton(): void {
-    this.showNotYetImplementedModal('Delete Invoice');
+    const dialogResult: Observable<string | boolean> =
+      this.requireDeleteReason() ? this.util.openDeleteModal() :
+        this.util.openConfirmationModal({
+          title: 'Delete Invoice',
+          innerHtmlMessage: `Are you sure you want to delete this invoice?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+          confirmButtonText: 'Delete Invoice',
+          confirmButtonStyle: 'destructive',
+          cancelButtonText: 'Cancel'
+        });
+    dialogResult.subscribe((result: string | boolean) => {
+      if (result) {
+        const request = this.requireDeleteReason()
+          ? this.deleteInvoiceWithReason({ deletedReason: result })
+          : this.deleteInvoice();
+        request.subscribe(
+            () => this.router.navigate(
+              [`/invoices`],
+              {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}}
+            ),
+            () => this.snackBar.open(
+              `Failure, invoice was not deleted.`,
+              'close',
+              {duration: 5 * 1000}
+            )
+          );
+      }
+    });
   }
 
   clickToggleEditMode(): void {
@@ -137,5 +171,17 @@ export class InvoiceEditPageComponent implements OnInit {
     this.subscriptions.manage(this.util.openErrorModal({
       title, innerHtmlMessage: 'Not Yet Implemented On This Page'
     }).subscribe());
+  }
+
+  private deleteInvoice(): Observable<any> {
+    return this.invoiceService.deleteInvoice(this.falconInvoiceNumber);
+  }
+
+  private deleteInvoiceWithReason(deletedReasonParameters: any): Observable<any> {
+    return this.invoiceService.deleteInvoiceWithReason(this.falconInvoiceNumber, deletedReasonParameters);
+  }
+
+  private requireDeleteReason(): boolean {
+    return this.isAutoInvoice && this.isApprovedInvoice;
   }
 }
