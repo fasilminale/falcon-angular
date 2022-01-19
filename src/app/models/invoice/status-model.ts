@@ -17,6 +17,7 @@ export class StatusUtil {
   static SUBMITTED = 'SUBMITTED';
   static CREATED = 'CREATED';
   static REJECTED = 'REJECTED';
+  static APPROVED = 'APPROVED';
 
   static hasKey(statusKey: string, status: KeyedLabel): boolean {
     return status.key === statusKey;
@@ -29,6 +30,14 @@ export class StatusUtil {
   static isSubmitted(status: KeyedLabel): boolean {
     return status.key !== StatusUtil.CREATED
       && status.key !== StatusUtil.REJECTED;
+  }
+
+  static isApproved(status: KeyedLabel): boolean {
+    return status.key === StatusUtil.APPROVED;
+  }
+
+  static isRejected(status: KeyedLabel): boolean {
+    return status.key === StatusUtil.REJECTED;
   }
 
 }
