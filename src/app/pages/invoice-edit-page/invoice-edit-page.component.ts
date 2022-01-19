@@ -14,7 +14,7 @@ import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
 import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
 import {MatDialog} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {ToastService} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -45,10 +45,10 @@ export class InvoiceEditPageComponent implements OnInit {
   constructor(private util: UtilService,
               private router: Router,
               private route: ActivatedRoute,
-              private snackBar: MatSnackBar,
               private userService: UserService,
               private invoiceService: InvoiceService,
               private dialog: MatDialog,
+              private toastService: ToastService,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
@@ -105,7 +105,7 @@ export class InvoiceEditPageComponent implements OnInit {
     amountOfPayment: 600,
 
       }
-    })
+    });
   }
 
   private loadUserInfo(newUserInfo: FalUserInfo): void {
@@ -137,10 +137,8 @@ export class InvoiceEditPageComponent implements OnInit {
               [`/invoices`],
               {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}}
             ),
-            () => this.snackBar.open(
-              `Failure, invoice was not deleted.`,
-              'close',
-              {duration: 5 * 1000}
+            () => this.toastService.openErrorToast(
+              `Failure, invoice was not deleted.`
             )
           );
       }
