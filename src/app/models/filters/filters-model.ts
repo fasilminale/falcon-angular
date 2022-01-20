@@ -23,6 +23,9 @@ export class FiltersModel {
     {label: 'Rejected', key: 'REJECTED'},
     {label: 'Resubmitted', key: 'RESUBMITTED'},
     {label: 'Submitted', key: 'SUBMITTED'},
+    {label: 'Invoice Pending', key: 'INVOICE_PENDING'},
+    {label: 'Invoiced', key: 'INVOICED'},
+    {label: 'Error', key: 'ERROR'}
   ];
 
   constructor() {
