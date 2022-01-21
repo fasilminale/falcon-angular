@@ -1,7 +1,8 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup} from '@angular/forms';
 import { Observable } from 'rxjs';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
+import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
 
 @Component({
   selector: 'app-invoice-allocation',
@@ -10,24 +11,55 @@ import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subs
 })
 export class InvoiceAllocationComponent implements OnInit {
 
-  _formArray = new FormArray([]);
   _formGroup = new FormGroup({});
   isEditMode = true;
+  totalAllocationAmount = 0;
+  isAllocationAmountValid = true;
+
+  public totalGlAmount = new FormControl({});
+  public invoiceNetAmount = new FormControl({});
+  public invoiceAllocations = new FormArray([]);
+
+  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
+  }
+
+  ngOnInit(): void {
+    this.formGroup = this._formGroup;
+    this.formGroup.disable();
+  }
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
-    const formGroup = new FormGroup({});
-    formGroup.setControl('allocationPercentage', new FormControl('50%'));
-    formGroup.setControl('warehouse', new FormControl('Other'));
-    formGroup.setControl('glCostCenter', new FormControl('23344'));
-    formGroup.setControl('glAccount', new FormControl('71257000'));
-    formGroup.setControl('glCompanyCode', new FormControl('4323345')); 
-    formGroup.setControl('allocationAmount', new FormControl(300)); 
-    this._formArray.controls.push(formGroup);
-    givenFormGroup.setControl('invoiceAllocations', this._formArray);
+    givenFormGroup.setControl('totalGlAmount', this.totalGlAmount);
+    givenFormGroup.setControl('invoiceNetAmount', this.invoiceNetAmount);
+    givenFormGroup.setControl('invoiceAllocations', this.invoiceAllocations);
     this._formGroup = givenFormGroup;
+  }
 
-    console.log(this._formGroup.value)
+  get formGroup(): FormGroup {
+    return this._formGroup;
+  }
 
+  @Input() set loadAllocationDetails(observable: Observable<InvoiceAllocationDetail>) {
+    this.subscriptionManager.manage(observable.subscribe(t => {
+      const array = new FormArray([]);
+      this.totalGlAmount.setValue(t.totalGlAmount ?? 0);
+      this.invoiceNetAmount.setValue(t.invoiceNetAmount ?? 0);
+      this._formGroup.setControl('totalGlAmount', this.totalGlAmount);
+      this._formGroup.setControl('invoiceNetAmount', this.invoiceNetAmount);
+      for (const glLineItem of t.glLineItems) {
+        array.push(new FormGroup({
+          allocationPercent: new FormControl(glLineItem.allocationPercent ?? undefined),
+          warehouse: new FormControl(glLineItem.shippingPointWarehouse ?? undefined),
+          glCostCenter: new FormControl(glLineItem.glCostCenter ?? undefined),
+          glAccount: new FormControl(glLineItem.glAccount ?? undefined),
+          glCompanyCode: new FormControl(glLineItem.glCompanyCode ?? undefined),
+          allocationAmount: new FormControl(glLineItem.glAmount ?? undefined)
+        }));
+      }
+      this._formGroup.setControl('invoiceAllocations', array);
+      this.updateTotalAllocationAmount();
+      this.validateInvoiceAmount();
+    }));
   }
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
@@ -36,13 +68,27 @@ export class InvoiceAllocationComponent implements OnInit {
     ));
   }
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { }
-
-  ngOnInit(): void {
+  updateTotalAllocationAmount(): void{
+    this.totalAllocationAmount = 0;
+    this.invoiceAllocationsControls.forEach((item: any) => {
+      const totalAmount = item.get('allocationAmount')?.value;
+      if (!isNaN(parseFloat(totalAmount))) {
+        this.totalAllocationAmount += parseFloat(totalAmount.toFixed(2));
+      }
+    });
   }
 
-  get invoiceAllocationsControls() {
-    return this._formGroup.get('invoiceAllocations') ? (this._formGroup.get('invoiceAllocations') as FormArray).controls: new FormArray([]).controls;
+  public validateInvoiceAmount(): void {
+    let sum = 0;
+    this.invoiceAllocationsControls.forEach((item: any) => {
+      const lineItemAmount = item.get('allocationAmount') as FormControl;
+      sum += lineItemAmount.value;
+    });
+    this.isAllocationAmountValid = parseFloat(this.invoiceNetAmount.value) > 0 && sum.toFixed(2) === this.invoiceNetAmount.value;
+  }
+
+  get invoiceAllocationsControls(): any {
+    return this._formGroup.get('invoiceAllocations') ? (this._formGroup.get('invoiceAllocations') as FormArray).controls : new FormArray([]).controls;
   }
 
 }

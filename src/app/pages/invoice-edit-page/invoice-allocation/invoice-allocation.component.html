@@ -1,4 +1,4 @@
-<div [formGroup]="_formGroup">
+<div [formGroup]="formGroup">
   <div formArrayName="invoiceAllocations">
     <span class="headline2">Invoice allocation</span>
     <div class="col-12 my-3">Allocation breakdown</div>
@@ -11,12 +11,13 @@
       <div class="col-2">Allocation Amount</div>
     </div>
     <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0">
-      <div *ngFor="let _ of invoiceAllocationsControls; index as i" class="invoice-allocation-row row"
-        [formGroupName]="i">
+      <div *ngFor="let invoiceAllocation of invoiceAllocationsControls; index as i" class="invoice-allocation-row row"
+           [formGroupName]="i">
 
         <!-- Invoice allocation- allocationPercentage -->
         <div class="col-2">
-          <input type="text" class="form-control" formControlName="allocationPercentage"
+          <input type="text" class="form-control" formControlName="allocationPercent"
+            [ngModel]="invoiceAllocation.get('allocationPercent').value | percent"
             [attr.disabled]="isEditMode? '': null" />
         </div>
 
@@ -48,10 +49,31 @@
 
         <!-- Invoice allocation - allocationAmount -->
         <div class="col-2 allocation-amount-div">
-          <span class="allocation-amount-text">{{_.get('allocationAmount')?.value | currency}}</span>
+          <span class="allocation-amount-text">{{invoiceAllocation.get('allocationAmount').value | currency}}</span>
         </div>
 
       </div>
     </ng-container>
+
+    <div class="invoice-allocation-total-div mt-5 p-3 offset-md-9"
+         [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
+      <div class="row">
+        <div class="row d-flex justify-content-between">
+          <span class="px-3 col-md-6 text-right">Allocation totals:</span>
+          <span class="col-md-6 text-right">{{totalAllocationAmount | currency}}</span>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="row d-flex justify-content-between">
+          <span class="px-3 col-md-6 text-right text-bold">Invoice Net Amount:</span>
+          <span class="col-md-6 text-right text-bold">{{invoiceNetAmount?.value | currency}}</span>
+        </div>
+      </div>
+    </div>
+    <small class="error-text col-3 offset-md-9"
+           [ngClass]="{ 'mt-3' : !isAllocationAmountValid }"
+           *ngIf="!isAllocationAmountValid">
+      Line Net Amount must equal Invoice Net Amount
+    </small>
   </div>
 </div>
