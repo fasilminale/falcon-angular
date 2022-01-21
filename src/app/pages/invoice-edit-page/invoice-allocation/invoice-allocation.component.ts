@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import { Observable } from 'rxjs';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
@@ -87,7 +87,7 @@ export class InvoiceAllocationComponent implements OnInit {
     this.isAllocationAmountValid = parseFloat(this.invoiceNetAmount.value) > 0 && sum.toFixed(2) === this.invoiceNetAmount.value;
   }
 
-  get invoiceAllocationsControls(): any {
+  get invoiceAllocationsControls(): AbstractControl[] {
     return this._formGroup.get('invoiceAllocations') ? (this._formGroup.get('invoiceAllocations') as FormArray).controls : new FormArray([]).controls;
   }
 

@@ -17,7 +17,7 @@
         <!-- Invoice allocation- allocationPercentage -->
         <div class="col-2">
           <input type="text" class="form-control" formControlName="allocationPercent"
-            [ngModel]="invoiceAllocation.get('allocationPercent').value | percent"
+            [ngModel]="invoiceAllocation.get('allocationPercent')?.value | percent"
             [attr.disabled]="isEditMode? '': null" />
         </div>
 
@@ -49,7 +49,7 @@
 
         <!-- Invoice allocation - allocationAmount -->
         <div class="col-2 allocation-amount-div">
-          <span class="allocation-amount-text">{{invoiceAllocation.get('allocationAmount').value | currency}}</span>
+          <span class="allocation-amount-text">{{invoiceAllocation.get('allocationAmount')?.value | currency}}</span>
         </div>
 
       </div>
