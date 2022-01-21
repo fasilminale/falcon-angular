@@ -12,9 +12,9 @@ import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
-import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
+import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {MatDialog} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {ToastService} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -47,10 +47,10 @@ export class InvoiceEditPageComponent implements OnInit {
   constructor(private util: UtilService,
               private router: Router,
               private route: ActivatedRoute,
-              private snackBar: MatSnackBar,
               private userService: UserService,
               private invoiceService: InvoiceService,
               private dialog: MatDialog,
+              private toastService: ToastService,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
@@ -74,7 +74,7 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.falconInvoiceNumber) {
       this.subscriptions.manage(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
-          .subscribe(i  => this.loadInvoice(i))
+          .subscribe(i => this.loadInvoice(i))
       );
     }
   }
@@ -104,10 +104,9 @@ export class InvoiceEditPageComponent implements OnInit {
       freightPaymentTerms: FreightPaymentTerms.PREPAID,
       remittanceInformation: {
         erpInvoiceNumber: 'ERP1000',
-  erpRemittanceNumber: 'ERP2000',
-    vendorId: 'FED100',
-    amountOfPayment: 600,
-
+        erpRemittanceNumber: 'ERP2000',
+        vendorId: 'FED100',
+        amountOfPayment: 600,
       }
     });
     this.loadAllocationDetails$.next({
@@ -127,8 +126,9 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickDeleteButton(): void {
     const dialogResult: Observable<string | boolean> =
-      this.requireDeleteReason() ? this.util.openDeleteModal() :
-        this.util.openConfirmationModal({
+      this.requireDeleteReason()
+        ? this.util.openDeleteModal()
+        : this.util.openConfirmationModal({
           title: 'Delete Invoice',
           innerHtmlMessage: `Are you sure you want to delete this invoice?
                <br/><br/><strong>This action cannot be undone.</strong>`,
@@ -139,19 +139,17 @@ export class InvoiceEditPageComponent implements OnInit {
     dialogResult.subscribe((result: string | boolean) => {
       if (result) {
         const request = this.requireDeleteReason()
-          ? this.deleteInvoiceWithReason({ deletedReason: result })
+          ? this.deleteInvoiceWithReason({deletedReason: result})
           : this.deleteInvoice();
         request.subscribe(
-            () => this.router.navigate(
-              [`/invoices`],
-              {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}}
-            ),
-            () => this.snackBar.open(
-              `Failure, invoice was not deleted.`,
-              'close',
-              {duration: 5 * 1000}
-            )
-          );
+          () => this.router.navigate(
+            [`/invoices`],
+            {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}}
+          ),
+          () => this.toastService.openErrorToast(
+            `Failure, invoice was not deleted.`
+          )
+        );
       }
     });
   }
