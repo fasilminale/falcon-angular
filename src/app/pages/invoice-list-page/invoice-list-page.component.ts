@@ -103,7 +103,6 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   rowClicked(invoice: InvoiceDataModel): Promise<any> {
-    invoice.entryType = EntryType.AUTO;
     if (invoice.entryType === 'AUTO') {
       return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}/AUTO`]);
     } else {
