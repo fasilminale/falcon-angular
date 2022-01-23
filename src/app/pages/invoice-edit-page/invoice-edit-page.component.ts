@@ -1,18 +1,19 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {UtilService} from '../../services/util-service';
-import {Milestone} from '../../models/milestone/milestone-model';
-import {FormGroup} from '@angular/forms';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
-import {UserService} from '../../services/user-service';
-import {InvoiceService} from '../../services/invoice-service';
-import {Subject} from 'rxjs';
-import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {StatusUtil} from '../../models/invoice/status-model';
-import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
-import {SubjectValue} from '../../utils/subject-value';
-import {FalUserInfo} from '../../models/user-info/user-info-model';
+import { Component, Inject, OnInit } from '@angular/core';
+import { UtilService } from '../../services/util-service';
+import { Milestone } from '../../models/milestone/milestone-model';
+import { FormGroup } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { SUBSCRIPTION_MANAGER, SubscriptionManager } from '../../services/subscription-manager';
+import { UserService } from '../../services/user-service';
+import { InvoiceService } from '../../services/invoice-service';
+import { Subject } from 'rxjs';
+import { EntryType, InvoiceDataModel } from '../../models/invoice/invoice-model';
+import { StatusUtil } from '../../models/invoice/status-model';
+import { FreightPaymentTerms, TripInformation } from '../../models/invoice/trip-information-model';
+import { SubjectValue } from '../../utils/subject-value';
+import { FalUserInfo } from '../../models/user-info/user-info-model';
 import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
+import { ServiceLevel } from 'src/app/models/master-data-models/service-level-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -39,11 +40,11 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
 
   constructor(private util: UtilService,
-              private router: Router,
-              private route: ActivatedRoute,
-              private userService: UserService,
-              private invoiceService: InvoiceService,
-              @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
+    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private invoiceService: InvoiceService,
+    @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
     this.invoiceFormGroup = new FormGroup({
@@ -64,7 +65,7 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.falconInvoiceNumber) {
       this.subscriptions.manage(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
-          .subscribe(i  => this.loadInvoice(i))
+          .subscribe(i => this.loadInvoice(i))
       );
     }
   }
@@ -76,27 +77,35 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
     this.loadTripInformation$.next({
-      tripId: 'N/A',
+      tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),
-      proTrackingNumber: 'N/A',
-      bolNumber: 'N/A',
-      freightPaymentTerms: FreightPaymentTerms.PREPAID,
+      pickUpDate: new Date(invoice.pickupDateTime),
+      deliveryDate: new Date(invoice.deliveryDateTime),
+      proTrackingNumber: invoice.proNumber,
+      bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A' ,
+      freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,
+      originAddress: {...invoice.origin, shippingPoint: invoice.shippingPoint},
+      destinationAddress: {...invoice.destination, shippingPoint: invoice.shippingPoint},
+      billToAddress: {...invoice.billTo, shippingPoint: invoice.shippingPoint},
+      serviceLevel: invoice.serviceLevel,
+      carrier: invoice.carrier,
+      carrierMode: invoice.mode
     });
     this.loadInvoiceOverviewDetail$.next({
-      invoiceNetAmount: 6600,
-      invoiceDate: new Date(),
-      businessUnit: 'GPSC',
-      billToAddress: 'Customer Name, 2125 Chestnut St San Fransisco, CA 94123,United States',
-      paymentDue: new Date(),
-      carrier: 'Fedex',
-      carrierMode: 'Air',
-      freightPaymentTerms: FreightPaymentTerms.PREPAID,
+      invoiceNetAmount: invoice.plannedInvoiceNetAmount ? parseInt(invoice.plannedInvoiceNetAmount) : 0.0,
+      invoiceDate: new Date(invoice.invoiceDate),
+      businessUnit: invoice.businessUnit,
+      billToAddress: invoice.billTo,
+      paymentDue: new Date(invoice.paymentDue),
+      carrier: invoice?.carrier?.name,
+      carrierMode: invoice.mode?.reportKeyMode,
+      freightPaymentTerms: invoice.freightPaymentTerms,
       remittanceInformation: {
-        erpInvoiceNumber: 'ERP1000',
-  erpRemittanceNumber: 'ERP2000',
-    vendorId: 'FED100',
-    amountOfPayment: 600,
-   
+        erpInvoiceNumber: invoice.erpInvoiceNumber,
+        erpRemittanceNumber: invoice.erpRemittanceNumber,
+        vendorId: invoice.remitVendorId,
+        amountOfPayment: parseInt(invoice.amountOfPayment),
+
       }
     })
   }
