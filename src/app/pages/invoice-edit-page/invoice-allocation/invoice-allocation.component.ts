@@ -18,12 +18,12 @@ export class InvoiceAllocationComponent implements OnInit {
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
     const formGroup = new FormGroup({});
-    formGroup.setControl('allocationPercentage', new FormControl('50%'));
-    formGroup.setControl('warehouse', new FormControl('Other'));
-    formGroup.setControl('glCostCenter', new FormControl('23344'));
-    formGroup.setControl('glAccount', new FormControl('71257000'));
-    formGroup.setControl('glCompanyCode', new FormControl('4323345')); 
-    formGroup.setControl('allocationAmount', new FormControl(300)); 
+    formGroup.setControl('allocationPercentage', new FormControl('%'));
+    formGroup.setControl('warehouse', new FormControl(''));
+    formGroup.setControl('glCostCenter', new FormControl(''));
+    formGroup.setControl('glAccount', new FormControl(''));
+    formGroup.setControl('glCompanyCode', new FormControl('')); 
+    formGroup.setControl('allocationAmount', new FormControl(0)); 
     this._formArray.controls.push(formGroup);
     givenFormGroup.setControl('invoiceAllocations', this._formArray);
     this._formGroup = givenFormGroup;
@@ -42,6 +42,7 @@ export class InvoiceAllocationComponent implements OnInit {
           formGroup.setControl('glCompanyCode', new FormControl(glLineItem.glCompanyCode)); 
           formGroup.setControl('allocationAmount', new FormControl(glLineItem.glAmount)); 
           this._formArray.controls.push(formGroup);
+          this._formGroup.setControl('invoiceAllocations', this._formArray);
         });
       }
     ));
