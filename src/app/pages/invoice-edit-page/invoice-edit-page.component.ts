@@ -14,6 +14,7 @@ import { SubjectValue } from '../../utils/subject-value';
 import { FalUserInfo } from '../../models/user-info/user-info-model';
 import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
 import { ServiceLevel } from 'src/app/models/master-data-models/service-level-model';
+import { GlLineItem } from 'src/app/models/line-item/line-item-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -38,6 +39,8 @@ export class InvoiceEditPageComponent implements OnInit {
   public isEditMode$ = new SubjectValue(false);
   public loadTripInformation$ = new Subject<TripInformation>();
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
+  public loadGlLineItems$ = new Subject<GlLineItem[]>();
+  public invoiceNetAmount$ = new Subject<number>();
 
   constructor(private util: UtilService,
     private router: Router,
@@ -81,7 +84,7 @@ export class InvoiceEditPageComponent implements OnInit {
       invoiceDate: new Date(invoice.invoiceDate),
       pickUpDate: new Date(invoice.pickupDateTime),
       deliveryDate: new Date(invoice.deliveryDateTime),
-      proTrackingNumber: invoice.proNumber,
+      proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
       bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A' ,
       freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,
       originAddress: {...invoice.origin, shippingPoint: invoice.shippingPoint},
@@ -92,7 +95,7 @@ export class InvoiceEditPageComponent implements OnInit {
       carrierMode: invoice.mode
     });
     this.loadInvoiceOverviewDetail$.next({
-      invoiceNetAmount: invoice.plannedInvoiceNetAmount ? parseInt(invoice.plannedInvoiceNetAmount) : 0.0,
+      invoiceNetAmount: invoice.amountOfInvoice ? parseInt(invoice.amountOfInvoice) : 0.0,
       invoiceDate: new Date(invoice.invoiceDate),
       businessUnit: invoice.businessUnit,
       billToAddress: invoice.billTo,
@@ -107,7 +110,9 @@ export class InvoiceEditPageComponent implements OnInit {
         amountOfPayment: parseInt(invoice.amountOfPayment),
 
       }
-    })
+    });
+    this.loadGlLineItems$.next(invoice.glLineItems);
+    this.invoiceNetAmount$.next(invoice.plannedInvoiceNetAmount ? parseInt(invoice.plannedInvoiceNetAmount) : 0.0)
   }
 
   private loadUserInfo(newUserInfo: FalUserInfo): void {

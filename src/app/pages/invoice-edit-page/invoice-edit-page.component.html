@@ -87,6 +87,8 @@
         <app-invoice-allocation 
         [formGroup]="invoiceFormGroup"
         [updateIsEditMode$]="isEditMode$.asObservable()"
+        [loadGlLineItems$]="loadGlLineItems$.asObservable()"
+        [updateInvoiceNetAmount$]="invoiceNetAmount$.asObservable()"
         >
         </app-invoice-allocation>
         <hr/>
