@@ -42,8 +42,6 @@ export class InvoiceEditPageComponent implements OnInit {
   public isEditMode$ = new SubjectValue(false);
   public loadTripInformation$ = new Subject<TripInformation>();
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
-  public loadGlLineItems$ = new Subject<GlLineItem[]>();
-  public invoiceNetAmount$ = new Subject<number>();
 
   constructor(private util: UtilService,
               private router: Router,
@@ -117,8 +115,6 @@ export class InvoiceEditPageComponent implements OnInit {
 
       }
     });
-    this.loadGlLineItems$.next(invoice.glLineItems);
-    this.invoiceNetAmount$.next(invoice.amountOfInvoice ? parseInt(invoice.amountOfInvoice) : 0.0)
   }
 
   private loadUserInfo(newUserInfo: FalUserInfo): void {
