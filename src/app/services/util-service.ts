@@ -5,6 +5,7 @@ import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {TemplateInputModalComponent} from '../components/template-input-modal/template-input-modal.component';
 import {Milestone} from '../models/milestone/milestone-model';
+import {FalDeleteModalComponent} from '../components/fal-delete-modal/fal-delete-modal.component';
 
 @Injectable()
 export class UtilService {
@@ -43,6 +44,12 @@ export class UtilService {
           ? of(true)
           : of(false)
       ));
+  }
+
+  public openDeleteModal(): Observable<string> {
+    return this.dialog.open(FalDeleteModalComponent)
+      .afterClosed()
+      .pipe(mergeMap<any, Observable<string>>(result => of(result)));
   }
 
   public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {

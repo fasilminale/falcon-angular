@@ -104,7 +104,7 @@ describe('InvoiceAllocationComponent', () => {
       component.loadGlLineItems$ = loadGlLineItems$.asObservable();
     });
 
-    it('should update the invoice net amount', done => {
+    it('should update the allocation fields', done => {
       loadGlLineItems$.subscribe(() => {
         const formGroup = component._formArray.controls[0];
         expect(formGroup.get('allocationPercentage')?.value).toBe('10%');
@@ -125,6 +125,22 @@ describe('InvoiceAllocationComponent', () => {
         debitCreditFlag: 'Y'
       }]);
     });
+
+    it('should update the allocation fields to N/A', done => {
+      loadGlLineItems$.subscribe(() => {
+        const formGroup = component._formArray.controls[0];
+        expect(formGroup.get('allocationPercentage')?.value).toBe('N/A');
+        expect(formGroup.get('warehouse')?.value).toBe('N/A');
+        expect(formGroup.get('glCostCenter')?.value).toBe('N/A');
+        expect(formGroup.get('glCompanyCode')?.value).toBe('N/A');
+        expect(formGroup.get('glAccount')?.value).toBe('N/A');
+        done();
+      });
+      loadGlLineItems$.next([{
+       
+      } as GlLineItem]);
+    });
+
   });
 
 });

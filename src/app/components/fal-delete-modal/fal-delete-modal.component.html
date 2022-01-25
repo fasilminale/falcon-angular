@@ -1,0 +1,38 @@
+<div mat-dialog-title class="d-flex align-items-center">
+  <span class="headline2">Delete Invoice</span>
+  <elm-close-button class="dialog-close-button" mat-dialog-close></elm-close-button>
+</div>
+<div mat-dialog-content class="modal-body">
+  Are you sure you want to delete this invoice?
+  <br/><strong>This action cannot be undone.</strong><br/>
+  <label for="delete-reason-input" class="fal-label">
+    Reason for Deletion
+  </label>
+  <textarea id="delete-reason-input"
+            [(ngModel)]="deleteReason"
+            [ngClass]="!deleteReason ? 'error' : ''"
+            class="form-control"
+  ></textarea>
+  <small class="error-text"
+         *ngIf="!deleteReason">
+    A deletion reason is required
+  </small>
+</div>
+
+<div mat-dialog-actions class="float-right">
+  <elm-button buttonStyle="secondary"
+              class="ms-auto"
+              mat-dialog-close
+              id="cancel"
+              aria-label="cancel">
+    Cancel
+  </elm-button>
+  <elm-button buttonStyle="destructive"
+              class="ms-3"
+              (buttonClick)="confirm()"
+              [isDisabled]="!deleteReason"
+              id="confirm"
+              aria-label="confirm">
+    Delete Invoice
+  </elm-button>
+</div>

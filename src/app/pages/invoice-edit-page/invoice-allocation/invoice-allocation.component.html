@@ -48,7 +48,8 @@
 
         <!-- Invoice allocation - allocationAmount -->
         <div class="col-2 allocation-amount-div">
-          <span class="allocation-amount-text">{{_.get('allocationAmount')?.value | currency}}</span>
+          <span class="allocation-amount-text" *ngIf="_.get('allocationAmount')?.value">{{_.get('allocationAmount')?.value | currency}}</span>
+          <span class="allocation-amount-text" *ngIf="!_.get('allocationAmount')?.value">N/A</span>
         </div>
 
       </div>

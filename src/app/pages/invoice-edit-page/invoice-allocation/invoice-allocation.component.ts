@@ -18,7 +18,7 @@ export class InvoiceAllocationComponent implements OnInit {
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
     const formGroup = new FormGroup({});
-    formGroup.setControl('allocationPercentage', new FormControl('%'));
+    formGroup.setControl('allocationPercentage', new FormControl(''));
     formGroup.setControl('warehouse', new FormControl(''));
     formGroup.setControl('glCostCenter', new FormControl(''));
     formGroup.setControl('glAccount', new FormControl(''));
@@ -35,11 +35,11 @@ export class InvoiceAllocationComponent implements OnInit {
         this._formArray = new FormArray([]);
         glLineItems.forEach(glLineItem => {
           const formGroup = new FormGroup({});
-          formGroup.setControl('allocationPercentage', new FormControl(`${glLineItem.allocationPercent}%`));
-          formGroup.setControl('warehouse', new FormControl(glLineItem.shippingPointWarehouse));
-          formGroup.setControl('glCostCenter', new FormControl(glLineItem.glCostCenter));
-          formGroup.setControl('glAccount', new FormControl(glLineItem.glAccount));
-          formGroup.setControl('glCompanyCode', new FormControl(glLineItem.glCompanyCode)); 
+          formGroup.setControl('allocationPercentage', new FormControl(glLineItem.allocationPercent ? `${glLineItem.allocationPercent}%`: 'N/A'));
+          formGroup.setControl('warehouse', new FormControl(glLineItem.shippingPointWarehouse ? glLineItem.shippingPointWarehouse : 'N/A'));
+          formGroup.setControl('glCostCenter', new FormControl(glLineItem.glCostCenter ? glLineItem.glCostCenter : 'N/A'));
+          formGroup.setControl('glAccount', new FormControl(glLineItem.glAccount ? glLineItem.glAccount: 'N/A'));
+          formGroup.setControl('glCompanyCode', new FormControl(glLineItem.glCompanyCode ? glLineItem.glCompanyCode: 'N/A')); 
           formGroup.setControl('allocationAmount', new FormControl(glLineItem.glAmount)); 
           this._formArray.controls.push(formGroup);
           this._formGroup.setControl('invoiceAllocations', this._formArray);

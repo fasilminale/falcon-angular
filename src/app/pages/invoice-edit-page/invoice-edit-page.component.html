@@ -18,9 +18,8 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="isDeletedInvoice
-                                || isSubmittedInvoice
-                                || isAutoInvoice"
+                  [isDisabled]="(isDeletedInvoice
+                              || (isSubmittedInvoice && !(isAutoInvoice && (isApprovedInvoice || isRejectedInvoice))))"
                   (buttonClick)="clickDeleteButton()">
         Delete
       </elm-button>
@@ -64,7 +63,7 @@
         <!-- Invoice Overview -->
         <app-invoice-overview
           [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
-        
+
         >
         </app-invoice-overview>
         <hr/>
@@ -84,7 +83,7 @@
         <hr>
 
         <!-- Allocation -->
-        <app-invoice-allocation 
+        <app-invoice-allocation
         [formGroup]="invoiceFormGroup"
         [updateIsEditMode$]="isEditMode$.asObservable()"
         [loadGlLineItems$]="loadGlLineItems$.asObservable()"
