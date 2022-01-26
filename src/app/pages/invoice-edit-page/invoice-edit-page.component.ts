@@ -15,6 +15,7 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {MatDialog} from '@angular/material/dialog';
 import {ToastService} from '@elm/elm-styleguide-ui';
+import {GlLineItem} from 'src/app/models/line-item/line-item-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -83,26 +84,35 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
     this.loadTripInformation$.next({
-      tripId: 'N/A',
+      tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),
-      proTrackingNumber: 'N/A',
-      bolNumber: 'N/A',
-      freightPaymentTerms: FreightPaymentTerms.PREPAID,
+      pickUpDate: new Date(invoice.pickupDateTime),
+      deliveryDate: new Date(invoice.deliveryDateTime),
+      proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
+      bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A' ,
+      freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,
+      originAddress: {...invoice.origin, shippingPoint: invoice.shippingPoint},
+      destinationAddress: {...invoice.destination, shippingPoint: invoice.shippingPoint},
+      billToAddress: {...invoice.billTo, shippingPoint: invoice.shippingPoint},
+      serviceLevel: invoice.serviceLevel,
+      carrier: invoice.carrier,
+      carrierMode: invoice.mode
     });
     this.loadInvoiceOverviewDetail$.next({
-      invoiceNetAmount: 6600,
-      invoiceDate: new Date(),
-      businessUnit: 'GPSC',
-      billToAddress: 'Customer Name, 2125 Chestnut St San Fransisco, CA 94123,United States',
-      paymentDue: new Date(),
-      carrier: 'Fedex',
-      carrierMode: 'Air',
-      freightPaymentTerms: FreightPaymentTerms.PREPAID,
+      invoiceNetAmount: invoice.amountOfInvoice ? parseInt(invoice.amountOfInvoice) : 0.0,
+      invoiceDate: new Date(invoice.invoiceDate),
+      businessUnit: invoice.businessUnit,
+      billToAddress: invoice.billTo,
+      paymentDue: new Date(invoice.paymentDue),
+      carrier: invoice?.carrier?.name,
+      carrierMode: invoice.mode?.reportKeyMode,
+      freightPaymentTerms: invoice.freightPaymentTerms,
       remittanceInformation: {
-        erpInvoiceNumber: 'ERP1000',
-        erpRemittanceNumber: 'ERP2000',
-        vendorId: 'FED100',
-        amountOfPayment: 600,
+        erpInvoiceNumber: invoice.erpInvoiceNumber,
+        erpRemittanceNumber: invoice.erpRemittanceNumber,
+        vendorId: invoice.remitVendorId,
+        amountOfPayment: parseInt(invoice.amountOfPayment),
+
       }
     });
   }

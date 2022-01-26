@@ -14,6 +14,7 @@ import {
 import {FreightOrder} from '../freight-order/freight-order-model';
 import {CarrierReference, CarrierUtils, EMPTY_CARRIER_REFERENCE} from '../master-data-models/carrier-model';
 import {Location, EMPTY_LOCATION} from '../location/location-model';
+import { ServiceLevel } from '../master-data-models/service-level-model';
 
 export class InvoiceDataModel {
 
@@ -62,7 +63,7 @@ export class InvoiceDataModel {
   mode: CarrierModeCodeReference;
   carrierModeDisplay: string;
   freightPaymentTerms: string;
-  serviceLevel: string;
+  serviceLevel: ServiceLevel;
   trackingNumber: string;
   proNumber: string;
   billOfLadingNumber: string;

@@ -44,7 +44,16 @@ describe('InvoiceOverviewComponent', () => {
         invoiceNetAmount: 6600,
         invoiceDate: new Date(),
         businessUnit: 'GPSC',
-        billToAddress: 'NY, USA',
+        billToAddress: {
+          city: 'TestCity',
+          address: 'TestAddress',
+          address2: 'TestAddress2',
+          name: 'TestName',
+          state: 'TestState',
+          country: 'TestCountry',
+          code: 'TestCode',
+          zipCode: 'TestZipCode'
+        },
         paymentDue: new Date(),
         carrier: 'Fedex',
         carrierMode: 'Air',
