@@ -9,7 +9,7 @@ import {InvoiceService} from '../../services/invoice-service';
 import {Observable, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
-import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
+import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
@@ -38,10 +38,12 @@ export class InvoiceEditPageComponent implements OnInit {
   public invoiceFormGroup: FormGroup;
   public tripInformationFormGroup: FormGroup;
   public invoiceAmountFormGroup: FormGroup;
+  public invoiceAllocationFormGroup: FormGroup;
 
   public isEditMode$ = new SubjectValue(false);
   public loadTripInformation$ = new Subject<TripInformation>();
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
+  public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
 
   constructor(private util: UtilService,
               private router: Router,
@@ -53,9 +55,11 @@ export class InvoiceEditPageComponent implements OnInit {
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
+    this.invoiceAllocationFormGroup = new FormGroup({});
     this.invoiceFormGroup = new FormGroup({
       tripInformation: this.tripInformationFormGroup,
-      invoiceAmount: this.invoiceAmountFormGroup
+      invoiceAmount: this.invoiceAmountFormGroup,
+      invoiceAllocation: this.invoiceAllocationFormGroup
     });
   }
 
@@ -114,6 +118,11 @@ export class InvoiceEditPageComponent implements OnInit {
         amountOfPayment: parseInt(invoice.amountOfPayment),
 
       }
+    });
+    this.loadAllocationDetails$.next({
+      totalGlAmount: invoice.totalGlAmount,
+      invoiceNetAmount: invoice.amountOfInvoice,
+      glLineItems: invoice.glLineItems
     });
   }
 

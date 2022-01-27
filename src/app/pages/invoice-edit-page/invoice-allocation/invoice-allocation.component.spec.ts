@@ -1,13 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
 import { InvoiceAllocationComponent } from './invoice-allocation.component';
+import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
 
 describe('InvoiceAllocationComponent', () => {
   let component: InvoiceAllocationComponent;
   let fixture: ComponentFixture<InvoiceAllocationComponent>;
+
+  const testAllocationDetails = new FormGroup( {
+    invoiceNetAmount: new FormControl('1234.56'),
+    totalGlAmount: new FormControl('1234.56'),
+    invoiceAllocations: new FormArray([
+      new FormGroup({
+        allocationPercent: new FormControl(300.00),
+        shippingPointWarehouse: new FormControl('Other'),
+        glCostCenter: new FormControl('23344'),
+        glAccount: new FormControl('71257000'),
+        glCompanyCode: new FormControl('4323345'),
+        glAmount: new FormControl(300.00)
+      })
+    ])
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -20,6 +36,7 @@ describe('InvoiceAllocationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InvoiceAllocationComponent);
     component = fixture.componentInstance;
+    component.invoiceNetAmount = new FormControl(0);
     fixture.detectChanges();
   });
 
@@ -28,16 +45,45 @@ describe('InvoiceAllocationComponent', () => {
   });
 
   it('should set form control', () => {
-    component.formGroup = new FormGroup({});
+    component.invoiceAllocations = testAllocationDetails.get('invoiceAllocations') as FormArray;
+    component.formGroup = testAllocationDetails;
+
     expect(component._formGroup.get('invoiceAllocations')).toBeDefined();
     const invoiceAllocation =  component.invoiceAllocationsControls[0];
-    expect(invoiceAllocation.get('allocationPercentage')).toBeDefined();
+    expect(invoiceAllocation.get('allocationPercent')).toBeDefined();
     expect(invoiceAllocation.get('glCostCenter')).toBeDefined();
     expect(invoiceAllocation.get('warehouse')).toBeDefined();
     expect(invoiceAllocation.get('glCompanyCode')).toBeDefined();
     expect(invoiceAllocation.get('glAccount')).toBeDefined();
     expect(invoiceAllocation.get('allocationAmount')).toBeDefined();
+  });
 
+  describe('when invoice allocation detail is updated', () => {
+    let loadAllocationDetails$: Subject<InvoiceAllocationDetail>;
+    beforeEach(() => {
+      loadAllocationDetails$ = new Subject();
+      component.loadAllocationDetails = loadAllocationDetails$.asObservable();
+    });
+
+    it('should load allocation detail form', done => {
+      loadAllocationDetails$.subscribe(() => {
+        expect(component._formGroup).toBeDefined();
+        done();
+      });
+      loadAllocationDetails$.next({
+        invoiceNetAmount: '1234.56',
+        totalGlAmount: '1234.56',
+        glLineItems: [{
+          allocationPercent: 300.00,
+          shippingPointWarehouse: 'Other',
+          glCostCenter: '23344',
+          glAccount: '71257000',
+          glCompanyCode: '4323345',
+          glAmount: 300.00,
+          debitCreditFlag: ''
+        }]
+      });
+    });
   });
 
   describe('when edit mode is updated', () => {

@@ -84,8 +84,9 @@
 
         <!-- Allocation -->
         <app-invoice-allocation
-        [formGroup]="invoiceFormGroup"
+        [formGroup]="invoiceAllocationFormGroup"
         [updateIsEditMode$]="isEditMode$.asObservable()"
+        [loadAllocationDetails]="loadAllocationDetails$.asObservable()"
         >
         </app-invoice-allocation>
         <hr/>
