@@ -159,6 +159,7 @@
       <elm-card id="originAddressCard">
         <app-fal-address
          [formGroup]="originAddressFormGroup"
+         [loadAddress$]="loadOriginAddress$.asObservable()"
          >
 
         </app-fal-address> 
@@ -171,7 +172,9 @@
       </label>
       <elm-card id="destinationAddressCard">
         <app-fal-address
-         [formGroup]="destinationAddressFormGroup">
+         [formGroup]="destinationAddressFormGroup"
+         [loadAddress$]="loadDestinationAddress$.asObservable()"
+         >
          </app-fal-address>
       </elm-card>
     </div>
@@ -182,6 +185,7 @@
       </label>
       <elm-card id="billToAddressCard">
         <app-fal-address
+        [loadAddress$]="loadBillToAddress$.asObservable()"
         [formGroup]="billToAddressFormGroup"
         [showShippingItemField]="false"
         >

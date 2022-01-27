@@ -15,30 +15,42 @@
                 </div>
                 <div class="col invoice-info">
                     <span class="label-text">Payment Due</span>
-                    <span class="value-text">{{invoiceOverviewDetail?.invoiceDate | date: 'MM-dd-yyyy zzz'}}</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.paymentDue | date: 'MM-dd-yyyy zzz'}}</span>
                 </div>
                 <div class="col invoice-info">
                     <span class="label-text">Freight Payment Terms</span>
-                    <span class="value-text">{{invoiceOverviewDetail?.freightPaymentTerms}}</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.freightPaymentTerms ? invoiceOverviewDetail?.freightPaymentTerms : 'N/A'}}</span>
                 </div>
             </div>
             <div class="row">
                 <div class="col invoice-info">
                     <span class="label-text">Bill to Address</span>
-                    <span class="value-text">{{invoiceOverviewDetail?.billToAddress}}</span>
+                    <span class="value-text">
+                        <ng-container *ngIf="invoiceOverviewDetail?.billToAddress else defaultDiv">
+                            <div>{{invoiceOverviewDetail?.billToAddress?.name}}</div>
+                            <div>{{invoiceOverviewDetail?.billToAddress?.address}}</div>
+                            <div>{{invoiceOverviewDetail?.billToAddress?.city}}, {{invoiceOverviewDetail?.billToAddress?.state}} {{invoiceOverviewDetail?.billToAddress?.zipCode}}</div>
+                            <div>{{invoiceOverviewDetail?.billToAddress?.country}}</div>
+                        </ng-container>
+                        <ng-template #defaultDiv>
+                            N/A
+                        </ng-template>
+                       
+                        
+                    </span>
                 </div>
         
                 <div class="col invoice-info">
                     <span class="label-text">Carrier</span>
-                    <span class="value-text">{{invoiceOverviewDetail?.carrier}}</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.carrier ? invoiceOverviewDetail?.carrier : 'N/A'}}</span>
                 </div>
                 <div class="col invoice-info">
                     <span class="label-text">Carrier Mode</span>
-                    <span class="value-text">{{invoiceOverviewDetail?.carrierMode}}</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.carrierMode ? invoiceOverviewDetail?.carrierMode: 'N/A'}}</span>
                 </div>
                 <div class="col invoice-info">
                     <span class="label-text">Business Unit</span>
-                    <span class="value-text">{{invoiceOverviewDetail?.businessUnit}}</span>
+                    <span class="value-text">{{invoiceOverviewDetail?.businessUnit ? invoiceOverviewDetail?.businessUnit : 'N/A'}}</span>
                 </div>
             </div>
         </div>
@@ -53,23 +65,23 @@
                 
                 <div class="row">
                     <span class="col-7 label-text">ERP Invoice Number</span>
-                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber : 'NA'}}</span>
+                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber : 'N/A'}}</span>
                 </div>
                 <div class="row">
                     <span class="col-7 label-text">ERP Remittance Number</span>
-                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpRemittanceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpRemittanceNumber : 'NA'}}</span>
+                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpRemittanceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpRemittanceNumber : 'N/A'}}</span>
                 </div>
                 <div class="row">
                     <span class="col-7 label-text">Vendor ID</span>
-                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.vendorId ? invoiceOverviewDetail?.remittanceInformation?.vendorId : 'NA'}}</span>
+                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.vendorId ? invoiceOverviewDetail?.remittanceInformation?.vendorId : 'N/A'}}</span>
                 </div>
                 <div class="row">
                     <span class="col-7 label-text">Amount of Payment</span>
-                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.amountOfPayment ? invoiceOverviewDetail?.remittanceInformation?.amountOfPayment: 'NA'}}</span>
+                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.amountOfPayment ? invoiceOverviewDetail?.remittanceInformation?.amountOfPayment: 'N/A'}}</span>
                 </div>
                 <div class="row">
                     <span class="col-7 label-text">Date of Payment</span>
-                    <span class="col-5 value-text"><span class="col value-text">{{ invoiceOverviewDetail?.remittanceInformation?.dateOfPayment ? invoiceOverviewDetail?.remittanceInformation?.dateOfPayment: 'NA'}}</span>
+                    <span class="col-5 value-text"><span class="col value-text">{{ invoiceOverviewDetail?.remittanceInformation?.dateOfPayment ? invoiceOverviewDetail?.remittanceInformation?.dateOfPayment: 'N/A'}}</span>
                 </span>
                 </div>
                
