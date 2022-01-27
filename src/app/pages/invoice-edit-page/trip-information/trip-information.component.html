@@ -19,7 +19,7 @@
       </label>
       <app-fal-date-input id="invoiceDateInput"
                           class="fal-label"
-                          formControlName="pickUpDate"
+                          formControlName="invoiceDate"
                           [placeholder]="'MM-DD-YYYY'"
                           [isDisabled]="true"
                           [isError]="!invoiceDateControl.value">
@@ -57,7 +57,7 @@
       <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
       <app-fal-date-input id="deliveryDateInput"
                           class="fal-label"
-                          formControlName="pickUpDate"
+                          formControlName="deliveryDate"
                           [placeholder]="'MM-DD-YYYY'"
                           [isDisabled]="true"
                           [isError]="!deliveryDateControl.value">
@@ -112,9 +112,10 @@
                  bindLabel="label"
                  bindValue="value"
                  formControlName="carrier"
-                 [ngClass]="{'error': !carrierControl.value}">
+                 [compareWith]="compareWith"
+                 [ngClass]="{'error': !carrierControl.value?.name || !carrierControl.value?.scac}">
       </ng-select>
-      <elm-input-subtext *ngIf="!carrierControl.value"
+      <elm-input-subtext *ngIf="!carrierControl.value?.name || !carrierControl.value?.scac"
                          class="input-error"
                          [isError]="true">
         Carrier is missing
@@ -130,9 +131,10 @@
                  bindLabel="label"
                  bindValue="value"
                  formControlName="carrierMode"
-                 [ngClass]="{'error': !carrierModeControl.value}">
+                 [compareWith]="compareWith"
+                 [ngClass]="{'error': !carrierModeControl.value?.reportKeyMode}">
       </ng-select>
-      <elm-input-subtext *ngIf="!carrierModeControl.value"
+      <elm-input-subtext *ngIf="!carrierModeControl.value?.reportKeyMode"
                          class="input-error"
                          [isError]="true">
         Carrier Mode is missing
@@ -147,7 +149,8 @@
                  [items]="serviceLevelOptions"
                  bindLabel="label"
                  bindValue="value"
-                 formControlName="serviceLevel">
+                 formControlName="serviceLevel"
+                 [compareWith]="compareWith">
       </ng-select>
     </div>
   </div>

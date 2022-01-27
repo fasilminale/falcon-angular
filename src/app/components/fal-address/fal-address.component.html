@@ -25,7 +25,7 @@
                id="country"
                formControlName="country"
                class="form-control"
-               [ngClass]="{'error': !_formGroup.get('country')?.value && validateField, 'margin-spacing': !validateField}"
+               [ngClass]="{'error': !_formGroup.get('country')?.value && validateField}"
         />
         <elm-input-subtext *ngIf="!_formGroup.get('country')?.value && validateField"
                            class="input-error"

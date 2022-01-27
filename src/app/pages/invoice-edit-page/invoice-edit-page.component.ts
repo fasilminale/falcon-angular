@@ -15,7 +15,6 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {MatDialog} from '@angular/material/dialog';
 import {ToastService} from '@elm/elm-styleguide-ui';
-import {GlLineItem} from 'src/app/models/line-item/line-item-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -90,8 +89,8 @@ export class InvoiceEditPageComponent implements OnInit {
     this.loadTripInformation$.next({
       tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),
-      pickUpDate: new Date(invoice.pickupDateTime),
-      deliveryDate: new Date(invoice.deliveryDateTime),
+      pickUpDate: invoice.pickupDateTime ? new Date(invoice.pickupDateTime) : undefined,
+      deliveryDate: invoice.deliveryDateTime ? new Date(invoice.deliveryDateTime) : undefined,
       proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
       bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A' ,
       freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,

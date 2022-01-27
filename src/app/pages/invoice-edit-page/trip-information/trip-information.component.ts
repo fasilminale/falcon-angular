@@ -127,7 +127,7 @@ export class TripInformationComponent implements OnInit {
       this.serviceLevelControl.setValue(t.serviceLevel ?? undefined);
       this.loadOriginAddress$.next(t.originAddress);
       this.loadDestinationAddress$.next(t.destinationAddress);
-      this.loadBillToAddress$.next(t.billToAddress)
+      this.loadBillToAddress$.next(t.billToAddress);
       this.formGroup.updateValueAndValidity();
       this.formGroup.disable();
     }));
@@ -137,5 +137,8 @@ export class TripInformationComponent implements OnInit {
     this.showFreightOrderSection = !this.showFreightOrderSection;
   }
 
+  compareWith(item: any, value: any): boolean {
+    return item.id === value.id;
+  }
 }
 

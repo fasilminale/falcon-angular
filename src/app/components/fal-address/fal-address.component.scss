@@ -19,8 +19,8 @@
   }
 }
 
-.margin-spacing {
-  margin-bottom: 30px;
+.form-control {
+  margin-bottom: 24px;
 }
 
 ::ng-deep .error {
@@ -28,5 +28,5 @@
 }
 
 .input-error ::ng-deep .elm-input-subtext{
-  margin-top: 0;
+  margin-top: -24px;
 }
