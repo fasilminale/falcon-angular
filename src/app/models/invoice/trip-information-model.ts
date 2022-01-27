@@ -1,6 +1,7 @@
-import {Carrier} from '../master-data-models/carrier-model';
-import {CarrierModeCode} from '../master-data-models/carrier-mode-code-model';
+import {CarrierReference} from '../master-data-models/carrier-model';
+import {CarrierModeCodeReference} from '../master-data-models/carrier-mode-code-model';
 import {ServiceLevel} from '../master-data-models/service-level-model';
+import { ShippingPointLocation } from '../location/location-model';
 import {GlLineItem} from '../line-item/line-item-model';
 
 export interface TripInformation {
@@ -11,9 +12,12 @@ export interface TripInformation {
   proTrackingNumber: string;
   bolNumber: string;
   freightPaymentTerms: FreightPaymentTerms;
-  carrier?: Carrier;
-  carrierMode?: CarrierModeCode;
+  carrier?: CarrierReference;
+  carrierMode?: CarrierModeCodeReference;
   serviceLevel?: ServiceLevel;
+  originAddress?: ShippingPointLocation,
+  destinationAddress?: ShippingPointLocation
+  billToAddress?: ShippingPointLocation
 }
 
 export interface InvoiceAllocationDetail {

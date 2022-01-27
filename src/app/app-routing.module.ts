@@ -19,7 +19,7 @@ const routes: Routes = [
   {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {
     permissions: ['falAllowAllAccess', 'falAllowInvoiceWrite']
   }},
-  {path: 'invoice/:falconInvoiceNumber/test', component: InvoiceEditPageComponent, canActivate: [OktaAuthGuard]},
+  {path: 'invoice/:falconInvoiceNumber/:entryType', component: InvoiceEditPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice/:falconInvoiceNumber', component: InvoiceDetailPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {permissions: ['falAllowAllAccess', 'falAllowInvoiceWrite']
   }},

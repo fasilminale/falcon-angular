@@ -212,23 +212,13 @@ describe('TripInformationComponent', () => {
     const tripInformation: TripInformation = {
       bolNumber: 'TestBolNumber',
       carrier: {
-        autoPay: YesNo.NO,
-        currencyCode: 'USD',
-        dunsNumber: 123,
-        mcNumber: 456,
-        name: 'TestCarrier',
-        pushPay: YesNo.YES,
-        scac: 'TestSCAC',
-        tenderAutoAccept: YesNo.NO,
-        tenderEmail: 'fake@email.com',
-        tenderMethod: TenderMethod.NONE,
-        usdot: 789
+       scac: 'TestScac',
+       name: 'TestCarrierName'
+       
       },
       carrierMode: {
-        mode: 'TLTL',
-        reportKeyMode: 'Test LTL',
-        reportModeDescription: 'Test Less Than Truckload',
-        tripType: TripType.LOAD
+        reportModeDescription: 'ReportModeDescription',
+        reportKeyMode: 'ReportKeyMode'
       },
       deliveryDate: new Date(),
       freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
@@ -257,6 +247,15 @@ describe('TripInformationComponent', () => {
       done();
     });
     tripInformation$.next(tripInformation);
+  });
+
+  describe('should toggle freight orders section', ()=> {
+    it('toggles freight order section', ()=> {
+      component.showFreightOrderSection = false;
+      component.toggleFreightOrderDetailsSection();
+      expect(component.showFreightOrderSection).toBe(true);
+    });
+
   });
 
 });

@@ -1,9 +1,11 @@
+import {Location} from '../location/location-model';
+
 export interface InvoiceOverviewDetail {
     invoiceNetAmount?: number;
     invoiceDate?: Date;
     paymentDue?: Date;
     freightPaymentTerms?: string;
-    billToAddress?: string;
+    billToAddress?: Location;
     carrier?: string;
     carrierMode?:string;
     businessUnit?: string;

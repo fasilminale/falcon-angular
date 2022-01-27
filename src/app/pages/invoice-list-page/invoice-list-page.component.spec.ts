@@ -198,11 +198,18 @@ describe('InvoiceListPageComponent', () => {
       .toEqual(invoiceData.data[0].falconInvoiceNumber);
   });
 
-  it('should route to an invoice', fakeAsync(() => {
+  it('should route to an manual invoice edit page', fakeAsync(() => {
     const invoice = new InvoiceDataModel({falconInvoiceNumber: '1'});
     const navigateSpy = spyOn(router, 'navigate');
     component.rowClicked(invoice);
     expect(navigateSpy).toHaveBeenCalledWith(['/invoice/1']);
+  }));
+
+  it('should route to an auto invoice edit page', fakeAsync(() => {
+    const invoice = new InvoiceDataModel({falconInvoiceNumber: '1', entryType: 'AUTO'});
+    const navigateSpy = spyOn(router, 'navigate');
+    component.rowClicked(invoice);
+    expect(navigateSpy).toHaveBeenCalledWith(['/invoice/1/AUTO']);
   }));
 
   describe('openFilter', () => {

@@ -26,7 +26,7 @@ export class InvoiceAmountComponent implements OnInit {
   public costBreakdownTypes = [
     {display: 'Per hour', value: 'perHour'}, 
     {display: 'Flat', value: 'flat'}, 
-    { display: 'Per mile', value: 'perMile'}, 
+    {display: 'Per mile', value: 'perMile'}, 
     {display: 'N/A', value: ''}];
 
     totalInvoiceAmount = 0;
