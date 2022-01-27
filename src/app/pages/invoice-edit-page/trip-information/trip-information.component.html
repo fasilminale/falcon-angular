@@ -94,12 +94,13 @@
       <ng-select id="freightPaymentTermsInput"
                  [items]="freightPaymentTermOptions"
                  formControlName="freightPaymentTerms"
+                 placeholder="Select One..."
                  [ngClass]="{'error': !freightPaymentTermsControl.value}">
       </ng-select>
       <elm-input-subtext *ngIf="!freightPaymentTermsControl.value"
                          class="input-error"
                          [isError]="true">
-        Freight Payment Terms is required
+        Freight Payment Terms is missing
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -112,6 +113,7 @@
                  bindLabel="label"
                  bindValue="value"
                  formControlName="carrier"
+                 placeholder="Select One..."
                  [compareWith]="compareWith"
                  [ngClass]="{'error': !carrierControl.value?.name || !carrierControl.value?.scac}">
       </ng-select>
@@ -131,6 +133,7 @@
                  bindLabel="label"
                  bindValue="value"
                  formControlName="carrierMode"
+                 placeholder="Select One..."
                  [compareWith]="compareWith"
                  [ngClass]="{'error': !carrierModeControl.value?.reportKeyMode}">
       </ng-select>
@@ -150,6 +153,7 @@
                  bindLabel="label"
                  bindValue="value"
                  formControlName="serviceLevel"
+                 placeholder="Select One..."
                  [compareWith]="compareWith">
       </ng-select>
     </div>
