@@ -30,7 +30,7 @@
         <elm-input-subtext *ngIf="!_formGroup.get('country')?.value && validateField"
                            class="input-error"
                          [isError]="true">
-        Country is required
+        Country is missing
       </elm-input-subtext>
       </div>
       <div class="col-md-12">
@@ -41,10 +41,6 @@
         <elm-text-input id="name"
                         formControlName="name">
         </elm-text-input>
-        <elm-input-subtext *ngIf="_formGroup.get('name')?.errors?.required"
-                         [isError]="true">
-        Name is required
-      </elm-input-subtext>
       </div>
 
       <div class="col-md-12">
@@ -55,10 +51,6 @@
         <elm-text-input id="streetAddress"
                         formControlName="streetAddress">
         </elm-text-input>
-        <elm-input-subtext *ngIf="_formGroup.get('streetAddress')?.errors?.required"
-                         [isError]="true">
-        Street address is required
-      </elm-input-subtext>
       </div>
       <div class="col-md-12">
         <label for="streetAddress2"
@@ -78,10 +70,6 @@
         <elm-text-input id="city"
                         formControlName="city">
         </elm-text-input>
-        <elm-input-subtext *ngIf="_formGroup.get('city')?.errors?.required"
-                         [isError]="true">
-        City is required
-      </elm-input-subtext>
       </div>
       <div class="col">
         <label for="state"
@@ -91,10 +79,6 @@
         <elm-text-input id="state"
                         formControlName="state">
         </elm-text-input>
-        <elm-input-subtext *ngIf="_formGroup.get('state')?.errors?.required"
-                         [isError]="true">
-        State is required
-      </elm-input-subtext>
       </div>
 
       <div class="col">

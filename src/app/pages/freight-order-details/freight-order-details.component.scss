@@ -1,3 +1,5 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
 .mat-header-cell {
     font-size: inherit;
     color: inherit;
@@ -19,4 +21,9 @@ td.mat-cell, th.mat-header-cell{
 
 th.mat-header-cell {
     background-color: #f6f6f6;
+}
+
+.missing-error {
+    color: $cardinal-red;
+    border-bottom-color: #dedcd5;
 }

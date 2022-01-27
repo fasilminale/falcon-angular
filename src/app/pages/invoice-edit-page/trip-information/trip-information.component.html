@@ -17,14 +17,17 @@
              class="fal-label">
         Invoice Date
       </label>
-      <elm-date-picker id="invoiceDateInput"
-                       class="fal-label"
-                       labelPosition="top"
-                       formControlName="invoiceDate">
-      </elm-date-picker>
-      <elm-input-subtext *ngIf="invoiceDateControl.invalid"
+      <app-fal-date-input id="invoiceDateInput"
+                          class="fal-label"
+                          formControlName="pickUpDate"
+                          [placeholder]="'MM-DD-YYYY'"
+                          [isDisabled]="true"
+                          [isError]="!invoiceDateControl.value">
+      </app-fal-date-input>
+      <elm-input-subtext *ngIf="!invoiceDateControl.value"
+                         class="input-error"
                          [isError]="true">
-        Invoice Date is required
+        Invoice Date is missing
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -73,10 +76,6 @@
       <elm-text-input id="proTrackingNumberInput"
                       formControlName="proTrackingNumber">
       </elm-text-input>
-      <elm-input-subtext *ngIf="proTrackingNumberControl.invalid"
-                         [isError]="true">
-        PRO/Tracking Number is required
-      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="bolNumberInput"
@@ -86,10 +85,6 @@
       <elm-text-input id="bolNumberInput"
                       formControlName="bolNumber">
       </elm-text-input>
-      <elm-input-subtext *ngIf="bolNumberControl.invalid"
-                         [isError]="true">
-        BOL Number is required
-      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="freightPaymentTermsInput"
@@ -152,13 +147,8 @@
                  [items]="serviceLevelOptions"
                  bindLabel="label"
                  bindValue="value"
-                 formControlName="serviceLevel"
-                 [ngClass]="{'error':serviceLevelControl.invalid}">
+                 formControlName="serviceLevel">
       </ng-select>
-      <elm-input-subtext *ngIf="serviceLevelControl.invalid"
-                         [isError]="true">
-        Service Level is required
-      </elm-input-subtext>
     </div>
   </div>
   <div class="row">
