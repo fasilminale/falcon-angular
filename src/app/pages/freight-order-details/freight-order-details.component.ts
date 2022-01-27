@@ -13,8 +13,8 @@ export class FreightOrderDetailsComponent implements OnInit {
 
   freightOrders: any[] = [];
   freightOrderTitle = '';
-  constructor(private invoiceService: InvoiceService) { 
-  
+  constructor(private invoiceService: InvoiceService) {
+
   }
 
   ngOnInit(): void {

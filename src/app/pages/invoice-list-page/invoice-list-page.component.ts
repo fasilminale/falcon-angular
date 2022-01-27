@@ -5,7 +5,7 @@ import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {DataTableComponent, ElmDataTableHeader} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog} from '@angular/material/dialog';
@@ -15,6 +15,7 @@ import {Sort} from '@angular/material/sort';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
+import { InvoiceService } from 'src/app/services/invoice-service';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -55,7 +56,8 @@ export class InvoiceListPageComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     public filterService: FilterService,
-    public userService: UserService
+    public userService: UserService,
+    private invoiceService: InvoiceService,
   ) {
   }
 
@@ -101,7 +103,11 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   rowClicked(invoice: InvoiceDataModel): Promise<any> {
-    return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
+    if (invoice.entryType === 'AUTO') {
+      return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}/AUTO`]);
+    } else {
+      return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
+    }
   }
 
   sortChanged(sort: Sort): void {

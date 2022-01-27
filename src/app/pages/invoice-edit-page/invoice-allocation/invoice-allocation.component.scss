@@ -1,3 +1,21 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.error-div{
+  border: 1px solid $cardinal-red;
+}
+
+.error-text {
+  color: $cardinal-red;
+}
+
+.text-right{
+  text-align: right;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
 .invoice-allocation-header {
     background-color: #f6f6f6;
     padding-top: 10px;
@@ -6,7 +24,7 @@
  .invoice-allocation-header > div{
     font-size: 14px;
     font-weight: 700;
-    
+
     &:last-child{
       text-align: right;
     }
@@ -15,6 +33,11 @@
  .invoice-allocation-row{
    margin-bottom: 15px;
     .allocation-amount-div {
-         text-align: right;
+      text-align: right;
+      padding-right: 25px;
     }
  }
+
+.invoice-allocation-total-div {
+  background-color:#f6f6f6;
+}

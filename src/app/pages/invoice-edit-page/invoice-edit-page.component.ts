@@ -9,12 +9,13 @@ import {InvoiceService} from '../../services/invoice-service';
 import {Observable, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
-import {FreightPaymentTerms, TripInformation} from '../../models/invoice/trip-information-model';
+import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {MatDialog} from '@angular/material/dialog';
 import {ToastService} from '@elm/elm-styleguide-ui';
+import {GlLineItem} from 'src/app/models/line-item/line-item-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -37,10 +38,12 @@ export class InvoiceEditPageComponent implements OnInit {
   public invoiceFormGroup: FormGroup;
   public tripInformationFormGroup: FormGroup;
   public invoiceAmountFormGroup: FormGroup;
+  public invoiceAllocationFormGroup: FormGroup;
 
   public isEditMode$ = new SubjectValue(false);
   public loadTripInformation$ = new Subject<TripInformation>();
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
+  public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
 
   constructor(private util: UtilService,
               private router: Router,
@@ -52,9 +55,11 @@ export class InvoiceEditPageComponent implements OnInit {
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
+    this.invoiceAllocationFormGroup = new FormGroup({});
     this.invoiceFormGroup = new FormGroup({
       tripInformation: this.tripInformationFormGroup,
-      invoiceAmount: this.invoiceAmountFormGroup
+      invoiceAmount: this.invoiceAmountFormGroup,
+      invoiceAllocation: this.invoiceAllocationFormGroup
     });
   }
 
@@ -83,27 +88,41 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
     this.loadTripInformation$.next({
-      tripId: 'N/A',
+      tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),
-      proTrackingNumber: 'N/A',
-      bolNumber: 'N/A',
-      freightPaymentTerms: FreightPaymentTerms.PREPAID,
+      pickUpDate: new Date(invoice.pickupDateTime),
+      deliveryDate: new Date(invoice.deliveryDateTime),
+      proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
+      bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A' ,
+      freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,
+      originAddress: {...invoice.origin, shippingPoint: invoice.shippingPoint},
+      destinationAddress: {...invoice.destination, shippingPoint: invoice.shippingPoint},
+      billToAddress: {...invoice.billTo, shippingPoint: invoice.shippingPoint},
+      serviceLevel: invoice.serviceLevel,
+      carrier: invoice.carrier,
+      carrierMode: invoice.mode
     });
     this.loadInvoiceOverviewDetail$.next({
-      invoiceNetAmount: 6600,
-      invoiceDate: new Date(),
-      businessUnit: 'GPSC',
-      billToAddress: 'Customer Name, 2125 Chestnut St San Fransisco, CA 94123,United States',
-      paymentDue: new Date(),
-      carrier: 'Fedex',
-      carrierMode: 'Air',
-      freightPaymentTerms: FreightPaymentTerms.PREPAID,
+      invoiceNetAmount: invoice.amountOfInvoice ? parseInt(invoice.amountOfInvoice) : 0.0,
+      invoiceDate: new Date(invoice.invoiceDate),
+      businessUnit: invoice.businessUnit,
+      billToAddress: invoice.billTo,
+      paymentDue: new Date(invoice.paymentDue),
+      carrier: invoice?.carrier?.name,
+      carrierMode: invoice.mode?.reportKeyMode,
+      freightPaymentTerms: invoice.freightPaymentTerms,
       remittanceInformation: {
-        erpInvoiceNumber: 'ERP1000',
-        erpRemittanceNumber: 'ERP2000',
-        vendorId: 'FED100',
-        amountOfPayment: 600,
+        erpInvoiceNumber: invoice.erpInvoiceNumber,
+        erpRemittanceNumber: invoice.erpRemittanceNumber,
+        vendorId: invoice.remitVendorId,
+        amountOfPayment: parseInt(invoice.amountOfPayment),
+
       }
+    });
+    this.loadAllocationDetails$.next({
+      totalGlAmount: invoice.totalGlAmount,
+      invoiceNetAmount: invoice.amountOfInvoice,
+      glLineItems: invoice.glLineItems
     });
   }
 

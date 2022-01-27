@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
@@ -9,6 +9,7 @@ import {CarrierReference, CarrierUtils} from '../../../models/master-data-models
 import {map} from 'rxjs/operators';
 import {CarrierModeCodeReference, CarrierModeCodeUtils} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
+import { ShippingPointLocation } from 'src/app/models/location/location-model';
 
 const {required} = Validators;
 
@@ -55,6 +56,9 @@ export class TripInformationComponent implements OnInit {
   ]);
 
   public showFreightOrderSection = false;
+  loadOriginAddress$ = new Subject<ShippingPointLocation>();
+  loadDestinationAddress$ = new Subject<ShippingPointLocation>();
+  loadBillToAddress$ = new Subject<ShippingPointLocation>();
 
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
@@ -121,6 +125,9 @@ export class TripInformationComponent implements OnInit {
       this.carrierControl.setValue(t.carrier ?? undefined);
       this.carrierModeControl.setValue(t.carrierMode ?? undefined);
       this.serviceLevelControl.setValue(t.serviceLevel ?? undefined);
+      this.loadOriginAddress$.next(t.originAddress);
+      this.loadDestinationAddress$.next(t.destinationAddress);
+      this.loadBillToAddress$.next(t.billToAddress)
       this.formGroup.updateValueAndValidity();
       this.formGroup.disable();
     }));

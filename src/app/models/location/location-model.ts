@@ -17,3 +17,7 @@ export const EMPTY_LOCATION: Location = {
   country: '',
   zipCode: ''
 };
+
+export interface ShippingPointLocation extends Location{
+  shippingPoint?: string;
+}
