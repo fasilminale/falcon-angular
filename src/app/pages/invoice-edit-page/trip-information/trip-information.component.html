@@ -32,14 +32,18 @@
              class="fal-label">
         Pick up Date
       </label>
-      <elm-date-picker id="pickUpDateInput"
-                       class="fal-label"
-                       labelPosition="top"
-                       formControlName="pickUpDate">
-      </elm-date-picker>
-      <elm-input-subtext *ngIf="pickUpDateControl.invalid"
+      <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
+      <app-fal-date-input id="pickUpDateInput"
+                          class="fal-label"
+                          formControlName="pickUpDate"
+                          [placeholder]="'MM-DD-YYYY'"
+                          [isDisabled]="true"
+                          [isError]="!pickUpDateControl.value">
+      </app-fal-date-input>
+      <elm-input-subtext *ngIf="!pickUpDateControl.value"
+                         class="input-error"
                          [isError]="true">
-        Pick up Date is required
+        Pick up date is missing
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -47,14 +51,18 @@
              class="fal-label">
         Delivery Date
       </label>
-      <elm-date-picker id="deliveryDateInput"
-                       class="fal-label"
-                       labelPosition="top"
-                       formControlName="deliveryDate">
-      </elm-date-picker>
-      <elm-input-subtext *ngIf="deliveryDateControl.invalid"
+      <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
+      <app-fal-date-input id="deliveryDateInput"
+                          class="fal-label"
+                          formControlName="pickUpDate"
+                          [placeholder]="'MM-DD-YYYY'"
+                          [isDisabled]="true"
+                          [isError]="!deliveryDateControl.value">
+      </app-fal-date-input>
+      <elm-input-subtext *ngIf="!deliveryDateControl.value"
+                         class="input-error"
                          [isError]="true">
-        Delivery Date is required
+        Delivery date is missing
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -91,9 +99,10 @@
       <ng-select id="freightPaymentTermsInput"
                  [items]="freightPaymentTermOptions"
                  formControlName="freightPaymentTerms"
-                 [ngClass]="{'error': freightPaymentTermsControl.invalid}">
+                 [ngClass]="{'error': !freightPaymentTermsControl.value}">
       </ng-select>
-      <elm-input-subtext *ngIf="freightPaymentTermsControl.invalid"
+      <elm-input-subtext *ngIf="!freightPaymentTermsControl.value"
+                         class="input-error"
                          [isError]="true">
         Freight Payment Terms is required
       </elm-input-subtext>
@@ -108,11 +117,12 @@
                  bindLabel="label"
                  bindValue="value"
                  formControlName="carrier"
-                 [ngClass]="{'error': carrierControl.invalid}">
+                 [ngClass]="{'error': !carrierControl.value}">
       </ng-select>
-      <elm-input-subtext *ngIf="carrierControl.invalid"
+      <elm-input-subtext *ngIf="!carrierControl.value"
+                         class="input-error"
                          [isError]="true">
-        Carrier is required
+        Carrier is missing
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -125,11 +135,12 @@
                  bindLabel="label"
                  bindValue="value"
                  formControlName="carrierMode"
-                 [ngClass]="{'error': carrierModeControl.invalid}">
+                 [ngClass]="{'error': !carrierModeControl.value}">
       </ng-select>
-      <elm-input-subtext *ngIf="carrierModeControl.invalid"
+      <elm-input-subtext *ngIf="!carrierModeControl.value"
+                         class="input-error"
                          [isError]="true">
-        Carrier Mode is required
+        Carrier Mode is missing
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -161,7 +172,7 @@
          [formGroup]="originAddressFormGroup"
          >
 
-        </app-fal-address> 
+        </app-fal-address>
       </elm-card>
     </div>
     <div class="col">
@@ -184,6 +195,7 @@
         <app-fal-address
         [formGroup]="billToAddressFormGroup"
         [showShippingItemField]="false"
+        [validateField]="false"
         >
       </app-fal-address>
       </elm-card>

@@ -20,10 +20,15 @@
                class="country">
           Country
         </label>
-        <elm-text-input id="country"
-                        formControlName="country">
-        </elm-text-input>
-        <elm-input-subtext *ngIf="_formGroup.get('country')?.errors?.required"
+       <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
+        <input type="text"
+               id="country"
+               formControlName="country"
+               class="form-control"
+               [ngClass]="{'error': !_formGroup.get('country')?.value && validateField, 'margin-spacing': !validateField}"
+        />
+        <elm-input-subtext *ngIf="!_formGroup.get('country')?.value && validateField"
+                           class="input-error"
                          [isError]="true">
         Country is required
       </elm-input-subtext>
@@ -97,12 +102,17 @@
                class="zipCode">
             Zip/Postal Code
         </label>
-        <elm-text-input id="zipCode"
-                        formControlName="zipCode">
-        </elm-text-input>
-        <elm-input-subtext *ngIf="_formGroup.get('zipCode')?.invalid"
+        <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
+        <input type="text"
+               id="zipCode"
+               formControlName="zipCode"
+               class="form-control"
+               [ngClass]="{'error': !_formGroup.get('zipCode')?.value && validateField, 'margin-spacing': !validateField}"
+        />
+        <elm-input-subtext *ngIf="!_formGroup.get('zipCode')?.value && validateField"
+                           class="input-error"
                          [isError]="true">
-        Zip code must contain 5 digits
+        Zip is missing
       </elm-input-subtext>
       </div>
 

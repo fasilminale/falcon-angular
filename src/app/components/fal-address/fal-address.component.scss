@@ -1,3 +1,32 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
 .mb-30 {
     margin-bottom: 30px;
+}
+
+.error {
+  ::ng-deep {
+    .error-spacing {
+      padding-bottom: 0;
+    }
+    .elm-text-input {
+      margin-bottom: 0;
+    }
+
+    .input-group.input {
+      border-color: $cardinal-red !important;
+    }
+  }
+}
+
+.margin-spacing {
+  margin-bottom: 30px;
+}
+
+::ng-deep .error {
+  border-color: $cardinal-red !important;
+}
+
+.input-error ::ng-deep .elm-input-subtext{
+  margin-top: 0;
 }

@@ -12,7 +12,7 @@ import {FalControlValueAccessorComponent} from '../fal-control-value-accessor/fa
         <input class="form-control"
                [ngClass]="isError ? 'error' : ''"
                [disabled]="isDisabled"
-               placeholder="mm-dd-yyyy"
+               [placeholder]="placeholder"
                ngbDatepicker #d="ngbDatepicker"
                [readOnly]="false"
                navigation="select"
@@ -51,6 +51,7 @@ export class FalDateInputComponent extends FalControlValueAccessorComponent<stri
   @Input() isDisabled = false;
   @Input() navigation = 'select';
   @Input() isError = false;
+  @Input() placeholder = 'mm-dd-yyyy';
 
   @Output() focus = new EventEmitter<FocusEvent>();
 

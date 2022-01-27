@@ -1,15 +1,14 @@
-import {AfterViewInit, Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
-import {Carrier, CarrierReference, CarrierUtils} from '../../../models/master-data-models/carrier-model';
+import {CarrierReference, CarrierUtils} from '../../../models/master-data-models/carrier-model';
 import {map} from 'rxjs/operators';
-import {CarrierModeCode, CarrierModeCodeReference, CarrierModeCodeUtils} from '../../../models/master-data-models/carrier-mode-code-model';
+import {CarrierModeCodeReference, CarrierModeCodeUtils} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
-import {SubjectValue} from 'src/app/utils/subject-value';
 
 const {required} = Validators;
 
@@ -111,6 +110,7 @@ export class TripInformationComponent implements OnInit {
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
     this.subscriptionManager.manage(observable.subscribe(t => {
+      this.formGroup.enable();
       this.tripIdControl.setValue(t.tripId ?? undefined);
       this.invoiceDateControl.setValue(t.invoiceDate ?? undefined);
       this.pickUpDateControl.setValue(t.pickUpDate ?? undefined);
@@ -121,6 +121,8 @@ export class TripInformationComponent implements OnInit {
       this.carrierControl.setValue(t.carrier ?? undefined);
       this.carrierModeControl.setValue(t.carrierMode ?? undefined);
       this.serviceLevelControl.setValue(t.serviceLevel ?? undefined);
+      this.formGroup.updateValueAndValidity();
+      this.formGroup.disable();
     }));
   }
 

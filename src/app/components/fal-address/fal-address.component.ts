@@ -30,6 +30,7 @@ export class FalAddressComponent implements OnInit {
   }
 
   @Input() showShippingItemField = true;
+  @Input() validateField = true; // TODO: Temporary for FAL-750. Replace when edit capability is implemented
 
   constructor() { }
 
