@@ -22,7 +22,6 @@ export class InvoiceAmountComponent implements OnInit {
   ];
 
   public currencyOptions = ['USD', 'CAD'];
-  //nc
   public costBreakdownTypes = [
     {display: 'Per hour', value: 'perHour'}, 
     {display: 'Flat', value: 'flat'}, 
@@ -30,7 +29,6 @@ export class InvoiceAmountComponent implements OnInit {
     {display: 'N/A', value: ''}];
 
     totalInvoiceAmount = 0;
-    //nc
 
   overridePaymentTermsFormGroup  = new FormGroup({
     isPaymentOverrideSelected: new FormControl(false),
@@ -38,8 +36,7 @@ export class InvoiceAmountComponent implements OnInit {
   });
 
   readOnlyForm = true;
-
-  costBreakdownItems = new FormArray([]); //nc
+  costBreakdownItems = new FormArray([]);
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
@@ -47,18 +44,16 @@ export class InvoiceAmountComponent implements OnInit {
     ));
   }
 
-
   @Input() set formGroup(givenFormGroup: FormGroup) {
     givenFormGroup.setControl('amountOfInvoice', new FormControl(''));
     givenFormGroup.setControl('currency', new FormControl(''));
     givenFormGroup.setControl('overridePaymentTerms', this.overridePaymentTermsFormGroup);
     givenFormGroup.setControl('paymentTerms', new FormControl(''));
     givenFormGroup.setControl('mileage', new FormControl());
-    this.insertBreakDownItems(); //nc
+    this.insertBreakDownItems();
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems); 
-    //nc
     this._formGroup = givenFormGroup;
-    this.updateTotalInvoiceAmount(); //nc
+    this.updateTotalInvoiceAmount(); 
 
   }
 
@@ -67,7 +62,6 @@ export class InvoiceAmountComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  //*nc starts
   insertBreakDownItems() {
     this.costBreakdownItems.controls.push(new FormGroup({
         charge: new FormControl('Fuel'),
@@ -83,7 +77,6 @@ export class InvoiceAmountComponent implements OnInit {
       quantity: new FormControl(),
       totalAmount: new FormControl(500)
   }));
-  //this.updateTotalInvoiceAmount();
   }
 
   get costBreakdownItemsControls() {
@@ -99,7 +92,5 @@ export class InvoiceAmountComponent implements OnInit {
       }
     })
   }
-
-  //* nc ends
 
 }
