@@ -13,9 +13,9 @@ import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-import {MatDialog} from '@angular/material/dialog';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+
 
 @Component({
   selector: 'app-invoice-edit-page',
