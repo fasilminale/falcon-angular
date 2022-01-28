@@ -22,7 +22,7 @@ describe('FalAddressComponent', () => {
     fixture = TestBed.createComponent(FalAddressComponent);
     component = fixture.componentInstance;
     component.formGroup = new FormGroup({});
-    
+
     component.loadAddress$ = new Subject<ShippingPointLocation>().asObservable();
     fixture.detectChanges();
   });
@@ -50,7 +50,7 @@ describe('FalAddressComponent', () => {
       loadAddress$ = new Subject();
       component.loadAddress$ = loadAddress$.asObservable();
     });
-   
+
     it('should set form group when address is loaded', done => {
       loadAddress$.subscribe(address => {
         expect(component._formGroup.get('name')?.value).toBe(address.name);
@@ -76,16 +76,23 @@ describe('FalAddressComponent', () => {
       });
     });
 
-    it('should not set form group when properties of address are undefined', done => {
+    it('should not set form group when required properties of address are undefined', done => {
       loadAddress$.subscribe(address => {
-        expect(component._formGroup.get('name')?.value).toBeUndefined();
         expect(component._formGroup.get('country')?.value).toBeUndefined();
-        expect(component._formGroup.get('city')?.value).toBeUndefined();
         expect(component._formGroup.get('zipCode')?.value).toBeUndefined();
-        expect(component._formGroup.get('state')?.value).toBeUndefined();
-        expect(component._formGroup.get('streetAddress')?.value).toBeUndefined();
-        expect(component._formGroup.get('streetAddress2')?.value).toBeUndefined();
-        expect(component._formGroup.get('shippingPoint')?.value).toBeUndefined();
+        done();
+      });
+      loadAddress$.next({} as ShippingPointLocation);
+    });
+
+    it('should set form group values to N/A on non-required properties', done => {
+      loadAddress$.subscribe(address => {
+        expect(component._formGroup.get('name')?.value).toEqual('N/A');
+        expect(component._formGroup.get('city')?.value).toEqual('N/A');
+        expect(component._formGroup.get('state')?.value).toEqual('N/A');
+        expect(component._formGroup.get('streetAddress')?.value).toEqual('N/A');
+        expect(component._formGroup.get('streetAddress2')?.value).toEqual('N/A');
+        expect(component._formGroup.get('shippingPoint')?.value).toEqual('N/A');
         done();
       });
       loadAddress$.next({} as ShippingPointLocation);
@@ -93,6 +100,6 @@ describe('FalAddressComponent', () => {
 
 
   })
-  
+
 
 });
