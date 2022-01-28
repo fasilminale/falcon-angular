@@ -1,48 +1,52 @@
 <div class="px-3">
     <elm-section-header [sectionTitle]="freightOrderTitle">
     </elm-section-header>
-  
+
     <table #templateTable summary="freightOrders" mat-table [dataSource]="freightOrders"
       class="col-md-12" [ngClass]="freightOrders && freightOrders.length > 0 ? '' : 'hide'">
-  
+
       <ng-container matColumnDef="freightOrderNumber">
         <th id="freightOrderNumber" mat-header-cell *matHeaderCellDef> Freight Order Number </th>
-        <td mat-cell class="col-md-2" *matCellDef="let freightOrder"> {{freightOrder.freightOrderNumber}}</td>
+        <td mat-cell class="col-md-2" [ngClass]="{ 'missing-error' : !freightOrder.freightOrderNumber }"
+            *matCellDef="let freightOrder"> {{freightOrder.freightOrderNumber || 'Missing'}}</td>
       </ng-container>
-  
+
       <ng-container matColumnDef="tmsLoadId">
         <th id="tmsLoadId" mat-header-cell *matHeaderCellDef> TMS Load ID </th>
         <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.tmsLoadId}}</td>
       </ng-container>
-  
+
       <ng-container matColumnDef="warehouse">
         <th id="warehouse" mat-header-cell *matHeaderCellDef> Warehouse</th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.warehouse}}</td>
+        <td mat-cell class="col-md-1" [ngClass]="{ 'missing-error' : !freightOrder.warehouse }"
+            *matCellDef="let freightOrder"> {{freightOrder.warehouse || 'Missing'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="sequence">
         <th id="sequence" mat-header-cell *matHeaderCellDef> Sequence</th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.sequence}}</td>
-      </ng-container>      
+        <td mat-cell class="col-md-1" [ngClass]="{ 'missing-error' : !freightOrder.sequence }"
+            *matCellDef="let freightOrder"> {{freightOrder.sequence || 'Missing'}}</td>
+      </ng-container>
 
       <ng-container matColumnDef="stopId">
         <th id="stopId" mat-header-cell *matHeaderCellDef> Stop ID</th>
         <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.stopId}}</td>
-      </ng-container> 
+      </ng-container>
 
       <ng-container matColumnDef="destination">
         <th id="destination" mat-header-cell *matHeaderCellDef> Destination</th>
         <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.destination}}</td>
-      </ng-container> 
+      </ng-container>
 
       <ng-container matColumnDef="grossWeight">
         <th id="grossWeight" class="px-3" mat-header-cell *matHeaderCellDef>Gross Weight</th>
         <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <input type="text=" [value]="freightOrder.grossWeight" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.freightOrder" >
-           <!-- <small class="error-text" *ngIf="template.isError || template.name === ''"> &nbsp;</small> -->
+          <input type="text" [value]="freightOrder.grossWeight ? freightOrder.grossWeight : 'Missing'"
+                 [ngClass]="{ 'missing-error' : !freightOrder.grossWeight }"
+                 [disabled]="freightOrder.isDisable" class="form-control col-11" matInput >
         </td>
       </ng-container>
-      
+
       <ng-container matColumnDef="volume">
         <th id="volume" class="px-3" mat-header-cell *matHeaderCellDef>Volume</th>
         <td class="px-3" mat-cell *matCellDef="let freightOrder">
@@ -56,7 +60,7 @@
           <input type="text=" [value]="freightOrder.pallets" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.pallets" >
         </td>
       </ng-container>
-  
+
       <ng-container matColumnDef="actions">
         <th id="actions" class="px-3" mat-header-cell *matHeaderCellDef> Action </th>
         <td class="px-3 col-md-1" mat-cell *matCellDef="let freightOrder">
@@ -76,10 +80,9 @@
           </ng-template>
         </td>
       </ng-container>
-  
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
     </table>
-  
-</div> 
-  
+
+</div>

@@ -7,8 +7,13 @@
   margin-bottom: 0.5em;
 }
 
-.error {
-  margin-bottom: 24px;
+// TODO: Temporary for FAL-750. Replace when edit capability is implemented
+.input-error ::ng-deep .elm-input-subtext{
+  margin-top: 0;
+}
+
+.ng-select.error ::ng-deep .ng-select-container{
+  margin-top: 0;
 }
 
 ::ng-deep .error {
@@ -43,6 +48,6 @@
     text-transform: uppercase;
     text-decoration: underline;
     cursor: pointer;
-    
+
   }
 }
