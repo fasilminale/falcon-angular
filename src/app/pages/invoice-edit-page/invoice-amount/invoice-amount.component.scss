@@ -8,6 +8,10 @@
   color: $cardinal-red;
 }
 
+.border-radius-5 {
+  border-radius: 5px;
+}
+
 ::ng-deep #currency-input {
     div[role="radiogroup"].form-control {
       border: none;

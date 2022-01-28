@@ -69,18 +69,18 @@
       </div>
     </ng-container>
 
-    <div class="invoice-allocation-total-div mt-5 p-3 offset-md-9"
+    <div class="invoice-allocation-total-div mt-5 p-3 offset-md-9 border-radius-5"
          [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
       <div class="row">
         <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-6 text-right">Allocation totals:</span>
-          <span class="col-md-6 text-right">{{totalAllocationAmount | currency}}</span>
+          <span class="px-3 col-md-8 text-right">Allocation Amount Totals:</span>
+          <span class="col-md-4 text-right">{{totalAllocationAmount | currency}}</span>
         </div>
       </div>
       <div class="row mt-3">
         <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-6 text-right text-bold">Invoice Net Amount:</span>
-          <span class="col-md-6 text-right text-bold">{{invoiceNetAmount?.value | currency}}</span>
+          <span class="px-3 col-md-8 text-right text-bold">Invoice Net Amount:</span>
+          <span class="col-md-4 text-right text-bold">{{invoiceNetAmount?.value | currency}}</span>
         </div>
       </div>
     </div>

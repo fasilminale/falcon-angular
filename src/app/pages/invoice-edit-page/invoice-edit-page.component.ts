@@ -15,7 +15,7 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {MatDialog} from '@angular/material/dialog';
 import {ToastService} from '@elm/elm-styleguide-ui';
-import {GlLineItem} from 'src/app/models/line-item/line-item-model';
+import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -43,6 +43,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public isEditMode$ = new SubjectValue(false);
   public loadTripInformation$ = new Subject<TripInformation>();
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
+  public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
 
   constructor(private util: UtilService,
@@ -119,6 +120,15 @@ export class InvoiceEditPageComponent implements OnInit {
 
       }
     });
+
+    this.loadInvoiceAmountDetail$.next({
+      costLineItems: invoice.costLineItems,
+      amountOfInvoice: invoice.amountOfInvoice,
+      mileage: invoice.distance,
+      currency: invoice.currency,
+      standardPaymentTermsOverride: invoice.standardPaymentTermsOverride
+    })
+    
     this.loadAllocationDetails$.next({
       totalGlAmount: invoice.totalGlAmount,
       invoiceNetAmount: invoice.amountOfInvoice,
