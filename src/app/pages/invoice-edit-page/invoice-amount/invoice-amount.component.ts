@@ -79,9 +79,7 @@ export class InvoiceAmountComponent implements OnInit {
   insertBreakDownItems(costBreakdownItems?: CostLineItem[]) {
     if(costBreakdownItems && costBreakdownItems.length > 0) {
       this.costBreakdownItems = new FormArray([]);
-      costBreakdownItems.forEach((costBreakdownItem, index)=> {
-      console.log(costBreakdownItem , !costBreakdownItem.rateAmount ? costBreakdownItem.rateAmount : 'N/A');
-
+      costBreakdownItems.forEach((costBreakdownItem)=> {
         this.costBreakdownItemsControls.push(new FormGroup({
           charge: new FormControl(costBreakdownItem.chargeCode),
           rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}%` : 'N/A'),
