@@ -102,15 +102,15 @@
 
     <!-- Cost breakdown item - Rate -->
     <div class="col-2">
-      
-      <app-fal-currency-input formControlName="rate"
-                              [isDisabled]="readOnlyForm"
-                              [isError]="!_.get('rate')?.value"
-                             >
+      <input
+      *ngIf="_.get('charge')?.value == 'Discount'"
+       type="text"
+             class="form-control text-right"
+             formControlName="rate"
+             [attr.disabled]="readOnlyForm ? '': null"
+      />
+      <app-fal-currency-input *ngIf="_.get('charge')?.value != 'Discount'" formControlName="rate" [isDisabled]="readOnlyForm">
       </app-fal-currency-input>
-      <small class="error-text col-2" *ngIf="!_.get('rate')?.value" [ngClass]="{ 'mt-3' : true }" >
-        Rate is required
-      </small>
     </div>
 
     <!-- Cost breakdown item - Type -->
@@ -138,10 +138,17 @@
     <!-- Cost breakdown item - totalAmount -->
     <div class="col-2">
       <app-fal-currency-input 
+      [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
       formControlName="totalAmount"
       [isDisabled]="readOnlyForm"
      >
+     
     </app-fal-currency-input>
+   
+    <small class="error-text"
+    *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"> 
+ Base Rate Amount is required
+</small>
     </div>
 
   </div>

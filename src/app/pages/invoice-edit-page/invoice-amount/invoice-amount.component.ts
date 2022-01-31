@@ -28,6 +28,7 @@ export class InvoiceAmountComponent implements OnInit {
     {display: 'Per hour', value: 'PERHOUR'}, 
     {display: 'Flat', value: 'FLAT'}, 
     {display: 'Per mile', value: 'PERMILE'}, 
+    {display: 'Percent', value: 'PERCENT'},
     {display: 'N/A', value: ''}];
 
     totalInvoiceAmount = 0;
@@ -78,12 +79,14 @@ export class InvoiceAmountComponent implements OnInit {
   insertBreakDownItems(costBreakdownItems?: CostLineItem[]) {
     if(costBreakdownItems && costBreakdownItems.length > 0) {
       this.costBreakdownItems = new FormArray([]);
-      costBreakdownItems.forEach(costBreakdownItem => {
+      costBreakdownItems.forEach((costBreakdownItem, index)=> {
+      console.log(costBreakdownItem , !costBreakdownItem.rateAmount ? costBreakdownItem.rateAmount : 'N/A');
+
         this.costBreakdownItemsControls.push(new FormGroup({
           charge: new FormControl(costBreakdownItem.chargeCode),
-          rate: new FormControl(costBreakdownItem.rateAmount),
-          type: new FormControl(costBreakdownItem.rateType),
-          quantity: new FormControl(costBreakdownItem.quantity),
+          rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}%` : 'N/A'),
+          type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
+          quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity  : 'N/A'),
           totalAmount: new FormControl(costBreakdownItem.chargeLineTotal ? costBreakdownItem.chargeLineTotal : 0)
       }));
       })
