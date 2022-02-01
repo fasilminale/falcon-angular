@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+import { CostLineItem } from 'src/app/models/line-item/line-item-model';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
 import { InvoiceAmountComponent } from './invoice-amount.component';
@@ -111,7 +112,18 @@ describe('InvoiceAmountComponent', () => {
         expect(formGroupValue.mileage).toBe('');
         done();
       });
-      loadInvoiceAmountDetail$.next({} as InvoiceAmountDetail);
+      loadInvoiceAmountDetail$.next({costLineItems: [{} as CostLineItem]} as InvoiceAmountDetail);
+    });
+
+    it('should not populate form when no invoice amount details when form group has no fields set', done => {
+      component._formGroup = new FormGroup({costBreakdownItems: new FormArray([])});
+      loadInvoiceAmountDetail$.subscribe(() => {
+        expect(component._formGroup.value).toEqual({
+          costBreakdownItems: []
+        });
+        done();
+      });
+      loadInvoiceAmountDetail$.next({costLineItems: [{} as CostLineItem]} as InvoiceAmountDetail);
     });
 
     it('should not populate form when no invoice amount details', done => {

@@ -60,13 +60,13 @@ export class InvoiceAmountComponent implements OnInit {
 
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail) {
-    givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail?.amountOfInvoice : '');
-    givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail?.currency : '');
+    givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
+    givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail.currency : '');
     givenFormGroup.get('overridePaymentTerms')?.patchValue({
       isPaymentOverrideSelected: invoiceAmountDetail?.standardPaymentTermsOverride ? true : false,
-      paymentTerms: invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail?.standardPaymentTermsOverride : ''
+      paymentTerms: invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : ''
     });
-    givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ? invoiceAmountDetail?.mileage : '');
+    givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ? invoiceAmountDetail.mileage : '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear()
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
   }
