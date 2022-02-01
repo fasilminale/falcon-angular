@@ -58,7 +58,11 @@
         <!-- Invoice allocation - glCompanyCode -->
         <div class="col-2">
           <input type="text" class="form-control" formControlName="glCompanyCode"
+          [ngClass]="{ 'error-div' : !invoiceAllocation.get('glCompanyCode')?.value }"
             [attr.disabled]="isEditMode? '': null" />
+            <small class="error-text col-2" *ngIf="!invoiceAllocation.get('glCompanyCode')?.value" [ngClass]="{ 'mt-3' : true }" >
+              GL Company Code is missing
+            </small>
         </div>
 
         <!-- Invoice allocation - allocationAmount -->
