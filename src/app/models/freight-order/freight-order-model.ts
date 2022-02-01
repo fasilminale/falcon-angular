@@ -49,6 +49,7 @@ export interface FreightOrder {
   threePLSalesOrder: string;
   tmsLoadId: string;
   trackingNumbers: string;
+  isDisable?: boolean;
 }
 
 export interface RoutePlan {

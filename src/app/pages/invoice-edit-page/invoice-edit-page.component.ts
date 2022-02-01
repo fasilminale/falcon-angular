@@ -16,6 +16,7 @@ import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-det
 import {MatDialog} from '@angular/material/dialog';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -101,7 +102,8 @@ export class InvoiceEditPageComponent implements OnInit {
       billToAddress: {...invoice.billTo, shippingPoint: invoice.shippingPoint},
       serviceLevel: invoice.serviceLevel,
       carrier: invoice.carrier,
-      carrierMode: invoice.mode
+      carrierMode: invoice.mode,
+      freightOrders: invoice.freightOrders
     });
     this.loadInvoiceOverviewDetail$.next({
       invoiceNetAmount: invoice.amountOfInvoice ? parseInt(invoice.amountOfInvoice) : 0.0,

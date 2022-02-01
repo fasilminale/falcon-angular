@@ -229,7 +229,8 @@ describe('TripInformationComponent', () => {
         level: 'TL1',
         name: 'TestLevel'
       },
-      tripId: 'TestTripId'
+      tripId: 'TestTripId',
+      freightOrders: []
     };
     const tripInformation$ = new Subject<TripInformation>();
     component.loadTripInformation$ = tripInformation$.asObservable();

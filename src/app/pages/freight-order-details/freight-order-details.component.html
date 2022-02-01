@@ -7,12 +7,12 @@
   
       <ng-container matColumnDef="freightOrderNumber">
         <th id="freightOrderNumber" mat-header-cell *matHeaderCellDef> Freight Order Number </th>
-        <td mat-cell class="col-md-2" *matCellDef="let freightOrder"> {{freightOrder.freightOrderNumber}}</td>
+        <td mat-cell class="col-md-2" *matCellDef="let freightOrder"> {{freightOrder.freightOrderId}}</td>
       </ng-container>
   
       <ng-container matColumnDef="tmsLoadId">
         <th id="tmsLoadId" mat-header-cell *matHeaderCellDef> TMS Load ID </th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.tmsLoadId}}</td>
+        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.tmsLoadID}}</td>
       </ng-container>
   
       <ng-container matColumnDef="warehouse">
@@ -22,7 +22,7 @@
 
       <ng-container matColumnDef="sequence">
         <th id="sequence" mat-header-cell *matHeaderCellDef> Sequence</th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.sequence}}</td>
+        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.sequenceNumber}}</td>
       </ng-container>      
 
       <ng-container matColumnDef="stopId">
@@ -32,28 +32,33 @@
 
       <ng-container matColumnDef="destination">
         <th id="destination" mat-header-cell *matHeaderCellDef> Destination</th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.destination}}</td>
+        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> 
+          {{freightOrder.destination.address}}
+          {{freightOrder.destination.address2}}
+          {{freightOrder.destination.city}},
+           {{freightOrder.destination.state}}
+           {{freightOrder.destination.country}} {{freightOrder.destination.zipCode}}
+          </td>
       </ng-container> 
 
       <ng-container matColumnDef="grossWeight">
         <th id="grossWeight" class="px-3" mat-header-cell *matHeaderCellDef>Gross Weight</th>
         <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <input type="text=" [value]="freightOrder.grossWeight" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.freightOrder" >
-           <!-- <small class="error-text" *ngIf="template.isError || template.name === ''"> &nbsp;</small> -->
+          <input type="text=" [value]="freightOrder.weightGross.value" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.weightGross.value" >
         </td>
       </ng-container>
       
       <ng-container matColumnDef="volume">
         <th id="volume" class="px-3" mat-header-cell *matHeaderCellDef>Volume</th>
         <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <input type="text=" [value]="freightOrder.volume" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.volume" >
+          <input type="text=" [value]="freightOrder.volumeGross.value.toFixed(2)" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.volumeGross.value" >
         </td>
       </ng-container>
 
       <ng-container matColumnDef="pallets">
         <th id="pallets" class="px-3" mat-header-cell *matHeaderCellDef>Pallets</th>
         <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <input type="text=" [value]="freightOrder.pallets" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.pallets" >
+          <input type="text=" [value]="freightOrder.weightGross.value" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.weightGross.value" >
         </td>
       </ng-container>
   
@@ -80,6 +85,8 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
     </table>
+
+    <p class="text-center" *ngIf="freightOrders.length === 0">You have no freight orders available</p>
   
 </div> 
   

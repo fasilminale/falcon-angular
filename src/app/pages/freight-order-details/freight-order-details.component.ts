@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { InvoiceService } from 'src/app/services/invoice-service';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
+import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 
 @Component({
   selector: 'app-freight-order-details',
@@ -11,18 +13,26 @@ export class FreightOrderDetailsComponent implements OnInit {
   displayedColumns: string[] = ['freightOrderNumber', 'tmsLoadId', 'warehouse', 'sequence','stopId','destination','grossWeight', 'volume', 'pallets', 'actions'];
 
 
-  freightOrders: any[] = [];
+  freightOrders: FreightOrder[] = [];
   freightOrderTitle = '';
-  constructor(private invoiceService: InvoiceService) { 
-  
+  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { 
+      
   }
 
   ngOnInit(): void {
-    this.invoiceService.getFreightOrderDetails()
-      .subscribe(freightOrders => {
-         this.freightOrders = freightOrders;
-         this.freightOrderTitle = `Freight Orders in Trip (${this.freightOrders.length})`
-      })
+  }
+
+  @Input() set loadFreightOrders$(observable: Observable<FreightOrder[]>) {
+    this.subscriptionManager.manage(observable.subscribe(freightOrders => {
+     
+      this.freightOrders = freightOrders.map(freightOrder => {
+        freightOrder.volumeGross.value = parseFloat(freightOrder?.volumeGross?.value.toFixed(2));
+        freightOrder.isDisable = true;
+        return freightOrder
+      });
+      console.log(this.freightOrders);
+      this.freightOrderTitle = `Freight Orders in Trip (${this.freightOrders.length})`;
+    }));
   }
 
   editFreightOrder(freightOrder: any) {
