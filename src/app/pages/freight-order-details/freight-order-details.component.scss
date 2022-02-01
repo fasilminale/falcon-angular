@@ -12,7 +12,7 @@
 }
 
 tr.mat-row {
-    height: 54px;
+    height: 78px;
 }
 
 td.mat-cell, th.mat-header-cell{
@@ -26,4 +26,16 @@ th.mat-header-cell {
 .missing-error {
     color: $cardinal-red;
     border-bottom-color: #dedcd5;
+}
+
+.spacing {
+  padding-top: 24px;
+}
+
+::ng-deep .error {
+  border-color: $cardinal-red;
+}
+
+.input-error ::ng-deep .elm-input-subtext{
+  margin-top: 0;
 }

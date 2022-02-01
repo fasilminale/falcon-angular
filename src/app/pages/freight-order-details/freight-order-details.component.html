@@ -40,10 +40,15 @@
 
       <ng-container matColumnDef="grossWeight">
         <th id="grossWeight" class="px-3" mat-header-cell *matHeaderCellDef>Gross Weight</th>
-        <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <input type="text" [value]="freightOrder.grossWeight ? freightOrder.grossWeight : 'Missing'"
-                 [ngClass]="{ 'missing-error' : !freightOrder.grossWeight }"
+        <td class="px-3 spacing" mat-cell *matCellDef="let freightOrder">
+          <input type="text" [value]="freightOrder.grossWeight"
+                 [ngClass]="{ 'error' : !freightOrder.grossWeight }"
                  [disabled]="freightOrder.isDisable" class="form-control col-11" matInput >
+          <elm-input-subtext *ngIf="!freightOrder.grossWeight"
+                             class="input-error"
+                             [isError]="true">
+            Gross weight is missing
+          </elm-input-subtext>
         </td>
       </ng-container>
 
