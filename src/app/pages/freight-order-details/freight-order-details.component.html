@@ -1,92 +1,101 @@
 <div class="px-3">
-    <elm-section-header [sectionTitle]="freightOrderTitle">
-    </elm-section-header>
-  
-    <table #templateTable summary="freightOrders" mat-table [dataSource]="freightOrders"
-      class="col-md-12" [ngClass]="freightOrders && freightOrders.length > 0 ? '' : 'hide'">
-  
-      <ng-container matColumnDef="freightOrderNumber">
-        <th id="freightOrderNumber" mat-header-cell *matHeaderCellDef> Freight Order Number </th>
-        <td mat-cell class="col-md-2" *matCellDef="let freightOrder"> {{freightOrder.freightOrderId}}</td>
-      </ng-container>
-  
-      <ng-container matColumnDef="tmsLoadId">
-        <th id="tmsLoadId" mat-header-cell *matHeaderCellDef> TMS Load ID </th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.tmsLoadID}}</td>
-      </ng-container>
-  
-      <ng-container matColumnDef="warehouse">
-        <th id="warehouse" mat-header-cell *matHeaderCellDef> Warehouse</th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.warehouse}}</td>
-      </ng-container>
+  <elm-section-header [sectionTitle]="freightOrderTitle">
+  </elm-section-header>
 
-      <ng-container matColumnDef="sequence">
-        <th id="sequence" mat-header-cell *matHeaderCellDef> Sequence</th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.sequenceNumber}}</td>
-      </ng-container>      
+  <table #templateTable summary="freightOrders" mat-table [dataSource]="freightOrders"
+    class="col-md-12" [ngClass]="freightOrders && freightOrders.length > 0 ? '' : 'hide'">
 
-      <ng-container matColumnDef="stopId">
-        <th id="stopId" mat-header-cell *matHeaderCellDef> Stop ID</th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.stopId}}</td>
-      </ng-container> 
+    <ng-container matColumnDef="freightOrderNumber">
+      <th id="freightOrderNumber" mat-header-cell *matHeaderCellDef> Freight Order Number </th>
+      <td mat-cell class="col-md-2" [ngClass]="{ 'missing-error' : !freightOrder.freightOrderId }"
+          *matCellDef="let freightOrder"> {{freightOrder.freightOrderId || 'Missing'}}</td>
+    </ng-container>
 
-      <ng-container matColumnDef="destination">
-        <th id="destination" mat-header-cell *matHeaderCellDef> Destination</th>
-        <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> 
-          {{freightOrder.destination.address}}
-          {{freightOrder.destination.address2}}
-          {{freightOrder.destination.city}},
-           {{freightOrder.destination.state}}
-           {{freightOrder.destination.country}} {{freightOrder.destination.zipCode}}
-          </td>
-      </ng-container> 
+    <ng-container matColumnDef="tmsLoadId">
+      <th id="tmsLoadId" mat-header-cell *matHeaderCellDef> TMS Load ID </th>
+      <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.tmsLoadID}}</td>
+    </ng-container>
 
-      <ng-container matColumnDef="grossWeight">
-        <th id="grossWeight" class="px-3" mat-header-cell *matHeaderCellDef>Gross Weight</th>
-        <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <input type="text=" [value]="freightOrder.weightGross.value" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.weightGross.value" >
-        </td>
-      </ng-container>
-      
-      <ng-container matColumnDef="volume">
-        <th id="volume" class="px-3" mat-header-cell *matHeaderCellDef>Volume</th>
-        <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <input type="text=" [value]="freightOrder.volumeGross.value.toFixed(2)" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.volumeGross.value" >
-        </td>
-      </ng-container>
+    <ng-container matColumnDef="warehouse">
+      <th id="warehouse" mat-header-cell *matHeaderCellDef> Warehouse</th>
+      <td mat-cell class="col-md-1" [ngClass]="{ 'missing-error' : !freightOrder.warehouse }"
+          *matCellDef="let freightOrder"> {{freightOrder.warehouse || 'Missing'}}</td>
+    </ng-container>
 
-      <ng-container matColumnDef="pallets">
-        <th id="pallets" class="px-3" mat-header-cell *matHeaderCellDef>Pallets</th>
-        <td class="px-3" mat-cell *matCellDef="let freightOrder">
-          <input type="text=" [value]="freightOrder.weightGross.value" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.weightGross.value" >
-        </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="actions">
-        <th id="actions" class="px-3" mat-header-cell *matHeaderCellDef> Action </th>
-        <td class="px-3 col-md-1" mat-cell *matCellDef="let freightOrder">
-          <span *ngIf="freightOrder.isDisable ; else submit" role="button" class="disabled material-icons material-icons-outlined">
-            edit
+    <ng-container matColumnDef="sequence">
+      <th id="sequence" mat-header-cell *matHeaderCellDef> Sequence</th>
+      <td mat-cell class="col-md-1" [ngClass]="{ 'missing-error' : !freightOrder.sequenceNumber }"
+          *matCellDef="let freightOrder"> {{freightOrder.sequenceNumber || 'Missing'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="stopId">
+      <th id="stopId" mat-header-cell *matHeaderCellDef> Stop ID</th>
+      <td mat-cell class="col-md-1" *matCellDef="let freightOrder"> {{freightOrder.stopId}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="destination">
+      <th id="destination" mat-header-cell *matHeaderCellDef> Destination</th>
+      <td mat-cell class="col-md-1" *matCellDef="let freightOrder">
+        {{freightOrder.destination.address}}
+        {{freightOrder.destination.address2}}
+        {{freightOrder.destination.city}},
+        {{freightOrder.destination.state}}
+        {{freightOrder.destination.country}} {{freightOrder.destination.zipCode}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="grossWeight">
+      <th id="grossWeight" class="px-3" mat-header-cell *matHeaderCellDef>Gross Weight</th>
+      <td class="px-3" mat-cell *matCellDef="let freightOrder">
+        <input type="text" [value]="freightOrder.weightGross.value"
+               [ngClass]="{ 'error' : !freightOrder.weightGross.value }"
+               [disabled]="freightOrder.isDisable" class="form-control col-11" matInput >
+        <elm-input-subtext *ngIf="!freightOrder.weightGross.value"
+                           class="input-error"
+                           [isError]="true">
+          Gross weight is missing
+        </elm-input-subtext>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="volume">
+      <th id="volume" class="px-3" mat-header-cell *matHeaderCellDef>Volume</th>
+      <td class="px-3" mat-cell *matCellDef="let freightOrder">
+        <input type="text=" [value]="freightOrder.volumeGross.value" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.volumeGross.value" >
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pallets">
+      <th id="pallets" class="px-3" mat-header-cell *matHeaderCellDef>Pallets</th>
+      <td class="px-3" mat-cell *matCellDef="let freightOrder">
+        <input type="text=" [value]="freightOrder.weightGross.value" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.weightGross.value" >
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th id="actions" class="px-3" mat-header-cell *matHeaderCellDef> Action </th>
+      <td class="px-3 col-md-1" mat-cell *matCellDef="let freightOrder">
+        <span *ngIf="freightOrder.isDisable ; else submit" role="button" class="disabled material-icons material-icons-outlined">
+          edit
+        </span>
+        <span *ngIf="freightOrder.isDisable" role="button" class="disabled material-icons material-icons-outlined">
+          delete
+        </span>
+        <ng-template #submit>
+          <span role="button" class="material-icons material-icons-outlined">
+            done
           </span>
-          <span *ngIf="freightOrder.isDisable" role="button" class="disabled material-icons material-icons-outlined">
-            delete
+          <span role="button" class="material-icons material-icons-outlined">
+            block
           </span>
-          <ng-template #submit>
-            <span role="button" class="material-icons material-icons-outlined">
-              done
-            </span>
-            <span role="button" class="material-icons material-icons-outlined">
-              block
-            </span>
-          </ng-template>
-        </td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
-    </table>
+        </ng-template>
+      </td>
+    </ng-container>
 
-    <p class="text-center" *ngIf="freightOrders.length === 0">You have no freight orders available</p>
-  
-</div> 
-  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
+  </table>
+
+  <p class="text-center" *ngIf="freightOrders.length === 0">You have no freight orders available</p>
+
+</div>

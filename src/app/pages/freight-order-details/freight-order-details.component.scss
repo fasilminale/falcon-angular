@@ -1,3 +1,5 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
 .mat-header-cell {
     font-size: inherit;
     color: inherit;
@@ -14,7 +16,7 @@
 }
 
 tr.mat-row {
-    height: 54px;
+    height: 78px;
 }
 
 td.mat-cell, th.mat-header-cell{
@@ -23,4 +25,21 @@ td.mat-cell, th.mat-header-cell{
 
 th.mat-header-cell {
     background-color: #f6f6f6;
+}
+
+.missing-error {
+    color: $cardinal-red;
+    border-bottom-color: #dedcd5;
+}
+
+.spacing {
+  padding-top: 24px;
+}
+
+::ng-deep .error {
+  border-color: $cardinal-red;
+}
+
+.input-error ::ng-deep .elm-input-subtext{
+  margin-top: 0;
 }

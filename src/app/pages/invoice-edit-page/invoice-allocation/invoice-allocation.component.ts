@@ -84,7 +84,7 @@ export class InvoiceAllocationComponent implements OnInit {
       const lineItemAmount = item.get('allocationAmount') as FormControl;
       sum += lineItemAmount.value;
     });
-    this.isAllocationAmountValid = parseFloat(this.invoiceNetAmount.value) > 0 && sum.toFixed(2) === this.invoiceNetAmount.value;
+    this.isAllocationAmountValid = parseFloat(this.invoiceNetAmount.value) > 0 && sum.toFixed(2) === parseFloat(this.invoiceNetAmount.value).toFixed(2);
   }
 
   get invoiceAllocationsControls(): AbstractControl[] {

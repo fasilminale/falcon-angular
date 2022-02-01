@@ -13,10 +13,10 @@ import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-import {MatDialog} from '@angular/material/dialog';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
+
 
 @Component({
   selector: 'app-invoice-edit-page',
@@ -52,7 +52,6 @@ export class InvoiceEditPageComponent implements OnInit {
               private route: ActivatedRoute,
               private userService: UserService,
               private invoiceService: InvoiceService,
-              private dialog: MatDialog,
               private toastService: ToastService,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
     this.tripInformationFormGroup = new FormGroup({});
@@ -92,8 +91,8 @@ export class InvoiceEditPageComponent implements OnInit {
     this.loadTripInformation$.next({
       tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),
-      pickUpDate: new Date(invoice.pickupDateTime),
-      deliveryDate: new Date(invoice.deliveryDateTime),
+      pickUpDate: invoice.pickupDateTime ? new Date(invoice.pickupDateTime) : undefined,
+      deliveryDate: invoice.deliveryDateTime ? new Date(invoice.deliveryDateTime) : undefined,
       proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
       bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A' ,
       freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,

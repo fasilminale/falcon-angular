@@ -118,6 +118,28 @@ describe('TripInformationComponent', () => {
     });
   });
 
+  describe('selection compare', () => {
+    const CARRIER: Carrier = {
+      name: 'Test Carrier',
+      scac: 'TCS',
+      tenderAutoAccept: YesNo.NO,
+      tenderMethod: TenderMethod.NONE
+    };
+
+    const selectedCarrier: Carrier = {
+      name: 'Test Carrier',
+      scac: 'TCS',
+      tenderAutoAccept: YesNo.NO,
+      tenderMethod: TenderMethod.NONE
+    };
+
+    it('it should compare the two values', () => {
+      const result = component.compareWith(CARRIER, selectedCarrier);
+      expect(result).toBe(true);
+    });
+
+  });
+
   describe('#formGroup', () => {
     let parentFormGroup: FormGroup;
     beforeEach(() => {
@@ -214,7 +236,7 @@ describe('TripInformationComponent', () => {
       carrier: {
        scac: 'TestScac',
        name: 'TestCarrierName'
-       
+
       },
       carrierMode: {
         reportModeDescription: 'ReportModeDescription',
@@ -250,8 +272,8 @@ describe('TripInformationComponent', () => {
     tripInformation$.next(tripInformation);
   });
 
-  describe('should toggle freight orders section', ()=> {
-    it('toggles freight order section', ()=> {
+  describe('should toggle freight orders section', () => {
+    it('toggles freight order section', () => {
       component.showFreightOrderSection = false;
       component.toggleFreightOrderDetailsSection();
       expect(component.showFreightOrderSection).toBe(true);

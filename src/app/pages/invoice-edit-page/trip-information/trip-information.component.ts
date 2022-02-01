@@ -116,12 +116,13 @@ export class TripInformationComponent implements OnInit {
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
     this.subscriptionManager.manage(observable.subscribe(t => {
-      this.tripIdControl.setValue(t.tripId ?? undefined);
+      this.formGroup.enable();
+      this.tripIdControl.setValue(t.tripId ?? 'N/A');
       this.invoiceDateControl.setValue(t.invoiceDate ?? undefined);
       this.pickUpDateControl.setValue(t.pickUpDate ?? undefined);
       this.deliveryDateControl.setValue(t.deliveryDate ?? undefined);
-      this.proTrackingNumberControl.setValue(t.proTrackingNumber ?? undefined);
-      this.bolNumberControl.setValue(t.bolNumber ?? undefined);
+      this.proTrackingNumberControl.setValue(t.proTrackingNumber ?? 'N/A');
+      this.bolNumberControl.setValue(t.bolNumber ?? 'N/A');
       this.freightPaymentTermsControl.setValue(t.freightPaymentTerms ?? undefined);
       this.carrierControl.setValue(t.carrier ?? undefined);
       this.carrierModeControl.setValue(t.carrierMode ?? undefined);
@@ -129,8 +130,9 @@ export class TripInformationComponent implements OnInit {
       this.loadOriginAddress$.next(t.originAddress);
       this.loadDestinationAddress$.next(t.destinationAddress);
       this.loadBillToAddress$.next(t.billToAddress);
-      console.log(t.freightOrders);
       this.loadFreightOrders$.next(t.freightOrders);
+      this.formGroup.updateValueAndValidity();
+      this.formGroup.disable();
     }));
   }
 
@@ -138,5 +140,8 @@ export class TripInformationComponent implements OnInit {
     this.showFreightOrderSection = !this.showFreightOrderSection;
   }
 
+  compareWith(item: any, value: any): boolean {
+    return item.id === value.id;
+  }
 }
 
