@@ -82,7 +82,7 @@ export class InvoiceAmountComponent implements OnInit {
       costBreakdownItems.forEach((costBreakdownItem)=> {
         this.costBreakdownItemsControls.push(new FormGroup({
           charge: new FormControl(costBreakdownItem.chargeCode),
-          rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}%` : 'N/A'),
+          rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
           type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
           quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity  : 'N/A'),
           totalAmount: new FormControl(costBreakdownItem.chargeLineTotal ? costBreakdownItem.chargeLineTotal : 0)
