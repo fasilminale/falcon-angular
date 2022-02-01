@@ -1,3 +1,16 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.error-div{
+  border: 1px solid $cardinal-red;
+}
+
+.error-text {
+  color: $cardinal-red;
+}
+
+.border-radius-5 {
+  border-radius: 5px;
+}
 
 ::ng-deep #currency-input {
     div[role="radiogroup"].form-control {

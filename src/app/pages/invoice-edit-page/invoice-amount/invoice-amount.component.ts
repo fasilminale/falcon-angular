@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { FalRadioOption } from 'src/app/components/fal-radio-input/fal-radio-input.component';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
@@ -24,15 +24,14 @@ export class InvoiceAmountComponent implements OnInit {
   ];
 
   public currencyOptions = ['USD', 'CAD'];
-  //nc
   public costBreakdownTypes = [
     {display: 'Per hour', value: 'PERHOUR'}, 
     {display: 'Flat', value: 'FLAT'}, 
     {display: 'Per mile', value: 'PERMILE'}, 
+    {display: 'Percent', value: 'PERCENT'},
     {display: 'N/A', value: ''}];
 
     totalInvoiceAmount = 0;
-    //nc
 
   overridePaymentTermsFormGroup  = new FormGroup({
     isPaymentOverrideSelected: new FormControl(false),
@@ -40,8 +39,7 @@ export class InvoiceAmountComponent implements OnInit {
   });
 
   readOnlyForm = true;
-
-  costBreakdownItems = new FormArray([]); //nc
+  costBreakdownItems = new FormArray([]);
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
@@ -50,11 +48,11 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
-    givenFormGroup.setControl('amountOfInvoice', new FormControl(''));
+    givenFormGroup.setControl('amountOfInvoice', new FormControl('', [Validators.required]));
     givenFormGroup.setControl('currency', new FormControl(''));
     givenFormGroup.setControl('overridePaymentTerms', this.overridePaymentTermsFormGroup);
     givenFormGroup.setControl('paymentTerms', new FormControl(''));
-    givenFormGroup.setControl('mileage', new FormControl(''));
+    givenFormGroup.setControl('mileage', new FormControl());
     this.insertBreakDownItems();
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems); 
     this._formGroup = givenFormGroup;
@@ -78,16 +76,15 @@ export class InvoiceAmountComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  //*nc starts
   insertBreakDownItems(costBreakdownItems?: CostLineItem[]) {
     if(costBreakdownItems && costBreakdownItems.length > 0) {
       this.costBreakdownItems = new FormArray([]);
-      costBreakdownItems.forEach(costBreakdownItem => {
+      costBreakdownItems.forEach((costBreakdownItem)=> {
         this.costBreakdownItemsControls.push(new FormGroup({
           charge: new FormControl(costBreakdownItem.chargeCode),
-          rate: new FormControl(costBreakdownItem.rateAmount),
-          type: new FormControl(costBreakdownItem.rateType),
-          quantity: new FormControl(costBreakdownItem.quantity),
+          rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
+          type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
+          quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity  : 'N/A'),
           totalAmount: new FormControl(costBreakdownItem.chargeLineTotal ? costBreakdownItem.chargeLineTotal : 0)
       }));
       })

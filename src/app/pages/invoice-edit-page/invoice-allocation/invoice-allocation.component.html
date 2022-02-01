@@ -13,32 +13,46 @@
     <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0">
       <div *ngFor="let invoiceAllocation of invoiceAllocationsControls; index as i" class="invoice-allocation-row row"
            [formGroupName]="i">
-
         <!-- Invoice allocation- allocationPercentage -->
         <div class="col-2">
           <input type="text" class="form-control" formControlName="allocationPercent"
+          [ngClass]="{ 'error-div' : !invoiceAllocation.get('allocationPercent')?.value }"
             [ngModel]="invoiceAllocation.get('allocationPercent')?.value | percent"
             [attr.disabled]="isEditMode? '': null" />
+            <small class="error-text col-2" *ngIf="!invoiceAllocation.get('allocationPercent')?.value" [ngClass]="{ 'mt-3' : true }" >
+              Allocation % is missing
+            </small>
         </div>
 
         <!-- Invoice allocation - warehouse -->
         <div class="col-2">
 
           <input type="text" class="form-control" formControlName="warehouse"
+          [ngClass]="{ 'error-div' : !invoiceAllocation.get('warehouse')?.value }"
             [attr.disabled]="isEditMode? '': null" />
+            <small class="error-text col-2" *ngIf="!invoiceAllocation.get('warehouse')?.value" [ngClass]="{ 'mt-3' : true }" >
+              Warehouse is missing
+            </small>
         </div>
 
         <!-- Invoice allocation - glCostCenter -->
         <div class="col-2">
           <input type="text" class="form-control" formControlName="glCostCenter"
+          [ngClass]="{ 'error-div' : !invoiceAllocation.get('glCostCenter')?.value }"
             [attr.disabled]="isEditMode? '': null" />
+            <small class="error-text col-2" *ngIf="!invoiceAllocation.get('glCostCenter')?.value" [ngClass]="{ 'mt-3' : true }" >
+              GL Cost Center is missing
+            </small>
         </div>
 
         <!-- Invoice allocation - glAccount -->
         <div class="col-2">
-          <input type="text" class="form-control" formControlName="glAccount"
+          <input type="text" class="form-control" formControlName="glAccount" 
+          [ngClass]="{ 'error-div' : !invoiceAllocation.get('glAccount')?.value }"
             [attr.disabled]="isEditMode? '': null" />
-
+            <small class="error-text col-2" *ngIf="!invoiceAllocation.get('glAccount')?.value" [ngClass]="{ 'mt-3' : true }" >
+              GL Account is missing
+            </small>
         </div>
 
         <!-- Invoice allocation - glCompanyCode -->
@@ -55,25 +69,25 @@
       </div>
     </ng-container>
 
-    <div class="invoice-allocation-total-div mt-5 p-3 offset-md-9"
+    <div class="invoice-allocation-total-div mt-5 p-3 offset-md-9 border-radius-5"
          [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
       <div class="row">
         <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-6 text-right">Allocation totals:</span>
-          <span class="col-md-6 text-right">{{totalAllocationAmount | currency}}</span>
+          <span class="px-3 col-md-8 text-right">Allocation Amount Totals:</span>
+          <span class="col-md-4 text-right">{{totalAllocationAmount | currency}}</span>
         </div>
       </div>
       <div class="row mt-3">
         <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-6 text-right text-bold">Invoice Net Amount:</span>
-          <span class="col-md-6 text-right text-bold">{{invoiceNetAmount?.value | currency}}</span>
+          <span class="px-3 col-md-8 text-right text-bold">Invoice Net Amount:</span>
+          <span class="col-md-4 text-right text-bold">{{invoiceNetAmount?.value | currency}}</span>
         </div>
       </div>
     </div>
     <small class="error-text col-3 offset-md-9"
            [ngClass]="{ 'mt-3' : !isAllocationAmountValid }"
            *ngIf="!isAllocationAmountValid">
-      Line Net Amount must equal Invoice Net Amount
+      Allocation Amount Totals must equal Invoice Net Amount
     </small>
   </div>
 </div>

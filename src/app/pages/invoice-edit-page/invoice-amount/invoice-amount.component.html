@@ -10,8 +10,13 @@
       <app-fal-currency-input id="invoice-amount-input"
                               formControlName="amountOfInvoice"
                               [isDisabled]="readOnlyForm"
+                              [isError]="!_formGroup.get('amountOfInvoice')?.value"
                              >
       </app-fal-currency-input>
+  
+      <small class="error-text col-2" *ngIf="!_formGroup.get('amountOfInvoice')?.value" [ngClass]="{ 'mt-3' : true }" >
+        Invoice Net Amount is missing
+      </small>
     </div>
 
     <!-- CURRENCY -->
@@ -97,10 +102,14 @@
 
     <!-- Cost breakdown item - Rate -->
     <div class="col-2">
-      
-      <app-fal-currency-input formControlName="rate"
-                              [isDisabled]="readOnlyForm"
-                             >
+      <input
+      *ngIf="_.get('charge')?.value == 'Discount'"
+       type="text"
+             class="form-control text-right"
+             formControlName="rate"
+             [attr.disabled]="readOnlyForm ? '': null"
+      />
+      <app-fal-currency-input *ngIf="_.get('charge')?.value != 'Discount'" formControlName="rate" [isDisabled]="readOnlyForm">
       </app-fal-currency-input>
     </div>
 
@@ -129,33 +138,39 @@
     <!-- Cost breakdown item - totalAmount -->
     <div class="col-2">
       <app-fal-currency-input 
+      [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
       formControlName="totalAmount"
       [isDisabled]="readOnlyForm"
      >
+     
     </app-fal-currency-input>
+   
+    <small class="error-text"
+    *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"> 
+ Base Rate Amount is required
+</small>
     </div>
-
 
   </div>
 </ng-container>
 
-  <div class="cost-breakdown-total-div my-5 p-3 offset-md-9" *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
+  <div [class.error-div]="!_formGroup?.get('amountOfInvoice')?.value" class="border-radius-5 cost-breakdown-total-div mt-5 mb-2 p-3 offset-md-9" *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
     <div class="row" *ngFor="let _ of costBreakdownItemsControls">
       <div class="row d-flex justify-content-between">
-        <span class="px-3 col-md-6 text-right">{{_.get('charge')?.value}} total:</span>
-        <span class="col-md-6 text-right">{{_.get('totalAmount')?.value | currency}}</span>
+        <span class="px-3 col-md-8 text-right">{{_.get('charge')?.value}} total:</span>
+        <span class="col-md-4 text-right">{{_.get('totalAmount')?.value | currency}}</span>
       </div>
     </div>
     <div class="row mt-3">
       <div class="row d-flex justify-content-between">
-      <span class="px-3 col-md-6 text-right text-bold">Invoice Net Amount:</span>
-      <span class="col-md-6 text-right text-bold">{{_formGroup?.get('amountOfInvoice')?.value | currency}}</span>
+      <span class="px-3 col-md-8 text-right text-bold">Invoice Net Amount:</span>
+      <span class="col-md-4 text-right text-bold">{{_formGroup?.get('amountOfInvoice')?.value | currency}}</span>
     </div>
-    </div>
-  
+    </div>  
   </div>
-
+  <small class="error-text col-3 offset-md-9 mt-3" *ngIf="!_formGroup?.get('amountOfInvoice')?.value">
+    Invoice Net Amount is missing
+  </small>
   </div>
-  <!--new change ends-->
 
 </div>
