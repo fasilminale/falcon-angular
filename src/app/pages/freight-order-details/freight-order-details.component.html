@@ -68,7 +68,7 @@
     <ng-container matColumnDef="pallets">
       <th id="pallets" class="px-3" mat-header-cell *matHeaderCellDef>Pallets</th>
       <td class="px-3" mat-cell *matCellDef="let freightOrder">
-        <input type="text=" [value]="freightOrder.weightGross.value" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.weightGross.value" >
+        <input type="text=" [value]="freightOrder?.pallets?.value ? freightOrder?.pallets?.value : 'N/A'" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput>
       </td>
     </ng-container>
 

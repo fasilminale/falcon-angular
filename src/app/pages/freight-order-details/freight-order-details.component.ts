@@ -30,7 +30,6 @@ export class FreightOrderDetailsComponent implements OnInit {
         freightOrder.isDisable = true;
         return freightOrder
       });
-      console.log(this.freightOrders);
       this.freightOrderTitle = `Freight Orders in Trip (${this.freightOrders.length})`;
     }));
   }
