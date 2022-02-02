@@ -15,6 +15,7 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 
 
 @Component({
@@ -100,7 +101,8 @@ export class InvoiceEditPageComponent implements OnInit {
       billToAddress: {...invoice.billTo, shippingPoint: invoice.shippingPoint},
       serviceLevel: invoice.serviceLevel,
       carrier: invoice.carrier,
-      carrierMode: invoice.mode
+      carrierMode: invoice.mode,
+      freightOrders: invoice.freightOrders
     });
     this.loadInvoiceOverviewDetail$.next({
       invoiceNetAmount: invoice.amountOfInvoice ? parseInt(invoice.amountOfInvoice) : 0.0,

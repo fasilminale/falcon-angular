@@ -5,6 +5,6 @@ export interface FreightOrder {
       grossWeight: number,
       volume: number,
       pallets: number,
-      isDisable?: boolean
+      isEdit?: boolean
 }
   

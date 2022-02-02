@@ -3,6 +3,7 @@ import {CarrierModeCodeReference} from '../master-data-models/carrier-mode-code-
 import {ServiceLevel} from '../master-data-models/service-level-model';
 import { ShippingPointLocation } from '../location/location-model';
 import {GlLineItem} from '../line-item/line-item-model';
+import { FreightOrder } from '../freight-order/freight-order-model';
 
 export interface TripInformation {
   tripId: string;
@@ -18,6 +19,7 @@ export interface TripInformation {
   originAddress?: ShippingPointLocation,
   destinationAddress?: ShippingPointLocation
   billToAddress?: ShippingPointLocation
+  freightOrders: FreightOrder[]
 }
 
 export interface InvoiceAllocationDetail {

@@ -10,6 +10,7 @@ import {map} from 'rxjs/operators';
 import {CarrierModeCodeReference, CarrierModeCodeUtils} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
 import { ShippingPointLocation } from 'src/app/models/location/location-model';
+import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 
 const {required} = Validators;
 
@@ -59,6 +60,7 @@ export class TripInformationComponent implements OnInit {
   loadOriginAddress$ = new Subject<ShippingPointLocation>();
   loadDestinationAddress$ = new Subject<ShippingPointLocation>();
   loadBillToAddress$ = new Subject<ShippingPointLocation>();
+  loadFreightOrders$ = new Subject<FreightOrder[]>();
 
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
@@ -128,6 +130,7 @@ export class TripInformationComponent implements OnInit {
       this.loadOriginAddress$.next(t.originAddress);
       this.loadDestinationAddress$.next(t.destinationAddress);
       this.loadBillToAddress$.next(t.billToAddress);
+      this.loadFreightOrders$.next(t.freightOrders);
       this.formGroup.updateValueAndValidity();
       this.formGroup.disable();
     }));
