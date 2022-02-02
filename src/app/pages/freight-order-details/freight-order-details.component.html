@@ -49,7 +49,7 @@
       <td class="px-3" mat-cell *matCellDef="let freightOrder">
         <input type="text" [value]="freightOrder.weightGross.value"
                [ngClass]="{ 'error' : !freightOrder.weightGross.value }"
-               [disabled]="freightOrder.isDisable" class="form-control col-11" matInput >
+               [disabled]="freightOrder.isEdit" class="form-control col-11" matInput >
         <elm-input-subtext *ngIf="!freightOrder.weightGross.value"
                            class="input-error"
                            [isError]="true">
@@ -61,24 +61,24 @@
     <ng-container matColumnDef="volume">
       <th id="volume" class="px-3" mat-header-cell *matHeaderCellDef>Volume</th>
       <td class="px-3" mat-cell *matCellDef="let freightOrder">
-        <input type="text=" [value]="freightOrder.volumeGross.value" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput [(ngModel)]="freightOrder.volumeGross.value" >
+        <input type="text=" [value]="freightOrder.volumeGross.value" [disabled]="freightOrder.isEdit" class="form-control col-11" matInput [(ngModel)]="freightOrder.volumeGross.value" >
       </td>
     </ng-container>
 
     <ng-container matColumnDef="pallets">
       <th id="pallets" class="px-3" mat-header-cell *matHeaderCellDef>Pallets</th>
       <td class="px-3" mat-cell *matCellDef="let freightOrder">
-        <input type="text=" [value]="freightOrder?.pallets?.value ? freightOrder?.pallets?.value : 'N/A'" [disabled]="freightOrder.isDisable" class="form-control col-11" matInput>
+        <input type="text=" [value]="freightOrder?.pallets?.value ? freightOrder?.pallets?.value : 'N/A'" [disabled]="freightOrder.isEdit" class="form-control col-11" matInput>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
       <th id="actions" class="px-3" mat-header-cell *matHeaderCellDef> Action </th>
       <td class="px-3 col-md-1" mat-cell *matCellDef="let freightOrder">
-        <span *ngIf="freightOrder.isDisable ; else submit" role="button" class="disabled material-icons material-icons-outlined">
+        <span *ngIf="freightOrder.isEdit ; else submit" role="button" class="disabled material-icons material-icons-outlined">
           edit
         </span>
-        <span *ngIf="freightOrder.isDisable" role="button" class="disabled material-icons material-icons-outlined">
+        <span *ngIf="freightOrder.isEdit" role="button" class="disabled material-icons material-icons-outlined">
           delete
         </span>
         <ng-template #submit>

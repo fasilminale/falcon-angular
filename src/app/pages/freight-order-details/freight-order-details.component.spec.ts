@@ -29,10 +29,10 @@ describe('FreightOrderDetailsComponent', () => {
 
   it('edit freight orders', () => {
     const freightOrder = {
-      isDisable: true
+      isEdit: true
     };
     component.editFreightOrder(freightOrder);
-    expect(freightOrder.isDisable).toBe(false);
+    expect(freightOrder.isEdit).toBe(false);
    });
 
 

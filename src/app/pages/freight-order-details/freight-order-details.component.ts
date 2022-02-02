@@ -27,7 +27,7 @@ export class FreightOrderDetailsComponent implements OnInit {
      
       this.freightOrders = freightOrders.map(freightOrder => {
         freightOrder.volumeGross.value = parseFloat(freightOrder?.volumeGross?.value.toFixed(2));
-        freightOrder.isDisable = true;
+        freightOrder.isEdit = true;
         return freightOrder
       });
       this.freightOrderTitle = `Freight Orders in Trip (${this.freightOrders.length})`;
@@ -35,7 +35,7 @@ export class FreightOrderDetailsComponent implements OnInit {
   }
 
   editFreightOrder(freightOrder: any) {
-    freightOrder.isDisable = false;
+    freightOrder.isEdit = false;
   }
 
 }
