@@ -52,6 +52,7 @@ describe('InvoiceAllocationComponent', () => {
     const invoiceAllocation =  component.invoiceAllocationsControls[0];
     expect(invoiceAllocation.get('allocationPercent')).toBeDefined();
     expect(invoiceAllocation.get('glCostCenter')).toBeDefined();
+    expect(invoiceAllocation.get('glProfitCenter')).toBeDefined();
     expect(invoiceAllocation.get('warehouse')).toBeDefined();
     expect(invoiceAllocation.get('glCompanyCode')).toBeDefined();
     expect(invoiceAllocation.get('glAccount')).toBeDefined();
@@ -77,6 +78,7 @@ describe('InvoiceAllocationComponent', () => {
           allocationPercent: 300.00,
           shippingPointWarehouse: 'Other',
           glCostCenter: '23344',
+          glProfitCenter: '',
           glAccount: '71257000',
           glCompanyCode: '4323345',
           glAmount: 300.00,
