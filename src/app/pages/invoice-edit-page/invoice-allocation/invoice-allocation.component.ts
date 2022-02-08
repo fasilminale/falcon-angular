@@ -49,7 +49,6 @@ export class InvoiceAllocationComponent implements OnInit {
       for (const glLineItem of t.glLineItems) {
         const glCostCenter = glLineItem.glCostCenter ? glLineItem.glCostCenter : glLineItem.glProfitCenter ? 'N/A' : undefined;
         const glProfitCenter = glLineItem.glProfitCenter ? glLineItem.glProfitCenter : glLineItem.glCostCenter ? 'N/A' : undefined;
-        console.log(glLineItem.glProfitCenter, glLineItem.glCostCenter);
 
         array.push(new FormGroup({
           allocationPercent: new FormControl(glLineItem.allocationPercent ?? undefined),
