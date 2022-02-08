@@ -264,7 +264,7 @@ describe('InvoiceDetailPageComponent', () => {
     });
   });
 
-  it('should delete invoice with reason', async () => {
+  it('should delete invoice with reason', async (done) => {
     component.isDeletedInvoice = false;
     component.hasInvoiceWrite = true;
     component.isAutoInvoice = true;
@@ -274,21 +274,14 @@ describe('InvoiceDetailPageComponent', () => {
     spyOn(component, 'requireDeleteReason').and.callThrough();
     spyOn(router, 'navigate').and.stub();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
-    const deleteInvoiceSpy = spyOn(component, 'deleteInvoice');
+    spyOn(component.util, 'openDeleteModal').and.callThrough();
 
+    component.deleteInvoice();
     fixture.detectChanges();
     fixture.whenStable().then(() => {
-      const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
-      deleteBtn.buttonClick.emit();
-      const deleteReason = fixture.debugElement.query(By.css('#delete-reason-input')).context as ElmTextareaInputComponent;
-      deleteReason.value = 'test';
-      fixture.detectChanges();
-      fixture.whenStable().then(() => {
-        expect(deleteInvoiceSpy).toHaveBeenCalled();
-        spyOn(router, 'navigate').and.stub();
-        spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
-      });
+      http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}/delete`)
+        .flush(invoiceResponse);
+      done();
     });
   });
-
 });
