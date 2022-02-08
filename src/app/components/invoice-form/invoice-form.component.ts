@@ -239,7 +239,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             if (this.invoice.status.key === 'APPROVED') {
               this.isApprovedInvoice.emit(true);
             }
-            if (this.invoice.status.key === 'Rejected') {
+            if (this.invoice.status.key === 'REJECTED') {
               this.isRejectedInvoice.emit(true);
             }
             this.loadingService.hideLoading();
