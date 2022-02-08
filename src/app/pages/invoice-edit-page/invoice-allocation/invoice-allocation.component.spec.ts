@@ -17,7 +17,8 @@ describe('InvoiceAllocationComponent', () => {
       new FormGroup({
         allocationPercent: new FormControl(300.00),
         shippingPointWarehouse: new FormControl('Other'),
-        glCostCenter: new FormControl('23344'),
+        glCostCenter: new FormControl(''),
+        glProfitCenter: new FormControl(''),
         glAccount: new FormControl('71257000'),
         glCompanyCode: new FormControl('4323345'),
         glAmount: new FormControl(300.00)
@@ -52,6 +53,7 @@ describe('InvoiceAllocationComponent', () => {
     const invoiceAllocation =  component.invoiceAllocationsControls[0];
     expect(invoiceAllocation.get('allocationPercent')).toBeDefined();
     expect(invoiceAllocation.get('glCostCenter')).toBeDefined();
+    expect(invoiceAllocation.get('glProfitCenter')).toBeDefined();
     expect(invoiceAllocation.get('warehouse')).toBeDefined();
     expect(invoiceAllocation.get('glCompanyCode')).toBeDefined();
     expect(invoiceAllocation.get('glAccount')).toBeDefined();
@@ -76,7 +78,71 @@ describe('InvoiceAllocationComponent', () => {
         glLineItems: [{
           allocationPercent: 300.00,
           shippingPointWarehouse: 'Other',
+          glCostCenter: '',
+          glProfitCenter: '',
+          glAccount: '71257000',
+          glCompanyCode: '4323345',
+          glAmount: 300.00,
+          debitCreditFlag: ''
+        }]
+      });
+    });
+
+    it('should load allocation detail form with glCostCenter', done => {
+      loadAllocationDetails$.subscribe(() => {
+        expect(component._formGroup).toBeDefined();
+        done();
+      });
+      loadAllocationDetails$.next({
+        invoiceNetAmount: '1234.56',
+        totalGlAmount: '1234.56',
+        glLineItems: [{
+          allocationPercent: 300.00,
+          shippingPointWarehouse: 'Other',
           glCostCenter: '23344',
+          glProfitCenter: '',
+          glAccount: '71257000',
+          glCompanyCode: '4323345',
+          glAmount: 300.00,
+          debitCreditFlag: ''
+        }]
+      });
+    });
+
+    it('should load allocation detail form with glProfitCenter', done => {
+      loadAllocationDetails$.subscribe(() => {
+        expect(component._formGroup).toBeDefined();
+        done();
+      });
+      loadAllocationDetails$.next({
+        invoiceNetAmount: '1234.56',
+        totalGlAmount: '1234.56',
+        glLineItems: [{
+          allocationPercent: 300.00,
+          shippingPointWarehouse: 'Other',
+          glCostCenter: '',
+          glProfitCenter: '23344',
+          glAccount: '71257000',
+          glCompanyCode: '4323345',
+          glAmount: 300.00,
+          debitCreditFlag: ''
+        }]
+      });
+    });
+
+    it('should load allocation detail form with both glProfitCenter and glProfitCenter', done => {
+      loadAllocationDetails$.subscribe(() => {
+        expect(component._formGroup).toBeDefined();
+        done();
+      });
+      loadAllocationDetails$.next({
+        invoiceNetAmount: '1234.56',
+        totalGlAmount: '1234.56',
+        glLineItems: [{
+          allocationPercent: 300.00,
+          shippingPointWarehouse: 'Other',
+          glCostCenter: '23344',
+          glProfitCenter: '23344',
           glAccount: '71257000',
           glCompanyCode: '4323345',
           glAmount: 300.00,

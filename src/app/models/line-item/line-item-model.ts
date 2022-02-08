@@ -23,6 +23,7 @@ export interface GlLineItem {
   shippingPointWarehouse: string;
   glCompanyCode: string;
   glCostCenter: string;
+  glProfitCenter: string;
   glAccount: string;
   glAmount: number;
   debitCreditFlag: string;

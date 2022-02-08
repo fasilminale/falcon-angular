@@ -1,4 +1,11 @@
-<div class="headline2 mb-3">Invoice Overview</div>
+<div class="d-flex justify-content-between">
+  <div class="headline2 mb-3">
+    Invoice Overview
+  </div>
+  <div class="m-1 fal-label">
+    Invoice Type: Auto
+  </div>
+</div>
 
 <elm-card id="backrgound-grey">
     <div class="row p-4">
@@ -8,7 +15,7 @@
                     <span class="label-text">Invoice Net amount</span>
                     <span class="value-text">{{invoiceOverviewDetail?.invoiceNetAmount | currency}}</span>
                 </div>
-        
+
                 <div class="col invoice-info ">
                     <span class="label-text">Invoice Date</span>
                     <span class="value-text">{{invoiceOverviewDetail?.invoiceDate | date: 'MM-dd-yyyy zzz'}}</span>
@@ -35,11 +42,11 @@
                         <ng-template #defaultDiv>
                             N/A
                         </ng-template>
-                       
-                        
+
+
                     </span>
                 </div>
-        
+
                 <div class="col invoice-info">
                     <span class="label-text">Carrier</span>
                     <span class="value-text">{{invoiceOverviewDetail?.carrier ? invoiceOverviewDetail?.carrier : 'N/A'}}</span>
@@ -62,7 +69,7 @@
                 [tooltipMessage]="'Remittance information is not available until payment of invoice in ERP'"></app-info-icon-tooltip>
             </div>
             <div class="remittance-info-div">
-                
+
                 <div class="row">
                     <span class="col-7 label-text">ERP Invoice Number</span>
                     <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber : 'N/A'}}</span>
@@ -84,7 +91,7 @@
                     <span class="col-5 value-text"><span class="col value-text">{{ invoiceOverviewDetail?.remittanceInformation?.dateOfPayment ? invoiceOverviewDetail?.remittanceInformation?.dateOfPayment: 'N/A'}}</span>
                 </span>
                 </div>
-               
+
 
             </div>
 
