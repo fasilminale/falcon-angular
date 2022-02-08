@@ -129,7 +129,7 @@ export class InvoiceEditPageComponent implements OnInit {
       currency: invoice.currency,
       standardPaymentTermsOverride: invoice.standardPaymentTermsOverride
     })
-    
+
     this.loadAllocationDetails$.next({
       totalGlAmount: invoice.totalGlAmount,
       invoiceNetAmount: invoice.amountOfInvoice,

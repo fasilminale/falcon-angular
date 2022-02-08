@@ -14,7 +14,9 @@
                   (buttonClick)="saveAsTemplate()">
         <u>Save as Template</u>
       </elm-button>
-      <elm-button *ngIf="!(isDeletedInvoice || isSubmittedInvoice)" id="delete-button"
+    <elm-button *ngIf="!(isDeletedInvoice
+                  || (isSubmittedInvoice
+                  && !(isAutoInvoice && (isApprovedInvoice || isRejectedInvoice))))" id="delete-button"
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
@@ -53,6 +55,9 @@
                         (toggleMilestones)="toggleMilestones()"
                         (isDeletedInvoice)="disableInvoice($event)"
                         (isSubmittedInvoice)="submittedInvoice($event)"
+                        (isAutoInvoice)="autoInvoice($event)"
+                        (isApprovedInvoice)="approvedInvoice($event)"
+                        (isRejectedInvoice)="rejectedInvoice($event)"
       (invoiceStatusChange)="invoiceStatusChange($event)">
       </app-invoice-form>
     </mat-sidenav-content>

@@ -5,7 +5,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoadingService} from '../../services/loading-service';
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
 import {TemplateService} from '../../services/template-service';
@@ -13,10 +13,11 @@ import {Router} from '@angular/router';
 import {TimeService} from '../../services/time-service';
 import {Template} from '../../models/template/template-model';
 import {By} from '@angular/platform-browser';
-import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
+import {ButtonModule, ElmButtonComponent, ElmTextareaInputComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-manager';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {UserService} from '../../services/user-service';
+import {asSpy} from '../../testing/test-utils.spec';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -161,6 +162,30 @@ describe('InvoiceDetailPageComponent', () => {
     expect(component.isSubmittedInvoice).toBeTruthy();
   });
 
+  it('should update the isAutoInvoice flag', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(component, 'autoInvoice').and.callThrough();
+    component.autoInvoice(true);
+    expect(component.isAutoInvoice).toBeTruthy();
+  });
+
+  it('should update the isApprovedInvoice flag', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(component, 'approvedInvoice').and.callThrough();
+    component.approvedInvoice(true);
+    expect(component.isApprovedInvoice).toBeTruthy();
+  });
+
+  it('should update the isRejectedInvoice flag', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(component, 'rejectedInvoice').and.callThrough();
+    component.rejectedInvoice(true);
+    expect(component.isRejectedInvoice).toBeTruthy();
+  });
+
   it('should call delete invoice route after confirming delete invoice', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
       .flush(invoiceResponse);
@@ -230,6 +255,33 @@ describe('InvoiceDetailPageComponent', () => {
     fixture.whenStable().then(() => {
       const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
       deleteBtn.buttonClick.emit();
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        expect(deleteInvoiceSpy).toHaveBeenCalled();
+        spyOn(router, 'navigate').and.stub();
+        spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+      });
+    });
+  });
+
+  it('should delete invoice with reason', async () => {
+    component.isDeletedInvoice = false;
+    component.hasInvoiceWrite = true;
+    component.isAutoInvoice = true;
+    component.isApprovedInvoice = true;
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(component, 'requireDeleteReason').and.callThrough();
+    spyOn(router, 'navigate').and.stub();
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    const deleteInvoiceSpy = spyOn(component, 'deleteInvoice');
+
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
+      deleteBtn.buttonClick.emit();
+      const deleteReason = fixture.debugElement.query(By.css('#delete-reason-input')).context as ElmTextareaInputComponent;
+      deleteReason.value = 'test';
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(deleteInvoiceSpy).toHaveBeenCalled();

@@ -73,6 +73,9 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   @Output() toggleMilestones = new EventEmitter<void>();
   @Output() isDeletedInvoice = new EventEmitter<boolean>();
   @Output() isSubmittedInvoice = new EventEmitter<boolean>();
+  @Output() isAutoInvoice = new EventEmitter<boolean>();
+  @Output() isApprovedInvoice = new EventEmitter<boolean>();
+  @Output() isRejectedInvoice = new EventEmitter<boolean>();
   @Output() invoiceStatusChange = new EventEmitter<KeyedLabel | null>();
 
   /* CHILDREN */
@@ -229,6 +232,15 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             if (this.invoice.status.key !== 'CREATED' && this.invoice.status.key !== 'REJECTED') {
               this.editableInvoice = false;
               this.isSubmittedInvoice.emit(true);
+            }
+            if (this.invoice.entryType === 'AUTO') {
+              this.isAutoInvoice.emit(true);
+            }
+            if (this.invoice.status.key === 'APPROVED') {
+              this.isApprovedInvoice.emit(true);
+            }
+            if (this.invoice.status.key === 'Rejected') {
+              this.isRejectedInvoice.emit(true);
             }
             this.loadingService.hideLoading();
             this.markFormAsPristine();
