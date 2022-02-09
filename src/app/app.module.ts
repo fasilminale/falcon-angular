@@ -78,6 +78,7 @@ import { InfoIconTooltipComponent } from './components/info-icon-tooltip/info-ic
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { FalDeleteModalComponent } from './components/fal-delete-modal/fal-delete-modal.component';
 import {BuildInfoService} from './services/build-info-service';
+import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -160,7 +161,8 @@ const oktaConfig = {
     InvoiceAmountComponent,
     InvoiceAllocationComponent,
     InfoIconTooltipComponent,
-    FalDeleteModalComponent
+    FalDeleteModalComponent,
+    NewUserLogoutPageComponent
   ],
   imports: [
     BrowserModule,

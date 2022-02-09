@@ -19,6 +19,6 @@ export class ErrorService {
 }
 
 export interface Error {
-  status: string;
+  status: string | number;
   message: string;
 }

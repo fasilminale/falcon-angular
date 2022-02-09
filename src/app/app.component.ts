@@ -73,12 +73,18 @@ export class AppComponent implements OnInit {
         innerHtmlMessage: `<strong>Status:</strong> ${error.status}<br>` +
           `${error.message}`
       };
-      this.util.openErrorModal(modalData)
-        .subscribe(() => {
-          if (error.status === '401') {
-            this.router.navigate(['/logged-out']).then();
-          }
-        });
+      // tslint:disable-next-line:triple-equals
+      if (error.status == '403' && error.message === 'User Not Found') {
+        this.router.navigate(['/newUserForbidden']).then();
+      } else {
+        this.util.openErrorModal(modalData)
+          .subscribe(() => {
+            // tslint:disable-next-line:triple-equals
+            if (error.status == '401') {
+              this.router.navigate(['/logged-out']).then();
+            }
+          });
+      }
     });
   }
 
@@ -86,6 +92,10 @@ export class AppComponent implements OnInit {
     this.oktaService.signOut().then(() => {
       this.router.navigate(['/logged-out']).then();
     });
+  }
+
+  get showNavBar(): boolean {
+    return !(this.router.url.includes(`/logged-out`) || this.router.url === `/newUserForbidden`);
   }
 
   public buildNavBar(): void {

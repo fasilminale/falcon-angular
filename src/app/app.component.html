@@ -2,7 +2,7 @@
   <elm-progress-spinner label="{{label}}" spinnerType="indeterminate"></elm-progress-spinner>
 </div>
 <div class="app">
-  <div *ngIf="authService.isAuthenticated()" class="page-header">
+  <div *ngIf="authService.isAuthenticated() && showNavBar" class="page-header">
     <elm-navbar headerTitle="FALCON"
                 [logoUrl]="logoUrl"
                 [logoAlt]="logoAlt"
