@@ -7,7 +7,7 @@ import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {TimeService} from '../../services/time-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {KeyedLabel} from '../../models/generic/keyed-label';
@@ -33,6 +33,9 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   public milestonesTabOpen = false;
   public isDeletedInvoice = false;
   public isSubmittedInvoice = false;
+  public isAutoInvoice = false;
+  public isApprovedInvoice = false;
+  public isRejectedInvoice = false;
   public falconInvoiceNumber = '';
   public milestones: Array<Milestone> = [];
   public invoiceStatus = '';
@@ -89,23 +92,23 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   }
 
   public deleteInvoice(): void {
-    this.dialog.open(ConfirmationModalComponent,
-      {
-        autoFocus: false,
-        data: {
+    const dialogResult: Observable<string | boolean> =
+      this.requireDeleteReason()
+        ? this.util.openDeleteModal()
+        : this.util.openConfirmationModal({
           title: 'Delete Invoice',
           innerHtmlMessage: `Are you sure you want to delete this invoice?
-                 <br/><br/><strong>This action cannot be undone.</strong>`,
+               <br/><br/><strong>This action cannot be undone.</strong>`,
           confirmButtonText: 'Delete Invoice',
           confirmButtonStyle: 'destructive',
           cancelButtonText: 'Cancel'
-        }
-      })
-      .afterClosed()
-      .subscribe(result => {
+        });
+    dialogResult.subscribe(result => {
         if (result) {
-          this.webService.httpDelete(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`)
-            .subscribe(
+          const request = this.requireDeleteReason()
+            ? this.deleteInvoiceWithReason({deletedReason: result})
+            : this.deleteInvoiceWithoutReason();
+          request.subscribe(
               () => this.router.navigate(
                 [`/invoices`],
                 {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}}
@@ -132,6 +135,30 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
 
   public submittedInvoice(value: boolean): void {
     this.isSubmittedInvoice = value;
+  }
+
+  public autoInvoice(value: boolean): void {
+    this.isAutoInvoice = value;
+  }
+
+  public approvedInvoice(value: boolean): void {
+    this.isApprovedInvoice = value;
+  }
+
+  public rejectedInvoice(value: boolean): void {
+    this.isRejectedInvoice = value;
+  }
+
+  public requireDeleteReason(): boolean {
+    return this.isAutoInvoice && this.isApprovedInvoice;
+  }
+
+  private deleteInvoiceWithoutReason(): Observable<any> {
+    return this.webService.httpDelete(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}`);
+  }
+
+  private deleteInvoiceWithReason(deletedReasonParameters: any): Observable<any> {
+    return this.webService.httpPut(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}/delete`, deletedReasonParameters);
   }
 
   public formatTimestamp(value: string): string | undefined {
