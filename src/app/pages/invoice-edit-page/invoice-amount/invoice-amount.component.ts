@@ -85,7 +85,7 @@ export class InvoiceAmountComponent implements OnInit {
           rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
           type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
           quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity  : 'N/A'),
-          totalAmount: new FormControl(costBreakdownItem.chargeLineTotal ? costBreakdownItem.chargeLineTotal : 0)
+          totalAmount: new FormControl(costBreakdownItem.chargeLineTotal ? costBreakdownItem.chargeCode == 'Discount' ? -costBreakdownItem.chargeLineTotal : costBreakdownItem.chargeLineTotal : 0)
       }));
       })
     } else  {
@@ -102,6 +102,16 @@ export class InvoiceAmountComponent implements OnInit {
 
   get costBreakdownItemsControls() {
     return this._formGroup.get('costBreakdownItems') ? (this._formGroup.get('costBreakdownItems') as FormArray).controls: new FormArray([]).controls;
+  }
+
+  get costBreakdownTotal() {
+    let totalAmount = 0;
+    this.costBreakdownItemsControls.forEach(c => {
+      if(c?.get('totalAmount')?.value) {
+        totalAmount += parseFloat(c?.get('totalAmount')?.value);
+      }
+    });
+    return totalAmount;
   }
 
   @Input() set loadInvoiceAmountDetail$(observable: Observable<InvoiceAmountDetail>) {
