@@ -11,6 +11,7 @@ import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.co
 import {MasterDataPageComponent} from './pages/master-data-page/master-data-page.component';
 import {RoleGuard} from './components/role-guard/role-guard';
 import {InvoiceEditPageComponent} from './pages/invoice-edit-page/invoice-edit-page.component';
+import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
 
 const routes: Routes = [
   {path: 'master-data', component:  MasterDataPageComponent, canActivate: [OktaAuthGuard]},
@@ -25,6 +26,7 @@ const routes: Routes = [
   }},
   {path: 'login/callback', component: OktaCallbackComponent},
   {path: 'logged-out', component:  LoggedOutPageComponent},
+  {path: 'newUserForbidden', component: NewUserLogoutPageComponent},
   {path: '', redirectTo: '/invoices', pathMatch: 'full'},
 ];
 

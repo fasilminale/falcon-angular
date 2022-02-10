@@ -130,6 +130,16 @@ describe('AppComponent', () => {
       component.logout();
       expect(oktaService.signOut).toHaveBeenCalled();
     });
+
+    it('should return true', () => {
+      spyOnProperty(router, 'url').and.returnValue('/invoices');
+      expect(component.showNavBar).toBeTrue();
+    });
+
+    it('should return false', () => {
+      spyOnProperty(router, 'url').and.returnValue('/newUserForbidden');
+      expect(component.showNavBar).toBeFalse();
+    });
   });
 
   describe('write user view', () => {
@@ -186,6 +196,31 @@ describe('AppComponent', () => {
 
     it('should navigate to logout', () => {
       expect(router.navigate).toHaveBeenCalledOnceWith(['/logged-out']);
+    });
+  });
+
+  describe('with forbidden errors', () => {
+    beforeEach(() => {
+      // Common Spies
+      spyOn(util, 'openErrorModal').and.stub();
+      spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
+      // Create Component
+      const fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      component.ngOnInit();
+      // Trigger Error
+      errorService.addError({
+        status: '403',
+        message: 'User not Found'
+      });
+    });
+
+    it('should not show error modal', () => {
+      expect(util.openErrorModal).not.toHaveBeenCalled();
+    });
+
+    it('should navigate to newUserForbidden', () => {
+      expect(router.navigate).toHaveBeenCalledOnceWith(['/newUserForbidden']);
     });
   });
 });
