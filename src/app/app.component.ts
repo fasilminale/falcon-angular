@@ -74,7 +74,7 @@ export class AppComponent implements OnInit {
           `${error.message}`
       };
       // tslint:disable-next-line:triple-equals
-      if (error.status == '403' && error.message === 'User Not Found') {
+      if (error.status == '403' && error.message.includes('User not Found')) {
         this.router.navigate(['/newUserForbidden']).then();
       } else {
         this.util.openErrorModal(modalData)

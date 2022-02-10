@@ -211,7 +211,7 @@ describe('AppComponent', () => {
       // Trigger Error
       errorService.addError({
         status: '403',
-        message: 'User Not Found'
+        message: 'User not Found'
       });
     });
 
