@@ -9,7 +9,7 @@
       <div class="col">GL Profit Center</div>
       <div class="col">GL Account</div>
       <div class="col">GL Company Code</div>
-      <div class="col">Allocation Amount</div>
+      <div class="col">Total</div>
     </div>
     <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0">
       <div *ngFor="let invoiceAllocation of invoiceAllocationsControls; index as i" class="invoice-allocation-row row"
@@ -88,7 +88,7 @@
          [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
       <div class="row">
         <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-8 text-left text-bold">Allocation Amount Totals:</span>
+          <span class="px-3 col-md-8 text-left text-bold">Allocation Amount Total:</span>
           <span class="col-md-4 text-right text-bold px-0">{{totalAllocationAmount | currency}}</span>
         </div>
       </div>
