@@ -6,7 +6,10 @@
               mat-dialog-close>
     Milestones
   </elm-button>
-  <div class="content">
+  <div class="content my-3">
+    <div class="headline2">
+      Invoice Details
+    </div>
     <form [formGroup]="form.invoiceFormGroup">
 
       <div class="row me-0">
@@ -55,8 +58,29 @@
             </small>
           </div>
 
-          <!-- COMPANY CODE -->
+          <!-- ERP TYPE -->
           <div class="col-12">
+            <label for="erp-type-input" class="fal-label">
+              ERP Type
+            </label>
+            <app-fal-radio-input id="erp-type-input"
+                                 formControlName="erpType"
+                                 [orientation]="0"
+                                 [options]="form.erpTypeOptions"
+                                 [isDisabled]="readOnly"
+                                 (focus)="form.forceValueChangeEvent(form.erpType)"
+                                 [isError]="!!(form.erpType.errors
+                                               && form.erpType.hasError('required')
+                                               && form.erpType.touched)">
+            </app-fal-radio-input>
+            <small class="error-text"
+                   *ngIf="form.erpType.hasError('required') && form.erpType.touched">
+              ERP Type is required
+            </small>
+          </div>
+
+          <!-- COMPANY CODE -->
+          <div class="col-6">
             <label for="company-code-input" class="fal-label">
               Company Code
             </label>
@@ -84,28 +108,8 @@
             </small>
           </div>
 
-          <!-- ERP TYPE -->
-          <div class="col-12">
-            <label for="erp-type-input" class="fal-label">
-              ERP Type
-            </label>
-            <app-fal-radio-input id="erp-type-input"
-                                 formControlName="erpType"
-                                 [options]="form.erpTypeOptions"
-                                 [isDisabled]="readOnly"
-                                 (focus)="form.forceValueChangeEvent(form.erpType)"
-                                 [isError]="!!(form.erpType.errors
-                                               && form.erpType.hasError('required')
-                                               && form.erpType.touched)">
-            </app-fal-radio-input>
-            <small class="error-text"
-                   *ngIf="form.erpType.hasError('required') && form.erpType.touched">
-              ERP Type is required
-            </small>
-          </div>
-
           <!-- VENDOR NUMBER -->
-          <div class="col-12">
+          <div class="col-6">
             <label for="vendor-number-input" class="fal-label">
               Vendor Number
             </label>
@@ -132,7 +136,7 @@
           </div>
 
           <!-- EXTERNAL INVOICE NUMBER -->
-          <div class="col-12">
+          <div class="col-6">
             <label for="external-invoice-number-input" class="fal-label">
               External Invoice Number
             </label>
@@ -160,7 +164,7 @@
           </div>
 
           <!-- EXTERNAL INVOICE DATE -->
-          <div class="col-12">
+          <div class="col-6">
             <label for="external-invoice-date-input" class="fal-label">
               External Invoice Date
             </label>
@@ -192,7 +196,7 @@
 
       </div>
 
-      <div class="row">
+      <hr/>
 
         <!-- LINE ITEMS -->
         <elm-card id="line-items-card"
@@ -505,7 +509,6 @@
             </elm-button>
           </div>
         </div>
-      </div>
     </form>
   </div>
 </div>
