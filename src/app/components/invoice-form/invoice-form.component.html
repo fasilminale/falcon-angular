@@ -199,266 +199,264 @@
       <hr/>
 
         <!-- LINE ITEMS -->
-        <elm-card id="line-items-card"
+      <div class="headline2">
+        Invoice Details
+      </div>
 
-                  overflow="visible">
-          <elm-section-header [sectionTitle]="'Invoice Amount'">
-          </elm-section-header>
-
-          <div class="row px-3">
-            <!-- INVOICE AMOUNT -->
-            <div class="col-2">
-              <label for="invoice-amount-input" class="fal-label">
-                Invoice Net Amount
-              </label>
-              <app-fal-currency-input id="invoice-amount-input"
-                                      formControlName="amountOfInvoice"
-                                      [isDisabled]="readOnly"
-                                      (focus)="focusAmountOfInvoice()"
-                                      [isError]="!!(form.amountOfInvoice.errors
-                                                  && (form.amountOfInvoice.hasError('required')
-                                                  || form.amountOfInvoice.hasError('isGreaterThanZero'))
-                                                  && form.amountOfInvoice.touched)
-                                                  || !form.isInvoiceAmountValid">
-              </app-fal-currency-input>
-              <small class="error-text"
-                     *ngIf="(form.amountOfInvoice.hasError('required')
-                          || form.amountOfInvoice.hasError('isGreaterThanZero'))
-                          && form.amountOfInvoice.touched">
-                Invoice Net Amount is required
-              </small>
-            </div>
-
-            <!-- CURRENCY -->
-            <div class="col-4 px-4 currency-div">
-              <label for="currency-input" class="fal-label">
-                Currency
-              </label>
-              <app-fal-radio-input id="currency-input"
-                                   formControlName="currency"
-                                   [options]="form.currencyOptions"
-                                   [isDisabled]="readOnly"
-                                   (focus)="form.forceValueChangeEvent(form.currency)"
-                                   [isError]="!!(form.currency.errors
-                                               && form.currency.hasError('required')
-                                               && form.currency.touched)">
-              </app-fal-radio-input>
-              <small class="error-text"
-                     *ngIf="form.currency.hasError('required')
-                          && form.currency.touched">
-                Currency is required
-              </small>
-            </div>
-
-            <!-- OVERRIDE STANDARD PAYMENT TERMS -->
-            <div class="col-4 offset-md-2 d-flex" [formGroup]="form.osptFormGroup">
-              <label for="override-stp-checkbox"
-                     class="fal-label override-stp-checkbox-div">
-                <input id="override-stp-checkbox"
-                       type="checkbox"
-                       (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
-                       formControlName="isPaymentOverrideSelected"
-                       [attr.disabled]="readOnly ? true : null"
-                />
-                Override Standard Payment Terms
-              </label>
-              <div class="payment-terms-div">
-                <label class="fal-label">Payment terms</label>
-                <ng-select id="paymentTerms"
-                           formControlName="paymentTerms"
-                           [items]="form.paymentTermOptions"
-                           bindLabel="display"
-                           bindValue="value"
-                           (change)="form.forceValueChangeEvent(form.osptFormGroup)"
-                           [readonly]="readOnly || !form.isPaymentOverrideSelected.value"
-                           placeholder="Select One...">
-                </ng-select>
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- LINE ITEM - LOOP -->
-          <div id="line-item-rows-container" formArrayName="lineItems">
-            <div class="row m-3 line-item-header">
-              <div class="col-1 text-center">Line Item</div>
-              <div class="col-2">Company Code</div>
-              <div class="col-2">Cost Center</div>
-              <div class="col-2">GL Account</div>
-              <div class="col-2">Line Net Amount</div>
-              <div class="col-3">Notes(optional)</div>
-            </div>
-            <div *ngFor="let _ of form.lineItems.controls; index as i"
-                 class="line-item-row row mx-3"
-                 [formGroupName]="i">
-
-              <div class="col-1 text-left line-item sn">
-                {{i + 1}}
-              </div>
-
-              <div class="col-2">
-                <input type="text"
-                       class="form-control"
-                       formControlName="companyCode"
-                       [placeholder]="form.companyCode.value"
-                       (keypress)="validateRegex($event)"
-                       maxlength="4"
-                       (focus)="focusLineItemElement(form.lineItemCompanyCode(i))"
-                       [ngClass]="form.lineItemCompanyCode(i).invalid
-                                  && form.lineItemCompanyCode(i).touched
-                                  ? 'error' : ''"
-                />
-                <small class="error-text"
-                       *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
-                  {{specialCharErrorMessage}}
-                </small>
-                <ng-template #companyCodeError>
-                  <small class="error-text"
-                         [ngClass]="{'invisible': !form.lineItemCompanyCode(i).hasError('validateCompanyCode')}">
-                    Company code is invalid
-                  </small>
-                </ng-template>
-
-              </div>
-
-
-              <!-- LINE ITEM - COST CENTER -->
-              <div class="col-2">
-                <input type="text"
-                       class="form-control"
-                       formControlName="costCenter"
-                       (keypress)="validateRegex($event)"
-                       maxlength="10"
-                       (focus)="focusLineItemElement(form.lineItemCostCenter(i))"
-                       [ngClass]="form.lineItemCostCenter(i).errors
-                          && form.lineItemCostCenter(i).hasError('required')
-                          && form.lineItemCostCenter(i).touched
-                          || form.lineItemCostCenter(i).hasError('pattern')
-                          ? 'error' : ''"
-                />
-                <small class="error-text"
-                       *ngIf="form.lineItemCostCenter(i).hasError('pattern'); else costCenterReq">
-                  {{specialCharErrorMessage}}
-                </small>
-                <ng-template #costCenterReq>
-                  <small class="error-text"
-                         [ngClass]="{'invisible': !(form.lineItemCostCenter(i).hasError('required')
-                                                  && form.lineItemCostCenter(i).touched)}">
-                    Cost Center is required
-                  </small>
-                </ng-template>
-              </div>
-
-              <!-- LINE ITEM - GL ACCOUNT -->
-              <div class="col-2">
-                <input type="text"
-                       class="form-control"
-                       formControlName="glAccount"
-                       (keypress)="validateRegex($event)"
-                       maxlength="10"
-                       (focus)="focusLineItemElement(form.lineItemGlAccount(i))"
-                       [ngClass]="form.lineItemGlAccount(i).errors
-                          && form.lineItemGlAccount(i).hasError('required')
-                          && form.lineItemGlAccount(i).touched
-                          || form.lineItemGlAccount(i).hasError('pattern')
-                          ? 'error' : ''"
-                />
-                <small class="error-text"
-                       *ngIf="form.lineItemGlAccount(i).hasError('pattern'); else glAmountReq">
-                  {{specialCharErrorMessage}}
-                </small>
-                <ng-template #glAmountReq>
-                  <small class="error-text"
-                         [ngClass]="{'invisible': !(form.lineItemGlAccount(i).hasError('required')
-                                                  && form.lineItemGlAccount(i).touched)}">
-                    GL Account is required
-                  </small>
-
-                </ng-template>
-              </div>
-
-              <!-- LINE ITEM - NET AMOUNT -->
-              <div class="col-2">
-                <app-fal-currency-input formControlName="lineItemNetAmount"
-                                        [isDisabled]="readOnly"
-                                        (focus)="focusLineItemElement(form.lineItemNetAmount(i))"
-                                        [isError]="!!(form.lineItemNetAmount(i).errors
-                                                      && (form.lineItemNetAmount(i).hasError('required')
-                                                      || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
-                                                      && form.lineItemNetAmount(i).touched) || !form.isInvoiceAmountValid">
-                </app-fal-currency-input>
-                <small class="error-text"
-                       *ngIf="!!(form.lineItemNetAmount(i).errors
-                   && (form.lineItemNetAmount(i).hasError('required') || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
-                   && form.lineItemNetAmount(i).touched)">
-                  Line Net Amount is required
-                </small>
-              </div>
-
-              <div class="d-flex col-3 align-items-start">
-                <!-- LINE ITEM - NOTES -->
-                <input type="text"
-                       class="form-control"
-                       formControlName="notes"
-                       (focus)="form.forceValueChangeEvent(form.lineItemNotes(i))"
-                       (keypress)="validateFreeTextRegex($event)"
-                       maxlength="50"
-                />
-
-                <!-- LINE ITEM - REMOVE -->
-                <div class="flex-shrink-1">
-                  <div>
-                    <input type="button"
-                           value="remove_circle"
-                           class="material-icons btn line-item-remove-button"
-                           [disabled]="lineItemRemoveButtonDisable || readOnly"
-                           (focus)="form.forceValueChangeEvent(form.lineItems)"
-                           (click)="form.removeLineItem(i)"
-                    /></div>
-                  <small class="error-text invisible">
-                    spacer
-                  </small>
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-
-          <div class="row">
-            <!-- LINE ITEMS - ADD NEW -->
-            <div class="col-6">
-              <elm-button *ngIf="!readOnly"
-                          buttonType="button"
-                          buttonStyle="text"
-                          id="add-new-line-item-button"
-                          (focus)="form.forceValueChangeEvent(form.lineItems)"
-                          (buttonClick)="form.addNewEmptyLineItem()">
-                <u>+ Add New Line Item</u>
-              </elm-button>
-            </div>
-          </div>
-
-          <div class="row mb-3 mx-3 amount-row">
-            <div class="amount-summary-div col-3 offset-md-9 p-3 d-flex flex-column"
-                 [ngClass]="!form.isInvoiceAmountValid  ? 'error-div' : ''">
-              <div class="col-12 d-flex justify-content-between align-items-end">
-                <span>Line Item Net Amount Total:</span>
-                <span>${{form.totalLineItemNetAmount | number : '1.2-2'}}</span>
-              </div>
-              <div class="col-12 d-flex justify-content-between align-items-end">
-                <span>Invoice Net Amount:</span>
-                <span>${{form.amountOfInvoice?.value | number : '1.2-2'}}</span>
-              </div>
-
-            </div>
-            <small class="error-text col-3 offset-md-9 px-0"
-                   *ngIf="!form.isInvoiceAmountValid">
-              Line Net Amount must equal Invoice Net Amount
+        <div class="row">
+          <!-- INVOICE AMOUNT -->
+          <div class="col-2">
+            <label for="invoice-amount-input" class="fal-label">
+              Invoice Net Amount
+            </label>
+            <app-fal-currency-input id="invoice-amount-input"
+                                    formControlName="amountOfInvoice"
+                                    [isDisabled]="readOnly"
+                                    (focus)="focusAmountOfInvoice()"
+                                    [isError]="!!(form.amountOfInvoice.errors
+                                                && (form.amountOfInvoice.hasError('required')
+                                                || form.amountOfInvoice.hasError('isGreaterThanZero'))
+                                                && form.amountOfInvoice.touched)
+                                                || !form.isInvoiceAmountValid">
+            </app-fal-currency-input>
+            <small class="error-text"
+                   *ngIf="(form.amountOfInvoice.hasError('required')
+                        || form.amountOfInvoice.hasError('isGreaterThanZero'))
+                        && form.amountOfInvoice.touched">
+              Invoice Net Amount is required
             </small>
           </div>
-        </elm-card>
+
+          <!-- CURRENCY -->
+          <div class="col-4 px-4 currency-div">
+            <label for="currency-input" class="fal-label">
+              Currency
+            </label>
+            <app-fal-radio-input id="currency-input"
+                                 formControlName="currency"
+                                 [options]="form.currencyOptions"
+                                 [isDisabled]="readOnly"
+                                 (focus)="form.forceValueChangeEvent(form.currency)"
+                                 [isError]="!!(form.currency.errors
+                                             && form.currency.hasError('required')
+                                             && form.currency.touched)">
+            </app-fal-radio-input>
+            <small class="error-text"
+                   *ngIf="form.currency.hasError('required')
+                        && form.currency.touched">
+              Currency is required
+            </small>
+          </div>
+
+          <!-- OVERRIDE STANDARD PAYMENT TERMS -->
+          <div class="col-4 offset-md-2 d-flex" [formGroup]="form.osptFormGroup">
+            <label for="override-stp-checkbox"
+                   class="fal-label override-stp-checkbox-div">
+              <input id="override-stp-checkbox"
+                     type="checkbox"
+                     (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
+                     formControlName="isPaymentOverrideSelected"
+                     [attr.disabled]="readOnly ? true : null"
+              />
+              Override Standard Payment Terms
+            </label>
+            <div class="payment-terms-div">
+              <label class="fal-label">Payment terms</label>
+              <ng-select id="paymentTerms"
+                         formControlName="paymentTerms"
+                         [items]="form.paymentTermOptions"
+                         bindLabel="display"
+                         bindValue="value"
+                         (change)="form.forceValueChangeEvent(form.osptFormGroup)"
+                         [readonly]="readOnly || !form.isPaymentOverrideSelected.value"
+                         placeholder="Select One...">
+              </ng-select>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- LINE ITEM - LOOP -->
+        <div class="headline3 my-3">
+          Cost Breakdown
+        </div>
+        <div id="line-item-rows-container" formArrayName="lineItems">
+          <div class="row my-3 mx-1 line-item-header">
+            <div class="col-1 text-center text-bold">Line Item</div>
+            <div class="col-2 text-bold">Company Code</div>
+            <div class="col-2 text-bold">Cost Center</div>
+            <div class="col-2 text-bold">GL Account</div>
+            <div class="col-2 text-bold">Line Net Amount</div>
+            <div class="col-3"><span class="text-bold">Notes</span><span class="text-italics"> (optional)</span></div>
+          </div>
+          <div *ngFor="let _ of form.lineItems.controls; index as i"
+               class="row mx-2"
+               [formGroupName]="i">
+
+            <div class="col-1 text-left line-item sn">
+              {{i + 1}}
+            </div>
+
+            <div class="col-2">
+              <input type="text"
+                     class="form-control"
+                     formControlName="companyCode"
+                     [placeholder]="form.companyCode.value"
+                     (keypress)="validateRegex($event)"
+                     maxlength="4"
+                     (focus)="focusLineItemElement(form.lineItemCompanyCode(i))"
+                     [ngClass]="form.lineItemCompanyCode(i).invalid
+                                && form.lineItemCompanyCode(i).touched
+                                ? 'error' : ''"
+              />
+              <small class="error-text"
+                     *ngIf="form.lineItemCompanyCode(i).hasError('pattern'); else companyCodeError">
+                {{specialCharErrorMessage}}
+              </small>
+              <ng-template #companyCodeError>
+                <small class="error-text"
+                       [ngClass]="{'invisible': !form.lineItemCompanyCode(i).hasError('validateCompanyCode')}">
+                  Company code is invalid
+                </small>
+              </ng-template>
+
+            </div>
+
+
+            <!-- LINE ITEM - COST CENTER -->
+            <div class="col-2">
+              <input type="text"
+                     class="form-control"
+                     formControlName="costCenter"
+                     (keypress)="validateRegex($event)"
+                     maxlength="10"
+                     (focus)="focusLineItemElement(form.lineItemCostCenter(i))"
+                     [ngClass]="form.lineItemCostCenter(i).errors
+                        && form.lineItemCostCenter(i).hasError('required')
+                        && form.lineItemCostCenter(i).touched
+                        || form.lineItemCostCenter(i).hasError('pattern')
+                        ? 'error' : ''"
+              />
+              <small class="error-text"
+                     *ngIf="form.lineItemCostCenter(i).hasError('pattern'); else costCenterReq">
+                {{specialCharErrorMessage}}
+              </small>
+              <ng-template #costCenterReq>
+                <small class="error-text"
+                       [ngClass]="{'invisible': !(form.lineItemCostCenter(i).hasError('required')
+                                                && form.lineItemCostCenter(i).touched)}">
+                  Cost Center is required
+                </small>
+              </ng-template>
+            </div>
+
+            <!-- LINE ITEM - GL ACCOUNT -->
+            <div class="col-2">
+              <input type="text"
+                     class="form-control"
+                     formControlName="glAccount"
+                     (keypress)="validateRegex($event)"
+                     maxlength="10"
+                     (focus)="focusLineItemElement(form.lineItemGlAccount(i))"
+                     [ngClass]="form.lineItemGlAccount(i).errors
+                        && form.lineItemGlAccount(i).hasError('required')
+                        && form.lineItemGlAccount(i).touched
+                        || form.lineItemGlAccount(i).hasError('pattern')
+                        ? 'error' : ''"
+              />
+              <small class="error-text"
+                     *ngIf="form.lineItemGlAccount(i).hasError('pattern'); else glAmountReq">
+                {{specialCharErrorMessage}}
+              </small>
+              <ng-template #glAmountReq>
+                <small class="error-text"
+                       [ngClass]="{'invisible': !(form.lineItemGlAccount(i).hasError('required')
+                                                && form.lineItemGlAccount(i).touched)}">
+                  GL Account is required
+                </small>
+
+              </ng-template>
+            </div>
+
+            <!-- LINE ITEM - NET AMOUNT -->
+            <div class="col-2">
+              <app-fal-currency-input formControlName="lineItemNetAmount"
+                                      [isDisabled]="readOnly"
+                                      (focus)="focusLineItemElement(form.lineItemNetAmount(i))"
+                                      [isError]="!!(form.lineItemNetAmount(i).errors
+                                                    && (form.lineItemNetAmount(i).hasError('required')
+                                                    || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
+                                                    && form.lineItemNetAmount(i).touched) || !form.isInvoiceAmountValid">
+              </app-fal-currency-input>
+              <small class="error-text"
+                     *ngIf="!!(form.lineItemNetAmount(i).errors
+                 && (form.lineItemNetAmount(i).hasError('required') || form.lineItemNetAmount(i).hasError('isGreaterThanZero'))
+                 && form.lineItemNetAmount(i).touched)">
+                Line Net Amount is required
+              </small>
+            </div>
+
+            <div class="d-flex col-3 align-items-start">
+              <!-- LINE ITEM - NOTES -->
+              <input type="text"
+                     class="form-control"
+                     formControlName="notes"
+                     (focus)="form.forceValueChangeEvent(form.lineItemNotes(i))"
+                     (keypress)="validateFreeTextRegex($event)"
+                     maxlength="50"
+              />
+
+              <!-- LINE ITEM - REMOVE -->
+              <div class="flex-shrink-1">
+                <div>
+                  <input type="button"
+                         value="remove_circle"
+                         class="material-icons btn line-item-remove-button"
+                         [disabled]="lineItemRemoveButtonDisable || readOnly"
+                         (focus)="form.forceValueChangeEvent(form.lineItems)"
+                         (click)="form.removeLineItem(i)"
+                  /></div>
+                <small class="error-text invisible">
+                  spacer
+                </small>
+              </div>
+
+            </div>
+
+            <hr/>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- LINE ITEMS - ADD NEW -->
+          <div class="col-6">
+            <elm-button *ngIf="!readOnly"
+                        buttonType="button"
+                        buttonStyle="text"
+                        id="add-new-line-item-button"
+                        (focus)="form.forceValueChangeEvent(form.lineItems)"
+                        (buttonClick)="form.addNewEmptyLineItem()">
+              <u>+ Add New Line Item</u>
+            </elm-button>
+          </div>
+        </div>
+
+        <div class="row mb-3 mx-3 amount-row">
+          <div class="amount-summary-div col-3 offset-md-9 p-3 d-flex flex-column"
+               [ngClass]="!form.isInvoiceAmountValid  ? 'error-div' : ''">
+            <div class="col-12 d-flex justify-content-between">
+              <span class="px-3 col-md-8 text-right text-bold">Line Item Net Amount Total:</span>
+              <span>${{form.amountOfInvoice?.value | number : '1.2-2'}}</span>
+            </div>
+
+          </div>
+          <small class="error-text col-3 offset-md-9 px-0"
+                 *ngIf="!form.isInvoiceAmountValid">
+            Line Net Amount must equal Invoice Net Amount
+          </small>
+        </div>
 
         <div class="col-6" style="padding-right: 44px">
           <!-- COMMENTS -->

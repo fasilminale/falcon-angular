@@ -128,14 +128,6 @@
   text-align: center;
 }
 
-.line-item-total-amount {
-  text-align: right;
-}
-
-.line-item-row > div {
-  margin-bottom: 0.5rem;
-}
-
 ::ng-deep .nodisplay {
   display: none;
 }
@@ -153,7 +145,7 @@
 .override-stp-checkbox-div{
   flex-grow: 0.5;
   align-self: center;
-  margin-top: 35px;
+  margin-top: 50px;
 }
 
 .payment-terms-div{
@@ -187,3 +179,18 @@
   }
 }
 
+.text-left{
+  text-align: left;
+}
+
+.text-right{
+  text-align: right;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.text-italics {
+  font-style: italic;
+}
