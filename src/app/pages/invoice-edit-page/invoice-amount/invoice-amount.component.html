@@ -154,17 +154,19 @@
   </div>
 </ng-container>
 
-  <div [class.error-div]="!_formGroup?.get('amountOfInvoice')?.value" class="border-radius-5 cost-breakdown-total-div mt-5 mb-2 p-3 offset-md-9" *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
-   
+  <div [class.error-div]="!isValidCostBreakdownAmount"
+    class="border-radius-5 cost-breakdown-total-div mt-5 mb-2 p-3 offset-md-9"
+    *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
+  
     <div class="row">
       <div class="row d-flex justify-content-between">
-      <span class="px-3 col-md-8 text-left text-bold">Cost Breakdown Total:</span>
-      <span class="col-md-4 text-right text-bold p-0">{{ costBreakdownTotal | currency}}</span>
+        <span class="px-3 col-md-8 text-left text-bold">Cost Breakdown Total:</span>
+        <span class="col-md-4 text-right text-bold p-0">{{ costBreakdownTotal | currency}}</span>
+      </div>
     </div>
-    </div>  
   </div>
-  <small class="error-text col-3 offset-md-9 mt-3" *ngIf="!_formGroup?.get('amountOfInvoice')?.value">
-    Invoice Net Amount is missing
+  <small class="error-text col-3 offset-md-9 mt-3" *ngIf="!isValidCostBreakdownAmount">
+    Cost Breakdown Total must equal Invoice Net Amount
   </small>
   </div>
 

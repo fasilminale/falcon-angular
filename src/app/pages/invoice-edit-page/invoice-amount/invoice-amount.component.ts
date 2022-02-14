@@ -17,6 +17,7 @@ export class InvoiceAmountComponent implements OnInit {
   amountOfInvoiceControl = new FormControl();
   currencyControl = new FormControl();
   paymentTermsControl = new FormControl();
+  isValidCostBreakdownAmount = true
  
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
@@ -111,6 +112,8 @@ export class InvoiceAmountComponent implements OnInit {
         totalAmount += parseFloat(c?.get('totalAmount')?.value);
       }
     });
+    const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
+    this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0 && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
     return totalAmount;
   }
 

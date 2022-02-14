@@ -85,7 +85,7 @@
     </ng-container>
 
     <div class="invoice-allocation-total-div mt-5 p-3 offset-md-9 border-radius-5"
-         [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
+      [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
       <div class="row">
         <div class="row d-flex justify-content-between">
           <span class="px-3 col-md-8 text-left text-bold">Allocation Amount Total:</span>
@@ -93,10 +93,9 @@
         </div>
       </div>
     </div>
-    <small class="error-text col-3 offset-md-9"
-           [ngClass]="{ 'mt-3' : !isAllocationAmountValid }"
-           *ngIf="!isAllocationAmountValid">
+    <small class="error-text col-3 offset-md-9" [ngClass]="{ 'mt-3' : !isAllocationAmountValid }"
+      *ngIf="!isAllocationAmountValid">
       Allocation Amount Totals must equal Invoice Net Amount
     </small>
-  </div>
+    </div>
 </div>
