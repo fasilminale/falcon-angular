@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 import { CostLineItem } from 'src/app/models/line-item/line-item-model';
@@ -38,6 +38,26 @@ describe('InvoiceAmountComponent', () => {
     expect(component._formGroup.get('overridePaymentTerms')).toBeDefined();
 
   });
+
+  describe('get totalCostBreakdownAmount', () => {
+    it('should get totalCostBreakdownAmount as zero', () => {
+      expect(component.costBreakdownTotal).toBe(0)
+    });
+
+    it('should get totalCostBreakdownAmount as total', () => {
+      component._formGroup = new FormGroup({
+        costBreakdownItems: new FormArray([new FormGroup({
+          totalAmount: new FormControl(10)
+        }), 
+        new FormGroup({
+          totalAmount: new FormControl()
+        })
+      ])
+      })
+      expect(component.costBreakdownTotal).toBe(10)
+    });
+  });
+  
 
   describe('when edit mode is updated', () => {
     let isEditMode$: Subject<boolean>;

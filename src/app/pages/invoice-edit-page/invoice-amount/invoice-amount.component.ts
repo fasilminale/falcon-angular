@@ -17,6 +17,7 @@ export class InvoiceAmountComponent implements OnInit {
   amountOfInvoiceControl = new FormControl();
   currencyControl = new FormControl();
   paymentTermsControl = new FormControl();
+  isValidCostBreakdownAmount = true
  
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
@@ -85,7 +86,7 @@ export class InvoiceAmountComponent implements OnInit {
           rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
           type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
           quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity  : 'N/A'),
-          totalAmount: new FormControl(costBreakdownItem.chargeLineTotal ? costBreakdownItem.chargeLineTotal : 0)
+          totalAmount: new FormControl(costBreakdownItem.chargeLineTotal || 0)
       }));
       })
     } else  {
@@ -102,6 +103,18 @@ export class InvoiceAmountComponent implements OnInit {
 
   get costBreakdownItemsControls() {
     return this._formGroup.get('costBreakdownItems') ? (this._formGroup.get('costBreakdownItems') as FormArray).controls: new FormArray([]).controls;
+  }
+
+  get costBreakdownTotal() {
+    let totalAmount = 0;
+    this.costBreakdownItemsControls.forEach(c => {
+      if(c?.get('totalAmount')?.value) {
+        totalAmount += parseFloat(c?.get('totalAmount')?.value);
+      }
+    });
+    const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
+    this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0 && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
+    return totalAmount;
   }
 
   @Input() set loadInvoiceAmountDetail$(observable: Observable<InvoiceAmountDetail>) {

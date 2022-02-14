@@ -9,7 +9,7 @@
       <div class="col">GL Profit Center</div>
       <div class="col">GL Account</div>
       <div class="col">GL Company Code</div>
-      <div class="col">Allocation Amount</div>
+      <div class="col">Total</div>
     </div>
     <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0">
       <div *ngFor="let invoiceAllocation of invoiceAllocationsControls; index as i" class="invoice-allocation-row row"
@@ -85,24 +85,17 @@
     </ng-container>
 
     <div class="invoice-allocation-total-div mt-5 p-3 offset-md-9 border-radius-5"
-         [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
+      [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
       <div class="row">
         <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-8 text-right">Allocation Amount Totals:</span>
-          <span class="col-md-4 text-right">{{totalAllocationAmount | currency}}</span>
-        </div>
-      </div>
-      <div class="row mt-3">
-        <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-8 text-right text-bold">Invoice Net Amount:</span>
-          <span class="col-md-4 text-right text-bold">{{invoiceNetAmount?.value | currency}}</span>
+          <span class="px-3 col-md-8 text-left text-bold">Allocation Amount Total:</span>
+          <span class="col-md-4 text-right text-bold px-0">{{totalAllocationAmount | currency}}</span>
         </div>
       </div>
     </div>
-    <small class="error-text col-3 offset-md-9"
-           [ngClass]="{ 'mt-3' : !isAllocationAmountValid }"
-           *ngIf="!isAllocationAmountValid">
+    <small class="error-text col-3 offset-md-9" [ngClass]="{ 'mt-3' : !isAllocationAmountValid }"
+      *ngIf="!isAllocationAmountValid">
       Allocation Amount Totals must equal Invoice Net Amount
     </small>
-  </div>
+    </div>
 </div>
