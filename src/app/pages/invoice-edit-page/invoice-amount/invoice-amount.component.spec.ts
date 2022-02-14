@@ -46,8 +46,9 @@ describe('InvoiceAmountComponent', () => {
 
     it('should get totalCostBreakdownAmount as total', () => {
       component._formGroup = new FormGroup({
+        amountOfInvoice: new FormControl(10),
         costBreakdownItems: new FormArray([new FormGroup({
-          totalAmount: new FormControl(10)
+          totalAmount: new FormControl(10),
         }), 
         new FormGroup({
           totalAmount: new FormControl()
