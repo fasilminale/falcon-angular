@@ -5,8 +5,8 @@ import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
-import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {DataTableComponent, ElmDataTableHeader} from '@elm/elm-styleguide-ui';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {DataTableComponent, ElmDataTableHeader, ToastService} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
@@ -15,7 +15,6 @@ import {Sort} from '@angular/material/sort';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import { InvoiceService } from 'src/app/services/invoice-service';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -57,7 +56,7 @@ export class InvoiceListPageComponent implements OnInit {
     private dialog: MatDialog,
     public filterService: FilterService,
     public userService: UserService,
-    private invoiceService: InvoiceService,
+    private toastService: ToastService
   ) {
   }
 
@@ -66,7 +65,7 @@ export class InvoiceListPageComponent implements OnInit {
     this.route.queryParamMap.subscribe(queryParams => {
       const falconInvoiceNumber = queryParams.get('falconInvoiceNumber');
       if (falconInvoiceNumber) {
-        this.snackBar.open(`Success! Falcon Invoice ${falconInvoiceNumber} has been deleted.`, 'close', {duration: 5 * 1000});
+        this.toastService.openSuccessToast(`Success! Falcon Invoice ${falconInvoiceNumber} has been deleted.`, 5 * 1000);
       }
     });
     this.userService.getUserInfo().subscribe(userInfo => {
