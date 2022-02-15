@@ -15,7 +15,6 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
-import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 
 
 @Component({
