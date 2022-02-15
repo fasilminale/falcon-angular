@@ -1,14 +1,13 @@
 @import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
 
 #upload-button-container {
-  padding-top: 2em;
+  padding-top: 4em;
 }
 
 .attachment {
   padding: 0.5em;
-  margin-bottom: 0.5em;
-  background-color: $cardinal-grey;
   border-radius: 0.25rem;
+  margin-bottom: 0.5em;
   font-size: small;
   word-break: break-all;
 }
@@ -20,6 +19,15 @@
   cursor: pointer;
 }
 
+.attachment-container {
+  background-color: $grey1;
+  border-radius: 0.25rem;
+  border: 1px dashed $grey2;
+  padding: 1em;
+  height: 260px;
+  overflow: auto;
+}
+
 .btn-remove-attachment {
   padding: 0em;
 }
@@ -28,19 +36,16 @@
   background-color: $cardinal-white;
 }
 
-.upload-container {
-  padding: 1em;
-
-  .file-label {
-    margin-top: 0;
-  }
-
+.spacing {
+  padding-bottom: 1em;
 }
 
-.upload-file-div {
-  height: 300px;
-  overflow: auto;
-  margin-top: 6px;
+.file-label {
+  margin-top: 0;
+}
+
+.file-upload {
+  height: 260px;
 }
 
 .error {
@@ -49,8 +54,4 @@
 
 label.form-label {
   margin-top: 0;
-}
-
-.fal-label {
-  margin-top: 0; 
 }

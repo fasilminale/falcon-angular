@@ -189,11 +189,6 @@
           </div>
         </div>
 
-        <!-- UPLOAD DOCUMENT SECTION -->
-        <app-upload-form class="row col-12 col-lg-6"
-                         [isDisabled]="readOnly">
-        </app-upload-form>
-
       </div>
 
       <hr/>
@@ -443,7 +438,7 @@
           </div>
         </div>
 
-        <div class="row mb-3 mx-3 amount-row">
+        <div class="row mb-4 mx-3 amount-row">
           <div class="amount-summary-div col-3 offset-md-9 p-3 d-flex flex-column"
                [ngClass]="!form.isInvoiceAmountValid  ? 'error-div' : ''">
             <div class="col-12 d-flex justify-content-between">
@@ -457,6 +452,15 @@
             Line Net Amount must equal Invoice Net Amount
           </small>
         </div>
+
+        <hr/>
+
+        <!-- UPLOAD DOCUMENT SECTION -->
+        <app-upload-form class="row col-12 col-lg-6"
+                         [isDisabled]="readOnly">
+        </app-upload-form>
+
+        <hr/>
 
         <div class="col-6" style="padding-right: 44px">
           <!-- COMMENTS -->
