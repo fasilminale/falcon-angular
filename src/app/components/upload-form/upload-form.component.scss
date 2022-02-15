@@ -45,13 +45,20 @@
 }
 
 .file-upload {
-  height: 260px;
+  height: 340px;
 }
 
 .error {
-  border-color: $cardinal-red;
+  border: 1px solid $cardinal-red !important;
 }
 
 label.form-label {
   margin-top: 0;
+}
+
+.empty-attachments {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

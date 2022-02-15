@@ -122,7 +122,6 @@ describe('UploadFormComponent', () => {
     expect(component.attachmentType.value).toBeFalsy();
   });
 
-
   it('should remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
@@ -291,6 +290,22 @@ describe('UploadFormComponent', () => {
       action: 'UPLOAD',
       url: undefined
     }]);
+  });
+
+  it('should filter out deleted attachments', () => {
+    component.file.setValue(TEST_FILE_1);
+    component.attachmentType.setValue('test type 2');
+    component.attachments.push({
+      file: TEST_FILE_1,
+      type: 'test type 1',
+      uploadError: false,
+      action: 'DELETE',
+      url: 'url'
+    });
+    spyOnProperty(component, 'numberOfAttachments').and.callThrough();
+    const result = component.numberOfAttachments;
+    expect(result).toEqual(0);
+    expect(component.attachments.length).toEqual(1);
   });
 
   it('should find attachments in list', () => {

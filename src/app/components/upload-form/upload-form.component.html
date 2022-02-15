@@ -3,7 +3,6 @@
   <label class="elm-h2 attachment-label ">
     Attachments
   </label>
-<!--  <div class="form-control upload-container" [ngClass]="(!externalAttachment && (!pristine || formGroup.dirty )) ? 'error' : ''">-->
     <div class="row">
       <div class="col-6 file-upload">
         <!-- ATTACHMENT TYPE -->
@@ -51,7 +50,11 @@
           Uploaded Attachments
         </label>
         <!-- ATTACHMENTS LOOP-->
-        <div class="attachment-container upload-file-div">
+        <div class="attachment-container upload-file-div" [ngClass]="(!externalAttachment && (!pristine || formGroup.dirty )) ? 'error' : ''">
+          <div *ngIf="numberOfAttachments === 0"
+               class="d-flex empty-attachments">
+            Uploaded attachments will appear here
+          </div>
           <div *ngFor="let attachment of attachments; index as i">
             <div *ngIf="attachment.action !== 'DELETE'"
                  class="attachment form-control d-flex align-items-center justify-content-between"
@@ -74,12 +77,11 @@
             </div>
           </div>
         </div>
+        <small class="error-text"
+               *ngIf="(!externalAttachment && (!pristine || formGroup.dirty ))">
+          External Invoice is required
+        </small>
       </div>
 
     </div>
-<!--  </div>-->
-  <small class="error-text"
-         *ngIf="(!externalAttachment && (!pristine || formGroup.dirty ))">
-    External Invoice is required
-  </small>
 </form>
