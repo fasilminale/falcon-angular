@@ -1,11 +1,25 @@
 <form [formGroup]="formGroup">
 
-  <label class="elm-h3 attachment-label ">
-    Upload Attachments
+  <label class="elm-h2 attachment-label ">
+    Attachments
   </label>
-  <div class="form-control upload-container" [ngClass]="(!externalAttachment && (!pristine || formGroup.dirty )) ? 'error' : ''">
+<!--  <div class="form-control upload-container" [ngClass]="(!externalAttachment && (!pristine || formGroup.dirty )) ? 'error' : ''">-->
     <div class="row">
-      <div class="col-6">
+      <div class="col-6 file-upload">
+        <!-- ATTACHMENT TYPE -->
+        <label for="attachment-type-input"
+               class="fal-label">
+          Document Type
+        </label>
+        <ng-select id="attachment-type-input"
+                   formControlName="attachmentType"
+                   class="spacing"
+                   [items]="DOCUMENT_TYPE_OPTIONS"
+                   [searchable]="true"
+                   placeholder="Select One...."
+                   [ngClass]="{ 'disabled': isDisabled }">
+        </ng-select>
+
         <!-- FILE CHOOSER -->
         <label for="file-chooser-input"
                class="fal-label file-label ">
@@ -16,22 +30,9 @@
                             accept=".eml, .doc, .jpg, .pdf, .xlsx"
                             [isDisabled]="isDisabled">
         </app-fal-file-input>
-        <div class="fal-label p-1">
+        <div class="form-label fieldLabel1">
           Maximum file size 50MB
         </div>
-
-        <!-- ATTACHMENT TYPE -->
-        <label for="attachment-type-input"
-               class="fal-label">
-          Document Type
-        </label>
-        <ng-select id="attachment-type-input"
-                   formControlName="attachmentType"
-                   [items]="DOCUMENT_TYPE_OPTIONS"
-                   [searchable]="true"
-                   placeholder="Select One...."
-                   [ngClass]="{ 'disabled': isDisabled }">
-        </ng-select>
 
         <!-- UPLOAD BUTTON -->
         <div id="upload-button-container">
@@ -40,38 +41,43 @@
                       width="100%"
                       [isDisabled]="!(formGroup.controls.file.value && formGroup.controls.attachmentType.value)"
                       (buttonClick)="uploadButtonClick()">
-            Upload
+            Upload Attachment
           </elm-button>
         </div>
       </div>
 
-      <div class="col-6 upload-file-div">
+      <div class="col-6">
+        <label class="fal-label">
+          Uploaded Attachments
+        </label>
         <!-- ATTACHMENTS LOOP-->
-        <div *ngFor="let attachment of attachments; index as i">
-          <div *ngIf="attachment.action !== 'DELETE'"
-               class="attachment form-control d-flex align-items-center justify-content-between"
-               [ngClass]="{ 'attachment-download': attachment.url }">
+        <div class="attachment-container upload-file-div">
+          <div *ngFor="let attachment of attachments; index as i">
+            <div *ngIf="attachment.action !== 'DELETE'"
+                 class="attachment form-control d-flex align-items-center justify-content-between"
+                 [ngClass]="{ 'attachment-download': attachment.url }">
 
-            <!-- ATTACHMENT - ICON -->
-            <div class="material-icons">file_present</div>
+              <!-- ATTACHMENT - ICON -->
+              <div class="material-icons">file_present</div>
 
-            <!-- ATTACHMENT - CONTENT -->
-            <div class=" flex-grow-1 p-1" (click)="downloadAttachment(i)">
-              {{attachment.file.name}}&nbsp;({{attachment.type}})
+              <!-- ATTACHMENT - CONTENT -->
+              <div class=" flex-grow-1 p-1" (click)="downloadAttachment(i)">
+                {{attachment.file.name}}&nbsp;({{attachment.type}})
+              </div>
+
+              <!-- ATTACHMENT - REMOVE -->
+              <input *ngIf="!isDisabled" type="button"
+                     value="close"
+                     class="material-icons btn btn-remove-attachment"
+                     (click)="removeAttachment(i)"
+              />
             </div>
-
-            <!-- ATTACHMENT - REMOVE -->
-            <input *ngIf="!isDisabled" type="button"
-                   value="close"
-                   class="material-icons btn btn-remove-attachment"
-                   (click)="removeAttachment(i)"
-            />
           </div>
         </div>
       </div>
 
     </div>
-  </div>
+<!--  </div>-->
   <small class="error-text"
          *ngIf="(!externalAttachment && (!pristine || formGroup.dirty ))">
     External Invoice is required
