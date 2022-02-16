@@ -104,6 +104,10 @@ export class UploadFormComponent implements OnInit, OnChanges {
       .includes(name);
   }
 
+  public get numberOfAttachments(): number {
+    return this.attachments.filter(a => a.action !== 'DELETE').length;
+  }
+
   private get attachmentNames(): Array<string> {
     return this.attachments.map(a => a.file.name);
   }
