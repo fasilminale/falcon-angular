@@ -12,6 +12,14 @@
   border-radius: 5px;
 }
 
+.ng-select.ng-select-disabled ::ng-deep .ng-select-container,
+app-fal-radio-input ::ng-deep .background-disabled, 
+::ng-deep .form-control:disabled,
+::ng-deep .form-control[readonly]{
+  opacity: 0.65;
+  background-color: #e5e4e4
+}
+
 ::ng-deep #currency-input {
     div[role="radiogroup"].form-control {
       border: none;

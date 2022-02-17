@@ -31,6 +31,12 @@
 .ng-select.error ::ng-deep .ng-select-container {
   border-color: $cardinal-red;
 }
+
+.ng-select.ng-select-disabled ::ng-deep .ng-select-container, ::ng-deep .form-control:disabled, ::ng-deep .form-control[readonly]{
+  opacity: 0.65;
+  background-color: #e5e4e4
+}
+
 ::ng-deep .elm-card {
   height: 91%;
   overflow: hidden !important;
