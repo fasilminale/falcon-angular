@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
 import {FormArray} from '@angular/forms';
 import { StatusModel } from 'src/app/models/invoice/status-model';
+import {FilterService} from '../../services/filter-service';
 
 export interface FilterChip {
   type: string;
@@ -24,7 +25,7 @@ export class ChipComponent implements OnChanges {
   selectable = true;
   removable = true;
 
-  constructor() { }
+  constructor(private filterService: FilterService) { }
 
   ngOnChanges(): void {
     this.updateChipFilters();
@@ -37,7 +38,7 @@ export class ChipComponent implements OnChanges {
     if (statusForm?.value.length > 0) {
       this.chips.push(
         this.formatArrayChip(
-          'Status:&nbsp', statusForm as FormArray, this.filtersModel.invoiceStatusOptions, 'invoiceStatuses'
+          'Status:&nbsp', statusForm as FormArray, this.filterService.invoiceStatuses, 'invoiceStatuses'
         ));
     }
   }

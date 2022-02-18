@@ -13,21 +13,6 @@ export class FiltersModel {
     initial: new FormControl()
   });
 
-  public invoiceStatusOptions: Array<StatusModel> = [
-    {label: 'Approved', key: 'APPROVED'},
-    {label: 'Created', key: 'CREATED'},
-    {label: 'Deleted', key: 'DELETED'},
-    {label: 'Error', key: 'ERROR'},
-    {label: 'Invoiced', key: 'INVOICED'},
-    {label: 'Invoice Pending', key: 'INVOICE_PENDING'},
-    {label: 'Pending Extract', key: 'PENDING_EXTRACT'},
-    {label: 'Paid', key: 'PAID'},
-    {label: 'Pending Pay', key: 'PENDING_PAY'},
-    {label: 'Rejected', key: 'REJECTED'},
-    {label: 'Resubmitted', key: 'RESUBMITTED'},
-    {label: 'Submitted', key: 'SUBMITTED'}
-  ];
-
   constructor() {
     this.resetForm();
   }

@@ -114,7 +114,7 @@ describe('InvoiceExtractionPageComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
-
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush([]);
   });
 
   afterEach(() => {
