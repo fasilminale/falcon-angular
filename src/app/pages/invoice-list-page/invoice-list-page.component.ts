@@ -8,7 +8,7 @@ import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {DataTableComponent, ElmDataTableHeader, ToastService} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
@@ -43,6 +43,9 @@ export class InvoiceListPageComponent implements OnInit {
   selectedInvoiceStatuses: Array<string> = [];
   invoiceCountLabel = 'Invoices';
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
+
+  invoiceFilter!: MatDialogRef<any>;
+  invoiceStatuses: Array<StatusModel> = [];
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
@@ -140,14 +143,16 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   openFilter(): void {
-    this.dialog.open(InvoiceFilterModalComponent, {
+    this.invoiceFilter = this.dialog.open(InvoiceFilterModalComponent, {
       minWidth: '525px',
       width: '33vw',
       autoFocus: false,
       position: {
         right: '24px'
       }
-    }).afterClosed().subscribe(response => {
+    });
+    this.invoiceFilter.componentInstance.invoiceStatuses = this.invoiceStatuses;
+    this.invoiceFilter.afterClosed().subscribe(response => {
       if (response) {
         this.resetTable();
       }

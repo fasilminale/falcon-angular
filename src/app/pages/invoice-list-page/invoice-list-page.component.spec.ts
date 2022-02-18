@@ -114,6 +114,7 @@ describe('InvoiceListPageComponent', () => {
     fixture.detectChanges();
     http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(userInfo);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush([]);
   });
 
   afterEach(() => {
@@ -213,6 +214,13 @@ describe('InvoiceListPageComponent', () => {
   }));
 
   describe('openFilter', () => {
+    const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed : of({}), close: null });
+    dialogRefSpyObj.componentInstance = { body: '' };
+
+    beforeEach(() => {
+      spyOn(TestBed.inject(MatDialog), 'open').and.returnValue(dialogRefSpyObj);
+    });
+
     function openModal(): void {
       spyOn(component, 'openFilter').and.callThrough();
       component.openFilter();

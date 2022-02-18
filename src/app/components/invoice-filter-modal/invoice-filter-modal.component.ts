@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {FiltersModel} from '../../models/filters/filters-model';
-import {StatusModel} from '../../models/invoice/status-model';
 
 @Component({
   selector: 'app-loads-filter-modal',
@@ -11,10 +10,8 @@ import {StatusModel} from '../../models/invoice/status-model';
 })
 export class InvoiceFilterModalComponent implements OnInit {
   localFilterModel: FiltersModel = new FiltersModel();
-  invoiceStatuses: Array<StatusModel>;
   constructor(private dialogRef: MatDialogRef<InvoiceFilterModalComponent>,
               public filterService: FilterService) {
-    this.invoiceStatuses = this.localFilterModel.invoiceStatusOptions;
     this.resetForm();
   }
 

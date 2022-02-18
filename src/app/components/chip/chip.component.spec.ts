@@ -4,16 +4,24 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {StatusModel} from '../../models/invoice/status-model';
+import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import {environment} from '../../../environments/environment';
 
 describe('ChipComponent', () => {
   let component: ChipComponent;
   let fixture: ComponentFixture<ChipComponent>;
   let http: HttpTestingController;
 
+  const invoiceStatuses: Array<StatusModel> = [
+    {label: 'Created', key: 'CREATED'},
+    {label: 'Submitted', key: 'SUBMITTED'},
+  ];
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ ChipComponent ],
-      imports: [ HttpClientTestingModule ],
+      imports: [ HttpClientTestingModule, FalconTestingModule ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
     .compileComponents();
@@ -22,6 +30,7 @@ describe('ChipComponent', () => {
     component = fixture.componentInstance;
     component.filtersModel = new FiltersModel();
     fixture.detectChanges();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush(invoiceStatuses);
   });
 
   afterEach(() => {
@@ -30,7 +39,7 @@ describe('ChipComponent', () => {
 
   function addFilter(value?: string): void {
     const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as FormArray;
-    loadStatusArray.push(new FormControl(value ? value: 'CREATED'));
+    loadStatusArray.push(new FormControl(value ? value : 'CREATED'));
   }
 
   it('should create', () => {
@@ -61,7 +70,7 @@ describe('ChipComponent', () => {
       const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as FormArray;
       loadStatusArray.push(new FormControl('CREATED'));
       const statusChip: FilterChip =
-        component.formatArrayChip('Status:&nbsp', loadStatusArray, component.filtersModel.invoiceStatusOptions, 'invoiceStatuses'
+        component.formatArrayChip('Status:&nbsp', loadStatusArray, invoiceStatuses, 'invoiceStatuses'
         );
       expect(statusChip).toEqual(
         {type: 'Status:&nbsp', label: 'Created', group: 'invoiceStatuses'}
@@ -75,7 +84,7 @@ describe('ChipComponent', () => {
       const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as FormArray;
       loadStatusArray.push(new FormControl('CREATED'));
       loadStatusArray.push(new FormControl('SUBMITTED'));
-      const tooltips = component.getTooltips(loadStatusArray, component.filtersModel.invoiceStatusOptions);
+      const tooltips = component.getTooltips(loadStatusArray, invoiceStatuses);
       expect(tooltips).toBe('Created<br>Submitted');
     });
   });

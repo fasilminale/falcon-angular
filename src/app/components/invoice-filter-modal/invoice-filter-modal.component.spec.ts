@@ -6,6 +6,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {FormArray, FormControl} from '@angular/forms';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {FilterService} from '../../services/filter-service';
+import {environment} from '../../../environments/environment';
 
 describe('LoadsFilterModalComponent', () => {
   let component: InvoiceFilterModalComponent;
@@ -35,6 +36,7 @@ describe('LoadsFilterModalComponent', () => {
     fixture = TestBed.createComponent(InvoiceFilterModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush([]);
   });
 
   afterEach(() => {

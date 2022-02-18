@@ -20,7 +20,7 @@
 
     <span class="elm-nav1">Invoice Status</span>
     <div class="row">
-      <div *ngFor="let invoiceStatusOption of invoiceStatuses; let i=index"
+      <div *ngFor="let invoiceStatusOption of filterService.invoiceStatuses; let i=index"
            class="col-6 col-md-4">
         <div class="form-check mt-2">
           <input class="form-check-input"
