@@ -40,6 +40,7 @@ export class InvoiceListPageComponent implements OnInit {
   sortField = '';
   searchValue = '';
   createdByUser = false;
+  totalSearchResult = 0;
   selectedInvoiceStatuses: Array<string> = [];
   invoiceCountLabel = 'Invoices';
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
@@ -55,7 +56,6 @@ export class InvoiceListPageComponent implements OnInit {
     private route: ActivatedRoute,
     private loadingService: LoadingService,
     private webservice: WebServices,
-    private snackBar: MatSnackBar,
     private dialog: MatDialog,
     public filterService: FilterService,
     public userService: UserService,
@@ -90,6 +90,7 @@ export class InvoiceListPageComponent implements OnInit {
       numberPerPage
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
+      this.totalSearchResult = invoiceData.total;
       this.invoiceCountLabel = this.createdByUser
         ? `My Invoices (${this.paginationModel.total})`
         : (this.searchValue || this.selectedInvoiceStatuses.length > 0)
@@ -125,9 +126,11 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   searchInvoices(searchValue: any): void {
+    this.totalSearchResult = -1; // this is for test
     this.searchValue = searchValue;
     this.sortField = '';
     this.resetTable();
+    console.log(searchValue);
   }
 
   changeCreatedByUser(): void {
