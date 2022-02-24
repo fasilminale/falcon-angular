@@ -16,6 +16,7 @@ describe('InvoiceAllocationComponent', () => {
     invoiceAllocations: new FormArray([
       new FormGroup({
         allocationPercent: new FormControl(300.00),
+        customerCategory: new FormControl('CAH'),
         shippingPointWarehouse: new FormControl('Other'),
         glCostCenter: new FormControl(''),
         glProfitCenter: new FormControl(''),
@@ -54,7 +55,7 @@ describe('InvoiceAllocationComponent', () => {
     expect(invoiceAllocation.get('allocationPercent')).toBeDefined();
     expect(invoiceAllocation.get('glCostCenter')).toBeDefined();
     expect(invoiceAllocation.get('glProfitCenter')).toBeDefined();
-    expect(invoiceAllocation.get('warehouse')).toBeDefined();
+    expect(invoiceAllocation.get('customerCategory')).toBeDefined();
     expect(invoiceAllocation.get('glCompanyCode')).toBeDefined();
     expect(invoiceAllocation.get('glAccount')).toBeDefined();
     expect(invoiceAllocation.get('allocationAmount')).toBeDefined();
@@ -77,6 +78,7 @@ describe('InvoiceAllocationComponent', () => {
         totalGlAmount: '1234.56',
         glLineItems: [{
           allocationPercent: 300.00,
+          customerCategory: 'CAH',
           shippingPointWarehouse: 'Other',
           glCostCenter: '',
           glProfitCenter: '',
@@ -98,6 +100,7 @@ describe('InvoiceAllocationComponent', () => {
         totalGlAmount: '1234.56',
         glLineItems: [{
           allocationPercent: 300.00,
+          customerCategory: 'CAH',
           shippingPointWarehouse: 'Other',
           glCostCenter: '23344',
           glProfitCenter: '',
@@ -119,6 +122,7 @@ describe('InvoiceAllocationComponent', () => {
         totalGlAmount: '1234.56',
         glLineItems: [{
           allocationPercent: 300.00,
+          customerCategory: 'BAX',
           shippingPointWarehouse: 'Other',
           glCostCenter: '',
           glProfitCenter: '23344',
@@ -140,6 +144,7 @@ describe('InvoiceAllocationComponent', () => {
         totalGlAmount: '1234.56',
         glLineItems: [{
           allocationPercent: 300.00,
+          customerCategory: 'CAH',
           shippingPointWarehouse: 'Other',
           glCostCenter: '23344',
           glProfitCenter: '23344',

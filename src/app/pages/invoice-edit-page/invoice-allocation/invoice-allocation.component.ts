@@ -52,7 +52,7 @@ export class InvoiceAllocationComponent implements OnInit {
 
         array.push(new FormGroup({
           allocationPercent: new FormControl(glLineItem.allocationPercent ?? undefined),
-          warehouse: new FormControl(glLineItem.shippingPointWarehouse ?? undefined),
+          customerCategory: new FormControl(glLineItem.customerCategory ?? undefined),
           glProfitCenter: new FormControl(glProfitCenter),
           glCostCenter: new FormControl(glCostCenter),
           glAccount: new FormControl(glLineItem.glAccount ?? undefined),
