@@ -20,6 +20,7 @@ export interface CostLineItem {
 
 export interface GlLineItem {
   allocationPercent: number;
+  customerCategory: string;
   shippingPointWarehouse: string;
   glCompanyCode: string;
   glCostCenter: string;

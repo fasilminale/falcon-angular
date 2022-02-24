@@ -4,7 +4,7 @@
     <div class="col-12 my-3">Allocation breakdown</div>
     <div class="row my-3 mx-0 invoice-allocation-header">
       <div class="col">Allocation %</div>
-      <div class="col">Warehouse</div>
+      <div class="col">Customer Category</div>
       <div class="col">GL Cost Center</div>
       <div class="col">GL Profit Center</div>
       <div class="col">GL Account</div>
@@ -25,14 +25,14 @@
             </small>
         </div>
 
-        <!-- Invoice allocation - warehouse -->
+        <!-- Invoice allocation - customerCategory -->
         <div class="col">
 
-          <input type="text" class="form-control" formControlName="warehouse"
-          [ngClass]="{ 'error-div' : !invoiceAllocation.get('warehouse')?.value }"
+          <input type="text" class="form-control" formControlName="customerCategory"
+          [ngClass]="{ 'error-div' : !invoiceAllocation.get('customerCategory')?.value }"
             [attr.disabled]="isEditMode? '': null" />
-            <small class="error-text col-2" *ngIf="!invoiceAllocation.get('warehouse')?.value" [ngClass]="{ 'mt-3' : true }" >
-              Warehouse is missing
+            <small class="error-text col-2" *ngIf="!invoiceAllocation.get('customerCategory')?.value" [ngClass]="{ 'mt-3' : true }" >
+              Customer Category is missing
             </small>
         </div>
 
