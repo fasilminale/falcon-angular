@@ -18,7 +18,7 @@ export class InvoiceAmountComponent implements OnInit {
   currencyControl = new FormControl();
   paymentTermsControl = new FormControl();
   isValidCostBreakdownAmount = true
- 
+
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
     {value: 'ZN14', display: 'Pay in 14 days'}
@@ -26,9 +26,9 @@ export class InvoiceAmountComponent implements OnInit {
 
   public currencyOptions = ['USD', 'CAD'];
   public costBreakdownTypes = [
-    {display: 'Per hour', value: 'PERHOUR'}, 
-    {display: 'Flat', value: 'FLAT'}, 
-    {display: 'Per mile', value: 'PERMILE'}, 
+    {display: 'Per hour', value: 'PERHOUR'},
+    {display: 'Flat', value: 'FLAT'},
+    {display: 'Per mile', value: 'PERMILE'},
     {display: 'Percent', value: 'PERCENT'},
     {display: 'N/A', value: ''}];
 
@@ -55,7 +55,7 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.setControl('paymentTerms', new FormControl(''));
     givenFormGroup.setControl('mileage', new FormControl());
     this.insertBreakDownItems();
-    givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems); 
+    givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems);
     this._formGroup = givenFormGroup;
   }
 
@@ -121,5 +121,9 @@ export class InvoiceAmountComponent implements OnInit {
     this.subscriptionManager.manage(observable.subscribe(
       invoiceAmountDetail => this.loadForm(this._formGroup, invoiceAmountDetail)
     ));
+  }
+
+  get hasMileage(): boolean {
+    return !!this._formGroup?.get('mileage')?.value;
   }
 }
