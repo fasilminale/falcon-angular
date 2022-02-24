@@ -126,11 +126,10 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   searchInvoices(searchValue: any): void {
-    this.totalSearchResult = -1; // this is for test
+    // this.totalSearchResult = -1; // this is for test
     this.searchValue = searchValue;
     this.sortField = '';
     this.resetTable();
-    console.log(searchValue);
   }
 
   changeCreatedByUser(): void {
