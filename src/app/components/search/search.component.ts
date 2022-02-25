@@ -10,8 +10,8 @@ import {PaginationModel} from '../../models/PaginationModel';
 })
 export class SearchComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
-  @Input() label = 'Enter the Falcon Invoice Number - 10 characters required';
-  @Input() minLengthMessage = 'Invoice Number must be 10 characters';
+  @Input() label = 'Enter the Falcon Invoice Number - 11 characters required';
+  @Input() minLengthMessage = 'Invoice Number must be 11 characters';
   @Input() invalidIdMessage = 'Invoice Number is not found';
   @Input() requiredMessage = 'Invoice Number is required';
   @Input() patternMessage = 'Invoice Number is invalid';
@@ -29,7 +29,7 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.controlGroup = this.fb.group({
-        control: [null, [Validators.pattern('^[A-Za-z0-9]*$'), Validators.required, Validators.minLength(10)]]
+        control: [null, [Validators.pattern('^[A-Za-z0-9]*$'), Validators.required, Validators.minLength(11)]]
       }, {updateOn: 'submit'}
     );
   }
