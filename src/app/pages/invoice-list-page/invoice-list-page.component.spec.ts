@@ -155,14 +155,29 @@ describe('InvoiceListPageComponent', () => {
     expect(component.paginationModel.sortOrder).toEqual(sortEvent.direction);
   }));
 
-  it('should Search Invoices', fakeAsync(() => {
+  it('should Search Invoices with single result', fakeAsync(() => {
+    spyOn(component, 'searchInvoices').and.callThrough();
+    spyOn(component, 'getTableData').and.callThrough();
+    component.searchInvoices('1');
+    const navigateSpy = spyOn(router, 'navigate');
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush({
+      data: [{
+        falconInvoiceNumber: '1'
+      }]
+    });
+    tick(150);
+    fixture.detectChanges();
+    expect(navigateSpy).toHaveBeenCalledWith(['/invoice/1']);
+    expect(component.searchInvoices).toHaveBeenCalled();
+  }));
+
+  it('should Search Invoices with multiple result', fakeAsync(() => {
     spyOn(component, 'searchInvoices').and.callThrough();
     spyOn(component, 'getTableData').and.callThrough();
     component.searchInvoices('1');
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
     tick(150);
     fixture.detectChanges();
-    expect(component.searchInvoices).toHaveBeenCalled();
     expect(component.getTableData).toHaveBeenCalled();
     expect(component.searchValue).toEqual('1');
   }));
