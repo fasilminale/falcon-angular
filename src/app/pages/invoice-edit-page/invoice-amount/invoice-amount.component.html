@@ -13,7 +13,7 @@
                               [isError]="!_formGroup.get('amountOfInvoice')?.value"
                              >
       </app-fal-currency-input>
-  
+
       <small class="error-text col-2" *ngIf="!_formGroup.get('amountOfInvoice')?.value" [ngClass]="{ 'mt-3' : true }" >
         Invoice Net Amount is missing
       </small>
@@ -32,7 +32,7 @@
       </app-fal-radio-input>
     </div>
 
-    <div class="col-2">
+    <div *ngIf="hasMileage" class="col-2">
         <label for="mileage" class="fal-label">
             Mileage
         </label>
@@ -41,7 +41,7 @@
             formControlName="mileage"
             [attr.disabled]="readOnlyForm? '': null"
         />
-       
+
       </div>
 
     <!-- OVERRIDE STANDARD PAYMENT TERMS -->
@@ -73,7 +73,7 @@
   <!--Invoice amount div ends-->
 
 
-  
+
   <!--new change starts--> <!--cost breakdown div starts-->
   <div class="cost-breakdown-div my-3" formArrayName="costBreakdownItems">
     <div class="col-12">Cost breakdown</div>
@@ -137,16 +137,16 @@
 
     <!-- Cost breakdown item - totalAmount -->
     <div class="col-2">
-      <app-fal-currency-input 
+      <app-fal-currency-input
       [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
       formControlName="totalAmount"
       [isDisabled]="readOnlyForm"
      >
-     
+
     </app-fal-currency-input>
-   
+
     <small class="error-text"
-    *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"> 
+    *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
  Base Rate Amount is required
 </small>
     </div>
@@ -157,7 +157,7 @@
   <div [class.error-div]="!isValidCostBreakdownAmount"
     class="border-radius-5 cost-breakdown-total-div mt-5 mb-2 p-3 offset-md-9"
     *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
-  
+
     <div class="row">
       <div class="row d-flex justify-content-between">
         <span class="px-3 col-md-8 text-left text-bold">Cost Breakdown Total:</span>
