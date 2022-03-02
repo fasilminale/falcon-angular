@@ -8,22 +8,25 @@
 </div>
 <elm-card>
   <elm-section-header [sectionTitle]="this.invoiceCountLabel">
-    <div *ngIf="hasInvoiceWrite" class="col-12">
-      <div class='d-flex justify-content-between align-items-center'>
-        <elm-button id="extract-invoice-button"
-                    buttonType="button"
-                    buttonStyle="text"
-                    class="flex-shrink-1"
-                    (buttonClick)="routeToExtractPage()">
-          <u>Extract Approved Invoices for Remittance</u>
-        </elm-button>
+    <div class='d-flex flex-end justify-content-between align-items-center col-12'>
+      <div class="col-6">
+        <div *ngIf="hasInvoiceWrite">
+          <elm-button id="extract-invoice-button"
+                      buttonType="button"
+                      buttonStyle="text"
+                      class="flex-shrink-1"
+                      (buttonClick)="routeToExtractPage()">
+            <u>Extract Approved Invoices for Remittance</u>
+          </elm-button>
+        </div>
+      </div>
+      <div class="ml-col-6">
         <elm-button buttonStyle="primary"
                     (buttonClick)="openFilter()"
                     class="me-1">
           <span class="material-icons  me-2">filter_list</span>
           Filter
         </elm-button>
-
       </div>
     </div>
   </elm-section-header>

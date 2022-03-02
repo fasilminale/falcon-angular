@@ -120,7 +120,7 @@ export class InvoiceListPageComponent implements OnInit {
 
   sortChanged(sort: Sort): void {
     this.paginationModel.sortOrder = sort.direction;
-    this.sortField = sort.active;
+    this.sortField = this.checkSortFields(sort.active);
     this.resetTable();
   }
 
@@ -176,6 +176,23 @@ export class InvoiceListPageComponent implements OnInit {
 
   routeToExtractPage(): void {
     this.router.navigate(['/invoice-extraction']);
+  }
+
+  checkSortFields(field: string): string {
+    switch (field) {
+      case 'statusLabel':
+        return 'status';
+      case 'invoiceReference':
+        return 'tripId';
+      case 'carrierDisplay':
+        return 'carrier.scac';
+      case 'carrierModeDisplay':
+        return 'mode.mode';
+      case 'paymentDueDisplay':
+        return 'paymentDue';
+      default:
+        return field;
+    }
   }
 
 }
