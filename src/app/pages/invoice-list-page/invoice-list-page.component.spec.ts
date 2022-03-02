@@ -155,6 +155,61 @@ describe('InvoiceListPageComponent', () => {
     expect(component.paginationModel.sortOrder).toEqual(sortEvent.direction);
   }));
 
+  describe('check sort fields', () => {
+    beforeEach(() => {
+      spyOn(component, 'checkSortFields').and.callThrough();
+    });
+
+    it('statusLabel should be status', fakeAsync(() => {
+      const result = component.checkSortFields('statusLabel');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('status');
+    }));
+
+    it('invoiceReference should be tripId', fakeAsync(() => {
+      const result = component.checkSortFields('invoiceReference');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('tripId');
+    }));
+
+    it('carrierDisplay should be carrier.scac', fakeAsync(() => {
+      const result = component.checkSortFields('carrierDisplay');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('carrier.scac');
+    }));
+
+    it('carrierModeDisplay should be mode.mode', fakeAsync(() => {
+      const result = component.checkSortFields('carrierModeDisplay');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('mode.mode');
+    }));
+
+    it('paymentDueDisplay should be paymentDue', fakeAsync(() => {
+      const result = component.checkSortFields('paymentDueDisplay');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('paymentDue');
+    }));
+
+    it('any other field should be unchanged', fakeAsync(() => {
+      const falconInvoiceNumber = 'falconInvoiceNumber';
+      const result = component.checkSortFields(falconInvoiceNumber);
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual(falconInvoiceNumber);
+    }));
+  });
+
   it('should Search Invoices with single result', fakeAsync(() => {
     spyOn(component, 'searchInvoices').and.callThrough();
     spyOn(component, 'getTableData').and.callThrough();
