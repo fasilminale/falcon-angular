@@ -11,10 +11,10 @@ import {PaginationModel} from '../../models/PaginationModel';
 export class SearchComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
   @Input() label = 'Enter the Falcon Invoice Number - 11 characters required';
-  @Input() minLengthMessage = 'Invoice Number must be 11 characters';
-  @Input() invalidIdMessage = 'Invoice Number is not found';
-  @Input() requiredMessage = 'Invoice Number is required';
-  @Input() patternMessage = 'Invoice Number is invalid';
+  @Input() minLengthMessage = 'Falcon Invoice Number must be 11 characters';
+  @Input() invalidIdMessage = 'Falcon Invoice Number is not found';
+  @Input() requiredMessage = 'Falcon Invoice Number is required';
+  @Input() patternMessage = 'Falcon Invoice Number is invalid';
   @Input() totalResults = 0;
 
   @Output() submitEvent: EventEmitter<string> = new EventEmitter<string>();

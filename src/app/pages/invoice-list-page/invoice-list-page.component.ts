@@ -77,7 +77,7 @@ export class InvoiceListPageComponent implements OnInit {
     });
   }
 
-  getTableData(numberPerPage: number): void {
+  getTableData(numberPerPage: number, isInvoiceSearched = false): void {
     this.loadingService.showLoading('Loading');
     const searchFilters = this.filterService.invoiceFilterModel.formatForSearch();
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
@@ -89,12 +89,12 @@ export class InvoiceListPageComponent implements OnInit {
       ...searchFilters,
       numberPerPage
     }).subscribe((invoiceData: any) => {
-      console.log(invoiceData);
       if(invoiceData?.data?.length === 1) {
           this.rowClicked(invoiceData.data[0]);
       } else  {
         this.paginationModel.total = invoiceData.total;
         this.totalSearchResult = invoiceData.total;
+        if(!isInvoiceSearched || this.totalSearchResult !== 0) {
         this.invoiceCountLabel = this.createdByUser
           ? `My Invoices (${this.paginationModel.total})`
           : (this.searchValue || this.selectedInvoiceStatuses.length > 0)
@@ -106,6 +106,7 @@ export class InvoiceListPageComponent implements OnInit {
         });
         this.invoices = invoiceArray;
       }
+    }
       this.loadingService.hideLoading();
     });
   }
@@ -133,8 +134,9 @@ export class InvoiceListPageComponent implements OnInit {
   searchInvoices(searchValue: any): void {
     // this.totalSearchResult = -1; // this is for test
     this.searchValue = searchValue;
+    console.log(this.searchValue);
     this.sortField = '';
-    this.resetTable();
+    this.resetTable(true);
   }
 
   changeCreatedByUser(): void {
@@ -166,11 +168,11 @@ export class InvoiceListPageComponent implements OnInit {
     });
   }
 
-  resetTable(): void {
+  resetTable(isInvoiceSearched = false): void {
     if (this.paginationModel.pageIndex !== 1) {
       this.dataTable.goToFirstPage();
     } else {
-      this.getTableData(this.paginationModel.numberPerPage);
+      this.getTableData(this.paginationModel.numberPerPage, isInvoiceSearched);
     }
   }
 
