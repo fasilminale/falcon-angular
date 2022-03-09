@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { WebServices } from './web-services';
 import { UserInfoModel } from '../models/user-info/user-info-model';
 import {map, share} from 'rxjs/operators';
+import {PaginationModel} from '../models/PaginationModel';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +13,18 @@ import {map, share} from 'rxjs/operators';
 export class UserService {
   private observableCache: Observable<UserInfoModel> | undefined;
   private userInfoCache: UserInfoModel | undefined;
+  private paginationModel: PaginationModel | undefined;
 
   constructor(private http: HttpClient, private web: WebServices) {
 
+  }
+
+  get searchState(): PaginationModel {
+    return this.paginationModel ?? new PaginationModel();
+  }
+
+  set searchState(lastSearch: PaginationModel) {
+    this.paginationModel = lastSearch;
   }
 
   private userInfoUrl = `${environment.baseServiceUrl}/v1/user/info`;

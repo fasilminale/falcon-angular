@@ -1,8 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
@@ -21,7 +20,7 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
   templateUrl: './invoice-list-page.component.html',
   styleUrls: ['./invoice-list-page.component.scss']
 })
-export class InvoiceListPageComponent implements OnInit {
+export class InvoiceListPageComponent implements OnInit, OnDestroy {
   public userInfo: UserInfoModel | undefined;
   paginationModel: PaginationModel = new PaginationModel();
   headers: Array<ElmDataTableHeader> = [
@@ -64,6 +63,7 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.paginationModel = this.userService.searchState;
     this.getTableData(this.paginationModel.numberPerPage);
     this.route.queryParamMap.subscribe(queryParams => {
       const falconInvoiceNumber = queryParams.get('falconInvoiceNumber');
@@ -75,6 +75,10 @@ export class InvoiceListPageComponent implements OnInit {
       this.userInfo = new UserInfoModel(userInfo);
       this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
     });
+  }
+
+  ngOnDestroy(): void {
+    this.userService.searchState = this.paginationModel;
   }
 
   getTableData(numberPerPage: number, isInvoiceSearched = false): void {
