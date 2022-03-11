@@ -13,7 +13,7 @@
 }
 
 .ng-select.ng-select-disabled ::ng-deep .ng-select-container,
-app-fal-radio-input ::ng-deep .background-disabled, 
+app-fal-radio-input ::ng-deep .background-disabled,
 ::ng-deep .form-control:disabled,
 ::ng-deep .form-control[readonly]{
   opacity: 0.65;
@@ -56,14 +56,14 @@ app-fal-radio-input ::ng-deep .background-disabled,
  .cost-breakdown-item-header > div{
     font-size: 14px;
     font-weight: 700;
-    
+
     &:last-child{
       text-align: right;
     }
  }
 
  .cost-breakdown-item-row{
-   margin-bottom: 15px;
+   margin-bottom: 24px;
  }
 
  .cost-breakdown-total-div {

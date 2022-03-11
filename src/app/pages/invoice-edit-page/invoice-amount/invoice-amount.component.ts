@@ -86,7 +86,8 @@ export class InvoiceAmountComponent implements OnInit {
           rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
           type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
           quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity  : 'N/A'),
-          totalAmount: new FormControl(costBreakdownItem.chargeLineTotal || 0)
+          totalAmount: new FormControl(costBreakdownItem.chargeLineTotal || 0),
+          message: new FormControl(costBreakdownItem.message ?? '')
       }));
       })
     } else  {
