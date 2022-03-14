@@ -131,23 +131,23 @@ export class TripInformationComponent implements OnInit {
   }
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
-    this.subscriptionManager.manage(observable.subscribe(t => {
-      this.tripInformation = t;
+    this.subscriptionManager.manage(observable.subscribe(tripInfo => {
+      this.tripInformation = tripInfo;
       this.formGroup.enable();
-      this.tripIdControl.setValue(t.tripId ?? 'N/A');
-      this.invoiceDateControl.setValue(t.invoiceDate ?? undefined);
-      this.pickUpDateControl.setValue(t.pickUpDate ?? undefined);
-      this.deliveryDateControl.setValue(t.deliveryDate ?? undefined);
-      this.proTrackingNumberControl.setValue(t.proTrackingNumber ?? 'N/A');
-      this.bolNumberControl.setValue(t.bolNumber ?? 'N/A');
-      this.freightPaymentTermsControl.setValue(t.freightPaymentTerms ?? undefined);
-      this.carrierControl.setValue(t.carrier ?? undefined);
-      this.carrierModeControl.setValue(t.carrierMode ?? undefined);
-      this.serviceLevelControl.setValue(t.serviceLevel ?? undefined);
-      this.loadOriginAddress$.next(t.originAddress);
-      this.loadDestinationAddress$.next(t.destinationAddress);
-      this.loadBillToAddress$.next(t.billToAddress);
-      this.loadFreightOrders$.next(t.freightOrders);
+      this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
+      this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
+      this.pickUpDateControl.setValue(tripInfo.pickUpDate ?? undefined);
+      this.deliveryDateControl.setValue(tripInfo.deliveryDate ?? undefined);
+      this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
+      this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
+      this.freightPaymentTermsControl.setValue(tripInfo.freightPaymentTerms ?? undefined);
+      this.carrierControl.setValue(tripInfo.carrier ?? undefined);
+      this.carrierModeControl.setValue(tripInfo.carrierMode ?? undefined);
+      this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
+      this.loadOriginAddress$.next(tripInfo.originAddress);
+      this.loadDestinationAddress$.next(tripInfo.destinationAddress);
+      this.loadBillToAddress$.next(tripInfo.billToAddress);
+      this.loadFreightOrders$.next(tripInfo.freightOrders);
       this.formGroup.updateValueAndValidity();
       this.formGroup.disable();
     }));
