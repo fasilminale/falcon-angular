@@ -27,9 +27,9 @@ export class InvoiceAmountComponent implements OnInit {
   public currencyOptions = ['USD', 'CAD'];
   public costBreakdownTypes = [
     {display: 'Per hour', value: 'PERHOUR'},
-    {display: 'Flat', value: 'FLAT'},
+    {display: 'Flat', value: 'Flat'},
     {display: 'Per mile', value: 'PERMILE'},
-    {display: 'Percent', value: 'PERCENT'},
+    {display: 'Percent', value: 'Percentage'},
     {display: 'N/A', value: ''}];
 
     totalInvoiceAmount = 0;
