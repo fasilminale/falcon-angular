@@ -37,6 +37,8 @@
     tableType="clickable"
     [data]="invoices"
     [headers]="headers"
+    [pageSize]="paginationModel.numberPerPage"
+    [pageIndex]="paginationModel.pageIndex-1"
     (pageChangedEvent)="pageChanged($event)"
     (dataSelectedEvent)="rowClicked($event[0])"
     (sortEvent)="sortChanged($event)"

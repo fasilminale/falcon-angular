@@ -1,8 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
@@ -21,7 +20,7 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
   templateUrl: './invoice-list-page.component.html',
   styleUrls: ['./invoice-list-page.component.scss']
 })
-export class InvoiceListPageComponent implements OnInit {
+export class InvoiceListPageComponent implements OnInit, OnDestroy {
   public userInfo: UserInfoModel | undefined;
   paginationModel: PaginationModel = new PaginationModel();
   headers: Array<ElmDataTableHeader> = [
@@ -64,6 +63,7 @@ export class InvoiceListPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.paginationModel = this.userService.searchState;
     this.getTableData(this.paginationModel.numberPerPage);
     this.route.queryParamMap.subscribe(queryParams => {
       const falconInvoiceNumber = queryParams.get('falconInvoiceNumber');
@@ -77,7 +77,11 @@ export class InvoiceListPageComponent implements OnInit {
     });
   }
 
-  getTableData(numberPerPage: number): void {
+  ngOnDestroy(): void {
+    this.userService.searchState = this.paginationModel;
+  }
+
+  getTableData(numberPerPage: number, isInvoiceSearched = false): void {
     this.loadingService.showLoading('Loading');
     const searchFilters = this.filterService.invoiceFilterModel.formatForSearch();
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
@@ -89,12 +93,12 @@ export class InvoiceListPageComponent implements OnInit {
       ...searchFilters,
       numberPerPage
     }).subscribe((invoiceData: any) => {
-      console.log(invoiceData);
       if(invoiceData?.data?.length === 1) {
           this.rowClicked(invoiceData.data[0]);
       } else  {
         this.paginationModel.total = invoiceData.total;
         this.totalSearchResult = invoiceData.total;
+        if(!isInvoiceSearched || this.totalSearchResult !== 0) {
         this.invoiceCountLabel = this.createdByUser
           ? `My Invoices (${this.paginationModel.total})`
           : (this.searchValue || this.selectedInvoiceStatuses.length > 0)
@@ -106,6 +110,7 @@ export class InvoiceListPageComponent implements OnInit {
         });
         this.invoices = invoiceArray;
       }
+    }
       this.loadingService.hideLoading();
     });
   }
@@ -133,8 +138,9 @@ export class InvoiceListPageComponent implements OnInit {
   searchInvoices(searchValue: any): void {
     // this.totalSearchResult = -1; // this is for test
     this.searchValue = searchValue;
+    console.log(this.searchValue);
     this.sortField = '';
-    this.resetTable();
+    this.resetTable(true);
   }
 
   changeCreatedByUser(): void {
@@ -166,11 +172,11 @@ export class InvoiceListPageComponent implements OnInit {
     });
   }
 
-  resetTable(): void {
+  resetTable(isInvoiceSearched = false): void {
     if (this.paginationModel.pageIndex !== 1) {
       this.dataTable.goToFirstPage();
     } else {
-      this.getTableData(this.paginationModel.numberPerPage);
+      this.getTableData(this.paginationModel.numberPerPage, isInvoiceSearched);
     }
   }
 

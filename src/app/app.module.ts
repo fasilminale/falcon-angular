@@ -88,7 +88,10 @@ const getOktaConfig = () => {
         clientId: '0oayu5waixuCGIDbo0h7',
         issuer: 'https://identity.dev.cardinalhealth.net/',
         redirectUri: 'https://elm-dev.cardinalhealth.net/falcon/login/callback',
-        logoutUrl: 'https://elm-dev.cardinalhealth.net/falcon/logged-out'
+        logoutUrl: 'https://elm-dev.cardinalhealth.net/falcon/logged-out',
+        tokenManager: {
+          storageKey: 'falcon-okta-token-storage'
+        }
       };
     }
     case 'https://elm-qa.cardinalhealth.net': {
@@ -96,7 +99,10 @@ const getOktaConfig = () => {
         clientId: '0oazs9t13qwStnHh10h7',
         issuer: 'https://identity.stg.cardinalhealth.net/',
         redirectUri: 'https://elm-qa.cardinalhealth.net/falcon/login/callback',
-        logoutUrl: 'https://elm-qa.cardinalhealth.net/falcon/logged-out'
+        logoutUrl: 'https://elm-qa.cardinalhealth.net/falcon/logged-out',
+        tokenManager: {
+          storageKey: 'falcon-okta-token-storage'
+        }
       };
     }
     case 'https://elm.cardinalhealth.net': {
@@ -104,7 +110,10 @@ const getOktaConfig = () => {
         clientId: '0oaksn42jfaPtbrWa1t7',
         issuer: 'https://identity.cardinalhealth.net/',
         redirectUri: 'https://elm.cardinalhealth.net/falcon/login/callback',
-        logoutUrl: 'https://elm.cardinalhealth.net/falcon/logged-out'
+        logoutUrl: 'https://elm.cardinalhealth.net/falcon/logged-out',
+        tokenManager: {
+          storageKey: 'falcon-okta-token-storage'
+        }
       };
     }
     default: {
@@ -112,7 +121,10 @@ const getOktaConfig = () => {
         clientId: '0oayu5waixuCGIDbo0h7',
         issuer: 'https://identity.dev.cardinalhealth.net/',
         redirectUri: 'http://localhost:4200/login/callback',
-        logoutUrl: 'http://localhost:4200/logged-out'
+        logoutUrl: 'http://localhost:4200/logged-out',
+        tokenManager: {
+          storageKey: 'falcon-okta-token-storage'
+        }
       };
     }
   }

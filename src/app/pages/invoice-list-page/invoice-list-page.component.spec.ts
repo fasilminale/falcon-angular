@@ -237,6 +237,16 @@ describe('InvoiceListPageComponent', () => {
     expect(component.searchValue).toEqual('1');
   }));
 
+  it('should Search Invoices with no result', fakeAsync(() => {
+    spyOn(component, 'getTableData').and.callThrough();
+    component.searchInvoices('1');
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush({data: [], total: 0});
+    tick(150);
+    fixture.detectChanges();
+    expect(component.getTableData).toHaveBeenCalled();
+    expect(component.searchValue).toEqual('1');
+  }));
+
   it('should Search Invoices by status', fakeAsync(() => {
     spyOn(component, 'changeInvoiceStatus').and.callThrough();
     spyOn(component, 'getTableData').and.callThrough();

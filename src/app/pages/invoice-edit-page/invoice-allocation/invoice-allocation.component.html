@@ -77,8 +77,19 @@
         </div>
 
         <!-- Invoice allocation - allocationAmount -->
-        <div class="col allocation-amount-div">
-          <span class="allocation-amount-text">{{invoiceAllocation.get('allocationAmount')?.value | currency}}</span>
+        <div class="col">
+          <app-fal-currency-input
+            [isError]="invoiceAllocation.get('allocationAmount')?.value === 0"
+            formControlName="allocationAmount"
+            [isDisabled]="isEditMode"
+          >
+
+          </app-fal-currency-input>
+
+          <small class="error-text"
+                 *ngIf="invoiceAllocation.get('allocationAmount')?.value === 0">
+            Allocation Amount is required
+          </small>
         </div>
 
       </div>
