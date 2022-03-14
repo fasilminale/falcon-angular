@@ -16,6 +16,7 @@ export interface CostLineItem {
   rateAmount: number;
   rateType: string;
   chargeLineTotal: number;
+  message: string;
 }
 
 export interface GlLineItem {

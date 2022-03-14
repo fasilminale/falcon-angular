@@ -41,7 +41,7 @@ describe('InvoiceAmountComponent', () => {
 
   describe('get totalCostBreakdownAmount', () => {
     it('should get totalCostBreakdownAmount as zero', () => {
-      expect(component.costBreakdownTotal).toBe(0)
+      expect(component.costBreakdownTotal).toBe(0);
     });
 
     it('should get totalCostBreakdownAmount as total', () => {
@@ -49,16 +49,16 @@ describe('InvoiceAmountComponent', () => {
         amountOfInvoice: new FormControl(10),
         costBreakdownItems: new FormArray([new FormGroup({
           totalAmount: new FormControl(10),
-        }), 
+        }),
         new FormGroup({
           totalAmount: new FormControl()
         })
       ])
-      })
-      expect(component.costBreakdownTotal).toBe(10)
+      });
+      expect(component.costBreakdownTotal).toBe(10);
     });
   });
-  
+
 
   describe('when edit mode is updated', () => {
     let isEditMode$: Subject<boolean>;
@@ -113,8 +113,8 @@ describe('InvoiceAmountComponent', () => {
             rateAmount: 100,
             rateType: 'FLAT',
             quantity: 1,
-            costName: 'TestCostName'
-
+            costName: 'TestCostName',
+            message: ''
           }
         ],
         standardPaymentTermsOverride: 'TestTerms',
