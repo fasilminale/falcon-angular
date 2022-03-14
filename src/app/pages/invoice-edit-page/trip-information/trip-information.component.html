@@ -117,10 +117,10 @@
                  bindValue="value"
                  formControlName="carrier"
                  placeholder="Select One..."
-                 [compareWith]="compareWith"
-                 [ngClass]="{'error': !carrierControl.value?.name || !carrierControl.value?.scac}">
+                 [compareWith]="compareCarrierWith"
+                 [ngClass]="{'error': !carrierControl.value }">
       </ng-select>
-      <elm-input-subtext *ngIf="!carrierControl.value?.name || !carrierControl.value?.scac"
+      <elm-input-subtext *ngIf="!carrierControl.value"
                          class="input-error"
                          [isError]="true">
         Carrier is missing
@@ -137,10 +137,10 @@
                  bindValue="value"
                  formControlName="carrierMode"
                  placeholder="Select One..."
-                 [compareWith]="compareWith"
-                 [ngClass]="{'error': !carrierModeControl.value?.reportKeyMode}">
+                 [compareWith]="compareCarrierModeWith"
+                 [ngClass]="{'error': !carrierModeControl.value}">
       </ng-select>
-      <elm-input-subtext *ngIf="!carrierModeControl.value?.reportKeyMode"
+      <elm-input-subtext *ngIf="!carrierModeControl.value"
                          class="input-error"
                          [isError]="true">
         Carrier Mode is missing

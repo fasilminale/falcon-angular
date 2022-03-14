@@ -109,8 +109,8 @@ export class InvoiceEditPageComponent implements OnInit {
       businessUnit: invoice.businessUnit,
       billToAddress: invoice.billTo,
       paymentDue: new Date(invoice.paymentDue),
-      carrier: invoice?.carrier?.name,
-      carrierMode: invoice.mode?.reportKeyMode,
+      carrier: `${invoice?.carrier?.scac} (${invoice?.carrier?.name})`,
+      carrierMode: `${invoice.mode?.reportKeyMode} (${invoice.mode?.reportModeDescription})`,
       freightPaymentTerms: invoice.freightPaymentTerms,
       remittanceInformation: {
         erpInvoiceNumber: invoice.erpInvoiceNumber,

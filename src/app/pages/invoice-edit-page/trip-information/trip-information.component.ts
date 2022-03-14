@@ -55,6 +55,7 @@ export class TripInformationComponent implements OnInit {
     this.destinationAddressFormGroup,
     this.billToAddressFormGroup
   ]);
+  private tripInformation: TripInformation = {} as TripInformation;
 
   public showFreightOrderSection = false;
   loadOriginAddress$ = new Subject<ShippingPointLocation>();
@@ -73,11 +74,26 @@ export class TripInformationComponent implements OnInit {
     this.subscriptionManager.manage(
       // Carrier Options
       this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions))
-        .subscribe(opts => this.carrierOptions = opts),
+        .subscribe(opts => {
+          this.carrierOptions = opts;
+          if(this.tripInformation) {
+            setTimeout(() => {
+              this.carrierControl.setValue(this.tripInformation.carrier);
+              this.carrierControl.updateValueAndValidity();
+            }, 2000);
+           
+          }
+        }),
 
       // Carrier Mode Code Options
       this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions))
-        .subscribe(opts => this.carrierModeOptions = opts),
+        .subscribe(opts =>  {
+          this.carrierModeOptions = opts
+          setTimeout(() => {
+            this.carrierModeControl.setValue(this.tripInformation.carrierMode);
+            this.carrierModeControl.updateValueAndValidity();
+          }, 2000);
+        }),
 
       // Service Level Options
       this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions))
@@ -116,6 +132,7 @@ export class TripInformationComponent implements OnInit {
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
     this.subscriptionManager.manage(observable.subscribe(t => {
+      this.tripInformation = t;
       this.formGroup.enable();
       this.tripIdControl.setValue(t.tripId ?? 'N/A');
       this.invoiceDateControl.setValue(t.invoiceDate ?? undefined);
@@ -142,6 +159,14 @@ export class TripInformationComponent implements OnInit {
 
   compareWith(item: any, value: any): boolean {
     return item.id === value.id;
+  }
+
+  compareCarrierWith(item: any, value: any) {
+    return item.value.scac === value.scac;
+  }
+
+  compareCarrierModeWith(item: any, value: any) {
+    return item.value.reportKeyMode === value.reportKeyMode;
   }
 }
 
