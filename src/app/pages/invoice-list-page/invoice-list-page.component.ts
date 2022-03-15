@@ -93,23 +93,23 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       ...searchFilters,
       numberPerPage
     }).subscribe((invoiceData: any) => {
-      if(invoiceData?.data?.length === 1) {
+      if(invoiceData?.data?.length === 1 && this.searchValue !== '') {
           this.rowClicked(invoiceData.data[0]);
       } else  {
         this.paginationModel.total = invoiceData.total;
         this.totalSearchResult = invoiceData.total;
         if(!isInvoiceSearched || this.totalSearchResult !== 0) {
-        this.invoiceCountLabel = this.createdByUser
-          ? `My Invoices (${this.paginationModel.total})`
-          : (this.searchValue || this.selectedInvoiceStatuses.length > 0)
-            ? `Invoices (${this.paginationModel.total})`
-            : 'Invoices';
-        const invoiceArray: Array<InvoiceDataModel> = [];
-        invoiceData.data.map((invoice: any) => {
-          invoiceArray.push(new InvoiceDataModel(invoice));
-        });
-        this.invoices = invoiceArray;
-      }
+          this.invoiceCountLabel = this.createdByUser
+            ? `My Invoices (${this.paginationModel.total})`
+            : (this.searchValue || this.selectedInvoiceStatuses.length > 0)
+              ? `Invoices (${this.paginationModel.total})`
+              : 'Invoices';
+          const invoiceArray: Array<InvoiceDataModel> = [];
+          invoiceData.data.map((invoice: any) => {
+            invoiceArray.push(new InvoiceDataModel(invoice));
+          });
+          this.invoices = invoiceArray;
+        }
     }
       this.loadingService.hideLoading();
     });
