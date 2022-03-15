@@ -39,7 +39,7 @@ export class CarrierModeCodeUtils {
 
   static toDisplayLabel(carrierModeCode?: CarrierModeCodeReference): string {
     return carrierModeCode
-      ? `${carrierModeCode.reportModeDescription} (${carrierModeCode.reportKeyMode})`
+      ? `${carrierModeCode.reportKeyMode} (${carrierModeCode.reportModeDescription})`
       : '';
   }
 

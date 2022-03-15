@@ -92,7 +92,7 @@ describe('TripInformationComponent', () => {
       });
       it('should have carrier mode option', () => {
         expect(component.carrierModeOptions).toEqual([{
-          label: 'Test Mode Description (TLTL)',
+          label: 'TLTL (Test Mode Description)',
           value: CARRIER_MODE
         }]);
       });
@@ -277,6 +277,28 @@ describe('TripInformationComponent', () => {
       component.showFreightOrderSection = false;
       component.toggleFreightOrderDetailsSection();
       expect(component.showFreightOrderSection).toBe(true);
+    });
+
+  });
+
+  describe('should compare with carrier scac', () => {
+    it('should return true', () => {
+      expect(component.compareCarrierWith({value: {scac:'TL'}}, {scac: 'TL'})).toBeTrue();
+    });
+
+    it('should return false', () => {
+      expect(component.compareCarrierWith({value: {scac: 'TLT'}}, {scac: 'TL'})).toBeFalse();
+    });
+
+  });
+
+  describe('should compare with carrier mode scac', () => {
+    it('should return true', () => {
+      expect(component.compareCarrierModeWith({value: {reportKeyMode: 'TL'}}, {reportKeyMode: 'TL'})).toBeTrue();
+    });
+
+    it('should return false', () => {
+      expect(component.compareCarrierModeWith({value: {reportKeyMode: 'TLB'}}, {reportKeyMode: 'TL'})).toBeFalse();
     });
 
   });
