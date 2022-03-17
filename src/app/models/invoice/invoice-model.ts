@@ -75,8 +75,10 @@ export class InvoiceDataModel {
   shippingPoint: string;
   originType: string;
   origin: Location;
+  originStr: string;
   destinationType: string;
   destination: Location;
+  destinationStr: string;
   billTo: Location;
   shippedDateTime: string;
   estimatedPickupDateTime: string;
@@ -98,7 +100,7 @@ export class InvoiceDataModel {
   freightOrders: Array<FreightOrder>;
 
   constructor(json?: any) {
-    const {currency, status, date, paymentTerms} = InvoiceDataModel;
+    const {currency, status, date, paymentTerms, getCityStateStr} = InvoiceDataModel;
 
     // BASE INVOICE
     this.falconInvoiceNumber = json?.falconInvoiceNumber ?? '';
@@ -165,8 +167,10 @@ export class InvoiceDataModel {
     this.shippingPoint = json?.shippingPoint ?? '';
     this.originType = json?.originType ?? '';
     this.origin = json?.origin ?? EMPTY_LOCATION;
+    this.originStr = json?.origin ? getCityStateStr(json.origin): '';
     this.destinationType = json?.destinationType ?? '';
     this.destination = json?.destination ?? EMPTY_LOCATION;
+    this.destinationStr = json?.destination ? getCityStateStr(json.origin): '';
     this.billTo = json?.billTo ?? EMPTY_LOCATION;
     this.shippedDateTime = date(json?.shippedDateTime);
     this.estimatedPickupDateTime = date(json?.estimatedPickupDateTime);
@@ -186,6 +190,10 @@ export class InvoiceDataModel {
     this.totalGlAmount = currency(json?.totalGlAmount);
     this.glLineItems = json?.glLineItems ?? [];
     this.freightOrders = json?.freightOrders ?? [];
+  }
+
+  private static getCityStateStr(value:Location):string {
+    return `${value.city}, ${value.state}`
   }
 
   private static currency(value?: any, defaultValue: string = ''): string {

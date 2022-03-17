@@ -30,6 +30,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     {header: 'carrierDisplay', label: 'Carrier'},
     {header: 'carrierModeDisplay', label: 'Carrier Mode'},
     {header: 'businessUnit', label: 'Business Unit'},
+    {header: 'originStr', label: 'Origin'},
+    {header: 'destinationStr', label: 'Destination'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'paymentDueDisplay', label: 'Payment Due'},
     {header: 'amountOfInvoice', label: 'Invoice Net Amount', alignment: 'end'},
@@ -196,6 +198,10 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         return 'mode.mode';
       case 'paymentDueDisplay':
         return 'paymentDue';
+      case 'originStr':
+        return 'origin.city';
+      case 'destinationStr':
+        return 'destination.city';
       default:
         return field;
     }
