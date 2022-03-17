@@ -13,7 +13,7 @@ import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-import {ToastService} from '@elm/elm-styleguide-ui';
+import {BreadcrumbInterface, ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 
 
@@ -24,6 +24,7 @@ import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detai
 })
 export class InvoiceEditPageComponent implements OnInit {
 
+  breadcrumbs: Array<BreadcrumbInterface> = [{label: 'All Invoices', path: `/invoices`}];
   public falconInvoiceNumber = '';
   public invoiceStatus = '';
   public milestones: Array<Milestone> = [];
@@ -47,12 +48,12 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
 
   constructor(private util: UtilService,
-              private router: Router,
               private route: ActivatedRoute,
               private userService: UserService,
               private invoiceService: InvoiceService,
               private toastService: ToastService,
-              @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager) {
+              @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
+              public router: Router) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
     this.invoiceAllocationFormGroup = new FormGroup({});

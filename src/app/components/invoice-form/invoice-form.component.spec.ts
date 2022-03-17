@@ -861,4 +861,16 @@ describe('InvoiceFormComponent', () => {
     fixture.detectChanges();
     expect(component.form.invoiceFormGroup.controls.companyCode.hasError('validateCompanyCode')).toBeFalsy();
   });
+
+  it('onCancel subscription', done => {
+    const onCancel$ = new Subject<any>();
+    component.onCancel$ = onCancel$.asObservable();
+
+    onCancel$.subscribe(() => {
+      done();
+    });
+
+    // Run Test
+    onCancel$.next(true);
+  });
 });
