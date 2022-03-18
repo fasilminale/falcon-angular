@@ -28,7 +28,7 @@ import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-s
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {MatDialog} from '@angular/material/dialog';
-import {of} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
@@ -97,7 +97,20 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
   ) {
   }
 
+  private subscription?: Subscription;
   /* PROPERTY FUNCTIONS */
+  @Input() set onCancel$(observable: Observable<any>) {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    this.subscription = observable.subscribe(
+      () => {
+        this.onCancel();
+      }
+    );
+    this.subscriptionManager.manage(this.subscription);
+  }
+
   get isOnEditPage(): boolean {
     return !!this.falconInvoiceNumber;
   }

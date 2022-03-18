@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceFormComponent} from './invoice-form.component';
-import {of, throwError} from 'rxjs';
+import {of, Subject, throwError} from 'rxjs';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {SimpleChange} from '@angular/core';
@@ -860,5 +860,17 @@ describe('InvoiceFormComponent', () => {
     inputElemnt?.blur();
     fixture.detectChanges();
     expect(component.form.invoiceFormGroup.controls.companyCode.hasError('validateCompanyCode')).toBeFalsy();
+  });
+
+  it('onCancel subscription', done => {
+    const onCancel$ = new Subject<any>();
+    component.onCancel$ = onCancel$.asObservable();
+
+    onCancel$.subscribe(() => {
+      done();
+    });
+
+    // Run Test
+    onCancel$.next(true);
   });
 });

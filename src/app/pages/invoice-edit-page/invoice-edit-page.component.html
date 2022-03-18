@@ -1,10 +1,6 @@
-<div class="page-header">
-  <div>
-    <div class="headline1">
-      <span>Invoice {{falconInvoiceNumber}}</span>
-    </div>
-    <div class="headline3">Status: {{invoiceStatus}}</div>
-  </div>
+<elm-page-header class="page-header" (breadcrumbClick)="router.navigate([$event])" [breadcrumbs]="breadcrumbs"
+                 headerTitle="Invoice {{falconInvoiceNumber}}"
+                 headerSubtitle="Status: {{invoiceStatus}}">
   <div class="d-flex justify-content-end header-button">
     <div class="col-12 d-flex justify-content-end">
       <elm-button id="save-as-template-button"
@@ -19,7 +15,7 @@
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
                   [isDisabled]="(isDeletedInvoice
-                              || (isSubmittedInvoice && !(isAutoInvoice && (isApprovedInvoice || isRejectedInvoice))))"
+                          || (isSubmittedInvoice && !(isAutoInvoice && (isApprovedInvoice || isRejectedInvoice))))"
                   (buttonClick)="clickDeleteButton()">
         Delete
       </elm-button>
@@ -28,15 +24,15 @@
                   buttonStyle="primary"
                   class="flex-shrink-1 header-button"
                   [isDisabled]="isEditMode$.value
-                                || isDeletedInvoice
-                                || isSubmittedInvoice
-                                || isAutoInvoice"
+                            || isDeletedInvoice
+                            || isSubmittedInvoice
+                            || isAutoInvoice"
                   (buttonClick)="clickToggleEditMode()">
         Edit
       </elm-button>
     </div>
   </div>
-</div>
+</elm-page-header>
 
 <elm-card>
   <mat-sidenav-container class="side-nav-container"

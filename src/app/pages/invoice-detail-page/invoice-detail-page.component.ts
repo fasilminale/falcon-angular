@@ -1,13 +1,13 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
+import {BreadcrumbInterface, ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {TimeService} from '../../services/time-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {KeyedLabel} from '../../models/generic/keyed-label';
@@ -28,6 +28,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @ViewChild(InvoiceFormComponent) invoiceForm?: InvoiceFormComponent;
 
+  breadcrumbs: Array<BreadcrumbInterface> = [{label: 'All Invoices', path: `/invoices`}];
   public userInfo: UserInfoModel | undefined;
   public readOnly = true;
   public milestonesTabOpen = false;
@@ -42,15 +43,16 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
+  public onCancel$ = new Subject<any>();
 
   private subscriptions: Array<Subscription> = [];
 
   public constructor(private webService: WebServices,
-                     private router: Router,
                      private route: ActivatedRoute,
                      private dialog: MatDialog,
                      private snackBar: MatSnackBar,
                      private timeService: TimeService,
+                     public router: Router,
                      public userService: UserService,
                      public util: UtilService) {
   }
@@ -163,5 +165,13 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
 
   public formatTimestamp(value: string): string | undefined {
     return this.timeService.formatTimestamp(value, 'MM/DD/YY HH:mm z');
+  }
+
+  public breadcrumbNavigate(event: any): void {
+    if (!this.readOnly) {
+      this.onCancel$.next();
+    } else {
+      this.router.navigate([event]);
+    }
   }
 }
