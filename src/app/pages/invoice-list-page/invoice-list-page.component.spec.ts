@@ -201,6 +201,22 @@ describe('InvoiceListPageComponent', () => {
       expect(result).toEqual('paymentDue');
     }));
 
+    it('originStr should be origin.city', fakeAsync(() => {
+      const result = component.checkSortFields('originStr');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('origin.city');
+    }));
+
+    it('originStr should be destination.city', fakeAsync(() => {
+      const result = component.checkSortFields('destinationStr');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('destination.city');
+    }));
+
     it('any other field should be unchanged', fakeAsync(() => {
       const falconInvoiceNumber = 'falconInvoiceNumber';
       const result = component.checkSortFields(falconInvoiceNumber);
