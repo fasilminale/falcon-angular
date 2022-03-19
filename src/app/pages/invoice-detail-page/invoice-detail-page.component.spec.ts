@@ -5,7 +5,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoadingService} from '../../services/loading-service';
-import {of, Subject} from 'rxjs';
+import {of} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {InvoiceFormComponent} from '../../components/invoice-form/invoice-form.component';
 import {TemplateService} from '../../services/template-service';
@@ -13,11 +13,10 @@ import {Router} from '@angular/router';
 import {TimeService} from '../../services/time-service';
 import {Template} from '../../models/template/template-model';
 import {By} from '@angular/platform-browser';
-import {ButtonModule, ElmButtonComponent, ElmTextareaInputComponent} from '@elm/elm-styleguide-ui';
+import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-manager';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {UserService} from '../../services/user-service';
-import {asSpy} from '../../testing/test-utils.spec';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -283,5 +282,26 @@ describe('InvoiceDetailPageComponent', () => {
         .flush(invoiceResponse);
       done();
     });
+  });
+
+  it('should call breadcrumbNavigate and navigate', () => {
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(component, 'breadcrumbNavigate').and.callThrough();
+    spyOn(router, 'navigate').and.stub();
+    component.breadcrumbNavigate({});
+    expect(component.breadcrumbNavigate).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalled();
+  });
+
+  it('should call breadcrumbNavigate and call onCancel subject', () => {
+    component.readOnly = false;
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    spyOn(component, 'breadcrumbNavigate').and.callThrough();
+    spyOn(component.onCancel$, 'next').and.stub();
+    component.breadcrumbNavigate({});
+    expect(component.breadcrumbNavigate).toHaveBeenCalled();
+    expect(component.onCancel$.next).toHaveBeenCalled();
   });
 });

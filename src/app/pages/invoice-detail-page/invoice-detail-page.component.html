@@ -1,10 +1,6 @@
-<div class="page-header">
-  <div>
-    <div class="headline1">
-      <span>Invoice {{falconInvoiceNumber}}</span>
-    </div>
-    <div class="headline3">Status: {{invoiceStatus}}</div>
-  </div>
+<elm-page-header (breadcrumbClick)="breadcrumbNavigate($event)" [breadcrumbs]="breadcrumbs"
+                 headerTitle="Invoice {{falconInvoiceNumber}}"
+                 headerSubtitle="Status: {{invoiceStatus}}">
   <div class="d-flex justify-content-end header-button">
     <div *ngIf="hasInvoiceWrite" class="col-12 d-flex justify-content-end">
       <elm-button id="cancel-button"
@@ -14,9 +10,9 @@
                   (buttonClick)="saveAsTemplate()">
         <u>Save as Template</u>
       </elm-button>
-    <elm-button *ngIf="!(isDeletedInvoice
-                  || (isSubmittedInvoice
-                  && !(isAutoInvoice && (isApprovedInvoice || isRejectedInvoice))))" id="delete-button"
+      <elm-button *ngIf="!(isDeletedInvoice
+                || (isSubmittedInvoice
+                && !(isAutoInvoice && (isApprovedInvoice || isRejectedInvoice))))" id="delete-button"
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
@@ -33,7 +29,7 @@
       </elm-button>
     </div>
   </div>
-</div>
+</elm-page-header>
 
 <elm-card>
   <mat-sidenav-container class="side-nav-container"
@@ -51,6 +47,7 @@
                         [enableMilestones]="true"
                         [readOnly]="readOnly"
                         [userInfo]="userInfo"
+                        [onCancel$]="onCancel$.asObservable()"
                         (updateMilestones)="updateMilestones($event)"
                         (toggleMilestones)="toggleMilestones()"
                         (isDeletedInvoice)="disableInvoice($event)"
@@ -58,7 +55,7 @@
                         (isAutoInvoice)="autoInvoice($event)"
                         (isApprovedInvoice)="approvedInvoice($event)"
                         (isRejectedInvoice)="rejectedInvoice($event)"
-      (invoiceStatusChange)="invoiceStatusChange($event)">
+                        (invoiceStatusChange)="invoiceStatusChange($event)">
       </app-invoice-form>
     </mat-sidenav-content>
   </mat-sidenav-container>

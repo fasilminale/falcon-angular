@@ -17,6 +17,7 @@ import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
 import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
+import * as saveAsFunctions from 'file-saver';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -200,6 +201,22 @@ describe('InvoiceListPageComponent', () => {
       expect(result).toEqual('paymentDue');
     }));
 
+    it('originStr should be origin.city', fakeAsync(() => {
+      const result = component.checkSortFields('originStr');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('origin.city');
+    }));
+
+    it('originStr should be destination.city', fakeAsync(() => {
+      const result = component.checkSortFields('destinationStr');
+      tick(150);
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('destination.city');
+    }));
+
     it('any other field should be unchanged', fakeAsync(() => {
       const falconInvoiceNumber = 'falconInvoiceNumber';
       const result = component.checkSortFields(falconInvoiceNumber);
@@ -334,5 +351,23 @@ describe('InvoiceListPageComponent', () => {
     fixture.detectChanges();
     const deleteBtn = fixture.debugElement.query(By.css('#extract-invoice-button'));
     expect(deleteBtn).toBeNull();
+  });
+
+  it('should Download a list of invoices', fakeAsync(() => {
+    spyOn(webservice, 'httpPost').and.returnValue(of('csvData'));
+    spyOn(component, 'saveCSVFile').and.stub();
+    component.downloadCsv();
+    fixture.whenStable().then(() => {
+      expect(component.saveCSVFile).toHaveBeenCalled();
+    });
+  }));
+
+  describe('saveCSVFile', () => {
+    it('should call saveAs', () => {
+      const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.callFake(saveAs);
+      component.saveCSVFile('test data', 'test filename');
+      fixture.detectChanges();
+      expect(saveAsSpy).toHaveBeenCalled();
+    });
   });
 });

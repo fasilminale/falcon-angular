@@ -14,6 +14,7 @@ import {Sort} from '@angular/material/sort';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {saveAs} from 'file-saver';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -30,6 +31,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     {header: 'carrierDisplay', label: 'Carrier'},
     {header: 'carrierModeDisplay', label: 'Carrier Mode'},
     {header: 'businessUnit', label: 'Business Unit'},
+    {header: 'originStr', label: 'Origin'},
+    {header: 'destinationStr', label: 'Destination'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'paymentDueDisplay', label: 'Payment Due'},
     {header: 'amountOfInvoice', label: 'Invoice Net Amount', alignment: 'end'},
@@ -184,6 +187,29 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     this.router.navigate(['/invoice-extraction']);
   }
 
+  downloadCsv(): void {
+    this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices/csvData`, {
+      page: this.paginationModel.pageIndex,
+      numberPerPage: this.paginationModel.numberPerPage,
+      sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
+      sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
+      searchValue: this.searchValue,
+      createdByUser: this.createdByUser,
+      ...this.filterService.invoiceFilterModel.formatForSearch()
+    }, {responseType: 'text'}).subscribe(
+      (data: any) => {
+        const filename = 'Falcon.Invoice.List.csv';
+        this.saveCSVFile(data, filename);
+        this.toastService.openSuccessToast('File Generated: Invoice list has been successfully downloaded.', 5 * 1000);
+      }
+    );
+  }
+
+  saveCSVFile(data: any, filename: string): void {
+    const blob = new Blob([data], {type: 'application/csv'});
+    saveAs(blob, filename);
+  }
+
   checkSortFields(field: string): string {
     switch (field) {
       case 'statusLabel':
@@ -196,6 +222,10 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         return 'mode.mode';
       case 'paymentDueDisplay':
         return 'paymentDue';
+      case 'originStr':
+        return 'origin.city';
+      case 'destinationStr':
+        return 'destination.city';
       default:
         return field;
     }

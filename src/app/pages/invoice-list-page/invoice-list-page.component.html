@@ -8,8 +8,8 @@
 </div>
 <elm-card>
   <elm-section-header [sectionTitle]="this.invoiceCountLabel">
-    <div class='d-flex flex-end justify-content-between align-items-center col-12'>
-      <div class="col-6">
+    <div class='d-flex col-12'>
+      <div class="ml-col-3">
         <div *ngIf="hasInvoiceWrite">
           <elm-button id="extract-invoice-button"
                       buttonType="button"
@@ -20,7 +20,17 @@
           </elm-button>
         </div>
       </div>
-      <div class="ml-col-6">
+      <div class="ml-col-3">
+        <elm-button id="download-invoice-button"
+                    buttonType="button"
+                    buttonStyle="text"
+                    class="flex-shrink-1"
+                    (buttonClick)="downloadCsv()">
+          <span class="material-icons  me-2">download</span>
+          <u>Download List</u>
+        </elm-button>
+      </div>
+      <div class="ms-auto ml-col-6">
         <elm-button buttonStyle="primary"
                     (buttonClick)="openFilter()"
                     class="me-1">
