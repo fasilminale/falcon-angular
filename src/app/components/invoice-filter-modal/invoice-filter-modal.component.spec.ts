@@ -51,11 +51,16 @@ describe('LoadsFilterModalComponent', () => {
     it('should reset the form to the global', () => {
       const invoiceStatuses = component.filterService.invoiceFilterModel.form.get('invoiceStatuses') as FormArray;
       invoiceStatuses.push(new FormControl('CREATED'));
-      fixture.detectChanges();
+      component.filterService.invoiceFilterModel.form?.get('originCity')?.setValue('TestOriginCity');
+      component.filterService.invoiceFilterModel.form?.get('destinationCity')?.setValue('TestDestinationCity');
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual([]);
+      expect(component.localFilterModel.form.get('originCity')?.value).toBeNull();
+      expect(component.localFilterModel.form.get('destinationCity')?.value).toBeNull();
       component.resetForm();
-      fixture.detectChanges();
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
+      expect(component.localFilterModel.form.get('originCity')?.value).toEqual('TestOriginCity');
+      expect(component.localFilterModel.form.get('destinationCity')?.value).toEqual('TestDestinationCity');
+
     });
   });
 
@@ -63,10 +68,14 @@ describe('LoadsFilterModalComponent', () => {
     it('should clear all filters', fakeAsync(() => {
       const invoiceStatuses = component.localFilterModel.form.get('invoiceStatuses') as FormArray;
       invoiceStatuses.push(new FormControl('TEST'));
+      component.filterService.invoiceFilterModel.form?.get('originCity')?.setValue('TestOriginCity');
+      component.filterService.invoiceFilterModel.form?.get('destinationCity')?.setValue('TestDestinationCity');
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual(['TEST']);
       component.clearFilters();
-      fixture.detectChanges();
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual([]);
+      expect(component.localFilterModel.form.get('originCity')?.value).toBeNull();
+      expect(component.localFilterModel.form.get('destinationCity')?.value).toBeNull();
+
     }));
   });
 

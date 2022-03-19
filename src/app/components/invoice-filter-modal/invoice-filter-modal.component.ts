@@ -26,6 +26,7 @@ export class InvoiceFilterModalComponent implements OnInit {
 
   onSubmit(): void {
     if (this.localFilterModel.form.valid) {
+      console.log(this.localFilterModel);
       this.filterService.invoiceFilterModel = this.localFilterModel;
       this.dialogRef.close(true);
     }

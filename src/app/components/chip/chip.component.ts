@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
-import {FormArray} from '@angular/forms';
+import {FormArray, FormGroup} from '@angular/forms';
 import { StatusModel } from 'src/app/models/invoice/status-model';
 import {FilterService} from '../../services/filter-service';
 
@@ -34,12 +34,25 @@ export class ChipComponent implements OnChanges {
   updateChipFilters(): void {
     this.chips = [];
     const statusForm = this.filtersModel.form.get('invoiceStatuses');
+    const originCity = this.filtersModel.form.get('originCity');
+    const destinationCity = this.filtersModel.form.get('destinationCity');
 
     if (statusForm?.value.length > 0) {
       this.chips.push(
         this.formatArrayChip(
           'Status:&nbsp', statusForm as FormArray, this.filterService.invoiceStatuses, 'invoiceStatuses'
         ));
+    }
+    if(originCity?.value?.length > 0) {
+      this.chips.push(
+        this.formatChip('Origin:', originCity as FormGroup, 'originCity')
+      );
+    }
+
+    if(destinationCity?.value?.length > 0) {
+      this.chips.push(
+        this.formatChip('Dest:', destinationCity as FormGroup, 'destinationCity')
+      );
     }
   }
 
@@ -56,6 +69,14 @@ export class ChipComponent implements OnChanges {
       label: formArray?.value.length + ' Selected',
       group,
       tooltips: this.getTooltips(formArray, arrayOptions)
+    };
+  }
+
+  formatChip(type: string, formGroup: FormGroup, group:string) {
+    return {
+      type,
+      label: formGroup.value,
+      group
     };
   }
 
