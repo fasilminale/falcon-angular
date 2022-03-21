@@ -13,7 +13,7 @@ import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../
 import {SubjectValue} from '../../utils/subject-value';
 import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-import {BreadcrumbInterface, ToastService} from '@elm/elm-styleguide-ui';
+import {ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 
 
@@ -24,7 +24,7 @@ import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detai
 })
 export class InvoiceEditPageComponent implements OnInit {
 
-  breadcrumbs: Array<BreadcrumbInterface> = [{label: 'All Invoices', path: `/invoices`}];
+  breadcrumbs: Array<ElmLinkInterface> = [{label: 'All Invoices', path: `/invoices`}];
   public falconInvoiceNumber = '';
   public invoiceStatus = '';
   public milestones: Array<Milestone> = [];
@@ -128,7 +128,7 @@ export class InvoiceEditPageComponent implements OnInit {
       mileage: invoice.distance,
       currency: invoice.currency,
       standardPaymentTermsOverride: invoice.standardPaymentTermsOverride
-    })
+    });
 
     this.loadAllocationDetails$.next({
       totalGlAmount: invoice.totalGlAmount,
