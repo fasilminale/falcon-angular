@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BreadcrumbInterface, ConfirmationModalComponent} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, ElmLinkInterface} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
@@ -28,7 +28,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
   @ViewChild(InvoiceFormComponent) invoiceForm?: InvoiceFormComponent;
 
-  breadcrumbs: Array<BreadcrumbInterface> = [{label: 'All Invoices', path: `/invoices`}];
+  breadcrumbs: Array<ElmLinkInterface> = [{label: 'All Invoices', path: `/invoices`}];
   public userInfo: UserInfoModel | undefined;
   public readOnly = true;
   public milestonesTabOpen = false;

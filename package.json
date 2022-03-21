@@ -12,19 +12,19 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "11.0.x",
-    "@angular/common": "11.0.x",
-    "@angular/compiler": "11.0.x",
-    "@angular/cdk": "11.1.2",
-    "@angular/core": "11.0.x",
-    "@angular/forms": "11.0.x",
-    "@angular/material": "11.1.2",
-    "@angular/platform-browser": "11.0.x",
-    "@angular/platform-browser-dynamic": "11.0.x",
-    "@angular/router": "11.0.x",
+    "@angular/animations": "12.2.16",
+    "@angular/common": "13.3.0",
+    "@angular/compiler": "12.2.16",
+    "@angular/cdk": "12.2.13",
+    "@angular/core": "12.2.16",
+    "@angular/forms": "12.2.16",
+    "@angular/material": "12.2.13",
+    "@angular/platform-browser": "12.2.16",
+    "@angular/platform-browser-dynamic": "12.2.16",
+    "@angular/router": "12.2.16",
     "@types/file-saver": "^2.0.3",
     "file-saver": "^2.0.5",
-    "@elm/elm-styleguide-ui": "4.1.6",
+    "@elm/elm-styleguide-ui": "5.3.3",
     "jquery": "3.6.0",
     "karma-typescript": "5.x",
     "moment": "2.x",
@@ -34,13 +34,13 @@
     "racoon-mask-raw": "^1.1.5",
     "rxjs": "6.6.x",
     "tslib": "2.x",
-    "zone.js": "~0.11.3"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "0.1100.7",
-    "@angular/cli": "11.0.x",
-    "@angular/compiler-cli": "11.0.x",
-    "@angular/localize": "11.x",
+    "@angular-devkit/build-angular": "12.2.16",
+    "@angular/cli": "12.2.16",
+    "@angular/compiler-cli": "12.2.16",
+    "@angular/localize": "12.2.16",
     "@types/jasmine": "3.6.x",
     "@types/node": "12.x",
     "codelyzer": "6.x",
@@ -54,6 +54,6 @@
     "protractor": "7.0.x",
     "ts-node": "8.3.x",
     "tslint": "6.1.x",
-    "typescript": "4.0.x"
+    "typescript": "4.3.5"
   }
 }
