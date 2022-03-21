@@ -5,7 +5,7 @@ import {WebServices} from '../../services/web-services';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {DataTableComponent, ElmDataTableHeader, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, DataTableComponent, ElmDataTableHeader, ToastService} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
@@ -188,9 +188,35 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   }
 
   downloadCsv(): void {
+    const filters: any = this.filterService.invoiceFilterModel.formatForSearch();
+    if (filters.invoiceStatuses.length === 0) {
+      this.dialog.open(ConfirmationModalComponent,
+        {
+          autoFocus: false,
+          data: {
+            title: 'Download List',
+            innerHtmlMessage: `You are about to download a list of ${this.paginationModel.numberPerPage} invoices.
+                   <br/><br/><strong>Are you sure you want to download these invoices?</strong>`,
+            confirmButtonText: 'Download List',
+            confirmButtonStyle: 'primary',
+            cancelButtonText: 'Cancel'
+          }
+        })
+        .afterClosed()
+        .subscribe(result => {
+          if (result) {
+            this.callCSVApi({ page: this.paginationModel.pageIndex, numberPerPage: this.paginationModel.numberPerPage });
+          }
+        });
+    } else {
+      this.callCSVApi({ page: 1, numberPerPage: this.paginationModel.total });
+    }
+
+  }
+
+  callCSVApi(pageData: object): void {
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices/csvData`, {
-      page: this.paginationModel.pageIndex,
-      numberPerPage: this.paginationModel.numberPerPage,
+      ...pageData,
       sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
       searchValue: this.searchValue,

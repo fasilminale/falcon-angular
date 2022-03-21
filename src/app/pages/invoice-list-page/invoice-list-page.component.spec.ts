@@ -18,6 +18,7 @@ import {Sort} from '@angular/material/sort';
 import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
 import * as saveAsFunctions from 'file-saver';
+import {FormArray, FormControl} from '@angular/forms';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -353,13 +354,26 @@ describe('InvoiceListPageComponent', () => {
     expect(deleteBtn).toBeNull();
   });
 
-  it('should Download a list of invoices', fakeAsync(() => {
+  it('should prompt user before downloading a list of invoices', fakeAsync(() => {
     spyOn(webservice, 'httpPost').and.returnValue(of('csvData'));
     spyOn(component, 'saveCSVFile').and.stub();
+    spyOn(component, 'callCSVApi').and.callThrough();
     component.downloadCsv();
     fixture.whenStable().then(() => {
+      expect(component.callCSVApi).toHaveBeenCalled();
       expect(component.saveCSVFile).toHaveBeenCalled();
     });
+  }));
+
+  it('should download a list of invoices', fakeAsync(() => {
+    component.filterService.invoiceFilterModel.fb.group({ invoiceStatuses: new FormArray([]) });
+    const formArray: any = component.filterService.invoiceFilterModel.form.get('invoiceStatuses');
+    formArray.push(new FormControl('APPROVED'));
+    spyOn(webservice, 'httpPost').and.returnValue(of('csvData'));
+    spyOn(component, 'saveCSVFile').and.stub();
+    spyOn(component, 'callCSVApi').and.callThrough();
+    component.downloadCsv();
+    expect(component.saveCSVFile).toHaveBeenCalled();
   }));
 
   describe('saveCSVFile', () => {
