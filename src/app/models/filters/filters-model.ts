@@ -9,8 +9,11 @@ import {StatusModel} from '../invoice/status-model';
 
 export class FiltersModel {
   fb = new FormBuilder();
-  form: FormGroup = new FormGroup({
-    initial: new FormControl()
+  form: FormGroup = this.fb.group({
+    initial: new FormControl(),
+    originCity: new FormControl(),
+    destinationCity: new FormControl(),
+    invoiceStatuses: new FormArray([])
   });
 
   constructor() {
@@ -18,9 +21,12 @@ export class FiltersModel {
   }
 
   resetForm(): void {
-    this.form = this.fb.group({
-      invoiceStatuses: new FormArray([])
+
+    this.form.patchValue({
+      originCity: '',
+      destinationCity: ''
     });
+    (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }
 
   onCheckChange(arrayName: string, event: any): void {
@@ -87,13 +93,18 @@ export class FiltersModel {
 
   formatForSearch(): object {
     return {
-      invoiceStatuses: this.form.get('invoiceStatuses')?.value
+      invoiceStatuses: this.form.get('invoiceStatuses')?.value,
+      originCity: this.form.get('originCity')?.value,
+      destinationCity: this.form.get('destinationCity')?.value
     };
   }
 
   resetGroup<T extends AbstractControl>(control: AbstractControl | null): void {
     if (control instanceof FormArray) {
       control.clear();
+    }
+    if(control instanceof FormControl) {
+      control.reset();
     }
   }
 }
