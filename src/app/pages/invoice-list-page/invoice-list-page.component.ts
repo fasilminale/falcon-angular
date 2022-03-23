@@ -39,7 +39,6 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     {header: 'currency', label: 'Currency'},
   ];
   invoices: Array<InvoiceDataModel> = [];
-  sortField = '';
   searchValue = '';
   createdByUser = false;
   totalSearchResult = 0;
@@ -89,7 +88,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     const searchFilters = this.filterService.invoiceFilterModel.formatForSearch();
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
-      sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
+      sortField: this.paginationModel.sortField ? this.paginationModel.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
       searchValue: this.searchValue,
       createdByUser: this.createdByUser,
@@ -128,7 +127,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
 
   sortChanged(sort: Sort): void {
     this.paginationModel.sortOrder = sort.direction;
-    this.sortField = this.checkSortFields(sort.active);
+    this.paginationModel.sortField = this.checkSortFields(sort.active);
     this.resetTable();
   }
 
@@ -142,19 +141,19 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     // this.totalSearchResult = -1; // this is for test
     this.searchValue = searchValue;
     console.log(this.searchValue);
-    this.sortField = '';
+    this.paginationModel.sortField = '';
     this.resetTable(true);
   }
 
   changeCreatedByUser(): void {
     this.createdByUser = !this.createdByUser;
-    this.sortField = '';
+    this.paginationModel.sortField = '';
     this.resetTable();
   }
 
   changeInvoiceStatus(statuses: Array<StatusModel>): void {
     this.selectedInvoiceStatuses = statuses.map(status => status.key);
-    this.sortField = '';
+    this.paginationModel.sortField = '';
     this.resetTable();
   }
 
@@ -217,7 +216,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   callCSVApi(pageData: object): void {
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices/csvData`, {
       ...pageData,
-      sortField: this.sortField ? this.sortField : 'falconInvoiceNumber',
+      sortField: this.paginationModel.sortField ? this.paginationModel.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
       searchValue: this.searchValue,
       createdByUser: this.createdByUser,
