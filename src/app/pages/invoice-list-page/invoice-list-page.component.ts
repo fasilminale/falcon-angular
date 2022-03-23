@@ -195,7 +195,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
           autoFocus: false,
           data: {
             title: 'Download List',
-            innerHtmlMessage: `You are about to download a list of ${this.paginationModel.numberPerPage} invoices.
+            innerHtmlMessage: `You are about to download a list of ${this.paginationModel.total} invoices.
                    <br/><br/><strong>Are you sure you want to download these invoices?</strong>`,
             confirmButtonText: 'Download List',
             confirmButtonStyle: 'primary',
@@ -205,7 +205,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         .afterClosed()
         .subscribe(result => {
           if (result) {
-            this.callCSVApi({ page: this.paginationModel.pageIndex, numberPerPage: this.paginationModel.numberPerPage });
+            this.callCSVApi({ page: 1, numberPerPage: this.paginationModel.total });
           }
         });
     } else {
