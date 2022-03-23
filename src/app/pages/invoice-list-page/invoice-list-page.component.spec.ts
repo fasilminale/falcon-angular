@@ -153,7 +153,7 @@ describe('InvoiceListPageComponent', () => {
     fixture.detectChanges();
     expect(component.sortChanged).toHaveBeenCalled();
     expect(component.getTableData).toHaveBeenCalled();
-    expect(component.sortField).toEqual(sortEvent.active);
+    expect(component.paginationModel.sortField).toEqual(sortEvent.active);
     expect(component.paginationModel.sortOrder).toEqual(sortEvent.direction);
   }));
 
