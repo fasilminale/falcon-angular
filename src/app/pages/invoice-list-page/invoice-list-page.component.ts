@@ -205,7 +205,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         .afterClosed()
         .subscribe(result => {
           if (result) {
-            this.callCSVApi({ page: this.paginationModel.pageIndex, numberPerPage: this.paginationModel.numberPerPage });
+            this.callCSVApi({ page: 1, numberPerPage: this.paginationModel.total });
           }
         });
     } else {
