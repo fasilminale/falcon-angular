@@ -105,7 +105,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
     this.subscription = observable.subscribe(
       () => {
-        this.onCancel();
+        // this.onCancel();
+        this.gotoInvoiceList();
       }
     );
     this.subscriptionManager.manage(this.subscription);
@@ -342,14 +343,13 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-
-  public async onCancel(): Promise<void> {
+/*  public async onCancel(): Promise<void> {
     if (this.isFormPristine || await this.askForCancelConfirmation()) {
       await this.gotoInvoiceList();
     }
-  }
+  }*/
 
-  private askForCancelConfirmation(): Promise<boolean> {
+  public askForCancelConfirmation(): Observable<boolean> {
     let line1Message = 'You will lose all entered information if you cancel creation of this invoice now.';
     let line2Message = 'Are you sure you want to cancel creation of this invoice?';
     if (this.isOnEditPage) {
@@ -365,7 +365,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       confirmButtonText: 'Yes, cancel',
       confirmButtonStyle: 'destructive',
       cancelButtonText: 'No, go back'
-    }).toPromise();
+    });
   }
 
   public async gotoInvoiceList(): Promise<boolean> {
