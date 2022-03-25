@@ -105,7 +105,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     }
     this.subscription = observable.subscribe(
       () => {
-        // this.onCancel();
         this.gotoInvoiceList();
       }
     );
@@ -342,12 +341,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
       return false;
     }
   }
-
-/*  public async onCancel(): Promise<void> {
-    if (this.isFormPristine || await this.askForCancelConfirmation()) {
-      await this.gotoInvoiceList();
-    }
-  }*/
 
   public askForCancelConfirmation(): Observable<boolean> {
     let line1Message = 'You will lose all entered information if you cancel creation of this invoice now.';
