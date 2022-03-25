@@ -170,14 +170,6 @@ describe('InvoiceListPageComponent', () => {
       expect(result).toEqual('status');
     }));
 
-    it('invoiceReference should be tripId', fakeAsync(() => {
-      const result = component.checkSortFields('invoiceReference');
-      tick(150);
-      fixture.detectChanges();
-      expect(component.checkSortFields).toHaveBeenCalled();
-      expect(result).toEqual('tripId');
-    }));
-
     it('carrierDisplay should be carrier.scac', fakeAsync(() => {
       const result = component.checkSortFields('carrierDisplay');
       tick(150);
