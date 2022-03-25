@@ -292,9 +292,19 @@ describe('TripInformationComponent', () => {
 
   });
 
-  describe('should compare with carrier mode scac', () => {
+  fdescribe('should compare with carrier mode scac', () => {
     it('should return true', () => {
-      expect(component.compareCarrierModeWith({value: {reportKeyMode: 'TL'}}, {reportKeyMode: 'TL'})).toBeTrue();
+      expect(component.compareCarrierModeWith(
+        {value: {reportKeyMode: 'TL_IM', reportModeDescription: 'TRUCKLOAD'}},
+        {reportKeyMode: 'TL_IM', reportModeDescription: 'TRUCKLOAD'}
+      )).toBeTrue();
+    });
+
+    it('should return false', () => {
+      expect(component.compareCarrierModeWith(
+        {value: {reportKeyMode: 'TL_IM', reportModeDescription: 'TRUCKLOAD'}},
+        {reportKeyMode: 'TL_IM', reportModeDescription: 'BROKER'}
+      )).toBeFalse();
     });
 
     it('should return false', () => {
