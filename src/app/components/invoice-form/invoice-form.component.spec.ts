@@ -19,7 +19,7 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MasterDataService} from 'src/app/services/master-data-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ToastService} from '@elm/elm-styleguide-ui';
-import {Invoice, InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ManualLineItem} from '../../models/line-item/line-item-model';
 
 describe('InvoiceFormComponent', () => {
@@ -511,51 +511,6 @@ describe('InvoiceFormComponent', () => {
     await component.onSaveButtonClick();
     expect(component.resetForm).not.toHaveBeenCalled();
   });
-
-  describe('on create page', () => {
-    beforeEach(() => {
-      component.falconInvoiceNumber = '';
-    });
-
-    describe('and the form has been changed', () => {
-      beforeEach(() => {
-        component.form.invoiceFormGroup.markAsDirty();
-      });
-
-      describe('when the cancel button is pressed', () => {
-        it('should leave page when cancel dialog is CONFIRMED', async () => {
-          spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
-          await component.onCancel();
-          expect(router.navigate).toHaveBeenCalled();
-        });
-        it('should NOT leave page when cancel dialog is DENIED', async () => {
-          spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
-          await component.onCancel();
-          expect(router.navigate).not.toHaveBeenCalled();
-        });
-        it('should NOT leave page when cancel dialog is DENIED', async () => {
-          component.falconInvoiceNumber = 'TEST';
-          spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
-          await component.onCancel();
-          expect(router.navigate).not.toHaveBeenCalled();
-        });
-      });
-    });
-
-    describe('and the form has NOT been changed', () => {
-      beforeEach(() => {
-        component.form.invoiceFormGroup.markAsPristine();
-      });
-
-      describe('when the cancel button is pressed', () => {
-        it('should leave form', async () => {
-          await component.onCancel();
-          expect(router.navigate).toHaveBeenCalled();
-        });
-      });
-    });
-  });
-
 
   it('should reset form when invoice is successfully created', async () => {
     spyOn(component, 'resetForm').and.stub();
