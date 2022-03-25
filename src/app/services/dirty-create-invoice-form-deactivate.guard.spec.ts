@@ -6,6 +6,9 @@ describe('DirtyInvoiceCreateFormGuard', () => {
 
   let invoiceFormComponentSpy: any;
   let invoiceCreatePageComponentSpy: any;
+  const currentRouteSpy = createSpyObj('currentRouteSpy', ['']);
+  const currentStateSpy = createSpyObj('currentStateSpy', ['']);
+  const nextStateSpy = createSpyObj('nextStateSpy', [''], {url: 'qwerty'});
 
   let subscription: Subscription;
 
@@ -31,7 +34,7 @@ describe('DirtyInvoiceCreateFormGuard', () => {
     setUpSpies(true, false);
     const guard: DirtyInvoiceCreateFormGuard = new DirtyInvoiceCreateFormGuard();
 
-    const result: Observable<boolean> = guard.canDeactivate(invoiceCreatePageComponentSpy);
+    const result: Observable<boolean> = guard.canDeactivate(invoiceCreatePageComponentSpy, currentRouteSpy, currentStateSpy, nextStateSpy );
 
     subscription.add(result.subscribe(
       (transition) => {
@@ -46,7 +49,7 @@ describe('DirtyInvoiceCreateFormGuard', () => {
     setUpSpies(false, true);
     const guard: DirtyInvoiceCreateFormGuard = new DirtyInvoiceCreateFormGuard();
 
-    const result: Observable<boolean> = guard.canDeactivate(invoiceCreatePageComponentSpy);
+    const result: Observable<boolean> = guard.canDeactivate(invoiceCreatePageComponentSpy, currentRouteSpy, currentStateSpy, nextStateSpy );
 
     subscription.add(result.subscribe(
       (transition) => {
@@ -61,7 +64,7 @@ describe('DirtyInvoiceCreateFormGuard', () => {
     setUpSpies(false, false);
     const guard: DirtyInvoiceCreateFormGuard = new DirtyInvoiceCreateFormGuard();
 
-    const result: Observable<boolean> = guard.canDeactivate(invoiceCreatePageComponentSpy);
+    const result: Observable<boolean> = guard.canDeactivate(invoiceCreatePageComponentSpy, currentRouteSpy, currentStateSpy, nextStateSpy );
 
     subscription.add(result.subscribe(
       (transition) => {

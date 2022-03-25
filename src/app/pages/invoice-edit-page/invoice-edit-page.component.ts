@@ -15,7 +15,6 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
-import {InvoiceFormComponent} from "../../components/invoice-form/invoice-form.component";
 
 
 @Component({
@@ -47,8 +46,6 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
-
-  @ViewChild(InvoiceFormComponent) formComponent!: InvoiceFormComponent;
 
   constructor(private util: UtilService,
               private route: ActivatedRoute,

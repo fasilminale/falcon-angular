@@ -6,6 +6,9 @@ describe('DirtyInvoiceEditFormGuard', () => {
 
   let invoiceFormComponentSpy: any;
   let invoiceDetailPageComponentSpy: any;
+  const currentRouteSpy = createSpyObj('currentRouteSpy', ['']);
+  const currentStateSpy = createSpyObj('currentStateSpy', ['']);
+  const nextStateSpy = createSpyObj('nextStateSpy', [''], {url: 'qwerty'});
 
   let subscription: Subscription;
 
@@ -31,7 +34,7 @@ describe('DirtyInvoiceEditFormGuard', () => {
     setUpSpies(true, false, false);
     const guard: DirtyInvoiceEditFormGuard = new DirtyInvoiceEditFormGuard();
 
-    const result: Observable<boolean> = guard.canDeactivate(invoiceDetailPageComponentSpy);
+    const result: Observable<boolean> = guard.canDeactivate(invoiceDetailPageComponentSpy, currentRouteSpy, currentStateSpy, nextStateSpy);
 
     subscription.add(result.subscribe(
       (transition) => {
@@ -46,7 +49,7 @@ describe('DirtyInvoiceEditFormGuard', () => {
     setUpSpies(false, true, false);
     const guard: DirtyInvoiceEditFormGuard = new DirtyInvoiceEditFormGuard();
 
-    const result: Observable<boolean> = guard.canDeactivate(invoiceDetailPageComponentSpy);
+    const result: Observable<boolean> = guard.canDeactivate(invoiceDetailPageComponentSpy, currentRouteSpy, currentStateSpy, nextStateSpy);
 
     subscription.add(result.subscribe(
       (transition) => {
@@ -61,7 +64,7 @@ describe('DirtyInvoiceEditFormGuard', () => {
     setUpSpies(false, false, false);
     const guard: DirtyInvoiceEditFormGuard = new DirtyInvoiceEditFormGuard();
 
-    const result: Observable<boolean> = guard.canDeactivate(invoiceDetailPageComponentSpy);
+    const result: Observable<boolean> = guard.canDeactivate(invoiceDetailPageComponentSpy, currentRouteSpy, currentStateSpy, nextStateSpy);
 
     subscription.add(result.subscribe(
       (transition) => {
@@ -76,7 +79,7 @@ describe('DirtyInvoiceEditFormGuard', () => {
     setUpSpies(false, false, true);
     const guard: DirtyInvoiceEditFormGuard = new DirtyInvoiceEditFormGuard();
 
-    const result: Observable<boolean> = guard.canDeactivate(invoiceDetailPageComponentSpy);
+    const result: Observable<boolean> = guard.canDeactivate(invoiceDetailPageComponentSpy, currentRouteSpy, currentStateSpy, nextStateSpy);
 
     subscription.add(result.subscribe(
       (transition) => {

@@ -241,26 +241,24 @@ describe('InvoiceDetailPageComponent', () => {
     expect(component.formatTimestamp).toHaveBeenCalled();
   });
 
-  it('should click delete button', async () => {
+  it('should click delete button', async (done) => {
     component.isDeletedInvoice = false;
     component.hasInvoiceWrite = true;
-    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
-      .flush(invoiceResponse);
+
     spyOn(router, 'navigate').and.stub();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     const deleteInvoiceSpy = spyOn(component, 'deleteInvoice');
 
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
-      deleteBtn.buttonClick.emit();
-      fixture.detectChanges();
-      fixture.whenStable().then(() => {
-        expect(deleteInvoiceSpy).toHaveBeenCalled();
-        spyOn(router, 'navigate').and.stub();
-        spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
-      });
-    });
+    await fixture.whenStable();
+    const deleteBtn = fixture.debugElement.query(By.css('#delete-button')).context as ElmButtonComponent;
+    deleteBtn.buttonClick.emit();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(deleteInvoiceSpy).toHaveBeenCalled();
+    http.expectOne(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}`)
+      .flush(invoiceResponse);
+    done();
   });
 
   it('should delete invoice with reason', async (done) => {
