@@ -225,7 +225,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       (data: any) => {
         const filename = 'Falcon.Invoice.List.csv';
         this.saveCSVFile(data, filename);
-        this.toastService.openSuccessToast('File Generated: Invoice list has been successfully downloaded.', 5 * 1000);
+        this.toastService.openSuccessToast('<strong>File Generated:</strong> Invoice list has been successfully downloaded.', 5 * 1000);
       }
     );
   }
@@ -239,8 +239,6 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     switch (field) {
       case 'statusLabel':
         return 'status';
-      case 'invoiceReference':
-        return 'tripId';
       case 'carrierDisplay':
         return 'carrier.scac';
       case 'carrierModeDisplay':
