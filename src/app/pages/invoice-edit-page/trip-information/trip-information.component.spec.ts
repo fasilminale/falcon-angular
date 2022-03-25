@@ -292,7 +292,7 @@ describe('TripInformationComponent', () => {
 
   });
 
-  fdescribe('should compare with carrier mode scac', () => {
+  describe('should compare with carrier mode scac', () => {
     it('should return true', () => {
       expect(component.compareCarrierModeWith(
         {value: {reportKeyMode: 'TL_IM', reportModeDescription: 'TRUCKLOAD'}},
