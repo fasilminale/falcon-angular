@@ -13,8 +13,9 @@ export class InvoiceOverviewComponent implements OnInit {
   @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
     this.subscriptionManager.manage(observable.subscribe(
       invoiceOverviewDetail => this.invoiceOverviewDetail = invoiceOverviewDetail
+
     ));
-  }
+   }
   invoiceOverviewDetail: InvoiceOverviewDetail = {};
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { }

@@ -5,6 +5,7 @@ import { FalRadioOption } from 'src/app/components/fal-radio-input/fal-radio-inp
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 import { CostLineItem } from 'src/app/models/line-item/line-item-model';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
+import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
 
 @Component({
   selector: 'app-invoice-amount',
@@ -18,6 +19,8 @@ export class InvoiceAmountComponent implements OnInit {
   currencyControl = new FormControl();
   paymentTermsControl = new FormControl();
   isValidCostBreakdownAmount = true
+  freightPaymentTerm = ""
+  isPrepaid?: boolean;
 
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
@@ -48,6 +51,14 @@ export class InvoiceAmountComponent implements OnInit {
     ));
   }
 
+  @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
+    this.subscriptionManager.manage(observable.subscribe(
+      invoiceOverviewDetail => this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID'
+    ));
+  }
+
+
+
   @Input() set formGroup(givenFormGroup: FormGroup) {
     givenFormGroup.setControl('amountOfInvoice', new FormControl('', [Validators.required]));
     givenFormGroup.setControl('currency', new FormControl(''));
@@ -61,7 +72,9 @@ export class InvoiceAmountComponent implements OnInit {
 
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail) {
-    givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
+    var amountOfInvoice = this.isPrepaid ? (invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '') : 'N/A';
+
+    givenFormGroup.get('amountOfInvoice')?.setValue(amountOfInvoice);
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail.currency : '');
     givenFormGroup.get('overridePaymentTerms')?.patchValue({
       isPaymentOverrideSelected: invoiceAmountDetail?.standardPaymentTermsOverride ? true : false,
@@ -100,6 +113,10 @@ export class InvoiceAmountComponent implements OnInit {
     }));
     }
 
+  }
+
+  get hasCostBreakdownItems(){
+    return this.costBreakdownItems.length > 1
   }
 
   get costBreakdownItemsControls() {
