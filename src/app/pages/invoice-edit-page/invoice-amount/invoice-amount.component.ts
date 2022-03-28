@@ -57,8 +57,6 @@ export class InvoiceAmountComponent implements OnInit {
     ));
   }
 
-
-
   @Input() set formGroup(givenFormGroup: FormGroup) {
     givenFormGroup.setControl('amountOfInvoice', new FormControl('', [Validators.required]));
     givenFormGroup.setControl('currency', new FormControl(''));
@@ -69,7 +67,6 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems);
     this._formGroup = givenFormGroup;
   }
-
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail) {
     var amountOfInvoice = (invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
@@ -112,7 +109,6 @@ export class InvoiceAmountComponent implements OnInit {
         totalAmount: new FormControl('')
     }));
     }
-
   }
 
   get hasCostBreakdownItems(){

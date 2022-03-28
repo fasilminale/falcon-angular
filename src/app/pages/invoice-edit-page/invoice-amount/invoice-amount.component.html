@@ -12,7 +12,6 @@
                               [isDisabled]="readOnlyForm"
                               [isError]="!_formGroup.get('amountOfInvoice')?.value"
                               *ngIf="isPrepaid"
-
       >
       </app-fal-currency-input>
       <input  class="form-control input_na" disabled type="text" value="N/A" *ngIf="!isPrepaid">
@@ -107,7 +106,6 @@
           </small>
         </div>
 
-
         <!-- Cost breakdown item - Rate -->
         <div class="col-2">
           <input type="text"
@@ -167,6 +165,7 @@
     </div>
     <small class="error-text col-3 offset-md-9 mt-3" *ngIf="!isValidCostBreakdownAmount">
       Cost Breakdown Total must equal Invoice Net Amount
+      {{isPrepaid}}
     </small>
   </div>
 
