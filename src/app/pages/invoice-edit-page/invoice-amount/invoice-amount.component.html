@@ -77,9 +77,11 @@
   <div class="cost-breakdown-div my-3" formArrayName="costBreakdownItems">
     <div class="col-12">Cost breakdown</div>
     <div class="row my-3 mx-0 cost-breakdown-item-header">
-      <div class="col-3">Charge</div>
+      <div class="col-2">Charge</div>
+      <div class="col-1">Rate Source</div>
+      <div class="col-1">Entry Source</div>
       <div class="col-2">Rate</div>
-      <div class="col-3">Type</div>
+      <div class="col-2">Type</div>
       <div class="col-2">Quantity</div>
       <div class="col-2">Total</div>
     </div>
@@ -90,7 +92,7 @@
            [formGroupName]="i">
 
         <!-- Cost breakdown item- Charge -->
-        <div class="col-3">
+        <div class="col-2">
           <input type="text"
                  class="form-control"
                  formControlName="charge"
@@ -104,6 +106,21 @@
           </small>
         </div>
 
+        <div class="col-1">
+          <input type="text"
+                 class="form-control"
+                 formControlName="rateSource"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
+
+        <div class="col-1">
+          <input type="text"
+                 class="form-control"
+                 formControlName="entrySource"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
 
         <!-- Cost breakdown item - Rate -->
         <div class="col-2">
@@ -115,7 +132,7 @@
         </div>
 
         <!-- Cost breakdown item - Type -->
-        <div class="col-3">
+        <div class="col-2">
           <input type="text"
                  class="form-control"
                  formControlName="type"

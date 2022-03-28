@@ -1,10 +1,10 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { FalRadioOption } from 'src/app/components/fal-radio-input/fal-radio-input.component';
-import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
-import { CostLineItem } from 'src/app/models/line-item/line-item-model';
-import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
+import {Component, Inject, Input, OnInit} from '@angular/core';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
+import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
+import {CostLineItem} from 'src/app/models/line-item/line-item-model';
+import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
 
 @Component({
   selector: 'app-invoice-amount',
@@ -15,9 +15,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   _formGroup = new FormGroup({});
   amountOfInvoiceControl = new FormControl();
-  currencyControl = new FormControl();
-  paymentTermsControl = new FormControl();
-  isValidCostBreakdownAmount = true
+  isValidCostBreakdownAmount = true;
 
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
@@ -32,15 +30,19 @@ export class InvoiceAmountComponent implements OnInit {
     {display: 'Percent', value: 'Percentage'},
     {display: 'N/A', value: ''}];
 
-    totalInvoiceAmount = 0;
-
-  overridePaymentTermsFormGroup  = new FormGroup({
+  overridePaymentTermsFormGroup = new FormGroup({
     isPaymentOverrideSelected: new FormControl(false),
     paymentTerms: new FormControl('')
   });
 
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
+
+  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
+  }
+
+  ngOnInit(): void {
+  }
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
@@ -59,8 +61,7 @@ export class InvoiceAmountComponent implements OnInit {
     this._formGroup = givenFormGroup;
   }
 
-
-  loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail) {
+  loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail.currency : '');
     givenFormGroup.get('overridePaymentTerms')?.patchValue({
@@ -68,53 +69,54 @@ export class InvoiceAmountComponent implements OnInit {
       paymentTerms: invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : ''
     });
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ? invoiceAmountDetail.mileage : '');
-    (givenFormGroup.get('costBreakdownItems') as FormArray).clear()
+    (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
   }
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { }
-
-  ngOnInit(): void {
-  }
-
-  insertBreakDownItems(costBreakdownItems?: CostLineItem[]) {
-    if(costBreakdownItems && costBreakdownItems.length > 0) {
+  insertBreakDownItems(costBreakdownItems?: CostLineItem[]): void {
+    if (costBreakdownItems && costBreakdownItems.length > 0) {
       this.costBreakdownItems = new FormArray([]);
-      costBreakdownItems.forEach((costBreakdownItem)=> {
+      costBreakdownItems.forEach((costBreakdownItem) => {
         this.costBreakdownItemsControls.push(new FormGroup({
           charge: new FormControl(costBreakdownItem.chargeCode),
+          rateSource: new FormControl(costBreakdownItem.rateSource?.label ?? 'N/A'),
+          entrySource: new FormControl(costBreakdownItem.entrySource?.label ?? 'N/A'),
           rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
           type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
-          quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity  : 'N/A'),
+          quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity : 'N/A'),
           totalAmount: new FormControl(costBreakdownItem.chargeLineTotal || 0),
           message: new FormControl(costBreakdownItem.message ?? '')
-      }));
-      })
-    } else  {
+        }));
+      });
+    } else {
       this.costBreakdownItems.controls.push(new FormGroup({
         charge: new FormControl(''),
+        rateSource: new FormControl(''),
+        entrySource: new FormControl(''),
         rate: new FormControl(''),
         type: new FormControl(''),
         quantity: new FormControl(''),
         totalAmount: new FormControl('')
-    }));
+      }));
     }
-
   }
 
-  get costBreakdownItemsControls() {
-    return this._formGroup.get('costBreakdownItems') ? (this._formGroup.get('costBreakdownItems') as FormArray).controls: new FormArray([]).controls;
+  get costBreakdownItemsControls(): AbstractControl[] {
+    return this._formGroup.get('costBreakdownItems')
+      ? (this._formGroup.get('costBreakdownItems') as FormArray).controls
+      : new FormArray([]).controls;
   }
 
-  get costBreakdownTotal() {
+  get costBreakdownTotal(): number {
     let totalAmount = 0;
     this.costBreakdownItemsControls.forEach(c => {
-      if(c?.get('totalAmount')?.value) {
+      if (c?.get('totalAmount')?.value) {
         totalAmount += parseFloat(c?.get('totalAmount')?.value);
       }
     });
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
-    this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0 && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
+    this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
+      && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
     return totalAmount;
   }
 
