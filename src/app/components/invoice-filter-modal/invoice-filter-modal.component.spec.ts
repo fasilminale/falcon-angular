@@ -87,4 +87,15 @@ describe('LoadsFilterModalComponent', () => {
       expect(injectedMatDialogRef.close).toHaveBeenCalled();
     });
   });
+
+  describe('should compare with city', () => {
+    it('should return true', () => {
+      expect(component.compareCitiesWith({value: 'New York'}, 'New York')).toBeTrue();
+    });
+
+    it('should return false', () => {
+      expect(component.compareCitiesWith({value: 'New York'}, 'Chicago')).toBeFalse();
+    });
+
+  });
 });

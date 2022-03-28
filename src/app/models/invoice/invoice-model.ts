@@ -15,6 +15,7 @@ import {FreightOrder} from '../freight-order/freight-order-model';
 import {CarrierReference, CarrierUtils, EMPTY_CARRIER_REFERENCE} from '../master-data-models/carrier-model';
 import {Location, EMPTY_LOCATION} from '../location/location-model';
 import { ServiceLevel } from '../master-data-models/service-level-model';
+import { SelectOption } from '../select-option-model/select-option-model';
 
 export class InvoiceDataModel {
 
@@ -170,7 +171,7 @@ export class InvoiceDataModel {
     this.originStr = json?.origin ? getCityStateStr(json.origin): '';
     this.destinationType = json?.destinationType ?? '';
     this.destination = json?.destination ?? EMPTY_LOCATION;
-    this.destinationStr = json?.destination ? getCityStateStr(json.origin): '';
+    this.destinationStr = json?.destination ? getCityStateStr(json.destination): '';
     this.billTo = json?.billTo ?? EMPTY_LOCATION;
     this.shippedDateTime = date(json?.shippedDateTime);
     this.estimatedPickupDateTime = date(json?.estimatedPickupDateTime);
@@ -246,5 +247,15 @@ export interface Invoice {
   milestones: Array<Milestone>;
   attachments: Array<Attachment>;
   comments: string;
+}
+
+export class InvoiceUtils {
+
+  static toOption(city: string): SelectOption<string> {
+    return {
+      label: city,
+      value: city
+    };
+  }
 }
 

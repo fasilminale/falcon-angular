@@ -1,7 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {Component, Inject, Input, OnInit} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {FiltersModel} from '../../models/filters/filters-model';
+import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
+import { CarrierReference } from 'src/app/models/master-data-models/carrier-model';
+import { InvoiceUtils } from 'src/app/models/invoice/invoice-model';
 
 @Component({
   selector: 'app-loads-filter-modal',
@@ -10,9 +13,15 @@ import {FiltersModel} from '../../models/filters/filters-model';
 })
 export class InvoiceFilterModalComponent implements OnInit {
   localFilterModel: FiltersModel = new FiltersModel();
+
+  originCities: Array<SelectOption<string>> = [];
+  destinationCities: Array<SelectOption<string>> = [];
+
   constructor(private dialogRef: MatDialogRef<InvoiceFilterModalComponent>,
-              public filterService: FilterService) {
+              public filterService: FilterService, @Inject(MAT_DIALOG_DATA) data: any) {
     this.resetForm();
+    this.originCities = data.originCities;
+    this.destinationCities = data.destinationCities;
   }
 
   ngOnInit(): void {
@@ -26,7 +35,6 @@ export class InvoiceFilterModalComponent implements OnInit {
 
   onSubmit(): void {
     if (this.localFilterModel.form.valid) {
-      console.log(this.localFilterModel);
       this.filterService.invoiceFilterModel = this.localFilterModel;
       this.dialogRef.close(true);
     }
@@ -35,4 +43,9 @@ export class InvoiceFilterModalComponent implements OnInit {
   clearFilters(): void {
     this.localFilterModel.resetForm();
   }
+
+  compareCitiesWith(item: any, value: any) {
+    return item.value === value;
+  }
+
 }
