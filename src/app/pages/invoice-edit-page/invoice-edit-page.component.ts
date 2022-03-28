@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
