@@ -3,8 +3,6 @@ import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {FiltersModel} from '../../models/filters/filters-model';
 import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
-import { CarrierReference } from 'src/app/models/master-data-models/carrier-model';
-import { InvoiceUtils } from 'src/app/models/invoice/invoice-model';
 
 @Component({
   selector: 'app-loads-filter-modal',

@@ -84,7 +84,6 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     });
     this.invoiceService.getOriginDestinationCities()
     .subscribe(opts => {
-      console.log(opts);
        if(opts && opts.length > 0) {
          this.originCities = opts[0].originCities.map(InvoiceUtils.toOption);
          this.destinationCities = opts[0].destinationCities.map(InvoiceUtils.toOption);

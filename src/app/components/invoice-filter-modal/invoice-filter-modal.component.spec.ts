@@ -2,7 +2,7 @@ import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 import {InvoiceFilterModalComponent} from './invoice-filter-modal.component';
 import {AppModule} from '../../app.module';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FormArray, FormControl} from '@angular/forms';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {FilterService} from '../../services/filter-service';
@@ -19,12 +19,18 @@ describe('LoadsFilterModalComponent', () => {
     }
   };
 
+  const dialogDataMock = {
+    originCities: ['New York'],
+    destinationCities: ['Chicago']
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppModule, HttpClientTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [FilterService,
-        {provide: MatDialogRef, useValue: dialogMock}
+        {provide: MatDialogRef, useValue: dialogMock}, 
+        { provide: MAT_DIALOG_DATA, useValue: dialogDataMock}
       ]
     })
       .compileComponents();
@@ -54,8 +60,8 @@ describe('LoadsFilterModalComponent', () => {
       component.filterService.invoiceFilterModel.form?.get('originCity')?.setValue('TestOriginCity');
       component.filterService.invoiceFilterModel.form?.get('destinationCity')?.setValue('TestDestinationCity');
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual([]);
-      expect(component.localFilterModel.form.get('originCity')?.value).toEqual('');
-      expect(component.localFilterModel.form.get('destinationCity')?.value).toEqual('');
+      expect(component.localFilterModel.form.get('originCity')?.value).toBeNull();
+      expect(component.localFilterModel.form.get('destinationCity')?.value).toBeNull();
       component.resetForm();
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
       expect(component.localFilterModel.form.get('originCity')?.value).toEqual('TestOriginCity');
@@ -73,8 +79,8 @@ describe('LoadsFilterModalComponent', () => {
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual(['TEST']);
       component.clearFilters();
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual([]);
-      expect(component.localFilterModel.form.get('originCity')?.value).toEqual('');
-      expect(component.localFilterModel.form.get('destinationCity')?.value).toEqual('');
+      expect(component.localFilterModel.form.get('originCity')?.value).toBeNull();
+      expect(component.localFilterModel.form.get('destinationCity')?.value).toBeNull();
 
     }));
   });
