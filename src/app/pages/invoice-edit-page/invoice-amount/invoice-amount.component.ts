@@ -72,7 +72,7 @@ export class InvoiceAmountComponent implements OnInit {
 
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail) {
-    var amountOfInvoice = this.isPrepaid ? (invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '') : 'N/A';
+    var amountOfInvoice = (invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
 
     givenFormGroup.get('amountOfInvoice')?.setValue(amountOfInvoice);
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail.currency : '');

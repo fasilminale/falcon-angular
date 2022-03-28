@@ -10,10 +10,12 @@
       <app-fal-currency-input id="invoice-amount-input"
                               formControlName="amountOfInvoice"
                               [isDisabled]="readOnlyForm"
-                              [isError]="!_formGroup.get('amountOfInvoice')?.value && isPrepaid!"
-      >
+                              [isError]="!_formGroup.get('amountOfInvoice')?.value"
+                              *ngIf="isPrepaid"
 
+      >
       </app-fal-currency-input>
+      <input  class="form-control input_na" disabled type="text" value="N/A" *ngIf="!isPrepaid">
 
       <small class="error-text col-2" *ngIf="!_formGroup.get('amountOfInvoice')?.value && isPrepaid" [ngClass]="{ 'mt-3' : true }">
         Invoice Net Amount is missing

@@ -1,7 +1,7 @@
 .invoice-info {
     display:flex;
     flex-direction: column;
-    
+
 }
 
 .remittance-info-div > div{
@@ -22,14 +22,14 @@
     font-size: 20px;
 }
 
-.remittance-header{ 
+.remittance-header{
    font-weight: 700;
    margin-right: 5px
 }
 
 :host ::ng-deep #backrgound-grey .elm-card {
     background-color: #f6f6f6;
-    
+
 }
 
 .invoice-info-first-row{
