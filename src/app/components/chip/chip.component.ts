@@ -45,13 +45,13 @@ export class ChipComponent implements OnChanges {
     }
     if(originCity?.value?.length > 0) {
       this.chips.push(
-        this.formatChip('Origin:', originCity as FormGroup, 'originCity')
+        this.formatChip('Origin:&nbsp', originCity as FormGroup, 'originCity')
       );
     }
 
     if(destinationCity?.value?.length > 0) {
       this.chips.push(
-        this.formatChip('Dest:', destinationCity as FormGroup, 'destinationCity')
+        this.formatChip('Dest:&nbsp', destinationCity as FormGroup, 'destinationCity')
       );
     }
   }
