@@ -75,6 +75,7 @@
          [formGroup]="invoiceAmountFormGroup"
          [updateIsEditMode$]="isEditMode$.asObservable()"
          [loadInvoiceAmountDetail$]="loadInvoiceAmountDetail$.asObservable()"
+         [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
          >
         </app-invoice-amount>
         <hr>
@@ -84,6 +85,7 @@
         [formGroup]="invoiceAllocationFormGroup"
         [updateIsEditMode$]="isEditMode$.asObservable()"
         [loadAllocationDetails]="loadAllocationDetails$.asObservable()"
+        [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
         >
         </app-invoice-allocation>
         <hr/>

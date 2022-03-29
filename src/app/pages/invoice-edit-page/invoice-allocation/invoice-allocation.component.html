@@ -11,7 +11,7 @@
       <div class="col">GL Company Code</div>
       <div class="col">Total</div>
     </div>
-    <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0">
+    <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0 && isPrepaid">
       <div *ngFor="let invoiceAllocation of invoiceAllocationsControls; index as i" class="invoice-allocation-row row"
            [formGroupName]="i">
         <!-- Invoice allocation- allocationPercentage -->
@@ -95,6 +95,7 @@
       </div>
     </ng-container>
 
+    <div *ngIf="isPrepaid">
     <div class="invoice-allocation-total-div mt-5 p-3 offset-md-9 border-radius-5"
       [ngClass]="{ 'error-div' : !isAllocationAmountValid, 'mb-5' : isAllocationAmountValid, 'mb-2' : !isAllocationAmountValid }">
       <div class="row">
@@ -109,4 +110,9 @@
       Allocation Amount Totals must equal Invoice Net Amount
     </small>
     </div>
+  </div>
+
+  <div class="no-results" *ngIf="!isPrepaid">
+    No allocations available
+  </div>
 </div>

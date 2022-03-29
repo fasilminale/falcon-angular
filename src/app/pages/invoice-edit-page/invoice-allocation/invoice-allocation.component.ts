@@ -3,6 +3,7 @@ import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms
 import { Observable } from 'rxjs';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
+import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
 
 @Component({
   selector: 'app-invoice-allocation',
@@ -15,6 +16,7 @@ export class InvoiceAllocationComponent implements OnInit {
   isEditMode = true;
   totalAllocationAmount = 0;
   isAllocationAmountValid = true;
+  isPrepaid?: boolean;
 
   public totalGlAmount = new FormControl({});
   public invoiceNetAmount = new FormControl({});
@@ -26,6 +28,12 @@ export class InvoiceAllocationComponent implements OnInit {
   ngOnInit(): void {
     this.formGroup = this._formGroup;
     this.formGroup.disable();
+  }
+
+  @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
+    this.subscriptionManager.manage(observable.subscribe(
+      invoiceOverviewDetail => this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID'
+    ));
   }
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
