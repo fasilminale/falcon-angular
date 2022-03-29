@@ -9,7 +9,6 @@ import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-de
 import {InvoiceAmountDetail} from "../../../models/invoice/invoice-amount-detail-model";
 
 describe('InvoiceAllocationComponent', () => {
-
   let component: InvoiceAllocationComponent;
   let fixture: ComponentFixture<InvoiceAllocationComponent>;
 
@@ -71,6 +70,7 @@ describe('InvoiceAllocationComponent', () => {
       loadInvoiceOverviewDetail$ = new Subject();
       component.loadInvoiceOverviewDetail$ = loadInvoiceOverviewDetail$.asObservable();
     });
+
     it('should set isPrepaid to True', done => {
       loadInvoiceOverviewDetail$.subscribe(() => {
         expect(component.isPrepaid).toBeTrue();
