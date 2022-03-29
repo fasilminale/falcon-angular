@@ -80,8 +80,9 @@
     <div class="col-12">Cost breakdown</div>
     <div class="row my-3 mx-0 cost-breakdown-item-header">
       <div class="col-3">Charge</div>
+      <div class="col-1">Rate Source</div>
       <div class="col-2">Rate</div>
-      <div class="col-3">Type</div>
+      <div class="col-2">Type</div>
       <div class="col-2">Quantity</div>
       <div class="col-2">Total</div>
     </div>
@@ -106,6 +107,14 @@
           </small>
         </div>
 
+        <div class="col-1">
+          <input type="text"
+                 class="form-control"
+                 formControlName="rateSource"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
+
         <!-- Cost breakdown item - Rate -->
         <div class="col-2">
           <input type="text"
@@ -116,7 +125,7 @@
         </div>
 
         <!-- Cost breakdown item - Type -->
-        <div class="col-3">
+        <div class="col-2">
           <input type="text"
                  class="form-control"
                  formControlName="type"
@@ -165,7 +174,6 @@
     </div>
     <small class="error-text col-3 offset-md-9 mt-3" *ngIf="!isValidCostBreakdownAmount">
       Cost Breakdown Total must equal Invoice Net Amount
-      {{isPrepaid}}
     </small>
   </div>
 

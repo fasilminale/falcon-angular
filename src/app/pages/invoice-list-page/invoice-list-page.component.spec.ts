@@ -117,6 +117,10 @@ describe('InvoiceListPageComponent', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(userInfo);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush([]);
+    http.expectOne(`${environment.baseServiceUrl}/v1/originDestinationCities`).flush([{
+      originCities: ['New York'],
+      destinationCities: ['Chicago']
+    }]);
   });
 
   afterEach(() => {
@@ -168,14 +172,6 @@ describe('InvoiceListPageComponent', () => {
       fixture.detectChanges();
       expect(component.checkSortFields).toHaveBeenCalled();
       expect(result).toEqual('status');
-    }));
-
-    it('invoiceReference should be tripId', fakeAsync(() => {
-      const result = component.checkSortFields('invoiceReference');
-      tick(150);
-      fixture.detectChanges();
-      expect(component.checkSortFields).toHaveBeenCalled();
-      expect(result).toEqual('tripId');
     }));
 
     it('carrierDisplay should be carrier.scac', fakeAsync(() => {

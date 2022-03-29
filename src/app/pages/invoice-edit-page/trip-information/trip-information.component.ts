@@ -81,17 +81,18 @@ export class TripInformationComponent implements OnInit {
               this.carrierControl.setValue(this.tripInformation.carrier);
               this.carrierControl.updateValueAndValidity();
             }, 2000);
-           
+
           }
         }),
 
       // Carrier Mode Code Options
       this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions))
         .subscribe(opts =>  {
-          this.carrierModeOptions = opts
+          this.carrierModeOptions = opts;
           setTimeout(() => {
             this.carrierModeControl.setValue(this.tripInformation.carrierMode);
             this.carrierModeControl.updateValueAndValidity();
+            console.log(this.carrierModeOptions);
           }, 2000);
         }),
 
@@ -166,7 +167,8 @@ export class TripInformationComponent implements OnInit {
   }
 
   compareCarrierModeWith(item: any, value: any) {
-    return item.value.reportKeyMode === value.reportKeyMode;
+    return item.value.reportKeyMode === value.reportKeyMode ?
+      item.value.reportModeDescription === value.reportModeDescription : false;
   }
 }
 

@@ -4,7 +4,7 @@ import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {InvoiceDataModel, InvoiceUtils} from '../../models/invoice/invoice-model';
 import {ConfirmationModalComponent, DataTableComponent, ElmDataTableHeader, ToastService} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
@@ -15,6 +15,8 @@ import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {saveAs} from 'file-saver';
+import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
+import { InvoiceService } from 'src/app/services/invoice-service';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -48,6 +50,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
 
   invoiceFilter!: MatDialogRef<any>;
   invoiceStatuses: Array<StatusModel> = [];
+  public originCities: Array<SelectOption<string>> = [];
+  public destinationCities: Array<SelectOption<string>> = [];
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
@@ -60,7 +64,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public filterService: FilterService,
     public userService: UserService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private invoiceService: InvoiceService
   ) {
   }
 
@@ -77,6 +82,13 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       this.userInfo = new UserInfoModel(userInfo);
       this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
     });
+    this.invoiceService.getOriginDestinationCities()
+    .subscribe(opts => {
+       if(opts && opts.length > 0) {
+         this.originCities = opts[0].originCities.map(InvoiceUtils.toOption);
+         this.destinationCities = opts[0].destinationCities.map(InvoiceUtils.toOption);
+       }
+    })
   }
 
   ngOnDestroy(): void {
@@ -159,6 +171,10 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
 
   openFilter(): void {
     this.invoiceFilter = this.dialog.open(InvoiceFilterModalComponent, {
+      data: {
+        originCities: this.originCities,
+        destinationCities: this.destinationCities
+      },
       minWidth: '525px',
       width: '33vw',
       autoFocus: false,
@@ -225,7 +241,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       (data: any) => {
         const filename = 'Falcon.Invoice.List.csv';
         this.saveCSVFile(data, filename);
-        this.toastService.openSuccessToast('File Generated: Invoice list has been successfully downloaded.', 5 * 1000);
+        this.toastService.openSuccessToast('<strong>File Generated:</strong> Invoice list has been successfully downloaded.', 5 * 1000);
       }
     );
   }
@@ -239,8 +255,6 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     switch (field) {
       case 'statusLabel':
         return 'status';
-      case 'invoiceReference':
-        return 'tripId';
       case 'carrierDisplay':
         return 'carrier.scac';
       case 'carrierModeDisplay':
