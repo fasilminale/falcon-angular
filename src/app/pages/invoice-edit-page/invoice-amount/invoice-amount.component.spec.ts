@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
 import { CostLineItem } from 'src/app/models/line-item/line-item-model';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
@@ -86,10 +87,15 @@ describe('InvoiceAmountComponent', () => {
 
   describe('when invoice amount detail is loaded', () => {
     let loadInvoiceAmountDetail$: Subject<InvoiceAmountDetail>;
+    let loadInvoiceOverviewDetail$: Subject<InvoiceOverviewDetail>;
     beforeEach(() => {
       loadInvoiceAmountDetail$ = new Subject();
       component.formGroup = new FormGroup({});
       component.loadInvoiceAmountDetail$ = loadInvoiceAmountDetail$.asObservable();
+    });
+    beforeEach(() => {
+      loadInvoiceOverviewDetail$ = new Subject();
+      component.loadInvoiceOverviewDetail$ = loadInvoiceOverviewDetail$.asObservable();
     });
 
     it('should populate form with invoice amount details', done => {
@@ -134,6 +140,22 @@ describe('InvoiceAmountComponent', () => {
         done();
       });
       loadInvoiceAmountDetail$.next({costLineItems: [{} as CostLineItem]} as InvoiceAmountDetail);
+    });
+
+    it('should set isPrepaid to True', done => {
+      loadInvoiceOverviewDetail$.subscribe(() => {
+        expect(component.isPrepaid).toBeTrue();
+        done();
+      });
+     loadInvoiceOverviewDetail$.next({freightPaymentTerms: 'PREPAID'} as InvoiceOverviewDetail);
+    });
+
+    it('should set isPrepaid to False', done => {
+      loadInvoiceOverviewDetail$.subscribe(() => {
+        expect(component.isPrepaid).toBeFalse();
+        done();
+      });
+      loadInvoiceOverviewDetail$.next({freightPaymentTerms: 'COLLECT'} as InvoiceOverviewDetail);
     });
 
     it('should not populate form when no invoice amount details when form group has no fields set', done => {
