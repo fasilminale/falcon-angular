@@ -1,10 +1,13 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { FalRadioOption } from 'src/app/components/fal-radio-input/fal-radio-input.component';
-import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
-import { CostLineItem } from 'src/app/models/line-item/line-item-model';
-import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
+import {Component,  Inject, Input, OnInit} from '@angular/core';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
+import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
+import {CostLineItem} from 'src/app/models/line-item/line-item-model';
+import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
+import {CalcDetail, CostBreakDownUtils, RateEngineResponse} from '../../../models/rate-engine/rate-engine-request';
+import {map} from 'rxjs/operators';
+import {SelectOption} from '../../../models/select-option-model/select-option-model';
 
 @Component({
   selector: 'app-invoice-amount',
@@ -32,7 +35,9 @@ export class InvoiceAmountComponent implements OnInit {
     {display: 'Percent', value: 'Percentage'},
     {display: 'N/A', value: ''}];
 
-    totalInvoiceAmount = 0;
+  public costBreakdownOptions: Array<SelectOption<CalcDetail>> = [];
+
+  totalInvoiceAmount = 0;
 
   overridePaymentTermsFormGroup  = new FormGroup({
     isPaymentOverrideSelected: new FormControl(false),
@@ -41,6 +46,20 @@ export class InvoiceAmountComponent implements OnInit {
 
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
+
+  @Input() set chargeLineItemOptions$(observable: Observable<RateEngineResponse>) {
+    this.subscriptionManager.manage(observable.pipe(
+      map(response => {
+        console.log(response);
+        return CostBreakDownUtils.toOptions(response.calcDetails);
+      })
+    ).subscribe(
+      opts => {
+        this.costBreakdownOptions = opts;
+        this.costBreakdownOptions.push(CostBreakDownUtils.toOption({name: 'OTHER', accessorialCode: 'OTHER'}));
+      }
+    ));
+  }
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
@@ -78,38 +97,40 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   insertBreakDownItems(costBreakdownItems?: CostLineItem[]) {
-    if(costBreakdownItems && costBreakdownItems.length > 0) {
+    if (costBreakdownItems && costBreakdownItems.length > 0) {
       this.costBreakdownItems = new FormArray([]);
-      costBreakdownItems.forEach((costBreakdownItem)=> {
+      costBreakdownItems.forEach((costBreakdownItem) => {
         this.costBreakdownItemsControls.push(new FormGroup({
           charge: new FormControl(costBreakdownItem.chargeCode),
           rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
           type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
-          quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity  : 'N/A'),
+          quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity : 'N/A'),
           totalAmount: new FormControl(costBreakdownItem.chargeLineTotal || 0),
-          message: new FormControl(costBreakdownItem.message ?? '')
-      }));
-      })
-    } else  {
-      this.costBreakdownItems.controls.push(new FormGroup({
+          message: new FormControl(costBreakdownItem.message ?? ''),
+          contracted: new FormControl(true)
+        }));
+      });
+    } else {
+      this.costBreakdownItemsControls.push(new FormGroup({
         charge: new FormControl(''),
         rate: new FormControl(''),
         type: new FormControl(''),
         quantity: new FormControl(''),
-        totalAmount: new FormControl('')
-    }));
+        totalAmount: new FormControl(''),
+        contracted: new FormControl(true)
+      }));
     }
 
   }
 
   get costBreakdownItemsControls() {
-    return this._formGroup.get('costBreakdownItems') ? (this._formGroup.get('costBreakdownItems') as FormArray).controls: new FormArray([]).controls;
+    return this._formGroup.get('costBreakdownItems') ? (this._formGroup.get('costBreakdownItems') as FormArray).controls : new FormArray([]).controls;
   }
 
   get costBreakdownTotal() {
     let totalAmount = 0;
     this.costBreakdownItemsControls.forEach(c => {
-      if(c?.get('totalAmount')?.value) {
+      if (c?.get('totalAmount')?.value) {
         totalAmount += parseFloat(c?.get('totalAmount')?.value);
       }
     });
@@ -126,5 +147,21 @@ export class InvoiceAmountComponent implements OnInit {
 
   get hasMileage(): boolean {
     return !!this._formGroup?.get('mileage')?.value;
+  }
+
+  addNewEmptyLineItem(): void {
+    this.costBreakdownItemsControls.push(this.createEmptyLineItemGroup());
+  }
+
+  createEmptyLineItemGroup(): FormGroup {
+    const charge = new FormControl(null);
+    const rate = new FormControl('N/A');
+    const type = new FormControl('');
+    const quantity = new FormControl('N/A');
+    const totalAmount = new FormControl(0);
+    const message = new FormControl('');
+    const contracted = new FormControl(false);
+
+    return new FormGroup({charge, rate, type, quantity, totalAmount, message, contracted});
   }
 }

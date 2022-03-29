@@ -6,7 +6,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
-import {Observable, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
@@ -15,6 +15,9 @@ import {FalUserInfo} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+import {WebServices} from '../../services/web-services';
+import {RateEngineRequest, RateEngineResponse} from '../../models/rate-engine/rate-engine-request';
+import {environment} from '../../../environments/environment';
 
 
 @Component({
@@ -46,12 +49,14 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
+  public chargeLineItemOptions$ = new Subject<RateEngineResponse>();
 
   constructor(private util: UtilService,
               private route: ActivatedRoute,
               private userService: UserService,
               private invoiceService: InvoiceService,
               private toastService: ToastService,
+              private webService: WebServices,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
               public router: Router) {
     this.tripInformationFormGroup = new FormGroup({});
@@ -88,6 +93,9 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isApprovedInvoice = StatusUtil.isApproved(invoice.status);
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
+    this.subscriptions.manage(
+      this.getAccessorialList(invoice).subscribe(result => this.chargeLineItemOptions$.next(result))
+    );
     this.loadTripInformation$.next({
       tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),
@@ -193,6 +201,44 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickSubmitForApprovalButton(): void {
     this.showNotYetImplementedModal('Submit For Approval');
+  }
+
+  getAccessorialList(invoice: InvoiceDataModel): Observable<RateEngineResponse> {
+    if (this.checkAccessorialData(invoice)) {
+      const request: RateEngineRequest = {
+        mode: invoice.mode.mode,
+        scac: invoice.carrier.scac,
+        shipDate: invoice.pickupDateTime,
+        origin: {
+          streetAddress: invoice.origin.address,
+          locCode: '',
+          city: invoice.origin.city,
+          state: invoice.origin.state,
+          zip: invoice.origin.zipCode,
+          country: invoice.origin.country
+        },
+        destination: {
+          streetAddress: invoice.destination.address,
+          locCode: '',
+          city: invoice.destination.city,
+          state: invoice.destination.state,
+          zip: invoice.destination.zipCode,
+          country: invoice.destination.country
+        },
+        accessorialCodes: []
+      };
+      return this.webService.httpPost(`${environment.baseServiceUrl}/v1/rates/getAccessorialDetails`, request);
+    }
+    return of();
+  }
+
+  private checkAccessorialData(invoice: InvoiceDataModel): boolean {
+    const modeExists: boolean = invoice.mode != null && invoice.mode.mode != null;
+    const carrierExists: boolean = invoice.carrier != null && invoice.carrier.scac != null;
+    const shipDateExists: boolean = invoice.pickupDateTime != null;
+    const originExists: boolean = invoice.origin != null;
+    const destinationExists: boolean = invoice.destination != null;
+    return modeExists && carrierExists && shipDateExists && originExists && destinationExists;
   }
 
   private showNotYetImplementedModal(title: string): void {

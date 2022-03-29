@@ -6,6 +6,7 @@ import { CostLineItem } from 'src/app/models/line-item/line-item-model';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
 import { InvoiceAmountComponent } from './invoice-amount.component';
+import {RateEngineResponse} from '../../../models/rate-engine/rate-engine-request';
 
 describe('InvoiceAmountComponent', () => {
   let component: InvoiceAmountComponent;
@@ -83,6 +84,49 @@ describe('InvoiceAmountComponent', () => {
     });
   });
 
+  describe('when edit mode is updated', () => {
+    let chargeLineItemOptions$: Subject<RateEngineResponse>;
+    beforeEach(() => {
+      chargeLineItemOptions$ = new Subject();
+      component.chargeLineItemOptions$ = chargeLineItemOptions$.asObservable();
+    });
+
+    it('should populate cost breakdown charge options', done => {
+
+      chargeLineItemOptions$.subscribe(() => {
+        expect(component.costBreakdownOptions.length).toBeGreaterThan(0);
+        done();
+      });
+      chargeLineItemOptions$.next({
+        mode: 'TL',
+        scac: 'OWEL',
+        shipDate: '2022-04-02',
+        origin: {
+          streetAddress: '392 Poling Farm Road',
+          locCode: '',
+          city: 'Norfolk',
+          state: 'NE',
+          zip: '68701',
+          country: 'US'
+        },
+        destination: {
+          streetAddress: '4018 Murphy Court',
+          locCode: '',
+          city: 'Riverside',
+          state: 'CA',
+          zip: '92507',
+          country: 'US'
+        },
+        calcDetails: [
+          {
+            accessorialCode: '405',
+            name: 'Fuel Surcharge - Miles'
+          }
+        ]
+      });
+    });
+  });
+
 
   describe('when invoice amount detail is loaded', () => {
     let loadInvoiceAmountDetail$: Subject<InvoiceAmountDetail>;
@@ -114,7 +158,8 @@ describe('InvoiceAmountComponent', () => {
             rateType: 'FLAT',
             quantity: 1,
             costName: 'TestCostName',
-            message: ''
+            message: '',
+            manual: false
           }
         ],
         standardPaymentTermsOverride: 'TestTerms',
@@ -159,6 +204,15 @@ describe('InvoiceAmountComponent', () => {
         done();
       });
       loadInvoiceAmountDetail$.next(undefined);
+    });
+
+    describe('when an empty line item is added', () => {
+      beforeEach(() => {
+        component.addNewEmptyLineItem();
+      });
+      it('should now have 1 line item', () => {
+        expect(component.costBreakdownItems.length).toEqual(1);
+      });
     });
   });
 
