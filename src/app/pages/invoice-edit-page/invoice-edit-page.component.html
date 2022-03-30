@@ -2,7 +2,7 @@
                  headerTitle="Invoice {{falconInvoiceNumber}}"
                  headerSubtitle="Status: {{invoiceStatus}}">
   <div class="d-flex justify-content-end header-button">
-    <div class="col-12 d-flex justify-content-end">
+    <div *ngIf="hasInvoiceWrite" class="col-12 d-flex justify-content-end">
       <elm-button id="save-as-template-button"
                   buttonType="button"
                   buttonStyle="text"
@@ -15,7 +15,7 @@
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
                   [isDisabled]="(isDeletedInvoice
-                          || (isSubmittedInvoice && !(isAutoInvoice && (isApprovedInvoice || isRejectedInvoice))))"
+                          || (!isEditableInvoice && !(isAutoInvoice && isApprovedInvoice)))"
                   (buttonClick)="clickDeleteButton()">
         Delete
       </elm-button>
@@ -25,8 +25,7 @@
                   class="flex-shrink-1 header-button"
                   [isDisabled]="isEditMode$.value
                             || isDeletedInvoice
-                            || isSubmittedInvoice
-                            || isAutoInvoice"
+                            || !isEditableInvoice"
                   (buttonClick)="clickToggleEditMode()">
         Edit
       </elm-button>
