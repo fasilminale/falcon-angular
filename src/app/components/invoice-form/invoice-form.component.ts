@@ -3,14 +3,14 @@ import {
   EventEmitter,
   forwardRef, Inject,
   Input,
-  OnChanges,
+  OnChanges, OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
 import {
-  AbstractControl,
+  AbstractControl, FormArray,
   FormControl,
   FormGroup,
   NG_VALUE_ACCESSOR
@@ -32,7 +32,7 @@ import {Observable, of, Subscription} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ToastService} from '@elm/elm-styleguide-ui';
+import {ElmCheckboxRadioOptionInterface, ElmFormHelper, ToastService} from '@elm/elm-styleguide-ui';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 
 @Component({
@@ -45,7 +45,7 @@ import {ElmUamRoles} from '../../utils/elm-uam-roles';
     multi: true
   }]
 })
-export class InvoiceFormComponent implements OnInit, OnChanges {
+export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
 
   /* PUBLIC FIELDS */
   public readonly regex = /[a-zA-Z0-9_\\-]/;
@@ -95,6 +95,11 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
     @Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
   ) {
+  }
+
+  ngOnDestroy(): void {
+    // Bug is styleguide .... for some reason formarray supporting checkbox is not clearing out.
+    (this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).clear();
   }
 
   private subscription?: Subscription;
@@ -216,7 +221,19 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
             this.form.comments.setValue(invoice.comments);
             this.form.invoiceFormGroup.disable();
 
-            this.form.isPaymentOverrideSelected.setValue(!!invoice.standardPaymentTermsOverride);
+            console.log(`before ${(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).length}`);
+            if (!!invoice.standardPaymentTermsOverride) {
+              ElmFormHelper.checkCheckbox(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray,
+                this.form.overridePaymentTermsOptions[0], true);
+              // Next four lines fix an apparent bug in the styleguide where the formarray somehow accumulates
+              // null elements.
+              const array = this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray;
+              if (array.length > 1) {
+                (this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).removeAt(0);
+              }
+            }
+            console.log(`after ${(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).length}`);
+
             this.form.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
             this.form.osptFormGroup.disable();
 
@@ -276,7 +293,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     });
     this.form.addNewEmptyLineItem();
     // set default currency to USD
-    this.form.currency.setValue(this.form.currencyOptions[0]);
+    this.form.currency.setValue(this.form.currencyOptions[0].value);
     // default work type as long as there is only one value
     if (this.form.workTypeOptions.length === 1) {
       this.form.workType.setValue(this.form.workTypeOptions[0]);
@@ -449,6 +466,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     if (this.validateInvoiceAmount()) {
       // IS VALID
       const invoice = this.form.invoiceFormGroup.getRawValue();
+      console.log(`create invoice payment terms ${JSON.stringify(invoice)}`);
       invoice.falconInvoiceNumber = this.falconInvoiceNumber;
       const isDuplicate = await this.invoiceService.checkInvoiceIsDuplicate(invoice).toPromise();
       if (isDuplicate) {
@@ -614,6 +632,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges {
     this.form.currency.enable();
     this.form.lineItems.enable();
     this.form.comments.enable();
+    console.log(`ENABLE ME! ${(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).length}`);
+    (this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).enable();
   }
 
   public async checkCompanyCode(): Promise<string | null> {

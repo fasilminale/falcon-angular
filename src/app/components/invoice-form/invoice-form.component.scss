@@ -73,6 +73,10 @@
   border-color: $cardinal-red;
 }
 
+#erp-type-input ::ng-deep label.error {
+  border: none;
+}
+
 .error-div{
   border: 1px solid $cardinal-red;
 }
@@ -193,4 +197,8 @@
 
 .text-italics {
   font-style: italic;
+}
+
+#currency-input ::ng-deep .elm-input .elm-input-label {
+  margin-bottom: 0px;
 }

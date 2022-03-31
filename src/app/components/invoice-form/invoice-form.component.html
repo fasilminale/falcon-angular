@@ -63,16 +63,15 @@
             <label for="erp-type-input" class="fal-label">
               ERP Type
             </label>
-            <app-fal-radio-input id="erp-type-input"
-                                 formControlName="erpType"
-                                 [orientation]="0"
-                                 [options]="form.erpTypeOptions"
-                                 [isDisabled]="readOnly"
-                                 (focus)="form.forceValueChangeEvent(form.erpType)"
-                                 [isError]="!!(form.erpType.errors
-                                               && form.erpType.hasError('required')
-                                               && form.erpType.touched)">
-            </app-fal-radio-input>
+            <elm-radio-input id="erp-type-input"
+                             orientation="horizontal"
+                             formControlName="erpType"
+                             [options]="form.erpTypeOptions"
+                             [disabled]="readOnly"
+                             [errorSpacing]="false"
+                             [ngClass]="'form-control'"
+                             (focus)="form.forceValueChangeEvent(form.erpType)">
+            </elm-radio-input>
             <small class="error-text"
                    *ngIf="form.erpType.hasError('required') && form.erpType.touched">
               ERP Type is required
@@ -227,7 +226,7 @@
             <label for="currency-input" class="fal-label">
               Currency
             </label>
-            <app-fal-radio-input id="currency-input"
+<!--            <app-fal-radio-input id="currency-input"
                                  formControlName="currency"
                                  [options]="form.currencyOptions"
                                  [isDisabled]="readOnly"
@@ -235,7 +234,18 @@
                                  [isError]="!!(form.currency.errors
                                              && form.currency.hasError('required')
                                              && form.currency.touched)">
-            </app-fal-radio-input>
+            </app-fal-radio-input>-->
+
+            <elm-radio-input id="currency-input"
+                             orientation="horizontal"
+                             formControlName="currency"
+                             [options]="form.currencyOptions"
+                             [disabled]="readOnly"
+                             [errorSpacing]="true"
+                             (focus)="form.forceValueChangeEvent(form.currency)">
+            </elm-radio-input>
+
+
             <small class="error-text"
                    *ngIf="form.currency.hasError('required')
                         && form.currency.touched">
@@ -245,7 +255,7 @@
 
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
           <div class="col-4 offset-md-2 d-flex" [formGroup]="form.osptFormGroup">
-            <label for="override-stp-checkbox"
+<!--            <label for="override-stp-checkbox"
                    class="fal-label override-stp-checkbox-div">
               <input id="override-stp-checkbox"
                      type="checkbox"
@@ -254,7 +264,15 @@
                      [attr.disabled]="readOnly ? true : null"
               />
               Override Standard Payment Terms
-            </label>
+            </label>-->
+            <elm-checkbox-input orientation="horizontal"
+                                formArrayName="isPaymentOverrideSelected"
+                                checkboxStyle="checkbox"
+                                [errorSpacing]="false"
+                                [options]="form.overridePaymentTermsOptions"
+                                [attr.disabled]="readOnly ? true : null"
+                                (focus)="form.forceValueChangeEvent(form.osptFormGroup)">
+            </elm-checkbox-input>
             <div class="payment-terms-div">
               <label class="fal-label">Payment terms</label>
               <ng-select id="paymentTerms"

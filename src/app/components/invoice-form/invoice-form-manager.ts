@@ -51,7 +51,7 @@ export class InvoiceFormManager {
 
   /* OVERRIDE PAYMENT TERMS FORM GROUP */
   public osptFormGroup = new FormGroup({});
-  public isPaymentOverrideSelected = new FormControl();
+  public isPaymentOverrideSelected = new FormArray([]);
   public paymentTerms = new FormControl();
 
   /* MISC FORM CONTROLS */
@@ -62,8 +62,17 @@ export class InvoiceFormManager {
   /* VALUE OPTIONS */
   // TODO replace these with calls to the backend?
   public workTypeOptions = ['Indirect Non-PO Invoice'];
-  public erpTypeOptions = ['Pharma Corp', 'TPM'];
-  public currencyOptions = ['USD', 'CAD'];
+  public erpTypeOptions = [
+    {label: 'Pharma Corp', value: 'Pharma Corp', disabled: false},
+    {label: 'TPM', value: 'TPM', disabled: false}
+  ];
+  public currencyOptions = [
+    {label: 'USD', value: 'USD', disabled: false},
+    {label: 'CAD', value: 'CAD', disabled: false}
+  ];
+  public overridePaymentTermsOptions = [
+    {label: 'Override Standard Payment Terms', value: 'override', disabled: false}
+  ];
   public myTemplateOptions: Array<string> = [];
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
@@ -92,7 +101,7 @@ export class InvoiceFormManager {
     this.invoiceDate = new FormControl({value: null}, [required, validateDate]);
     this.amountOfInvoice = new FormControl({value: 0}, [required, this.validateInvoiceNetAmount()]);
     this.currency = new FormControl({value: null}, [required]);
-    this.isPaymentOverrideSelected = new FormControl({value: false});
+    // this.isPaymentOverrideSelected = new FormControl({value: false});
     this.paymentTerms = new FormControl({value: null});
     this.osptFormGroup = new FormGroup({
       isPaymentOverrideSelected: this.isPaymentOverrideSelected,
@@ -134,8 +143,10 @@ export class InvoiceFormManager {
     this.subscriptionManager.manage(
       // HANDLE PAYMENT TERMS WHEN OVERRIDE SELECTION CHANGES
       this.isPaymentOverrideSelected.valueChanges
-        .subscribe((selected: boolean) => {
-          if (selected) {
+        .subscribe((selected: string) => {
+          console.log(`selected = ${selected} this.overridePaymentTermsOptions[0].value ${this.overridePaymentTermsOptions[0].value}`);
+          const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value ? true : false;
+          if (selectedBool) {
             this.paymentTerms.enable();
           } else {
             this.paymentTerms.reset();
