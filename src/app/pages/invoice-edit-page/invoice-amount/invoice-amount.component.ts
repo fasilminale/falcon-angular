@@ -61,7 +61,14 @@ export class InvoiceAmountComponent implements OnInit {
       })
     ).subscribe(
       opts => {
-        this.costBreakdownOptions = opts;
+        this.costBreakdownOptions = opts.filter(opt => {
+          for (const control of this.costBreakdownItemsControls) {
+            if (control.value?.charge === opt.label) {
+              return null;
+            }
+          }
+          return opt;
+        }).filter(Boolean);
         this.costBreakdownOptions.push(CostBreakDownUtils.toOption({name: 'OTHER', accessorialCode: 'OTHER'}));
       }
     ));

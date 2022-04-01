@@ -9,7 +9,7 @@ import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-d
 import {InvoiceAmountComponent} from './invoice-amount.component';
 import {RateEngineResponse} from '../../../models/rate-engine/rate-engine-request';
 
-describe('InvoiceAmountComponent', () => {
+fdescribe('InvoiceAmountComponent', () => {
   let component: InvoiceAmountComponent;
   let fixture: ComponentFixture<InvoiceAmountComponent>;
 
@@ -87,6 +87,34 @@ describe('InvoiceAmountComponent', () => {
 
   describe('when edit mode is updated', () => {
     let chargeLineItemOptions$: Subject<RateEngineResponse>;
+    const accessorialDetailResponse = {
+      mode: 'TL',
+      scac: 'OWEL',
+      shipDate: '2022-04-02',
+      origin: {
+        streetAddress: '392 Poling Farm Road',
+        locCode: '',
+        city: 'Norfolk',
+        state: 'NE',
+        zip: '68701',
+        country: 'US'
+      },
+      destination: {
+        streetAddress: '4018 Murphy Court',
+        locCode: '',
+        city: 'Riverside',
+        state: 'CA',
+        zip: '92507',
+        country: 'US'
+      },
+      calcDetails: [
+        {
+          accessorialCode: '405',
+          name: 'Fuel Surcharge - Miles'
+        }
+      ]
+    };
+
     beforeEach(() => {
       chargeLineItemOptions$ = new Subject();
       component.chargeLineItemOptions$ = chargeLineItemOptions$.asObservable();
@@ -95,36 +123,26 @@ describe('InvoiceAmountComponent', () => {
     it('should populate cost breakdown charge options', done => {
 
       chargeLineItemOptions$.subscribe(() => {
-        expect(component.costBreakdownOptions.length).toBeGreaterThan(0);
+        expect(component.costBreakdownOptions.length).toBeGreaterThan(1);
         done();
       });
-      chargeLineItemOptions$.next({
-        mode: 'TL',
-        scac: 'OWEL',
-        shipDate: '2022-04-02',
-        origin: {
-          streetAddress: '392 Poling Farm Road',
-          locCode: '',
-          city: 'Norfolk',
-          state: 'NE',
-          zip: '68701',
-          country: 'US'
-        },
-        destination: {
-          streetAddress: '4018 Murphy Court',
-          locCode: '',
-          city: 'Riverside',
-          state: 'CA',
-          zip: '92507',
-          country: 'US'
-        },
-        calcDetails: [
-          {
-            accessorialCode: '405',
-            name: 'Fuel Surcharge - Miles'
-          }
-        ]
+      chargeLineItemOptions$.next(accessorialDetailResponse);
+    });
+
+    it ('should not display charge options already in list', done => {
+      component._formGroup = new FormGroup({
+        amountOfInvoice: new FormControl(10),
+        costBreakdownItems: new FormArray([new FormGroup({
+            charge: new FormControl('Fuel Surcharge - Miles'),
+          })
+        ])
       });
+
+      chargeLineItemOptions$.subscribe(() => {
+        expect(component.costBreakdownOptions.length).toEqual(1);
+        done();
+      });
+      chargeLineItemOptions$.next(accessorialDetailResponse);
     });
   });
 
