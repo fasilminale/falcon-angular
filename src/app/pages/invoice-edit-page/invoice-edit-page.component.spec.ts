@@ -14,7 +14,7 @@ import {UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {WebServices} from '../../services/web-services';
 
-fdescribe('InvoiceEditPageComponent', () => {
+describe('InvoiceEditPageComponent', () => {
 
   let component: InvoiceEditPageComponent;
   let fixture: ComponentFixture<InvoiceEditPageComponent>;

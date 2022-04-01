@@ -8,6 +8,7 @@ import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscr
 import {CalcDetail, CostBreakDownUtils, RateEngineResponse} from '../../../models/rate-engine/rate-engine-request';
 import {map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
+import {WebServices} from '../../../services/web-services';
 
 @Component({
   selector: 'app-invoice-amount',
@@ -50,7 +51,6 @@ export class InvoiceAmountComponent implements OnInit {
   @Input() set chargeLineItemOptions$(observable: Observable<RateEngineResponse>) {
     this.subscriptionManager.manage(observable.pipe(
       map(response => {
-        console.log(response);
         return CostBreakDownUtils.toOptions(response.calcDetails);
       })
     ).subscribe(
@@ -91,7 +91,7 @@ export class InvoiceAmountComponent implements OnInit {
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
   }
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { }
+  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager, private webService: WebServices) { }
 
   ngOnInit(): void {
   }

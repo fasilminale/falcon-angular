@@ -112,10 +112,6 @@
                      bindValue="value"
                      placeholder="Select One...">
           </ng-select>
-<!--          <small class="error-text"-->
-<!--                 *ngIf="_.get('message')?.value === 'NOT FOUND'">-->
-<!--            Charge not found-->
-<!--          </small>-->
         </div>
 
 
@@ -168,6 +164,7 @@
     <elm-button buttonType="button"
                 buttonStyle="text"
                 id="add-new-line-item-button"
+                [isDisabled]="readOnlyForm"
                 (buttonClick)="addNewEmptyLineItem()">
       <u>+ Add Charge</u>
     </elm-button>
