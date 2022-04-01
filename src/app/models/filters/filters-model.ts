@@ -23,8 +23,8 @@ export class FiltersModel {
   resetForm(): void {
 
     this.form.patchValue({
-      originCity: '',
-      destinationCity: ''
+      originCity: null,
+      destinationCity: null
     });
     (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }

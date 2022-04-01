@@ -1,5 +1,5 @@
 import {Component,  Inject, Input, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
@@ -9,6 +9,7 @@ import {CalcDetail, CostBreakDownUtils, RateEngineResponse} from '../../../model
 import {map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {WebServices} from '../../../services/web-services';
+import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
 
 @Component({
   selector: 'app-invoice-amount',
@@ -19,9 +20,8 @@ export class InvoiceAmountComponent implements OnInit {
 
   _formGroup = new FormGroup({});
   amountOfInvoiceControl = new FormControl();
-  currencyControl = new FormControl();
-  paymentTermsControl = new FormControl();
-  isValidCostBreakdownAmount = true
+  isValidCostBreakdownAmount = true;
+  isPrepaid?: boolean;
 
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
@@ -48,6 +48,12 @@ export class InvoiceAmountComponent implements OnInit {
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
 
+  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
+  }
+
+  ngOnInit(): void {
+  }
+
   @Input() set chargeLineItemOptions$(observable: Observable<RateEngineResponse>) {
     this.subscriptionManager.manage(observable.pipe(
       map(response => {
@@ -67,6 +73,12 @@ export class InvoiceAmountComponent implements OnInit {
     ));
   }
 
+  @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
+    this.subscriptionManager.manage(observable.subscribe(
+      invoiceOverviewDetail => this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID'
+    ));
+  }
+
   @Input() set formGroup(givenFormGroup: FormGroup) {
     givenFormGroup.setControl('amountOfInvoice', new FormControl('', [Validators.required]));
     givenFormGroup.setControl('currency', new FormControl(''));
@@ -78,8 +90,7 @@ export class InvoiceAmountComponent implements OnInit {
     this._formGroup = givenFormGroup;
   }
 
-
-  loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail) {
+  loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail.currency : '');
     givenFormGroup.get('overridePaymentTerms')?.patchValue({
@@ -87,21 +98,18 @@ export class InvoiceAmountComponent implements OnInit {
       paymentTerms: invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : ''
     });
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ? invoiceAmountDetail.mileage : '');
-    (givenFormGroup.get('costBreakdownItems') as FormArray).clear()
+    (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
   }
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager, private webService: WebServices) { }
-
-  ngOnInit(): void {
-  }
-
-  insertBreakDownItems(costBreakdownItems?: CostLineItem[]) {
+  insertBreakDownItems(costBreakdownItems?: CostLineItem[]): void {
     if (costBreakdownItems && costBreakdownItems.length > 0) {
       this.costBreakdownItems = new FormArray([]);
       costBreakdownItems.forEach((costBreakdownItem) => {
         this.costBreakdownItemsControls.push(new FormGroup({
           charge: new FormControl(costBreakdownItem.chargeCode),
+          rateSource: new FormControl(costBreakdownItem.rateSource?.label ?? 'N/A'),
+          entrySource: new FormControl(costBreakdownItem.entrySource?.label ?? 'N/A'),
           rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
           type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
           quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity : 'N/A'),
@@ -113,6 +121,8 @@ export class InvoiceAmountComponent implements OnInit {
     } else {
       this.costBreakdownItemsControls.push(new FormGroup({
         charge: new FormControl(''),
+        rateSource: new FormControl(''),
+        entrySource: new FormControl(''),
         rate: new FormControl(''),
         type: new FormControl(''),
         quantity: new FormControl(''),
@@ -120,14 +130,13 @@ export class InvoiceAmountComponent implements OnInit {
         contracted: new FormControl(true)
       }));
     }
-
   }
 
-  get costBreakdownItemsControls() {
+  get costBreakdownItemsControls(): AbstractControl[] {
     return this._formGroup.get('costBreakdownItems') ? (this._formGroup.get('costBreakdownItems') as FormArray).controls : new FormArray([]).controls;
   }
 
-  get costBreakdownTotal() {
+  get costBreakdownTotal(): number {
     let totalAmount = 0;
     this.costBreakdownItemsControls.forEach(c => {
       if (c?.get('totalAmount')?.value) {
@@ -135,7 +144,8 @@ export class InvoiceAmountComponent implements OnInit {
       }
     });
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
-    this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0 && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
+    this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
+      && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
     return totalAmount;
   }
 
@@ -155,13 +165,14 @@ export class InvoiceAmountComponent implements OnInit {
 
   createEmptyLineItemGroup(): FormGroup {
     const charge = new FormControl(null);
-    const rate = new FormControl('N/A');
+    const rateSource = new FormControl('Manual');
+    const rate = new FormControl('');
     const type = new FormControl('');
-    const quantity = new FormControl('N/A');
+    const quantity = new FormControl(0);
     const totalAmount = new FormControl(0);
     const message = new FormControl('');
     const contracted = new FormControl(false);
 
-    return new FormGroup({charge, rate, type, quantity, totalAmount, message, contracted});
+    return new FormGroup({charge, rateSource, rate, type, quantity, totalAmount, message, contracted});
   }
 }

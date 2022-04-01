@@ -6,7 +6,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {of, Subject} from 'rxjs';
 import {InvoiceService} from '../../services/invoice-service';
 import {MockParamMap} from '../../testing/test-utils';
-import {FalUserInfo} from '../../models/user-info/user-info-model';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ToastService, UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
@@ -174,10 +174,10 @@ describe('InvoiceEditPageComponent', () => {
         // Run Test
         routeParamMap$.next(mockParams);
       });
-      it('should not be submitted invoice', done => {
+      it('should not be editable invoice', done => {
         // Assertions
         routeParamMap$.subscribe(() => {
-          expect(component.isSubmittedInvoice).toBeTrue();
+          expect(component.isEditableInvoice).toBeFalse();
           done();
         });
         // Run Test
@@ -221,16 +221,16 @@ describe('InvoiceEditPageComponent', () => {
     // Setup
     const getUserInfo$ = new Subject<UserInfo>();
     asSpy(userService.getUserInfo).and.returnValue(getUserInfo$.asObservable());
-    const testUser: FalUserInfo = {
+    const testUser = new UserInfoModel({
       firstName: 'Test',
       lastName: 'User',
       role: 'TEST_ROLE',
       permissions: []
-    };
+    });
     component.ngOnInit();
     // Assertions
     getUserInfo$.subscribe(() => {
-      expect(component.userInfo).toBe(testUser);
+      expect(component.userInfo).toEqual(testUser);
       done();
     });
     // Run Test

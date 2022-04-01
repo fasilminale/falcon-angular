@@ -71,3 +71,19 @@ app-fal-radio-input ::ng-deep .background-disabled,
     background-color:#f6f6f6;
 
  }
+
+.no-results{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  overflow: auto;
+}
+
+.input_na{
+  background-color: #e5e4e4;
+  opacity: 0.65;
+  text-align: right;
+}
+
+

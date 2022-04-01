@@ -68,7 +68,6 @@ import { InvoiceEditPageComponent } from './pages/invoice-edit-page/invoice-edit
 import { MilestonePanelComponent } from './components/milestone-panel/milestone-panel.component';
 import { InvoiceOverviewComponent } from './pages/invoice-edit-page/invoice-overview/invoice-overview.component';
 import { TripInformationComponent } from './pages/invoice-edit-page/trip-information/trip-information.component';
-import { CostBreakdownComponent } from './pages/invoice-edit-page/cost-breakdown/cost-breakdown.component';
 import { AllocationComponent } from './pages/invoice-edit-page/allocation/allocation.component';
 import { FalAddressComponent } from './components/fal-address/fal-address.component';
 import { FreightOrderDetailsComponent } from './pages/freight-order-details/freight-order-details.component';
@@ -166,7 +165,6 @@ const oktaConfig = {
     MilestonePanelComponent,
     InvoiceOverviewComponent,
     TripInformationComponent,
-    CostBreakdownComponent,
     AllocationComponent,
     FalAddressComponent,
     FreightOrderDetailsComponent,

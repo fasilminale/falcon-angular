@@ -9,3 +9,7 @@
 .errorSpacing {
   padding-bottom: 36px;
 }
+
+::ng-deep .ng-select {
+  padding: 0;
+}

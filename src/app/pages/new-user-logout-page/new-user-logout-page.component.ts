@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {OktaAuthService} from '@okta/okta-angular';
 

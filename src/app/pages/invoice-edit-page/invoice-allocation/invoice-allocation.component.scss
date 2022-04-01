@@ -45,3 +45,11 @@
 .invoice-allocation-total-div {
   background-color:#f6f6f6;
 }
+
+.no-results{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  overflow: auto;
+}

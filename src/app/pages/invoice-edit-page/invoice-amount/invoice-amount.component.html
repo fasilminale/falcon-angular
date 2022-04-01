@@ -11,10 +11,12 @@
                               formControlName="amountOfInvoice"
                               [isDisabled]="readOnlyForm"
                               [isError]="!_formGroup.get('amountOfInvoice')?.value"
+                              *ngIf="isPrepaid"
       >
       </app-fal-currency-input>
+      <input  class="form-control input_na" disabled type="text" value="N/A" *ngIf="!isPrepaid">
 
-      <small class="error-text col-2" *ngIf="!_formGroup.get('amountOfInvoice')?.value" [ngClass]="{ 'mt-3' : true }">
+      <small class="error-text col-2" *ngIf="!_formGroup.get('amountOfInvoice')?.value && isPrepaid" [ngClass]="{ 'mt-3' : true }">
         Invoice Net Amount is missing
       </small>
     </div>
@@ -78,12 +80,13 @@
     <div class="col-12">Cost breakdown</div>
     <div class="row my-3 mx-0 cost-breakdown-item-header">
       <div class="col-3">Charge</div>
+      <div class="col-1">Rate Source</div>
       <div class="col-2">Rate</div>
-      <div class="col-3">Type</div>
+      <div class="col-2">Type</div>
       <div class="col-2">Quantity</div>
       <div class="col-2">Total</div>
     </div>
-    <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
+    <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && isPrepaid">
       <div *ngFor="let _ of costBreakdownItemsControls; index as i"
            class="row"
            [ngClass]="{ 'cost-breakdown-item-row' : _.get('message')?.value !== 'NOT FOUND' }"
@@ -114,6 +117,13 @@
           </ng-select>
         </div>
 
+        <div class="col-1">
+          <input type="text"
+                 class="form-control"
+                 formControlName="rateSource"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
 
         <!-- Cost breakdown item - Rate -->
         <div class="col-2">
@@ -125,7 +135,7 @@
         </div>
 
         <!-- Cost breakdown item - Type -->
-        <div class="col-3">
+        <div class="col-2">
           <input type="text"
                  class="form-control"
                  formControlName="type"
@@ -171,8 +181,7 @@
 
     <div [class.error-div]="!isValidCostBreakdownAmount"
          class="border-radius-5 cost-breakdown-total-div mt-5 mb-2 p-3 offset-md-9"
-         *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0">
-
+         *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && isPrepaid">
       <div class="row">
         <div class="row d-flex justify-content-between">
           <span class="px-3 col-md-8 text-left text-bold">Cost Breakdown Total:</span>
@@ -185,4 +194,8 @@
     </small>
   </div>
 
+  <div class="no-results" *ngIf="!isPrepaid">
+    No rates available
+  </div>
 </div>
+

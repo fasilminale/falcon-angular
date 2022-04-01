@@ -13,11 +13,27 @@ export class StatusModel implements KeyedLabel {
 
 export class StatusUtil {
 
-  static DELETED = 'DELETED';
-  static SUBMITTED = 'SUBMITTED';
+  // Editable Statuses
   static CREATED = 'CREATED';
+  static INVOICE_PENDING = 'INVOICE_PENDING';
+  static INVOICED = 'INVOICED';
   static REJECTED = 'REJECTED';
+  static ERROR = 'ERROR';
+  static DISPUTED = 'DISPUTED';
+  static EDITABLE_STATUSES = [StatusUtil.CREATED, StatusUtil.INVOICE_PENDING, StatusUtil.INVOICED,
+    StatusUtil.REJECTED, StatusUtil.ERROR, StatusUtil.DISPUTED];
+
+  // Deleted Invoice
+  static DELETED = 'DELETED';
+
+  // Non-Editable Statuses
+  static SUBMITTED = 'SUBMITTED';
+  static RESUBMITTED = 'RESUBMITTED';
   static APPROVED = 'APPROVED';
+  static NOT_PAYABLE = 'NOT_PAYABLE';
+  static PAID = 'PAID';
+  static PENDING_EXTRACT = 'PENDING_EXTRACT';
+  static PENDING_PAY = 'PENDING_PAY';
 
   static hasKey(statusKey: string, status: KeyedLabel): boolean {
     return status.key === statusKey;
@@ -27,17 +43,12 @@ export class StatusUtil {
     return status.key === StatusUtil.DELETED;
   }
 
-  static isSubmitted(status: KeyedLabel): boolean {
-    return status.key !== StatusUtil.CREATED
-      && status.key !== StatusUtil.REJECTED;
-  }
-
   static isApproved(status: KeyedLabel): boolean {
     return status.key === StatusUtil.APPROVED;
   }
 
-  static isRejected(status: KeyedLabel): boolean {
-    return status.key === StatusUtil.REJECTED;
+  static isEditable(status: KeyedLabel): boolean {
+    return StatusUtil.EDITABLE_STATUSES.includes(status.key);
   }
 
 }

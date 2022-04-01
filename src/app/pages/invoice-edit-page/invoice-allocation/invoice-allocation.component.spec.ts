@@ -5,6 +5,8 @@ import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
 import { InvoiceAllocationComponent } from './invoice-allocation.component';
 import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
+import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
+import {InvoiceAmountDetail} from "../../../models/invoice/invoice-amount-detail-model";
 
 describe('InvoiceAllocationComponent', () => {
   let component: InvoiceAllocationComponent;
@@ -59,6 +61,31 @@ describe('InvoiceAllocationComponent', () => {
     expect(invoiceAllocation.get('glCompanyCode')).toBeDefined();
     expect(invoiceAllocation.get('glAccount')).toBeDefined();
     expect(invoiceAllocation.get('allocationAmount')).toBeDefined();
+  });
+
+  describe('when invoice overview detail is loaded', () => {
+    let loadInvoiceOverviewDetail$: Subject<InvoiceOverviewDetail>;
+
+    beforeEach(() => {
+      loadInvoiceOverviewDetail$ = new Subject();
+      component.loadInvoiceOverviewDetail$ = loadInvoiceOverviewDetail$.asObservable();
+    });
+
+    it('should set isPrepaid to True', done => {
+      loadInvoiceOverviewDetail$.subscribe(() => {
+        expect(component.isPrepaid).toBeTrue();
+        done();
+      });
+      loadInvoiceOverviewDetail$.next({freightPaymentTerms: 'PREPAID'} as InvoiceOverviewDetail);
+    });
+
+    it('should set isPrepaid to False', done => {
+      loadInvoiceOverviewDetail$.subscribe(() => {
+        expect(component.isPrepaid).toBeFalse();
+        done();
+      });
+      loadInvoiceOverviewDetail$.next({freightPaymentTerms: 'COLLECT'} as InvoiceOverviewDetail);
+    });
   });
 
   describe('when invoice allocation detail is updated', () => {

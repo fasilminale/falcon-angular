@@ -11,10 +11,11 @@ import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
-import {FalUserInfo} from '../../models/user-info/user-info-model';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {WebServices} from '../../services/web-services';
 import {RateEngineRequest, RateEngineResponse} from '../../models/rate-engine/rate-engine-request';
 import {environment} from '../../../environments/environment';
@@ -31,25 +32,28 @@ export class InvoiceEditPageComponent implements OnInit {
   public falconInvoiceNumber = '';
   public invoiceStatus = '';
   public milestones: Array<Milestone> = [];
-  public userInfo?: FalUserInfo;
+  public userInfo: UserInfoModel | undefined;
   public isDeletedInvoice = false;
-  public isSubmittedInvoice = false;
   public isApprovedInvoice = false;
   public isRejectedInvoice = false;
   public isMilestoneTabOpen = false;
   public isAutoInvoice = false;
+  public isEditableInvoice = true;
   public showMilestoneToggleButton = true;
   public invoiceFormGroup: FormGroup;
   public tripInformationFormGroup: FormGroup;
   public invoiceAmountFormGroup: FormGroup;
   public invoiceAllocationFormGroup: FormGroup;
 
-  public isEditMode$ = new SubjectValue(false);
+  public isEditMode$ = new SubjectValue<boolean>(false);
   public loadTripInformation$ = new Subject<TripInformation>();
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
   public chargeLineItemOptions$ = new Subject<RateEngineResponse>();
+
+  private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
+  public hasInvoiceWrite = false;
 
   constructor(private util: UtilService,
               private route: ActivatedRoute,
@@ -89,8 +93,8 @@ export class InvoiceEditPageComponent implements OnInit {
   private loadInvoice(invoice: InvoiceDataModel): void {
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
-    this.isSubmittedInvoice = StatusUtil.isSubmitted(invoice.status);
     this.isApprovedInvoice = StatusUtil.isApproved(invoice.status);
+    this.isEditableInvoice = StatusUtil.isEditable(invoice.status);
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
     this.subscriptions.manage(
@@ -102,7 +106,7 @@ export class InvoiceEditPageComponent implements OnInit {
       pickUpDate: invoice.pickupDateTime ? new Date(invoice.pickupDateTime) : undefined,
       deliveryDate: invoice.deliveryDateTime ? new Date(invoice.deliveryDateTime) : undefined,
       proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
-      bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A' ,
+      bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A',
       freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,
       originAddress: {...invoice.origin, shippingPoint: invoice.shippingPoint},
       destinationAddress: {...invoice.destination, shippingPoint: invoice.shippingPoint},
@@ -145,8 +149,9 @@ export class InvoiceEditPageComponent implements OnInit {
     });
   }
 
-  private loadUserInfo(newUserInfo: FalUserInfo): void {
-    this.userInfo = newUserInfo;
+  private loadUserInfo(newUserInfo: UserInfoModel): void {
+    this.userInfo = new UserInfoModel(newUserInfo);
+    this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
   }
 
   clickSaveAsTemplateButton(): void {

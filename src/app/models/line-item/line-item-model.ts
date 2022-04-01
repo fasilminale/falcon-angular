@@ -1,4 +1,5 @@
 import {Measurement, UnitOfMeasure} from '../measurement/measurement-model';
+import {KeyedLabel} from '../generic/keyed-label';
 
 export interface ManualLineItem {
   lineItemNumber: string;
@@ -11,6 +12,8 @@ export interface ManualLineItem {
 
 export interface CostLineItem {
   chargeCode: string;
+  rateSource: KeyedLabel;
+  entrySource: KeyedLabel;
   costName: string;
   quantity: number;
   rateAmount: number;
