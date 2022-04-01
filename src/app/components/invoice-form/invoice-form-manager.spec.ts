@@ -89,10 +89,12 @@ describe('InvoiceFormManager', () => {
         // PAYMENT TERMS TESTS
         describe('given a payment override is selected', () => {
           beforeEach(() => {
-            (invoiceFormManager.isPaymentOverrideSelected as FormArray).push(new FormControl(invoiceFormManager.overridePaymentTermsOptions[0].value));
+            (invoiceFormManager.isPaymentOverrideSelected as FormArray)
+              .push(new FormControl(invoiceFormManager.overridePaymentTermsOptions[0].value));
           });
           it(', payment override should be selected', () => {
-            expect((invoiceFormManager.isPaymentOverrideSelected as FormArray).at(0).value).toEqual(invoiceFormManager.overridePaymentTermsOptions[0].value);
+            expect((invoiceFormManager.isPaymentOverrideSelected as FormArray).at(0).value)
+              .toEqual(invoiceFormManager.overridePaymentTermsOptions[0].value);
           });
           describe('and payment terms are present', () => {
             beforeEach(() => {
@@ -105,11 +107,9 @@ describe('InvoiceFormManager', () => {
               beforeEach(() => {
                 (invoiceFormManager.isPaymentOverrideSelected as FormArray).clear();
                 (invoiceFormManager.isPaymentOverrideSelected as FormArray).push(new FormControl(null));
-                // (invoiceFormManager.isPaymentOverrideSelected as FormArray).at(0).setValue(null);
               });
               it(', payment override should be unselected', () => {
                 expect((invoiceFormManager.isPaymentOverrideSelected as FormArray).at(0).value).toBeNull();
-                // expect(invoiceFormManager.isPaymentOverrideSelected.value).toBeFalse();
               });
               it(', payment terms should be cleared', () => {
                 expect(invoiceFormManager.paymentTerms.value).toBeNull();

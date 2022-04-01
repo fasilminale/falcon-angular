@@ -221,18 +221,10 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
             this.form.comments.setValue(invoice.comments);
             this.form.invoiceFormGroup.disable();
 
-            console.log(`before ${(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).length}`);
             if (!!invoice.standardPaymentTermsOverride) {
               ElmFormHelper.checkCheckbox(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray,
                 this.form.overridePaymentTermsOptions[0], true);
-              // Next four lines fix an apparent bug in the styleguide where the formarray somehow accumulates
-              // null elements.
-              const array = this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray;
-              if (array.length > 1) {
-                (this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).removeAt(0);
-              }
             }
-            console.log(`after ${(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).length}`);
 
             this.form.paymentTerms.setValue(invoice.standardPaymentTermsOverride);
             this.form.osptFormGroup.disable();
@@ -632,7 +624,6 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
     this.form.currency.enable();
     this.form.lineItems.enable();
     this.form.comments.enable();
-    console.log(`ENABLE ME! ${(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).length}`);
     (this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).enable();
   }
 

@@ -86,4 +86,14 @@ app-fal-radio-input ::ng-deep .background-disabled,
   text-align: right;
 }
 
+#currency-input ::ng-deep .elm-input .elm-input-label {
+  margin-bottom: 0px;
+}
+
+.radio-dev-disabled ::ng-deep .elm-input {
+  background-color: #e9ecef;
+  padding-bottom: 0px;
+  border: solid 1px transparent;
+  border-radius: 3px;
+}
 

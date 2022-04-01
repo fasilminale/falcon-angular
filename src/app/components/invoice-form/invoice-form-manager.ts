@@ -144,7 +144,6 @@ export class InvoiceFormManager {
       // HANDLE PAYMENT TERMS WHEN OVERRIDE SELECTION CHANGES
       this.isPaymentOverrideSelected.valueChanges
         .subscribe((selected: string) => {
-          console.log(`selected = ${selected} this.overridePaymentTermsOptions[0].value ${this.overridePaymentTermsOptions[0].value}`);
           const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value ? true : false;
           if (selectedBool) {
             this.paymentTerms.enable();

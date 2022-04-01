@@ -69,7 +69,7 @@
                              [options]="form.erpTypeOptions"
                              [disabled]="readOnly"
                              [errorSpacing]="false"
-                             [ngClass]="'form-control'"
+                             [ngClass]="{'form-control': true, 'radio-dev-disabled': readOnly}"
                              (focus)="form.forceValueChangeEvent(form.erpType)">
             </elm-radio-input>
             <small class="error-text"
@@ -226,22 +226,13 @@
             <label for="currency-input" class="fal-label">
               Currency
             </label>
-<!--            <app-fal-radio-input id="currency-input"
-                                 formControlName="currency"
-                                 [options]="form.currencyOptions"
-                                 [isDisabled]="readOnly"
-                                 (focus)="form.forceValueChangeEvent(form.currency)"
-                                 [isError]="!!(form.currency.errors
-                                             && form.currency.hasError('required')
-                                             && form.currency.touched)">
-            </app-fal-radio-input>-->
-
             <elm-radio-input id="currency-input"
                              orientation="horizontal"
                              formControlName="currency"
                              [options]="form.currencyOptions"
                              [disabled]="readOnly"
                              [errorSpacing]="true"
+                             [ngClass]="{'radio-dev-disabled': readOnly}"
                              (focus)="form.forceValueChangeEvent(form.currency)">
             </elm-radio-input>
 
@@ -255,17 +246,8 @@
 
           <!-- OVERRIDE STANDARD PAYMENT TERMS -->
           <div class="col-4 offset-md-2 d-flex" [formGroup]="form.osptFormGroup">
-<!--            <label for="override-stp-checkbox"
-                   class="fal-label override-stp-checkbox-div">
-              <input id="override-stp-checkbox"
-                     type="checkbox"
-                     (focus)="form.forceValueChangeEvent(form.osptFormGroup)"
-                     formControlName="isPaymentOverrideSelected"
-                     [attr.disabled]="readOnly ? true : null"
-              />
-              Override Standard Payment Terms
-            </label>-->
-            <elm-checkbox-input orientation="horizontal"
+            <elm-checkbox-input id="override-stp-checkbox"
+                                orientation="horizontal"
                                 formArrayName="isPaymentOverrideSelected"
                                 checkboxStyle="checkbox"
                                 [errorSpacing]="false"
