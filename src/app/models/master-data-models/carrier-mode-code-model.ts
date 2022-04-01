@@ -8,11 +8,13 @@ export interface CarrierModeCode {
 }
 
 export interface CarrierModeCodeReference {
+  mode: string;
   reportKeyMode: string;
   reportModeDescription: string;
 }
 
 export const EMPTY_CARRIER_MODE_CODE_REFERENCE: CarrierModeCodeReference = {
+  mode: '',
   reportKeyMode: '',
   reportModeDescription: ''
 };

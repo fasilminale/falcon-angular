@@ -10,8 +10,9 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ToastService, UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
-import {Invoice} from '../../models/invoice/invoice-model';
 import {UtilService} from '../../services/util-service';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {WebServices} from '../../services/web-services';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -25,6 +26,7 @@ describe('InvoiceEditPageComponent', () => {
   let userService: UserService;
   let utilService: UtilService;
   let toastService: ToastService;
+  let webService: WebServices;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -62,6 +64,10 @@ describe('InvoiceEditPageComponent', () => {
     toastService = TestBed.inject(ToastService);
     spyOn(toastService, 'openErrorToast').and.stub();
 
+    // Mock Web Service
+    webService = TestBed.inject(WebServices);
+    spyOn(webService, 'httpPost').and.stub();
+
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
     component = fixture.componentInstance;
@@ -90,21 +96,45 @@ describe('InvoiceEditPageComponent', () => {
       routeParamMap$.next(mockParams);
     });
     describe('and the invoice is found in the database', () => {
-      let testInvoice: Invoice;
+      let testInvoice: any;
       beforeEach(() => {
         testInvoice = {
           amountOfInvoice: 1234.56,
           attachments: [],
+          carrier: {
+            scac: 'testScac'
+          },
           comments: 'Test Comment',
           companyCode: 'TestCompanyCode',
           createdBy: 'Test User',
           currency: 'USD',
+          destination: {
+            address: 'testAddress',
+            locCode: '',
+            city: 'city',
+            state: 'state',
+            zipCode: '55555',
+            country: 'country'
+          },
           erpType: 'TPM',
           externalInvoiceNumber: 'EXT1',
           failedToCreate: false,
           falconInvoiceNumber: 'TestFalconInvoiceNumber',
           invoiceDate: new Date().toISOString(),
           lineItems: [],
+          mode: {
+            mode: 'testMode',
+            reportKeyMode: 'testReportKeyMode',
+            reportKeyDescription: 'testReportKeyDescription'
+          },
+          origin: {
+            address: 'testAddress',
+            locCode: '',
+            city: 'city',
+            state: 'state',
+            zipCode: '55555',
+            country: 'country'
+          },
           standardPaymentTermsOverride: '',
           status: {key: 'FAKE', label: 'Fake Status'},
           vendorNumber: '123',
@@ -116,6 +146,15 @@ describe('InvoiceEditPageComponent', () => {
           }]
         };
         asSpy(invoiceService.getInvoice).and.returnValue(of(testInvoice));
+      });
+      it('getAccessorialList should call rate engine', () => {
+        const newInvoice = new InvoiceDataModel();
+        component.getAccessorialList(newInvoice);
+        expect(webService.httpPost).toHaveBeenCalled();
+      });
+      it('getAccessorialList should not call rate engine', () => {
+        component.getAccessorialList(testInvoice);
+        expect(webService.httpPost).not.toHaveBeenCalled();
       });
       it('should load milestones', done => {
         // Assertions
@@ -197,7 +236,6 @@ describe('InvoiceEditPageComponent', () => {
     // Run Test
     getUserInfo$.next(testUser);
   });
-
 
   it('#clickToggleEditMode should toggle isEditMode$', () => {
     const initialValue = component.isEditMode$.value;

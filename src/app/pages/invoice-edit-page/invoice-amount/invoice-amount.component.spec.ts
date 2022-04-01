@@ -7,6 +7,7 @@ import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
 import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
 
 import {InvoiceAmountComponent} from './invoice-amount.component';
+import {RateEngineResponse} from '../../../models/rate-engine/rate-engine-request';
 
 describe('InvoiceAmountComponent', () => {
   let component: InvoiceAmountComponent;
@@ -84,6 +85,67 @@ describe('InvoiceAmountComponent', () => {
     });
   });
 
+  describe('when edit mode is updated', () => {
+    let chargeLineItemOptions$: Subject<RateEngineResponse>;
+    const accessorialDetailResponse = {
+      mode: 'TL',
+      scac: 'OWEL',
+      shipDate: '2022-04-02',
+      origin: {
+        streetAddress: '392 Poling Farm Road',
+        locCode: '',
+        city: 'Norfolk',
+        state: 'NE',
+        zip: '68701',
+        country: 'US'
+      },
+      destination: {
+        streetAddress: '4018 Murphy Court',
+        locCode: '',
+        city: 'Riverside',
+        state: 'CA',
+        zip: '92507',
+        country: 'US'
+      },
+      calcDetails: [
+        {
+          accessorialCode: '405',
+          name: 'Fuel Surcharge - Miles'
+        }
+      ]
+    };
+
+    beforeEach(() => {
+      chargeLineItemOptions$ = new Subject();
+      component.chargeLineItemOptions$ = chargeLineItemOptions$.asObservable();
+    });
+
+    it('should populate cost breakdown charge options', done => {
+
+      chargeLineItemOptions$.subscribe(() => {
+        expect(component.costBreakdownOptions.length).toBeGreaterThan(1);
+        done();
+      });
+      chargeLineItemOptions$.next(accessorialDetailResponse);
+    });
+
+    it ('should not display charge options already in list', done => {
+      component._formGroup = new FormGroup({
+        amountOfInvoice: new FormControl(10),
+        costBreakdownItems: new FormArray([new FormGroup({
+            charge: new FormControl('Fuel Surcharge - Miles'),
+          })
+        ])
+      });
+
+      chargeLineItemOptions$.subscribe(() => {
+        expect(component.costBreakdownOptions.length).toEqual(1);
+        done();
+      });
+      chargeLineItemOptions$.next(accessorialDetailResponse);
+    });
+  });
+
 
   describe('when invoice amount detail is loaded', () => {
     let loadInvoiceAmountDetail$: Subject<InvoiceAmountDetail>;
@@ -122,7 +184,8 @@ describe('InvoiceAmountComponent', () => {
             rateType: 'FLAT',
             quantity: 1,
             costName: 'TestCostName',
-            message: ''
+            message: '',
+            manual: false
           }
         ],
         standardPaymentTermsOverride: 'TestTerms',
@@ -183,6 +246,15 @@ describe('InvoiceAmountComponent', () => {
         done();
       });
       loadInvoiceAmountDetail$.next(undefined);
+    });
+
+    describe('when an empty line item is added', () => {
+      beforeEach(() => {
+        component.addNewEmptyLineItem();
+      });
+      it('should now have 1 line item', () => {
+        expect(component.costBreakdownItems.length).toEqual(1);
+      });
     });
   });
 

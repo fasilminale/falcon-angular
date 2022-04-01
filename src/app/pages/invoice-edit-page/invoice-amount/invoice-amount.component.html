@@ -93,7 +93,7 @@
            [formGroupName]="i">
 
         <!-- Cost breakdown item- Charge -->
-        <div class="col-3">
+        <div class="col-3" *ngIf="_.get('contracted')?.value">
           <input type="text"
                  class="form-control"
                  formControlName="charge"
@@ -105,6 +105,16 @@
                  *ngIf="_.get('message')?.value === 'NOT FOUND'">
             Charge not found
           </small>
+        </div>
+
+        <div class="col-3" *ngIf="!_.get('contracted')?.value">
+          <ng-select id="chargeField"
+                     formControlName="charge"
+                     [items]="costBreakdownOptions"
+                     bindLabel="label"
+                     bindValue="value"
+                     placeholder="Select One...">
+          </ng-select>
         </div>
 
         <div class="col-1">
@@ -161,6 +171,13 @@
 
       </div>
     </ng-container>
+    <elm-button buttonType="button"
+                buttonStyle="text"
+                id="add-new-line-item-button"
+                [isDisabled]="readOnlyForm"
+                (buttonClick)="addNewEmptyLineItem()">
+      <u>+ Add Charge</u>
+    </elm-button>
 
     <div [class.error-div]="!isValidCostBreakdownAmount"
          class="border-radius-5 cost-breakdown-total-div mt-5 mb-2 p-3 offset-md-9"
