@@ -9,7 +9,7 @@ import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-d
 import {InvoiceAmountComponent} from './invoice-amount.component';
 import {RateEngineResponse} from '../../../models/rate-engine/rate-engine-request';
 
-fdescribe('InvoiceAmountComponent', () => {
+describe('InvoiceAmountComponent', () => {
   let component: InvoiceAmountComponent;
   let fixture: ComponentFixture<InvoiceAmountComponent>;
 
