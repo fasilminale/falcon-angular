@@ -26,12 +26,6 @@
       <label for="currency-input" class="fal-label">
         Currency
       </label>
-<!--      <app-fal-radio-input id="currency-input"
-                           formControlName="currency"
-                           [options]="currencyOptions"
-                           [isDisabled]="readOnlyForm"
-      >
-      </app-fal-radio-input>-->
       <elm-radio-input id="currency-input"
                        orientation="horizontal"
                        formControlName="currency"
@@ -56,15 +50,6 @@
 
     <!-- OVERRIDE STANDARD PAYMENT TERMS -->
     <div class="col-4 offset-md-2 d-flex" [formGroup]="overridePaymentTermsFormGroup">
-<!--      <label for="override-stp-checkbox"
-             class="fal-label override-stp-checkbox-div">
-        <input id="override-stp-checkbox"
-               type="checkbox"
-               formControlName="isPaymentOverrideSelected"
-               [attr.disabled]="readOnlyForm? '': null"
-        />
-        Override Standard Payment Terms
-      </label>-->
       <elm-checkbox-input id="override-stp-checkbox"
                           orientation="horizontal"
                           formArrayName="isPaymentOverrideSelected"
