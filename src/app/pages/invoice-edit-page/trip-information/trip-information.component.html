@@ -163,6 +163,7 @@
       <elm-card id="originAddressCard">
         <app-fal-address
          [formGroup]="originAddressFormGroup"
+         [addressType]="'origin'"
          [loadAddress$]="loadOriginAddress$.asObservable()"
          >
 
@@ -177,6 +178,7 @@
       <elm-card id="destinationAddressCard">
         <app-fal-address
          [formGroup]="destinationAddressFormGroup"
+         [addressType]="'destination'"
          [loadAddress$]="loadDestinationAddress$.asObservable()"
          >
          </app-fal-address>

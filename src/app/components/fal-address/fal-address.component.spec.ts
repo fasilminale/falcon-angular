@@ -98,8 +98,63 @@ describe('FalAddressComponent', () => {
       loadAddress$.next({} as ShippingPointLocation);
     });
 
+    it('should set shipping point to N/A when address type is destination', done => {
+      component.addressType = 'destination';
+      loadAddress$.subscribe(address => {
+        expect(component._formGroup.get('shippingPoint')?.value).toEqual('N/A');
+        done();
+      });
+      loadAddress$.next({
+        city: 'TestCity',
+        address: 'TestAddress',
+        address2: 'TestAddress2',
+        name: 'TestName',
+        state: 'TestState',
+        country: 'TestCountry',
+        code: 'TestCode',
+        zipCode: 'TestZipCode',
+        shippingPoint: 'TestShippingPoint'
+      });
+    });
 
-  })
+    it('should set shipping point to proper value when address type is origin', done => {
+      component.addressType = 'origin';
+      loadAddress$.subscribe(address => {
+        expect(component._formGroup.get('shippingPoint')?.value).toEqual('TestShippingPoint');
+        done();
+      });
+      loadAddress$.next({
+        city: 'TestCity',
+        address: 'TestAddress',
+        address2: 'TestAddress2',
+        name: 'TestName',
+        state: 'TestState',
+        country: 'TestCountry',
+        code: 'TestCode',
+        zipCode: 'TestZipCode',
+        shippingPoint: 'TestShippingPoint'
+      });
+    });
+
+    it('should set shipping point to N/A when address type is origin and shipping point is undefined', done => {
+      component.addressType = 'origin';
+      loadAddress$.subscribe(address => {
+        expect(component._formGroup.get('shippingPoint')?.value).toEqual('N/A');
+        done();
+      });
+      loadAddress$.next({
+        city: 'TestCity',
+        address: 'TestAddress',
+        address2: 'TestAddress2',
+        name: 'TestName',
+        state: 'TestState',
+        country: 'TestCountry',
+        code: 'TestCode',
+        zipCode: 'TestZipCode',
+        shippingPoint: undefined
+      });
+    });
+  });
 
 
 });
