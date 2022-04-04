@@ -113,6 +113,7 @@
                      [items]="costBreakdownOptions"
                      bindLabel="label"
                      bindValue="value"
+                     (ngModelChange)="onSelectRate($event)"
                      placeholder="Select One...">
           </ng-select>
         </div>

@@ -1,4 +1,4 @@
-import {Component,  Inject, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
@@ -49,10 +49,10 @@ export class InvoiceAmountComponent implements OnInit {
 
   public costBreakdownOptions: Array<SelectOption<CalcDetail>> = [];
 
-  totalInvoiceAmount = 0;
-
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
+
+  @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
   }
@@ -217,5 +217,13 @@ export class InvoiceAmountComponent implements OnInit {
     const contracted = new FormControl(false);
 
     return new FormGroup({charge, rateSource, rate, type, quantity, totalAmount, message, contracted});
+  }
+
+  onSelectRate(value: any): void {
+    if (value.accessorialCode === 'OTHER') {
+      return;
+    }
+
+    this.rateEngineCall.emit(value.accessorialCode);
   }
 }

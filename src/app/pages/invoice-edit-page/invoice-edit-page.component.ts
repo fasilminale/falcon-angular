@@ -19,6 +19,7 @@ import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {WebServices} from '../../services/web-services';
 import {RateEngineRequest, RateEngineResponse} from '../../models/rate-engine/rate-engine-request';
 import {environment} from '../../../environments/environment';
+import {FreightOrder} from '../../models/invoice/freight-model';
 
 
 @Component({
@@ -53,6 +54,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public chargeLineItemOptions$ = new Subject<RateEngineResponse>();
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
+  private invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
 
   constructor(private util: UtilService,
@@ -91,6 +93,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   private loadInvoice(invoice: InvoiceDataModel): void {
+    this.invoice = invoice;
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
     this.isApprovedInvoice = StatusUtil.isApproved(invoice.status);
@@ -230,9 +233,43 @@ export class InvoiceEditPageComponent implements OnInit {
           zip: invoice.destination.zipCode,
           country: invoice.destination.country
         },
-        accessorialCodes: []
+        accessorialCodes: [],
+        invoice: this.invoice
       };
       return this.webService.httpPost(`${environment.baseServiceUrl}/v1/rates/getAccessorialDetails`, request);
+    }
+    return of();
+  }
+
+  getRates(event: any): any {
+    if (event) {
+      const origin = this.tripInformationFormGroup.get('originAddress');
+      const destination = this.tripInformationFormGroup.get('destinationAddress');
+      const request: RateEngineRequest = {
+        mode: this.tripInformationFormGroup.get('carrierMode')?.value.mode,
+        scac: this.tripInformationFormGroup.get('carrier')?.value.scac,
+        shipDate: this.tripInformationFormGroup.get('pickUpDate')?.value,
+        origin: {
+          streetAddress: origin?.get('address')?.value,
+          locCode: '',
+          city: origin?.get('city')?.value,
+          state: origin?.get('state')?.value,
+          zip: origin?.get('zipCode')?.value,
+          country: origin?.get('country')?.value
+        },
+        destination: {
+          streetAddress: destination?.get('address')?.value,
+          locCode: '',
+          city: destination?.get('city')?.value,
+          state: destination?.get('state')?.value,
+          zip: destination?.get('zipCode')?.value,
+          country: destination?.get('country')?.value
+        },
+        accessorialCodes: [event],
+        invoice: this.invoice
+      };
+
+      return this.webService.httpPost(`${environment.baseServiceUrl}/v1/rates/getRates`, request).subscribe(res => res);
     }
     return of();
   }

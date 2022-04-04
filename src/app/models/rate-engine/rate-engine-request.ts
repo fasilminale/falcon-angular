@@ -1,4 +1,6 @@
 import {SelectOption} from '../select-option-model/select-option-model';
+import {FreightOrder} from '../invoice/freight-model';
+import {InvoiceDataModel} from '../invoice/invoice-model';
 
 export interface RateEngineRequest {
   mode: string;
@@ -7,6 +9,7 @@ export interface RateEngineRequest {
   origin: Location;
   destination: Location;
   accessorialCodes: Array<string>;
+  invoice: InvoiceDataModel;
 }
 
 export interface RateEngineResponse {
