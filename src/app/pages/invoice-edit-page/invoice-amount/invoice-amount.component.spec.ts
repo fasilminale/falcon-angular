@@ -166,7 +166,7 @@ describe('InvoiceAmountComponent', () => {
 
         expect(formGroupValue.currency).toBe('USD');
         expect(formGroupValue.amountOfInvoice).toBe('1000');
-        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBe(true);
+        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual(['override']);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('TestTerms');
         expect(formGroupValue.mileage).toBe('100');
         done();
@@ -199,7 +199,7 @@ describe('InvoiceAmountComponent', () => {
 
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe('');
-        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBe(false);
+        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBeUndefined();
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('');
         expect(formGroupValue.mileage).toBe('');
         done();
@@ -240,12 +240,39 @@ describe('InvoiceAmountComponent', () => {
 
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe('');
-        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBe(false);
+        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBeUndefined();
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('');
         expect(formGroupValue.mileage).toBe('');
         done();
       });
       loadInvoiceAmountDetail$.next(undefined);
+    });
+
+    it('should reset payment terms when override payment terms checkbox unchecked', done => {
+      loadInvoiceAmountDetail$.next({
+        currency: 'USD',
+        amountOfInvoice: '1000',
+        costLineItems: [
+          {
+            chargeCode: 'TestChargeCode',
+            rateSource: {key: 'CONTRACT', label: 'Contract'},
+            entrySource: {key: 'AUTO', label: 'AUTO'},
+            chargeLineTotal: 100,
+            rateAmount: 100,
+            rateType: 'FLAT',
+            quantity: 1,
+            costName: 'TestCostName',
+            message: '',
+            manual: false
+          }
+        ],
+        standardPaymentTermsOverride: 'TestTerms',
+        mileage: '100'
+      });
+      expect(component.overridePaymentTermsFormGroup.controls.paymentTerms.value).toEqual('TestTerms');
+      component.isPaymentOverrideSelected.at(0).setValue(null);
+      expect(component.overridePaymentTermsFormGroup.controls.paymentTerms.value).toBeNull();
+      done();
     });
 
     describe('when an empty line item is added', () => {

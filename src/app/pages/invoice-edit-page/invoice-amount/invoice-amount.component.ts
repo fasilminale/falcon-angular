@@ -10,6 +10,7 @@ import {map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {WebServices} from '../../../services/web-services';
 import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
+import {ElmFormHelper} from "@elm/elm-styleguide-ui";
 
 @Component({
   selector: 'app-invoice-amount',
@@ -27,23 +28,28 @@ export class InvoiceAmountComponent implements OnInit {
     {value: 'Z000', display: 'Pay Immediately'},
     {value: 'ZN14', display: 'Pay in 14 days'}
   ];
-
-  public currencyOptions = ['USD', 'CAD'];
+  public currencyOptions = [
+    {label: 'USD', value: 'USD', disabled: false},
+    {label: 'CAD', value: 'CAD', disabled: false}
+  ];
   public costBreakdownTypes = [
     {display: 'Per hour', value: 'PERHOUR'},
     {display: 'Flat', value: 'Flat'},
     {display: 'Per mile', value: 'PERMILE'},
     {display: 'Percent', value: 'Percentage'},
     {display: 'N/A', value: ''}];
+  public overridePaymentTermsOptions = [
+    {label: 'Override Standard Payment Terms', value: 'override', disabled: false}
+  ];
+  isPaymentOverrideSelected = new FormArray([]);
+  overridePaymentTermsFormGroup = new FormGroup({
+    isPaymentOverrideSelected: this.isPaymentOverrideSelected,
+    paymentTerms: new FormControl('')
+  });
 
   public costBreakdownOptions: Array<SelectOption<CalcDetail>> = [];
 
   totalInvoiceAmount = 0;
-
-  overridePaymentTermsFormGroup  = new FormGroup({
-    isPaymentOverrideSelected: new FormControl(false),
-    paymentTerms: new FormControl('')
-  });
 
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
@@ -52,6 +58,27 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.setUpOverrideStandardPaymentTermsSubscription();
+    this.enableDisableOverrideStandardPaymentTerms();
+  }
+
+  setUpOverrideStandardPaymentTermsSubscription(): void {
+    this.subscriptionManager.manage(this.isPaymentOverrideSelected.valueChanges
+      .subscribe((selected: string) => {
+        const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value ? true : false;
+        if (!selectedBool) {
+          this.overridePaymentTermsFormGroup.controls.paymentTerms.reset();
+        }
+      }));
+  }
+
+  enableDisableOverrideStandardPaymentTerms(): void {
+    if (this.readOnlyForm) {
+      this.isPaymentOverrideSelected.disable();
+    }
+    else {
+      this.isPaymentOverrideSelected.enable();
+    }
   }
 
   @Input() set chargeLineItemOptions$(observable: Observable<RateEngineResponse>) {
@@ -76,7 +103,10 @@ export class InvoiceAmountComponent implements OnInit {
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
-      isEditMode => this.readOnlyForm = !isEditMode
+      isEditMode => {
+        this.readOnlyForm = !isEditMode;
+        this.enableDisableOverrideStandardPaymentTerms();
+      }
     ));
   }
 
@@ -100,10 +130,15 @@ export class InvoiceAmountComponent implements OnInit {
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail.currency : '');
-    givenFormGroup.get('overridePaymentTerms')?.patchValue({
+    if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
+      ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
+        this.overridePaymentTermsOptions[0], true);
+    }
+    this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : '');
+/*    givenFormGroup.get('overridePaymentTerms')?.patchValue({
       isPaymentOverrideSelected: invoiceAmountDetail?.standardPaymentTermsOverride ? true : false,
       paymentTerms: invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : ''
-    });
+    });*/
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ? invoiceAmountDetail.mileage : '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
@@ -165,6 +200,7 @@ export class InvoiceAmountComponent implements OnInit {
   get hasMileage(): boolean {
     return !!this._formGroup?.get('mileage')?.value;
   }
+
 
   addNewEmptyLineItem(): void {
     this.costBreakdownItemsControls.push(this.createEmptyLineItemGroup());

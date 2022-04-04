@@ -73,6 +73,10 @@
   border-color: $cardinal-red;
 }
 
+#erp-type-input ::ng-deep label.error {
+  border: none;
+}
+
 .error-div{
   border: 1px solid $cardinal-red;
 }
@@ -193,4 +197,23 @@
 
 .text-italics {
   font-style: italic;
+}
+
+#currency-input ::ng-deep .elm-input .elm-input-label {
+  margin-bottom: 0px;
+}
+
+#override-stp-checkbox {
+  padding-top: 40px;
+}
+
+.radio-dev-disabled {
+  background-color: #e9ecef;
+}
+
+.radio-dev-disabled ::ng-deep .elm-input {
+  background-color: #e9ecef;
+  padding-bottom: 0px;
+  border: solid 0px transparent;
+  border-radius: 3px;
 }

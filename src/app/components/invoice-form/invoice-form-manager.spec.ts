@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager} from './invoice-form-manager';
-import {AbstractControl, FormControl} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl} from '@angular/forms';
 import Spy = jasmine.Spy;
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {of} from 'rxjs';
@@ -89,10 +89,12 @@ describe('InvoiceFormManager', () => {
         // PAYMENT TERMS TESTS
         describe('given a payment override is selected', () => {
           beforeEach(() => {
-            invoiceFormManager.isPaymentOverrideSelected.setValue(true);
+            (invoiceFormManager.isPaymentOverrideSelected as FormArray)
+              .push(new FormControl(invoiceFormManager.overridePaymentTermsOptions[0].value));
           });
           it(', payment override should be selected', () => {
-            expect(invoiceFormManager.isPaymentOverrideSelected.value).toBeTrue();
+            expect((invoiceFormManager.isPaymentOverrideSelected as FormArray).at(0).value)
+              .toEqual(invoiceFormManager.overridePaymentTermsOptions[0].value);
           });
           describe('and payment terms are present', () => {
             beforeEach(() => {
@@ -103,10 +105,11 @@ describe('InvoiceFormManager', () => {
             });
             describe(', then payment override is unselected', () => {
               beforeEach(() => {
-                invoiceFormManager.isPaymentOverrideSelected.setValue(false);
+                (invoiceFormManager.isPaymentOverrideSelected as FormArray).clear();
+                (invoiceFormManager.isPaymentOverrideSelected as FormArray).push(new FormControl(null));
               });
               it(', payment override should be unselected', () => {
-                expect(invoiceFormManager.isPaymentOverrideSelected.value).toBeFalse();
+                expect((invoiceFormManager.isPaymentOverrideSelected as FormArray).at(0).value).toBeNull();
               });
               it(', payment terms should be cleared', () => {
                 expect(invoiceFormManager.paymentTerms.value).toBeNull();
