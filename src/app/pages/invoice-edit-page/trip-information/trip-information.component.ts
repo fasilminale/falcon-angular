@@ -42,18 +42,10 @@ export class TripInformationComponent implements OnInit {
   public destinationAddressFormGroup = new FormGroup({});
   public billToAddressFormGroup = new FormGroup({});
   private _editableFormArray = new FormArray([
-    this.invoiceDateControl,
     this.pickUpDateControl,
-    this.deliveryDateControl,
-    this.proTrackingNumberControl,
-    this.bolNumberControl,
-    this.freightPaymentTermsControl,
     this.carrierControl,
     this.carrierModeControl,
-    this.serviceLevelControl,
-    this.originAddressFormGroup,
-    this.destinationAddressFormGroup,
-    this.billToAddressFormGroup
+    this.serviceLevelControl
   ]);
   private tripInformation: TripInformation = {} as TripInformation;
 

@@ -199,12 +199,12 @@ describe('TripInformationComponent', () => {
     it('(edit mode = true) should enable editable forms', done => {
       isEditMode$.subscribe(() => {
         expect(component.tripIdControl.enabled).toBeFalse();
-        expect(component.invoiceDateControl.enabled).toBeTrue();
+        expect(component.invoiceDateControl.enabled).toBeFalse();
         expect(component.pickUpDateControl.enabled).toBeTrue();
-        expect(component.deliveryDateControl.enabled).toBeTrue();
-        expect(component.proTrackingNumberControl.enabled).toBeTrue();
-        expect(component.bolNumberControl.enabled).toBeTrue();
-        expect(component.freightPaymentTermsControl.enabled).toBeTrue();
+        expect(component.deliveryDateControl.enabled).toBeFalse();
+        expect(component.proTrackingNumberControl.enabled).toBeFalse();
+        expect(component.bolNumberControl.enabled).toBeFalse();
+        expect(component.freightPaymentTermsControl.enabled).toBeFalse();
         expect(component.carrierControl.enabled).toBeTrue();
         expect(component.carrierModeControl.enabled).toBeTrue();
         expect(component.serviceLevelControl.enabled).toBeTrue();

@@ -109,7 +109,7 @@
                         buttonType="button"
                         buttonStyle="secondary"
                         class="fake-form-control"
-                        [isDisabled]="!isEditMode$.value || invoiceFormGroup.invalid || isAutoInvoice"
+                        [isDisabled]="!isEditMode$.value || !invoiceFormGroup.valid"
                         (buttonClick)="clickSaveButton()">
               Save
             </elm-button>
@@ -119,7 +119,7 @@
                         buttonType="button"
                         buttonStyle="primary"
                         class="fake-form-control"
-                        [isDisabled]="!isEditMode$.value || invoiceFormGroup.invalid || isAutoInvoice"
+                        [isDisabled]="!isEditMode$.value || !invoiceFormGroup.valid"
                         (buttonClick)="clickSubmitForApprovalButton()">
               Submit for Approval
             </elm-button>
