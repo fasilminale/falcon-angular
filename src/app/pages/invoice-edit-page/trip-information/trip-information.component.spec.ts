@@ -239,6 +239,7 @@ describe('TripInformationComponent', () => {
 
       },
       carrierMode: {
+        mode: 'CarrierMode',
         reportModeDescription: 'ReportModeDescription',
         reportKeyMode: 'ReportKeyMode'
       },

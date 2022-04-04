@@ -92,7 +92,6 @@ export class TripInformationComponent implements OnInit {
           setTimeout(() => {
             this.carrierModeControl.setValue(this.tripInformation.carrierMode);
             this.carrierModeControl.updateValueAndValidity();
-            console.log(this.carrierModeOptions);
           }, 2000);
         }),
 
