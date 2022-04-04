@@ -63,14 +63,13 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   setUpOverrideStandardPaymentTermsSubscription(): void {
-    this.isPaymentOverrideSelected.valueChanges
+    this.subscriptionManager.manage(this.isPaymentOverrideSelected.valueChanges
       .subscribe((selected: string) => {
-        console.log(`selected ${selected}`);
         const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value ? true : false;
         if (!selectedBool) {
           this.overridePaymentTermsFormGroup.controls.paymentTerms.reset();
         }
-      });
+      }));
   }
 
   enableDisableOverrideStandardPaymentTerms(): void {
