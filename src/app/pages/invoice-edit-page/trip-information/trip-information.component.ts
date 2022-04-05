@@ -1,5 +1,5 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component, Inject, Input, OnChanges, OnInit} from '@angular/core';
+import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
@@ -11,13 +11,33 @@ import {CarrierModeCodeReference, CarrierModeCodeUtils} from '../../../models/ma
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
 import { ShippingPointLocation } from 'src/app/models/location/location-model';
 import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
+import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
+import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
+import {DateParserFormatter} from '../../../utils/date-parser-formatter';
 
 const {required} = Validators;
+
+export function validateDate(control: AbstractControl): ValidationErrors | null {
+  const dateString = control.value;
+  if (dateString) {
+    if (!(dateString instanceof Date) || (dateString.getFullYear() < 1000
+      || dateString.getFullYear() > 9999)) {
+      return {validateDate: true};
+    } else if (dateString.valueOf() >= Date.now()) {
+      return {dateBefore: true};
+    }
+  }
+  return null;
+}
 
 @Component({
   selector: 'app-trip-information',
   templateUrl: './trip-information.component.html',
-  styleUrls: ['./trip-information.component.scss']
+  styleUrls: ['./trip-information.component.scss'],
+  providers: [
+    {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter},
+    {provide: NgbDateParserFormatter, useClass: DateParserFormatter}
+  ]
 })
 export class TripInformationComponent implements OnInit {
 
@@ -25,10 +45,14 @@ export class TripInformationComponent implements OnInit {
   public carrierOptions: Array<SelectOption<CarrierReference>> = [];
   public carrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
   public serviceLevelOptions: Array<SelectOption<ServiceLevel>> = [];
+  public carrierSCACs: Array<CarrierSCAC> = [];
+
+  public filteredCarrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
+  public filteredServiceLevels: Array<SelectOption<ServiceLevel>> = [];
 
   public tripIdControl = new FormControl();
   public invoiceDateControl = new FormControl({}, [required]);
-  public pickUpDateControl = new FormControl({}, [required]);
+  public pickUpDateControl = new FormControl({}, [required, validateDate]);
   public deliveryDateControl = new FormControl({}, [required]);
   public proTrackingNumberControl = new FormControl({}, [required]);
   public bolNumberControl = new FormControl({}, [required]);
@@ -64,6 +88,16 @@ export class TripInformationComponent implements OnInit {
     this.formGroup = this._formGroup;
     this.formGroup.disable();
     this.subscriptionManager.manage(
+      // Carrier SCACs
+      this.masterData.getCarrierSCACs()
+        .subscribe(opts => {
+          this.carrierSCACs = opts;
+          setTimeout(() => {
+            this.filteredCarrierModeOptions = this.filterCarrierModes();
+            this.filteredServiceLevels = this.filterServiceLevels();
+          }, 500);
+        }),
+
       // Carrier Options
       this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions))
         .subscribe(opts => {
@@ -89,7 +123,9 @@ export class TripInformationComponent implements OnInit {
 
       // Service Level Options
       this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions))
-        .subscribe(opts => this.serviceLevelOptions = opts),
+        .subscribe(opts => {
+          this.serviceLevelOptions = opts;
+        }),
     );
   }
 
@@ -112,6 +148,30 @@ export class TripInformationComponent implements OnInit {
 
   get formGroup(): FormGroup {
     return this._formGroup;
+  }
+
+  filterCarrierModes(): Array<SelectOption<CarrierModeCodeReference>> {
+    const filteredScacs = this.carrierSCACs.filter(carrier => carrier.scac === this.carrierControl?.value?.scac);
+    return this.carrierModeOptions.filter(opt => {
+      for (const i in filteredScacs) {
+        if (filteredScacs[i].mode === opt.value.mode) {
+          return opt;
+        }
+      }
+      return null;
+    }).filter(Boolean);
+  }
+
+  filterServiceLevels(): Array<SelectOption<ServiceLevel>> {
+    const filteredScacs = this.carrierSCACs.filter(carrier => carrier.scac === this.carrierControl?.value?.scac);
+    return this.serviceLevelOptions.filter(opt => {
+      for (const i in filteredScacs) {
+        if (filteredScacs[i].serviceLevel === opt.value.level) {
+          return opt;
+        }
+      }
+      return null;
+    }).filter(Boolean);
   }
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
@@ -153,6 +213,10 @@ export class TripInformationComponent implements OnInit {
     return item.id === value.id;
   }
 
+  compareServiceLevelWith(item: any, value: any): boolean {
+    return item.value.level === (value.level || value);
+  }
+
   compareCarrierWith(item: any, value: any) {
     return item.value.scac === value.scac;
   }
@@ -160,6 +224,20 @@ export class TripInformationComponent implements OnInit {
   compareCarrierModeWith(item: any, value: any) {
     return item.value.reportKeyMode === value.reportKeyMode ?
       item.value.reportModeDescription === value.reportModeDescription : false;
+  }
+
+  refreshCarrierData(): void {
+    this.filteredCarrierModeOptions = this.filterCarrierModes();
+    this.filteredServiceLevels = this.filterServiceLevels();
+
+    if (!this.filteredCarrierModeOptions.some(opt => opt.value?.mode === this.carrierModeControl?.value?.mode)) {
+      this.carrierModeControl.setValue(null);
+    }
+
+    const serviceLevelValue = this.serviceLevelControl?.value?.level || this.serviceLevelControl?.value;
+    if (!this.filteredServiceLevels.some(opt => opt.value.level === serviceLevelValue)) {
+      this.serviceLevelControl.setValue(null);
+    }
   }
 }
 

@@ -24,7 +24,6 @@
                        formControlName="invoiceDate">
       </elm-date-picker>
       <elm-input-subtext *ngIf="invoiceDateControl.invalid"
-                         class="input-error"
                          [isError]="true">
         Invoice Date is missing
       </elm-input-subtext>
@@ -35,14 +34,16 @@
         Pick up Date
       </label>
       <elm-date-picker id="pickUpDateInput"
-                       class="fal-label"
                        labelPosition="top"
                        formControlName="pickUpDate">
       </elm-date-picker>
-      <elm-input-subtext *ngIf="pickUpDateControl.invalid"
-                         class="input-error"
+      <elm-input-subtext *ngIf="pickUpDateControl.invalid && !pickUpDateControl.hasError('dateBefore')"
                          [isError]="true">
         Pick up Date is missing
+      </elm-input-subtext>
+      <elm-input-subtext *ngIf="pickUpDateControl.hasError('dateBefore')"
+                         [isError]="true">
+        Pick up Date must be on or before current date
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -50,7 +51,6 @@
              class="fal-label">
         Delivery Date
       </label>
-      <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
       <elm-date-picker id="deliveryDateInput"
                        class="fal-label"
                        labelPosition="top"
@@ -110,6 +110,7 @@
                  bindValue="value"
                  formControlName="carrier"
                  placeholder="Select One..."
+                 (change)="refreshCarrierData()"
                  [compareWith]="compareCarrierWith"
                  [ngClass]="{'error': !carrierControl.value }">
       </ng-select>
@@ -125,7 +126,7 @@
         Carrier Mode
       </label>
       <ng-select id="carrierModeInput"
-                 [items]="carrierModeOptions"
+                 [items]="filteredCarrierModeOptions"
                  bindLabel="label"
                  bindValue="value"
                  formControlName="carrierMode"
@@ -145,13 +146,19 @@
         Service Level
       </label>
       <ng-select id="serviceLevelInput"
-                 [items]="serviceLevelOptions"
+                 [items]="filteredServiceLevels"
                  bindLabel="label"
                  bindValue="value"
                  formControlName="serviceLevel"
                  placeholder="Select One..."
-                 [compareWith]="compareWith">
+                 [compareWith]="compareServiceLevelWith"
+                 [ngClass]="{'error': !serviceLevelControl.value}">
       </ng-select>
+      <elm-input-subtext *ngIf="!serviceLevelControl.value"
+                         class="input-error"
+                         [isError]="true">
+        Service Level is missing
+      </elm-input-subtext>
     </div>
   </div>
   <div class="row">
