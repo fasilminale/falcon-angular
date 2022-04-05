@@ -199,7 +199,7 @@ describe('InvoiceAmountComponent', () => {
 
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe('');
-        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBeUndefined();
+        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual([]);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('');
         expect(formGroupValue.mileage).toBe('');
         done();
@@ -240,7 +240,7 @@ describe('InvoiceAmountComponent', () => {
 
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe('');
-        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBeUndefined();
+        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual([]);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('');
         expect(formGroupValue.mileage).toBe('');
         done();
@@ -283,6 +283,30 @@ describe('InvoiceAmountComponent', () => {
         expect(component.costBreakdownItems.length).toEqual(1);
       });
     });
+
+    it('should disable overrideStandardPaymentTerms checkbox when enableDisableOverrideStandardPaymentTerms invoked with true', () => {
+
+      component.overridePaymentTermsOptions[0].disabled = false;
+      component.enableDisableOverrideStandardPaymentTerms(true);
+      expect(component.overridePaymentTermsOptions[0].disabled).toBeTrue();
+    });
+
+    it('should disable currency radios when enableDisableCurrency invoked with true', () => {
+
+      component._formGroup.controls.currency.enable();
+      expect(component._formGroup.controls.currency.disabled).toBeFalse();
+      component.enableDisableCurrency(true);
+      expect(component._formGroup.controls.currency.disabled).toBeTrue();
+    });
+
+    it('should enable currency radios when enableDisableCurrency invoked with false', () => {
+
+      component._formGroup.controls.currency.disable();
+      expect(component._formGroup.controls.currency.disabled).toBeTrue();
+      component.enableDisableCurrency(false);
+      expect(component._formGroup.controls.currency.disabled).toBeFalse();
+    });
+
   });
 
 });
