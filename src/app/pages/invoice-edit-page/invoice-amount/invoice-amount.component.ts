@@ -59,7 +59,8 @@ export class InvoiceAmountComponent implements OnInit {
 
   ngOnInit(): void {
     this.setUpOverrideStandardPaymentTermsSubscription();
-    this.enableDisableOverrideStandardPaymentTerms();
+    this.enableDisableOverrideStandardPaymentTerms(true);
+    this.enableDisableCurrency(true);
   }
 
   setUpOverrideStandardPaymentTermsSubscription(): void {
@@ -72,12 +73,17 @@ export class InvoiceAmountComponent implements OnInit {
       }));
   }
 
-  enableDisableOverrideStandardPaymentTerms(): void {
-    if (this.readOnlyForm) {
-      this.isPaymentOverrideSelected.disable();
-    }
-    else {
-      this.isPaymentOverrideSelected.enable();
+  enableDisableOverrideStandardPaymentTerms(disable: boolean): void {
+      this.overridePaymentTermsOptions[0].disabled = disable;
+  }
+
+  enableDisableCurrency(disable: boolean): void {
+    if (this._formGroup.controls.currency) {
+      if (disable) {
+        this._formGroup.controls.currency.disable();
+      } else {
+        this._formGroup.controls.currency.enable();
+      }
     }
   }
 
@@ -105,7 +111,8 @@ export class InvoiceAmountComponent implements OnInit {
     this.subscriptionManager.manage(observable.subscribe(
       isEditMode => {
         this.readOnlyForm = !isEditMode;
-        this.enableDisableOverrideStandardPaymentTerms();
+        this.enableDisableOverrideStandardPaymentTerms(this.readOnlyForm);
+        this.enableDisableCurrency(this.readOnlyForm);
       }
     ));
   }
@@ -135,10 +142,7 @@ export class InvoiceAmountComponent implements OnInit {
         this.overridePaymentTermsOptions[0], true);
     }
     this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : '');
-/*    givenFormGroup.get('overridePaymentTerms')?.patchValue({
-      isPaymentOverrideSelected: invoiceAmountDetail?.standardPaymentTermsOverride ? true : false,
-      paymentTerms: invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : ''
-    });*/
+
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ? invoiceAmountDetail.mileage : '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
