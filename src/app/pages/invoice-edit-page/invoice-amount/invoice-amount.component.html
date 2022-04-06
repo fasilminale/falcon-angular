@@ -109,7 +109,8 @@
         <div class="col-3" *ngIf="!_.get('contracted')?.value">
           <ng-select id="chargeField"
                      formControlName="charge"
-                     [items]="costBreakdownOptions"
+                     [items]="filteredCostBreakdownOptions"
+                     [clearable]="false"
                      bindLabel="label"
                      bindValue="value"
                      (ngModelChange)="onSelectRate($event)"
@@ -176,7 +177,7 @@
                 id="add-new-line-item-button"
                 [isDisabled]="readOnlyForm"
                 (buttonClick)="addNewEmptyLineItem()">
-      <u>+ Add Charge</u>
+      <u>+ Add New Charge</u>
     </elm-button>
 
     <div [class.error-div]="!isValidCostBreakdownAmount"

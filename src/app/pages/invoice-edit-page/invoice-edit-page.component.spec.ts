@@ -66,7 +66,7 @@ describe('InvoiceEditPageComponent', () => {
 
     // Mock Web Service
     webService = TestBed.inject(WebServices);
-    spyOn(webService, 'httpPost').and.stub();
+    spyOn(webService, 'httpPost').and.returnValue(of());
 
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
@@ -156,6 +156,35 @@ describe('InvoiceEditPageComponent', () => {
         component.getAccessorialList(testInvoice);
         expect(webService.httpPost).not.toHaveBeenCalled();
       });
+      it('getRates should call rate engine', () => {
+        component.invoice = new InvoiceDataModel();
+        component.getRates('testAccessorialCode');
+        expect(webService.httpPost).toHaveBeenCalled();
+      });
+      it('getRates should not call rate engine', () => {
+        testInvoice.carrier = null;
+        component.invoice = testInvoice;
+        component.getRates('testAccessorialCode');
+        expect(webService.httpPost).not.toHaveBeenCalled();
+      });
+
+      it('handle getRates response', done => {
+        // Setup
+        const ratesResponse$ = new Subject<any>();
+        asSpy(webService.httpPost).and.returnValue(ratesResponse$.asObservable());
+        component.invoice = new InvoiceDataModel();
+        component.getRates('testAccessorialCode');
+
+        // Assertions
+        ratesResponse$.subscribe(() => {
+          expect(webService.httpPost).toHaveBeenCalled();
+          done();
+        });
+
+        // Run Test
+        ratesResponse$.next(true);
+      });
+
       it('should load milestones', done => {
         // Assertions
         routeParamMap$.subscribe(() => {

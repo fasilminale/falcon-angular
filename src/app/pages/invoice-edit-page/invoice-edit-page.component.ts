@@ -17,9 +17,9 @@ import {ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {WebServices} from '../../services/web-services';
-import {RateEngineRequest, RateEngineResponse} from '../../models/rate-engine/rate-engine-request';
+import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
 import {environment} from '../../../environments/environment';
-import {FreightOrder} from '../../models/invoice/freight-model';
+import {RateService} from '../../services/rate-service';
 
 
 @Component({
@@ -36,7 +36,6 @@ export class InvoiceEditPageComponent implements OnInit {
   public userInfo: UserInfoModel | undefined;
   public isDeletedInvoice = false;
   public isApprovedInvoice = false;
-  public isRejectedInvoice = false;
   public isMilestoneTabOpen = false;
   public isAutoInvoice = false;
   public isEditableInvoice = true;
@@ -51,10 +50,11 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
-  public chargeLineItemOptions$ = new Subject<RateEngineResponse>();
+  public chargeLineItemOptions$ = new Subject<RateDetailResponse>();
+  public rateEngineCallResult$ = new Subject<RatesResponse>();
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
-  private invoice: InvoiceDataModel = new InvoiceDataModel();
+  public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
 
   constructor(private util: UtilService,
@@ -62,7 +62,7 @@ export class InvoiceEditPageComponent implements OnInit {
               private userService: UserService,
               private invoiceService: InvoiceService,
               private toastService: ToastService,
-              private webService: WebServices,
+              private rateService: RateService,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
               public router: Router) {
     this.tripInformationFormGroup = new FormGroup({});
@@ -211,7 +211,12 @@ export class InvoiceEditPageComponent implements OnInit {
     this.showNotYetImplementedModal('Submit For Approval');
   }
 
-  getAccessorialList(invoice: InvoiceDataModel): Observable<RateEngineResponse> {
+  /**
+   *  Retrieves all available accessorials for the current invoice.
+   *  Cost breakdown options are populated with the results from this call.
+   *  Rate management is not called if checkAccessorialData() returns false,indicating required data is missing.
+   */
+  getAccessorialList(invoice: InvoiceDataModel): Observable<RateDetailResponse> {
     if (this.checkAccessorialData(invoice)) {
       const request: RateEngineRequest = {
         mode: invoice.mode.mode,
@@ -236,44 +241,57 @@ export class InvoiceEditPageComponent implements OnInit {
         accessorialCodes: [],
         invoice: this.invoice
       };
-      return this.webService.httpPost(`${environment.baseServiceUrl}/v1/rates/getAccessorialDetails`, request);
+      return this.rateService.getAccessorialDetails(request);
     }
     return of();
   }
 
-  getRates(event: any): any {
-    if (event) {
-      const origin = this.tripInformationFormGroup.get('originAddress');
-      const destination = this.tripInformationFormGroup.get('destinationAddress');
+  /**
+   *  Retrieves the rate for a provided accessorial code.
+   *  Populates the line item information for the selected accessorial code.
+   *  Rate management is not called if checkAccessorialData() returns false,indicating required data is missing.
+   */
+  getRates(accessorialCode: string): void {
+    if (this.checkAccessorialData(this.invoice) && accessorialCode) {
       const request: RateEngineRequest = {
-        mode: this.tripInformationFormGroup.get('carrierMode')?.value.mode,
-        scac: this.tripInformationFormGroup.get('carrier')?.value.scac,
-        shipDate: this.tripInformationFormGroup.get('pickUpDate')?.value,
+        mode: this.invoice.mode.mode,
+        scac: this.invoice.carrier.scac,
+        shipDate: this.invoice.pickupDateTime,
         origin: {
-          streetAddress: origin?.get('address')?.value,
+          streetAddress: this.invoice.origin.address,
           locCode: '',
-          city: origin?.get('city')?.value,
-          state: origin?.get('state')?.value,
-          zip: origin?.get('zipCode')?.value,
-          country: origin?.get('country')?.value
+          city: this.invoice.origin.city,
+          state: this.invoice.origin.state,
+          zip: this.invoice.origin.zipCode,
+          country: this.invoice.origin.country
         },
         destination: {
-          streetAddress: destination?.get('address')?.value,
+          streetAddress: this.invoice.destination.address,
           locCode: '',
-          city: destination?.get('city')?.value,
-          state: destination?.get('state')?.value,
-          zip: destination?.get('zipCode')?.value,
-          country: destination?.get('country')?.value
+          city: this.invoice.destination.city,
+          state: this.invoice.destination.state,
+          zip: this.invoice.destination.zipCode,
+          country: this.invoice.destination.country
         },
-        accessorialCodes: [event],
+        accessorialCodes: [accessorialCode],
         invoice: this.invoice
       };
-
-      return this.webService.httpPost(`${environment.baseServiceUrl}/v1/rates/getRates`, request).subscribe(res => res);
+      this.subscriptions.manage(
+        this.rateService.getRates(request).subscribe(response => {
+          this.rateEngineCallResult$.next(response);
+        })
+      );
     }
-    return of();
   }
 
+  /**
+   *  Checks for the required accessorial data.
+   *    Carrier Mode
+   *    Carrier Scac
+   *    Shipping Date
+   *    Origin Address
+   *    Destination Address
+   */
   private checkAccessorialData(invoice: InvoiceDataModel): boolean {
     const modeExists: boolean = invoice.mode != null && invoice.mode.mode != null;
     const carrierExists: boolean = invoice.carrier != null && invoice.carrier.scac != null;
