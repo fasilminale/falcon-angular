@@ -11,6 +11,7 @@ import {ServiceLevel} from '../../../models/master-data-models/service-level-mod
 import {FormGroup} from '@angular/forms';
 import {FreightPaymentTerms, TripInformation} from '../../../models/invoice/trip-information-model';
 import {asSpy} from '../../../testing/test-utils.spec';
+import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 
 describe('TripInformationComponent', () => {
 
@@ -26,6 +27,7 @@ describe('TripInformationComponent', () => {
 
     // Mock MasterDataService
     masterDataService = TestBed.inject(MasterDataService);
+    spyOn(masterDataService, 'getCarrierSCACs').and.returnValue(of([]));
     spyOn(masterDataService, 'getCarriers').and.returnValue(of([]));
     spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([]));
     spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([]));
@@ -44,6 +46,9 @@ describe('TripInformationComponent', () => {
       expect(component.formGroup.disabled).toBeTrue();
     });
     it('should have zero carrier options', () => {
+      expect(component.carrierSCACs).toEqual([]);
+    });
+    it('should have zero carrier options', () => {
       expect(component.carrierOptions).toEqual([]);
     });
     it('should have zero carrier mode options', () => {
@@ -54,6 +59,27 @@ describe('TripInformationComponent', () => {
     });
     it('should have controls in formGroup', () => {
       expect(Object.keys(component.formGroup.controls).length).toBe(13);
+    });
+  });
+
+  describe('#carrierSCACs', () => {
+    describe('given a carrier scac', () => {
+      const CARRIER_SCAC: CarrierSCAC = {
+        scac: 'TCS',
+        mode: 'LTL',
+        serviceLevel: 't1'
+      };
+      beforeEach(() => {
+        asSpy(masterDataService.getCarrierSCACs).and.returnValue(of([CARRIER_SCAC]));
+        component.ngOnInit();
+      });
+      it('should have carrier option', () => {
+        expect(component.carrierSCACs).toEqual([{
+          scac: 'TCS',
+          mode: 'LTL',
+          serviceLevel: 't1'
+        }]);
+      });
     });
   });
 
@@ -312,6 +338,57 @@ describe('TripInformationComponent', () => {
       expect(component.compareCarrierModeWith({value: {reportKeyMode: 'TLB'}}, {reportKeyMode: 'TL'})).toBeFalse();
     });
 
+  });
+
+  describe('should compare with service level', () => {
+    it('should return true', () => {
+      expect(component.compareServiceLevelWith({value: {level:'t1'}}, {level: 't1'})).toBeTrue();
+    });
+
+    it('should return false', () => {
+      expect(component.compareServiceLevelWith({value: {level: 't1'}}, {level: 't2'})).toBeFalse();
+    });
+
+  });
+
+  describe('should refresh carrier data', () => {
+    it('should call filter methods', () => {
+      spyOn(component, 'filterServiceLevels').and.callThrough();
+      spyOn(component, 'filterCarrierModes').and.callThrough();
+      component.carrierControl.setValue({ scac: 'TestScac' });
+      component.carrierSCACs = [
+        {
+          scac: 'TestScac',
+          mode: 'LTL',
+          serviceLevel: 't1'
+        }
+      ];
+
+      component.carrierModeOptions = [
+        {
+          label: 'TLTL (Test Mode Description)',
+          value: { mode: 'LTL', reportKeyMode: 'LTL', reportModeDescription: 'LTL.' }
+        },
+        {
+          label: 'TL (Test TL Mode Description)',
+          value: { mode: 'TL', reportKeyMode: 'TL', reportModeDescription: 'TL.' }
+        }
+      ];
+
+      component.serviceLevelOptions = [
+        {
+          label: 't1',
+          value: { level: 't1', name: 'T1' }
+        },
+        {
+          label: 't2',
+          value: { level: 't2', name: 'T2' }
+        }
+      ];
+      component.refreshCarrierData();
+      expect(component.filterCarrierModes).toHaveBeenCalled();
+      expect(component.filterServiceLevels).toHaveBeenCalled();
+    });
   });
 
 });

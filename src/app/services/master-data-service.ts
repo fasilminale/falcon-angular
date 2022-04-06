@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {WebServices} from './web-services';
 import {Observable} from 'rxjs';
-import {Carrier} from '../models/master-data-models/carrier-model';
+import {Carrier, CarrierReference} from '../models/master-data-models/carrier-model';
 import {CarrierModeCode} from '../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel} from '../models/master-data-models/service-level-model';
+import {CarrierSCAC} from '../models/master-data-models/carrier-scac';
 
 
 @Injectable()
@@ -19,6 +20,10 @@ export class MasterDataService {
 
   public checkCompanyCode(companyCode: string): Observable<any> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/companyCode/${companyCode}`);
+  }
+
+  public getCarrierSCACs(): Observable<Array<CarrierSCAC>> {
+    return this.getAllOfMasterDataType('carrierSCACs');
   }
 
   public getCarriers(): Observable<Array<Carrier>> {
