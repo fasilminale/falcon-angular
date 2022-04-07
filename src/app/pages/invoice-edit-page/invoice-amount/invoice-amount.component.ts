@@ -54,6 +54,7 @@ export class InvoiceAmountComponent implements OnInit {
   pendingAccessorialCode = '';
 
   @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
+  @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
   }
@@ -234,6 +235,10 @@ export class InvoiceAmountComponent implements OnInit {
 
   addNewEmptyLineItem(): void {
     this.costBreakdownItemsControls.push(this.createEmptyLineItemGroup());
+    if (this.costBreakdownOptions.length === 0)
+    {
+        this.getAccessorialDetails.emit();
+    }
   }
 
   createEmptyLineItemGroup(): FormGroup {

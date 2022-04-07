@@ -16,9 +16,7 @@ import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-det
 import {ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
-import {WebServices} from '../../services/web-services';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
-import {environment} from '../../../environments/environment';
 import {RateService} from '../../services/rate-service';
 
 
@@ -190,9 +188,6 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickToggleEditMode(): void {
     this.isEditMode$.value = !this.isEditMode$.value;
-    this.subscriptions.manage(
-      this.getAccessorialList(this.invoice).subscribe(result => this.chargeLineItemOptions$.next(result))
-    );
   }
 
   clickToggleMilestoneTab(): void {
@@ -211,39 +206,44 @@ export class InvoiceEditPageComponent implements OnInit {
     this.showNotYetImplementedModal('Submit For Approval');
   }
 
+  private createRequest(accessorialCode: string): RateEngineRequest {
+    return {
+      mode: this.invoice.mode.mode,
+      scac: this.invoice.carrier.scac,
+      shipDate: this.invoice.pickupDateTime,
+      origin: {
+        streetAddress: this.invoice.origin.address,
+        locCode: '',
+        city: this.invoice.origin.city,
+        state: this.invoice.origin.state,
+        zip: this.invoice.origin.zipCode,
+        country: this.invoice.origin.country
+      },
+      destination: {
+        streetAddress: this.invoice.destination.address,
+        locCode: '',
+        city: this.invoice.destination.city,
+        state: this.invoice.destination.state,
+        zip: this.invoice.destination.zipCode,
+        country: this.invoice.destination.country
+      },
+      accessorialCodes: accessorialCode ? [accessorialCode] : [],
+      invoice: this.invoice
+    };
+  }
+
   /**
    *  Retrieves all available accessorials for the current invoice.
    *  Cost breakdown options are populated with the results from this call.
    *  Rate management is not called if checkAccessorialData() returns false,indicating required data is missing.
    */
-  getAccessorialList(invoice: InvoiceDataModel): Observable<RateDetailResponse> {
-    if (this.checkAccessorialData(invoice)) {
-      const request: RateEngineRequest = {
-        mode: invoice.mode.mode,
-        scac: invoice.carrier.scac,
-        shipDate: invoice.pickupDateTime,
-        origin: {
-          streetAddress: invoice.origin.address,
-          locCode: '',
-          city: invoice.origin.city,
-          state: invoice.origin.state,
-          zip: invoice.origin.zipCode,
-          country: invoice.origin.country
-        },
-        destination: {
-          streetAddress: invoice.destination.address,
-          locCode: '',
-          city: invoice.destination.city,
-          state: invoice.destination.state,
-          zip: invoice.destination.zipCode,
-          country: invoice.destination.country
-        },
-        accessorialCodes: [],
-        invoice: this.invoice
-      };
-      return this.rateService.getAccessorialDetails(request);
+  getAccessorialList(): void {
+    if (this.checkAccessorialData(this.invoice)) {
+      const request: RateEngineRequest = this.createRequest('');
+      this.subscriptions.manage(
+        this.rateService.getAccessorialDetails(request).subscribe(result => this.chargeLineItemOptions$.next(result))
+      );
     }
-    return of();
   }
 
   /**
@@ -253,33 +253,9 @@ export class InvoiceEditPageComponent implements OnInit {
    */
   getRates(accessorialCode: string): void {
     if (this.checkAccessorialData(this.invoice) && accessorialCode) {
-      const request: RateEngineRequest = {
-        mode: this.invoice.mode.mode,
-        scac: this.invoice.carrier.scac,
-        shipDate: this.invoice.pickupDateTime,
-        origin: {
-          streetAddress: this.invoice.origin.address,
-          locCode: '',
-          city: this.invoice.origin.city,
-          state: this.invoice.origin.state,
-          zip: this.invoice.origin.zipCode,
-          country: this.invoice.origin.country
-        },
-        destination: {
-          streetAddress: this.invoice.destination.address,
-          locCode: '',
-          city: this.invoice.destination.city,
-          state: this.invoice.destination.state,
-          zip: this.invoice.destination.zipCode,
-          country: this.invoice.destination.country
-        },
-        accessorialCodes: [accessorialCode],
-        invoice: this.invoice
-      };
+      const request: RateEngineRequest = this.createRequest(accessorialCode);
       this.subscriptions.manage(
-        this.rateService.getRates(request).subscribe(response => {
-          this.rateEngineCallResult$.next(response);
-        })
+        this.rateService.getRates(request).subscribe(response => this.rateEngineCallResult$.next(response))
       );
     }
   }

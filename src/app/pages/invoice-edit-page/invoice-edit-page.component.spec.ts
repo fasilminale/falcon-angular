@@ -149,12 +149,13 @@ describe('InvoiceEditPageComponent', () => {
         asSpy(invoiceService.getInvoice).and.returnValue(of(testInvoice));
       });
       it('getAccessorialList should call rate engine', () => {
-        const newInvoice = new InvoiceDataModel();
-        component.getAccessorialList(newInvoice);
+        component.invoice = new InvoiceDataModel();
+        component.getAccessorialList();
         expect(rateService.getAccessorialDetails).toHaveBeenCalled();
       });
       it('getAccessorialList should not call rate engine', () => {
-        component.getAccessorialList(testInvoice);
+        component.invoice = testInvoice;
+        component.getAccessorialList();
         expect(rateService.getAccessorialDetails).not.toHaveBeenCalled();
       });
       it('getRates should call rate engine', () => {
@@ -167,6 +168,23 @@ describe('InvoiceEditPageComponent', () => {
         component.invoice = testInvoice;
         component.getRates('testAccessorialCode');
         expect(rateService.getRates).not.toHaveBeenCalled();
+      });
+
+      it('handle getAccessorialDetails response', done => {
+        // Setup
+        const getAccessorialDetails$ = new Subject<any>();
+        asSpy(rateService.getAccessorialDetails).and.returnValue(getAccessorialDetails$.asObservable());
+        component.invoice = new InvoiceDataModel();
+        component.getAccessorialList();
+
+        // Assertions
+        getAccessorialDetails$.subscribe(() => {
+          expect(rateService.getAccessorialDetails).toHaveBeenCalled();
+          done();
+        });
+
+        // Run Test
+        getAccessorialDetails$.next(true);
       });
 
       it('handle getRates response', done => {
@@ -271,23 +289,6 @@ describe('InvoiceEditPageComponent', () => {
     const initialValue = component.isEditMode$.value;
     component.clickToggleEditMode();
     expect(component.isEditMode$.value).toEqual(!initialValue);
-  });
-
-  it('#clickToggleEditMode should call rate engine for accessorial details', done => {
-    // Setup
-    const getAccessorialDetails$ = new Subject<any>();
-    asSpy(rateService.getAccessorialDetails).and.returnValue(getAccessorialDetails$.asObservable());
-    component.invoice = new InvoiceDataModel();
-    component.clickToggleEditMode();
-
-    // Assertions
-    getAccessorialDetails$.subscribe(() => {
-      expect(rateService.getAccessorialDetails).toHaveBeenCalled();
-      done();
-    });
-
-    // Run Test
-    getAccessorialDetails$.next(true);
   });
 
   it('#clickToggleMilestoneTab should toggle isMilestoneTabOpen', () => {
