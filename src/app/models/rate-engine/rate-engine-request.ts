@@ -1,4 +1,5 @@
 import {SelectOption} from '../select-option-model/select-option-model';
+import {InvoiceDataModel} from '../invoice/invoice-model';
 
 export interface RateEngineRequest {
   mode: string;
@@ -7,15 +8,49 @@ export interface RateEngineRequest {
   origin: Location;
   destination: Location;
   accessorialCodes: Array<string>;
+  invoice: InvoiceDataModel;
 }
 
-export interface RateEngineResponse {
+export interface RateDetailResponse {
   mode: string;
   scac: string;
   shipDate: string;
   origin: Location;
   destination: Location;
   calcDetails: Array<CalcDetail>;
+}
+
+export interface RatesResponse {
+  carrierRateSummaries: Array<CarrierRateSummary>;
+  mode: string;
+}
+
+export interface CarrierRateSummary {
+  legs: Array<Leg>;
+  totalCost: string;
+  scac: string;
+}
+
+export interface Leg {
+  carrierRate: CarrierRate;
+}
+
+export interface CarrierRate {
+  lineItems: Array<LineItem>;
+}
+
+export interface LineItem {
+  description: string;
+  rate: string;
+  rateType: string;
+  lineItemTotal: string;
+  runningTotal: string;
+  lineItemType: string;
+  step: string;
+  costName: string;
+  quantity: number;
+  message: string;
+  accessorial: boolean;
 }
 
 export interface CalcDetail {

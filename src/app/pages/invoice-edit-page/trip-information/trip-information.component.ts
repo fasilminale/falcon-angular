@@ -51,6 +51,7 @@ export class TripInformationComponent implements OnInit {
   public filteredServiceLevels: Array<SelectOption<ServiceLevel>> = [];
 
   public tripIdControl = new FormControl();
+  public freightOrders = new FormControl();
   public invoiceDateControl = new FormControl({}, [required]);
   public pickUpDateControl = new FormControl({}, [required, validateDate]);
   public deliveryDateControl = new FormControl({}, [required]);
@@ -143,6 +144,7 @@ export class TripInformationComponent implements OnInit {
     givenFormGroup.setControl('originAddress', this.originAddressFormGroup);
     givenFormGroup.setControl('destinationAddress', this.destinationAddressFormGroup);
     givenFormGroup.setControl('billToAddress', this.billToAddressFormGroup);
+    givenFormGroup.setControl('freightOrders', this.freightOrders);
     this._formGroup = givenFormGroup;
   }
 
@@ -196,6 +198,7 @@ export class TripInformationComponent implements OnInit {
       this.carrierControl.setValue(tripInfo.carrier ?? undefined);
       this.carrierModeControl.setValue(tripInfo.carrierMode ?? undefined);
       this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
+      this.freightOrders.setValue(tripInfo.freightOrders ?? undefined);
       this.loadOriginAddress$.next(tripInfo.originAddress);
       this.loadDestinationAddress$.next(tripInfo.destinationAddress);
       this.loadBillToAddress$.next(tripInfo.billToAddress);

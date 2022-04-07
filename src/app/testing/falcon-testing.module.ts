@@ -20,6 +20,7 @@ import {FilterService} from '../services/filter-service';
 import {MasterDataService} from '../services/master-data-service';
 import {UserService} from '../services/user-service';
 import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
+import {RateService} from '../services/rate-service';
 
 @NgModule({
   declarations: [],
@@ -57,6 +58,7 @@ import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
     MasterDataService,
     InvoiceFormManager,
     UserService,
+    RateService,
     RealSubscriptionManager.PROVIDER,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
