@@ -7,7 +7,7 @@ import {RateService} from './rate-service';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../models/rate-engine/rate-engine-request';
 import {InvoiceDataModel} from '../models/invoice/invoice-model';
 
-fdescribe('RateService', () => {
+describe('RateService', () => {
 
   let rateService: RateService;
   let web: WebServices;
