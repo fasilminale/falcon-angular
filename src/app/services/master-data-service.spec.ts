@@ -53,6 +53,15 @@ describe('MasterDataService', () => {
     }));
   });
 
+  describe('#getCarrierScac', () => {
+    it('should call api', async () => {
+      spyOn(web, 'httpGet').and.returnValue(of([]));
+      const carriers = await masterDataService.getCarrierSCACs().toPromise();
+      expect(carriers).toEqual([]);
+      expect(web.httpGet).toHaveBeenCalledWith(`${environment.baseServiceUrl}/v1/carrierSCACs`);
+    });
+  });
+
   describe('#getCarriers', () => {
     it('should call api', async () => {
       spyOn(web, 'httpGet').and.returnValue(of([]));

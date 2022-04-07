@@ -78,6 +78,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { FalDeleteModalComponent } from './components/fal-delete-modal/fal-delete-modal.component';
 import {BuildInfoService} from './services/build-info-service';
 import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
+import {RateService} from './services/rate-service';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -215,6 +216,7 @@ const oktaConfig = {
     UtilService,
     TimeService,
     ErrorService,
+    RateService,
     OktaAuthGuard,
     OktaAuthService,
     RealAuthService.PROVIDER,

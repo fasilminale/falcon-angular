@@ -7,7 +7,7 @@ import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
 import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
 
 import {InvoiceAmountComponent} from './invoice-amount.component';
-import {RateEngineResponse} from '../../../models/rate-engine/rate-engine-request';
+import {RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
 
 describe('InvoiceAmountComponent', () => {
   let component: InvoiceAmountComponent;
@@ -86,7 +86,7 @@ describe('InvoiceAmountComponent', () => {
   });
 
   describe('when edit mode is updated', () => {
-    let chargeLineItemOptions$: Subject<RateEngineResponse>;
+    let chargeLineItemOptions$: Subject<RateDetailResponse>;
     const accessorialDetailResponse = {
       mode: 'TL',
       scac: 'OWEL',
@@ -118,12 +118,19 @@ describe('InvoiceAmountComponent', () => {
     beforeEach(() => {
       chargeLineItemOptions$ = new Subject();
       component.chargeLineItemOptions$ = chargeLineItemOptions$.asObservable();
+      component.costBreakdownOptions.push({
+        label: 'Fuel Surcharge - Miles',
+        value: {
+            accessorialCode: '405',
+            name: 'Fuel Surcharge - Miles'
+        }
+      });
     });
 
     it('should populate cost breakdown charge options', done => {
 
       chargeLineItemOptions$.subscribe(() => {
-        expect(component.costBreakdownOptions.length).toBeGreaterThan(1);
+        expect(component.filteredCostBreakdownOptions.length).toEqual(2);
         done();
       });
       chargeLineItemOptions$.next(accessorialDetailResponse);
@@ -139,7 +146,7 @@ describe('InvoiceAmountComponent', () => {
       });
 
       chargeLineItemOptions$.subscribe(() => {
-        expect(component.costBreakdownOptions.length).toEqual(1);
+        expect(component.filteredCostBreakdownOptions.length).toEqual(1);
         done();
       });
       chargeLineItemOptions$.next(accessorialDetailResponse);
@@ -150,6 +157,7 @@ describe('InvoiceAmountComponent', () => {
   describe('when invoice amount detail is loaded', () => {
     let loadInvoiceAmountDetail$: Subject<InvoiceAmountDetail>;
     let loadInvoiceOverviewDetail$: Subject<InvoiceOverviewDetail>;
+    let rateEngineCallResult$: Subject<RatesResponse>;
     beforeEach(() => {
       loadInvoiceAmountDetail$ = new Subject();
       component.formGroup = new FormGroup({});
@@ -158,6 +166,10 @@ describe('InvoiceAmountComponent', () => {
     beforeEach(() => {
       loadInvoiceOverviewDetail$ = new Subject();
       component.loadInvoiceOverviewDetail$ = loadInvoiceOverviewDetail$.asObservable();
+    });
+    beforeEach(() => {
+      rateEngineCallResult$ = new Subject();
+      component.rateEngineCallResult$ = rateEngineCallResult$.asObservable();
     });
 
     it('should populate form with invoice amount details', done => {
@@ -199,7 +211,7 @@ describe('InvoiceAmountComponent', () => {
 
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe('');
-        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBeUndefined();
+        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual([]);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('');
         expect(formGroupValue.mileage).toBe('');
         done();
@@ -212,7 +224,7 @@ describe('InvoiceAmountComponent', () => {
         expect(component.isPrepaid).toBeTrue();
         done();
       });
-     loadInvoiceOverviewDetail$.next({freightPaymentTerms: 'PREPAID'} as InvoiceOverviewDetail);
+      loadInvoiceOverviewDetail$.next({freightPaymentTerms: 'PREPAID'} as InvoiceOverviewDetail);
     });
 
     it('should set isPrepaid to False', done => {
@@ -240,7 +252,7 @@ describe('InvoiceAmountComponent', () => {
 
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe('');
-        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toBeUndefined();
+        expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual([]);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('');
         expect(formGroupValue.mileage).toBe('');
         done();
@@ -278,11 +290,129 @@ describe('InvoiceAmountComponent', () => {
     describe('when an empty line item is added', () => {
       beforeEach(() => {
         component.addNewEmptyLineItem();
+        component.costBreakdownOptions.push({
+          label: 'TST - TestChargeCode',
+          value: {
+            accessorialCode: 'TST',
+            name: 'TST - TestChargeCode'
+          }
+        });
       });
       it('should now have 1 line item', () => {
         expect(component.costBreakdownItems.length).toEqual(1);
       });
+
+      it('should populate cost breakdown line item', done => {
+        const control = component.costBreakdownItems.controls[0];
+        control.patchValue({ charge: component.costBreakdownOptions[0].value });
+        component.pendingAccessorialCode = 'TST';
+        rateEngineCallResult$.next({
+          mode: 'LTL',
+          carrierRateSummaries: [{
+            totalCost: '0',
+            scac: 'ODFL',
+            legs: [
+              {
+                carrierRate: {
+                  lineItems: [
+                    {
+                      description: 'TST - TestChargeCode',
+                      rate: '100',
+                      rateType: 'FLAT',
+                      lineItemTotal: '100',
+                      lineItemType: 'ACCESSORIAL',
+                      runningTotal: '100',
+                      step: '1',
+                      costName: 'TestCostName',
+                      quantity: 0,
+                      message: '',
+                      accessorial: true
+                    }
+                  ]
+                }
+              }
+            ]
+          }]
+        });
+        expect(component.filteredCostBreakdownOptions.length).toEqual(1);
+        done();
+      });
+
+      it('should populate cost breakdown line item', done => {
+        component.pendingAccessorialCode = 'OTH';
+        rateEngineCallResult$.next({
+          mode: 'LTL',
+          carrierRateSummaries: [{
+            totalCost: '0',
+            scac: 'ODFL',
+            legs: [
+              {
+                carrierRate: {
+                  lineItems: [
+                    {
+                      description: 'OTH - OtherChargeCode',
+                      rate: '100',
+                      rateType: 'FLAT',
+                      lineItemTotal: '100',
+                      lineItemType: 'ACCESSORIAL',
+                      runningTotal: '100',
+                      step: '1',
+                      costName: 'TestCostName',
+                      quantity: 0,
+                      message: '',
+                      accessorial: true
+                    }
+                  ]
+                }
+              }
+            ]
+          }]
+        });
+        expect(component.filteredCostBreakdownOptions.length).toEqual(2);
+        done();
+      });
     });
+
+    it('should disable overrideStandardPaymentTerms checkbox when enableDisableOverrideStandardPaymentTerms invoked with true', () => {
+
+      component.overridePaymentTermsOptions[0].disabled = false;
+      component.enableDisableOverrideStandardPaymentTerms(true);
+      expect(component.overridePaymentTermsOptions[0].disabled).toBeTrue();
+    });
+
+    it('should disable currency radios when enableDisableCurrency invoked with true', () => {
+
+      component._formGroup.controls.currency.enable();
+      expect(component._formGroup.controls.currency.disabled).toBeFalse();
+      component.enableDisableCurrency(true);
+      expect(component._formGroup.controls.currency.disabled).toBeTrue();
+    });
+
+    it('should enable currency radios when enableDisableCurrency invoked with false', () => {
+
+      component._formGroup.controls.currency.disable();
+      expect(component._formGroup.controls.currency.disabled).toBeTrue();
+      component.enableDisableCurrency(false);
+      expect(component._formGroup.controls.currency.disabled).toBeFalse();
+    });
+
+  });
+
+  describe('select rate charge', () => {
+    it('should call rate engine', () => {
+      const rateEngineEmitter = spyOn(component.rateEngineCall, 'emit');
+      const selectedCharge = {accessorialCode: 'TST', name: 'TestChargeCode'};
+      component.onSelectRate(selectedCharge);
+      expect(rateEngineEmitter).toHaveBeenCalledWith(selectedCharge.accessorialCode);
+    });
+
+    it('should not call rate engine', () => {
+      const rateEngineEmitter = spyOn(component.rateEngineCall, 'emit');
+      const selectedCharge = {accessorialCode: 'OTHER', name: 'OTHER'};
+      component.onSelectRate(selectedCharge);
+      expect(rateEngineEmitter).not.toHaveBeenCalled();
+    });
+
   });
 
 });

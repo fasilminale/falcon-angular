@@ -30,7 +30,6 @@
                        orientation="horizontal"
                        formControlName="currency"
                        [options]="currencyOptions"
-                       [disabled]="readOnlyForm"
                        [ngClass]="{'radio-dev-disabled': readOnlyForm}"
                        [errorSpacing]="true">
       </elm-radio-input>
@@ -110,9 +109,11 @@
         <div class="col-3" *ngIf="!_.get('contracted')?.value">
           <ng-select id="chargeField"
                      formControlName="charge"
-                     [items]="costBreakdownOptions"
+                     [items]="filteredCostBreakdownOptions"
+                     [clearable]="false"
                      bindLabel="label"
                      bindValue="value"
+                     (ngModelChange)="onSelectRate($event)"
                      placeholder="Select One...">
           </ng-select>
         </div>
@@ -176,7 +177,7 @@
                 id="add-new-line-item-button"
                 [isDisabled]="readOnlyForm"
                 (buttonClick)="addNewEmptyLineItem()">
-      <u>+ Add Charge</u>
+      <u>+ Add New Charge</u>
     </elm-button>
 
     <div [class.error-div]="!isValidCostBreakdownAmount"

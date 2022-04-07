@@ -1,16 +1,15 @@
-import {Component,  Inject, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem} from 'src/app/models/line-item/line-item-model';
 import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
-import {CalcDetail, CostBreakDownUtils, RateEngineResponse} from '../../../models/rate-engine/rate-engine-request';
+import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
 import {map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
-import {WebServices} from '../../../services/web-services';
-import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
-import {ElmFormHelper} from "@elm/elm-styleguide-ui";
+import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
+import {ElmFormHelper} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-invoice-amount',
@@ -48,18 +47,22 @@ export class InvoiceAmountComponent implements OnInit {
   });
 
   public costBreakdownOptions: Array<SelectOption<CalcDetail>> = [];
-
-  totalInvoiceAmount = 0;
+  public filteredCostBreakdownOptions: Array<SelectOption<CalcDetail>> = [];
 
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
+  pendingAccessorialCode = '';
+
+  @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
+  @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
   }
 
   ngOnInit(): void {
     this.setUpOverrideStandardPaymentTermsSubscription();
-    this.enableDisableOverrideStandardPaymentTerms();
+    this.enableDisableOverrideStandardPaymentTerms(true);
+    this.enableDisableCurrency(true);
   }
 
   setUpOverrideStandardPaymentTermsSubscription(): void {
@@ -72,31 +75,29 @@ export class InvoiceAmountComponent implements OnInit {
       }));
   }
 
-  enableDisableOverrideStandardPaymentTerms(): void {
-    if (this.readOnlyForm) {
-      this.isPaymentOverrideSelected.disable();
-    }
-    else {
-      this.isPaymentOverrideSelected.enable();
+  enableDisableOverrideStandardPaymentTerms(disable: boolean): void {
+      this.overridePaymentTermsOptions[0].disabled = disable;
+  }
+
+  enableDisableCurrency(disable: boolean): void {
+    if (this._formGroup.controls.currency) {
+      if (disable) {
+        this._formGroup.controls.currency.disable();
+      } else {
+        this._formGroup.controls.currency.enable();
+      }
     }
   }
 
-  @Input() set chargeLineItemOptions$(observable: Observable<RateEngineResponse>) {
+  @Input() set chargeLineItemOptions$(observable: Observable<RateDetailResponse>) {
     this.subscriptionManager.manage(observable.pipe(
       map(response => {
         return CostBreakDownUtils.toOptions(response.calcDetails);
       })
     ).subscribe(
       opts => {
-        this.costBreakdownOptions = opts.filter(opt => {
-          for (const control of this.costBreakdownItemsControls) {
-            if (control.value?.charge === opt.label) {
-              return null;
-            }
-          }
-          return opt;
-        }).filter(Boolean);
-        this.costBreakdownOptions.push(CostBreakDownUtils.toOption({name: 'OTHER', accessorialCode: 'OTHER'}));
+        this.costBreakdownOptions = opts;
+        this.updateCostBreakdownOptions();
       }
     ));
   }
@@ -105,7 +106,8 @@ export class InvoiceAmountComponent implements OnInit {
     this.subscriptionManager.manage(observable.subscribe(
       isEditMode => {
         this.readOnlyForm = !isEditMode;
-        this.enableDisableOverrideStandardPaymentTerms();
+        this.enableDisableOverrideStandardPaymentTerms(this.readOnlyForm);
+        this.enableDisableCurrency(this.readOnlyForm);
       }
     ));
   }
@@ -127,6 +129,38 @@ export class InvoiceAmountComponent implements OnInit {
     this._formGroup = givenFormGroup;
   }
 
+  /**
+   *  Applies the response from rate engine to the pending accessorial that is expecting
+   *  the response from rate engine.
+   */
+  @Input() set rateEngineCallResult$(observable: Observable<RatesResponse>) {
+    this.subscriptionManager.manage(observable.subscribe(
+      rateEngineResult => {
+        const carrierSummary = rateEngineResult.carrierRateSummaries[0];
+        const leg = carrierSummary.legs[0];
+        // Check if accessorial code is contained in the description of the response
+        const accessorial = leg.carrierRate.lineItems.find(item => item.accessorial && item.description.substr(0, 3) === this.pendingAccessorialCode);
+
+        // If a match is found, update the pending line item with information from the response
+        if (accessorial) {
+          for (const control of this.costBreakdownItemsControls) {
+            if (control.value?.charge?.accessorialCode === this.pendingAccessorialCode) {
+              control.patchValue({
+                rate: accessorial.rate,
+                type: accessorial.rateType,
+                totalAmount: accessorial.lineItemTotal,
+                message: accessorial.message
+              });
+            }
+          }
+          // Update invoice total and available accessorial options
+          this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+          this.updateCostBreakdownOptions();
+        }
+      }
+    ));
+  }
+
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail.currency : '');
@@ -135,10 +169,7 @@ export class InvoiceAmountComponent implements OnInit {
         this.overridePaymentTermsOptions[0], true);
     }
     this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : '');
-/*    givenFormGroup.get('overridePaymentTerms')?.patchValue({
-      isPaymentOverrideSelected: invoiceAmountDetail?.standardPaymentTermsOverride ? true : false,
-      paymentTerms: invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : ''
-    });*/
+
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ? invoiceAmountDetail.mileage : '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
@@ -204,6 +235,10 @@ export class InvoiceAmountComponent implements OnInit {
 
   addNewEmptyLineItem(): void {
     this.costBreakdownItemsControls.push(this.createEmptyLineItemGroup());
+    if (this.costBreakdownOptions.length === 0)
+    {
+        this.getAccessorialDetails.emit();
+    }
   }
 
   createEmptyLineItemGroup(): FormGroup {
@@ -217,5 +252,35 @@ export class InvoiceAmountComponent implements OnInit {
     const contracted = new FormControl(false);
 
     return new FormGroup({charge, rateSource, rate, type, quantity, totalAmount, message, contracted});
+  }
+
+  /**
+   *  Calls rate engine for rate information to an accessorial.
+   *  Rate Management is not called if 'OTHER' is selected.
+   */
+  onSelectRate(value: any): void {
+    if (value.accessorialCode === 'OTHER') {
+      return;
+    }
+
+    this.pendingAccessorialCode = value.accessorialCode;
+    this.rateEngineCall.emit(value.accessorialCode);
+  }
+
+  /**
+   *  Called after a rate is applied to a pending accessorial.
+   *  Removes the accessorial from the selectable list of options.
+   *  'OTHER' will always be an available option.
+   */
+  updateCostBreakdownOptions(): void {
+    this.filteredCostBreakdownOptions = this.costBreakdownOptions.filter(opt => {
+      for (const control of this.costBreakdownItemsControls) {
+        if (control.value?.charge?.accessorialCode === opt.value?.accessorialCode || control.value?.charge === opt.label) {
+          return null;
+        }
+      }
+      return opt;
+    }).filter(Boolean);
+    this.filteredCostBreakdownOptions.push(CostBreakDownUtils.toOption({name: 'OTHER', accessorialCode: 'OTHER'}));
   }
 }

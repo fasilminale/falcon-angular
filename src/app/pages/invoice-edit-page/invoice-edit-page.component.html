@@ -76,6 +76,9 @@
          [loadInvoiceAmountDetail$]="loadInvoiceAmountDetail$.asObservable()"
          [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
          [chargeLineItemOptions$]="chargeLineItemOptions$.asObservable()"
+         [rateEngineCallResult$]="rateEngineCallResult$.asObservable()"
+         (getAccessorialDetails)="getAccessorialList()"
+         (rateEngineCall)="getRates($event)"
          >
         </app-invoice-amount>
         <hr>
