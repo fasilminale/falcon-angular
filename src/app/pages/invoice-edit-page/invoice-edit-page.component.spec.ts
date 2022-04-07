@@ -12,7 +12,7 @@ import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
 import {UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {WebServices} from '../../services/web-services';
+import {RateService} from '../../services/rate-service';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -26,7 +26,7 @@ describe('InvoiceEditPageComponent', () => {
   let userService: UserService;
   let utilService: UtilService;
   let toastService: ToastService;
-  let webService: WebServices;
+  let rateService: RateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -65,8 +65,9 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(toastService, 'openErrorToast').and.stub();
 
     // Mock Web Service
-    webService = TestBed.inject(WebServices);
-    spyOn(webService, 'httpPost').and.returnValue(of());
+    rateService = TestBed.inject(RateService);
+    spyOn(rateService, 'getAccessorialDetails').and.returnValue(of());
+    spyOn(rateService, 'getRates').and.returnValue(of());
 
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
@@ -150,34 +151,34 @@ describe('InvoiceEditPageComponent', () => {
       it('getAccessorialList should call rate engine', () => {
         const newInvoice = new InvoiceDataModel();
         component.getAccessorialList(newInvoice);
-        expect(webService.httpPost).toHaveBeenCalled();
+        expect(rateService.getAccessorialDetails).toHaveBeenCalled();
       });
       it('getAccessorialList should not call rate engine', () => {
         component.getAccessorialList(testInvoice);
-        expect(webService.httpPost).not.toHaveBeenCalled();
+        expect(rateService.getAccessorialDetails).not.toHaveBeenCalled();
       });
       it('getRates should call rate engine', () => {
         component.invoice = new InvoiceDataModel();
         component.getRates('testAccessorialCode');
-        expect(webService.httpPost).toHaveBeenCalled();
+        expect(rateService.getRates).toHaveBeenCalled();
       });
       it('getRates should not call rate engine', () => {
         testInvoice.carrier = null;
         component.invoice = testInvoice;
         component.getRates('testAccessorialCode');
-        expect(webService.httpPost).not.toHaveBeenCalled();
+        expect(rateService.getRates).not.toHaveBeenCalled();
       });
 
       it('handle getRates response', done => {
         // Setup
         const ratesResponse$ = new Subject<any>();
-        asSpy(webService.httpPost).and.returnValue(ratesResponse$.asObservable());
+        asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
         component.invoice = new InvoiceDataModel();
         component.getRates('testAccessorialCode');
 
         // Assertions
         ratesResponse$.subscribe(() => {
-          expect(webService.httpPost).toHaveBeenCalled();
+          expect(rateService.getRates).toHaveBeenCalled();
           done();
         });
 
@@ -270,6 +271,23 @@ describe('InvoiceEditPageComponent', () => {
     const initialValue = component.isEditMode$.value;
     component.clickToggleEditMode();
     expect(component.isEditMode$.value).toEqual(!initialValue);
+  });
+
+  it('#clickToggleEditMode should call rate engine for accessorial details', done => {
+    // Setup
+    const getAccessorialDetails$ = new Subject<any>();
+    asSpy(rateService.getAccessorialDetails).and.returnValue(getAccessorialDetails$.asObservable());
+    component.invoice = new InvoiceDataModel();
+    component.clickToggleEditMode();
+
+    // Assertions
+    getAccessorialDetails$.subscribe(() => {
+      expect(rateService.getAccessorialDetails).toHaveBeenCalled();
+      done();
+    });
+
+    // Run Test
+    getAccessorialDetails$.next(true);
   });
 
   it('#clickToggleMilestoneTab should toggle isMilestoneTabOpen', () => {

@@ -100,9 +100,6 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isEditableInvoice = StatusUtil.isEditable(invoice.status);
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
-    this.subscriptions.manage(
-      this.getAccessorialList(invoice).subscribe(result => this.chargeLineItemOptions$.next(result))
-    );
     this.loadTripInformation$.next({
       tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),
@@ -193,6 +190,9 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickToggleEditMode(): void {
     this.isEditMode$.value = !this.isEditMode$.value;
+    this.subscriptions.manage(
+      this.getAccessorialList(this.invoice).subscribe(result => this.chargeLineItemOptions$.next(result))
+    );
   }
 
   clickToggleMilestoneTab(): void {
