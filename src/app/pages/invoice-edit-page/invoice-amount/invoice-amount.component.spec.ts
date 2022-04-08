@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem} from 'src/app/models/line-item/line-item-model';
@@ -399,17 +399,28 @@ describe('InvoiceAmountComponent', () => {
   });
 
   describe('select rate charge', () => {
+    const lineItem: AbstractControl = new FormControl({});
+    beforeEach(() => {
+      component._formGroup = new FormGroup({
+        amountOfInvoice: new FormControl(10),
+        costBreakdownItems: new FormArray([new FormGroup({
+          charge: new FormControl('Fuel Surcharge - Miles'),
+          totalCost: new FormControl(10)
+        })
+        ])
+      });
+    });
     it('should call rate engine', () => {
       const rateEngineEmitter = spyOn(component.rateEngineCall, 'emit');
       const selectedCharge = {accessorialCode: 'TST', name: 'TestChargeCode'};
-      component.onSelectRate(selectedCharge);
+      component.onSelectRate(selectedCharge, lineItem);
       expect(rateEngineEmitter).toHaveBeenCalledWith(selectedCharge.accessorialCode);
     });
 
     it('should not call rate engine', () => {
       const rateEngineEmitter = spyOn(component.rateEngineCall, 'emit');
       const selectedCharge = {accessorialCode: 'OTHER', name: 'OTHER'};
-      component.onSelectRate(selectedCharge);
+      component.onSelectRate(selectedCharge, lineItem);
       expect(rateEngineEmitter).not.toHaveBeenCalled();
     });
 
