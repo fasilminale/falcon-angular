@@ -282,7 +282,9 @@ export class InvoiceAmountComponent implements OnInit {
    *  Calls rate engine for rate information to an accessorial.
    *  Rate Management is not called if 'OTHER' is selected.
    */
-  onSelectRate(value: any): void {
+  onSelectRate(value: any, lineItem: AbstractControl): void {
+    lineItem.patchValue({ rate: null, type: null, quantity: 0, totalAmount: 0});
+    this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
     if (value.accessorialCode === 'OTHER') {
       return;
     }

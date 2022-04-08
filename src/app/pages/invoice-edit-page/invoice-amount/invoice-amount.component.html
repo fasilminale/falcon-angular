@@ -114,7 +114,8 @@
                      [clearable]="false"
                      bindLabel="label"
                      bindValue="value"
-                     (ngModelChange)="onSelectRate($event)"
+                     (change)="updateCostBreakdownOptions()"
+                     (ngModelChange)="onSelectRate($event, _)"
                      placeholder="Select One...">
           </ng-select>
         </div>
