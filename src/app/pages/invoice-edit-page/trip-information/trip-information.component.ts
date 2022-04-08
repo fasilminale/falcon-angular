@@ -1,13 +1,16 @@
-import {Component, Inject, Input, OnChanges, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {Observable, Subject} from 'rxjs';
+import {ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
+import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {combineLatest, forkJoin, Observable, Subject} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {CarrierReference, CarrierUtils} from '../../../models/master-data-models/carrier-model';
 import {map} from 'rxjs/operators';
-import {CarrierModeCodeReference, CarrierModeCodeUtils} from '../../../models/master-data-models/carrier-mode-code-model';
+import {
+  CarrierModeCodeReference,
+  CarrierModeCodeUtils
+} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
 import { ShippingPointLocation } from 'src/app/models/location/location-model';
 import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
@@ -79,54 +82,35 @@ export class TripInformationComponent implements OnInit {
   loadDestinationAddress$ = new Subject<ShippingPointLocation>();
   loadBillToAddress$ = new Subject<ShippingPointLocation>();
   loadFreightOrders$ = new Subject<FreightOrder[]>();
-
+  filteredCarrierModeOptionsPopulatedSubject: Subject<number> = new Subject<number>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-              private masterData: MasterDataService) {
+              private masterData: MasterDataService, private changeDetection: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
     this.formGroup = this._formGroup;
     this.formGroup.disable();
     this.subscriptionManager.manage(
-      // Carrier SCACs
-      this.masterData.getCarrierSCACs()
-        .subscribe(opts => {
-          this.carrierSCACs = opts;
-          setTimeout(() => {
-            this.filteredCarrierModeOptions = this.filterCarrierModes();
-            this.filteredServiceLevels = this.filterServiceLevels();
-          }, 500);
-        }),
 
-      // Carrier Options
-      this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions))
-        .subscribe(opts => {
-          this.carrierOptions = opts;
-          if(this.tripInformation) {
-            setTimeout(() => {
-              this.carrierControl.setValue(this.tripInformation.carrier);
-              this.carrierControl.updateValueAndValidity();
-            }, 2000);
+      forkJoin([this.masterData.getCarrierSCACs(),
+        this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions)),
+        this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions)),
+        this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions))]).subscribe(
 
-          }
-        }),
-
-      // Carrier Mode Code Options
-      this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions))
-        .subscribe(opts =>  {
-          this.carrierModeOptions = opts;
-          setTimeout(() => {
-            this.carrierModeControl.setValue(this.tripInformation.carrierMode);
-            this.carrierModeControl.updateValueAndValidity();
-          }, 2000);
-        }),
-
-      // Service Level Options
-      this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions))
-        .subscribe(opts => {
-          this.serviceLevelOptions = opts;
-        }),
+        ([carrierSCACs,
+               carrierModeCodes,
+               carrierReferences,
+               serviceLevels]) => {
+          this.carrierSCACs = carrierSCACs;
+          this.carrierModeOptions = carrierModeCodes;
+          this.carrierOptions = carrierReferences;
+          this.serviceLevelOptions = serviceLevels;
+          this.carrierModeControl.setValue(this.tripInformation.carrierMode);
+          this.carrierModeControl.updateValueAndValidity();
+          this.filteredCarrierModeOptionsPopulatedSubject.next(0);
+        }
+      ),
     );
   }
 
@@ -185,7 +169,7 @@ export class TripInformationComponent implements OnInit {
   }
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
-    this.subscriptionManager.manage(observable.subscribe(tripInfo => {
+    this.subscriptionManager.manage(combineLatest([this.filteredCarrierModeOptionsPopulatedSubject.asObservable(), observable]).subscribe(([populated, tripInfo]) => {
       this.tripInformation = tripInfo;
       this.formGroup.enable();
       this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
@@ -196,6 +180,9 @@ export class TripInformationComponent implements OnInit {
       this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
       this.freightPaymentTermsControl.setValue(tripInfo.freightPaymentTerms ?? undefined);
       this.carrierControl.setValue(tripInfo.carrier ?? undefined);
+      this.filteredCarrierModeOptions = this.filterCarrierModes();
+      this.filteredServiceLevels = this.filterServiceLevels();
+      this.changeDetection.detectChanges();
       this.carrierModeControl.setValue(tripInfo.carrierMode ?? undefined);
       this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
       this.freightOrders.setValue(tripInfo.freightOrders ?? undefined);

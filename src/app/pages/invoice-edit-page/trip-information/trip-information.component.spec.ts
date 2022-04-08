@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {TripInformationComponent} from './trip-information.component';
 import {FalconTestingModule} from '../../../testing/falcon-testing.module';
@@ -35,29 +35,36 @@ describe('TripInformationComponent', () => {
     // Create Component
     fixture = TestBed.createComponent(TripInformationComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    // fixture.detectChanges();
   });
 
   describe('after component creation', () => {
     it('should have component', () => {
+      fixture.detectChanges();
       expect(component).toBeTruthy();
     });
     it('formGroup should be disabled', () => {
+      fixture.detectChanges();
       expect(component.formGroup.disabled).toBeTrue();
     });
     it('should have zero carrier options', () => {
+      fixture.detectChanges();
       expect(component.carrierSCACs).toEqual([]);
     });
     it('should have zero carrier options', () => {
+      fixture.detectChanges();
       expect(component.carrierOptions).toEqual([]);
     });
     it('should have zero carrier mode options', () => {
+      fixture.detectChanges();
       expect(component.carrierModeOptions).toEqual([]);
     });
     it('should have zero service level options', () => {
+      fixture.detectChanges();
       expect(component.serviceLevelOptions).toEqual([]);
     });
     it('should have controls in formGroup', () => {
+      fixture.detectChanges();
       expect(Object.keys(component.formGroup.controls).length).toBe(14);
     });
   });
@@ -74,6 +81,7 @@ describe('TripInformationComponent', () => {
         component.ngOnInit();
       });
       it('should have carrier option', () => {
+        fixture.detectChanges();
         expect(component.carrierSCACs).toEqual([{
           scac: 'TCS',
           mode: 'LTL',
@@ -96,6 +104,7 @@ describe('TripInformationComponent', () => {
         component.ngOnInit();
       });
       it('should have carrier option', () => {
+        fixture.detectChanges();
         expect(component.carrierOptions).toEqual([{
           label: 'TCS (Test Carrier)',
           value: CARRIER
@@ -117,6 +126,7 @@ describe('TripInformationComponent', () => {
         component.ngOnInit();
       });
       it('should have carrier mode option', () => {
+        fixture.detectChanges();
         expect(component.carrierModeOptions).toEqual([{
           label: 'TLTL (Test Mode Description)',
           value: CARRIER_MODE
@@ -136,6 +146,7 @@ describe('TripInformationComponent', () => {
         component.ngOnInit();
       });
       it('should have carrier mode option', () => {
+        fixture.detectChanges();
         expect(component.serviceLevelOptions).toEqual([{
           label: 't1 (Test Service Level)',
           value: SERVICE_LEVEL
@@ -160,6 +171,7 @@ describe('TripInformationComponent', () => {
     };
 
     it('it should compare the two values', () => {
+      fixture.detectChanges();
       const result = component.compareWith(CARRIER, selectedCarrier);
       expect(result).toBe(true);
     });
@@ -172,6 +184,7 @@ describe('TripInformationComponent', () => {
       parentFormGroup = new FormGroup({});
     });
     it('should have default value', () => {
+      fixture.detectChanges();
       expect(component.formGroup).toBeTruthy();
       expect(component.formGroup).not.toBe(parentFormGroup);
     });
@@ -180,36 +193,47 @@ describe('TripInformationComponent', () => {
         component.formGroup = parentFormGroup;
       });
       it('should accept input from parent', () => {
+        fixture.detectChanges();
         expect(component.formGroup).toBe(parentFormGroup);
       });
       it('should inject tripId control', () => {
+        fixture.detectChanges();
         expect(component.tripIdControl).toBeTruthy();
       });
       it('should inject invoiceDate control', () => {
+        fixture.detectChanges();
         expect(component.invoiceDateControl).toBeTruthy();
       });
       it('should inject pickUpDate control', () => {
+        fixture.detectChanges();
         expect(component.pickUpDateControl).toBeTruthy();
       });
       it('should inject deliveryDate control', () => {
+        fixture.detectChanges();
         expect(component.deliveryDateControl).toBeTruthy();
       });
       it('should inject proTrackingNumber control', () => {
+        fixture.detectChanges();
         expect(component.proTrackingNumberControl).toBeTruthy();
       });
       it('should inject bolNumber control', () => {
+        fixture.detectChanges();
         expect(component.bolNumberControl).toBeTruthy();
       });
       it('should inject freightPaymentTerms control', () => {
+        fixture.detectChanges();
         expect(component.freightPaymentTermsControl).toBeTruthy();
       });
       it('should inject carrier control', () => {
+        fixture.detectChanges();
         expect(component.carrierControl).toBeTruthy();
       });
       it('should inject carrierMode control', () => {
+        fixture.detectChanges();
         expect(component.carrierModeControl).toBeTruthy();
       });
       it('should inject serviceLevel control', () => {
+        fixture.detectChanges();
         expect(component.serviceLevelControl).toBeTruthy();
       });
     });
@@ -223,6 +247,7 @@ describe('TripInformationComponent', () => {
     });
 
     it('(edit mode = true) should enable editable forms', done => {
+      fixture.detectChanges();
       isEditMode$.subscribe(() => {
         expect(component.tripIdControl.enabled).toBeFalse();
         expect(component.invoiceDateControl.enabled).toBeFalse();
@@ -239,6 +264,7 @@ describe('TripInformationComponent', () => {
       isEditMode$.next(true);
     });
     it('(edit mode = false) should disable editable forms', done => {
+      fixture.detectChanges();
       isEditMode$.subscribe(() => {
         expect(component.tripIdControl.disabled).toBeTrue();
         expect(component.invoiceDateControl.disabled).toBeTrue();
@@ -256,7 +282,7 @@ describe('TripInformationComponent', () => {
     });
   });
 
-  it('should load trip information', done => {
+  it('should load trip information', () => {
     const tripInformation: TripInformation = {
       bolNumber: 'TestBolNumber',
       carrier: {
@@ -283,24 +309,23 @@ describe('TripInformationComponent', () => {
     };
     const tripInformation$ = new Subject<TripInformation>();
     component.loadTripInformation$ = tripInformation$.asObservable();
-    tripInformation$.subscribe(() => {
-      expect(component.tripIdControl.value).toBe(tripInformation.tripId);
-      expect(component.invoiceDateControl.value).toBe(tripInformation.invoiceDate);
-      expect(component.pickUpDateControl.value).toBe(tripInformation.pickUpDate);
-      expect(component.deliveryDateControl.value).toBe(tripInformation.deliveryDate);
-      expect(component.proTrackingNumberControl.value).toBe(tripInformation.proTrackingNumber);
-      expect(component.bolNumberControl.value).toBe(tripInformation.bolNumber);
-      expect(component.freightPaymentTermsControl.value).toBe(tripInformation.freightPaymentTerms);
-      expect(component.carrierControl.value).toBe(tripInformation.carrier);
-      expect(component.carrierModeControl.value).toBe(tripInformation.carrierMode);
-      expect(component.serviceLevelControl.value).toBe(tripInformation.serviceLevel);
-      done();
-    });
     tripInformation$.next(tripInformation);
+    fixture.detectChanges();
+    expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
+    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
+    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
+    expect(component.deliveryDateControl.value).toEqual(tripInformation.deliveryDate);
+    expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
+    expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
+    expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
+    expect(component.carrierControl.value).toEqual(tripInformation.carrier);
+    expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
+    expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
   });
 
   describe('should toggle freight orders section', () => {
     it('toggles freight order section', () => {
+      fixture.detectChanges();
       component.showFreightOrderSection = false;
       component.toggleFreightOrderDetailsSection();
       expect(component.showFreightOrderSection).toBe(true);
@@ -310,10 +335,12 @@ describe('TripInformationComponent', () => {
 
   describe('should compare with carrier scac', () => {
     it('should return true', () => {
+      fixture.detectChanges();
       expect(component.compareCarrierWith({value: {scac:'TL'}}, {scac: 'TL'})).toBeTrue();
     });
 
     it('should return false', () => {
+      fixture.detectChanges();
       expect(component.compareCarrierWith({value: {scac: 'TLT'}}, {scac: 'TL'})).toBeFalse();
     });
 
@@ -321,6 +348,7 @@ describe('TripInformationComponent', () => {
 
   describe('should compare with carrier mode scac', () => {
     it('should return true', () => {
+      fixture.detectChanges();
       expect(component.compareCarrierModeWith(
         {value: {reportKeyMode: 'TL_IM', reportModeDescription: 'TRUCKLOAD'}},
         {reportKeyMode: 'TL_IM', reportModeDescription: 'TRUCKLOAD'}
@@ -328,6 +356,7 @@ describe('TripInformationComponent', () => {
     });
 
     it('should return false', () => {
+      fixture.detectChanges();
       expect(component.compareCarrierModeWith(
         {value: {reportKeyMode: 'TL_IM', reportModeDescription: 'TRUCKLOAD'}},
         {reportKeyMode: 'TL_IM', reportModeDescription: 'BROKER'}
@@ -335,6 +364,7 @@ describe('TripInformationComponent', () => {
     });
 
     it('should return false', () => {
+      fixture.detectChanges();
       expect(component.compareCarrierModeWith({value: {reportKeyMode: 'TLB'}}, {reportKeyMode: 'TL'})).toBeFalse();
     });
 
@@ -342,10 +372,12 @@ describe('TripInformationComponent', () => {
 
   describe('should compare with service level', () => {
     it('should return true', () => {
+      fixture.detectChanges();
       expect(component.compareServiceLevelWith({value: {level:'t1'}}, {level: 't1'})).toBeTrue();
     });
 
     it('should return false', () => {
+      fixture.detectChanges();
       expect(component.compareServiceLevelWith({value: {level: 't1'}}, {level: 't2'})).toBeFalse();
     });
 
@@ -353,6 +385,7 @@ describe('TripInformationComponent', () => {
 
   describe('should refresh carrier data', () => {
     it('should call filter methods', () => {
+      fixture.detectChanges();
       spyOn(component, 'filterServiceLevels').and.callThrough();
       spyOn(component, 'filterCarrierModes').and.callThrough();
       component.carrierControl.setValue({ scac: 'TestScac' });

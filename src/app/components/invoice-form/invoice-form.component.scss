@@ -97,8 +97,12 @@
   border-color: $cardinal-red;
 }
 
-.ng-select.disabled ::ng-deep .ng-select-container {
+.ng-select.disabled ::ng-deep .ng-select-container,
+.ng-select.ng-select-disabled ::ng-deep .ng-select-container,
+::ng-deep .ng-select.ng-select-disabled ::ng-deep .ng-select-container{
   color: black;
+  background-color: #e9ecef;
+  opacity: 1;
 }
 
 .ng-select.ng-select-disabled .ng-arrow-wrapper {
