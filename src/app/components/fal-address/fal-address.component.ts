@@ -18,6 +18,7 @@ export class FalAddressComponent implements OnInit {
   ];
 
   public _formGroup = new FormGroup({});
+  @Input() addressType!: 'origin' | 'destination';
 
   @Input() set formGroup (newFormGroup: FormGroup) {
     newFormGroup.setControl('name', new FormControl('', [required]))
@@ -41,7 +42,7 @@ export class FalAddressComponent implements OnInit {
         this._formGroup.get('state')?.setValue(l.state ? l.state: 'N/A');
         this._formGroup.get('streetAddress')?.setValue(l.address ? l.address: 'N/A');
         this._formGroup.get('streetAddress2')?.setValue(l.address2 ? l.address2: 'N/A');
-        this._formGroup.get('shippingPoint')?.setValue(l.shippingPoint ? l.shippingPoint: 'N/A');
+        this._formGroup.get('shippingPoint')?.setValue(this.addressType === 'destination' ? 'N/A' : (l.shippingPoint ? l.shippingPoint : 'N/A'));
     }))
   }
 
