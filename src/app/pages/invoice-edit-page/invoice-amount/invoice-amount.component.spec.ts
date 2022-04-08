@@ -4,7 +4,7 @@ import {Subject} from 'rxjs';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem} from 'src/app/models/line-item/line-item-model';
 import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
-import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
+import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 
 import {InvoiceAmountComponent} from './invoice-amount.component';
 import {RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
@@ -41,26 +41,47 @@ describe('InvoiceAmountComponent', () => {
 
   });
 
-  describe('get totalCostBreakdownAmount', () => {
-    it('should get totalCostBreakdownAmount as zero', () => {
+  describe('Cost Breakdown / Rate Totals', () => {
+    it('should default costBreakdownTotal as zero', () => {
       expect(component.costBreakdownTotal).toBe(0);
     });
-
-    it('should get totalCostBreakdownAmount as total', () => {
-      component._formGroup = new FormGroup({
-        amountOfInvoice: new FormControl(10),
-        costBreakdownItems: new FormArray([new FormGroup({
-          totalAmount: new FormControl(10),
-        }),
-          new FormGroup({
-            totalAmount: new FormControl()
-          })
-        ])
+    it('should default contractedRateTotal as zero', () => {
+      expect(component.contractedRateTotal).toBe(0);
+    });
+    it('should default nonContractedRateTotal as zero', () => {
+      expect(component.nonContractedRateTotal).toBe(0);
+    });
+    describe('> After Adding Line Items', () => {
+      beforeEach(() => {
+        component._formGroup = new FormGroup({
+          amountOfInvoice: new FormControl(30),
+          costBreakdownItems: new FormArray([
+            new FormGroup({
+              totalAmount: new FormControl(10),
+              rateSource: new FormControl('Contract')
+            }),
+            new FormGroup({
+              totalAmount: new FormControl(20),
+              rateSource: new FormControl('Manual')
+            }),
+            new FormGroup({
+              totalAmount: new FormControl(),
+              rateSource: new FormControl('Manual')
+            })
+          ])
+        });
       });
-      expect(component.costBreakdownTotal).toBe(10);
+      it('should get costBreakdownTotal as total', () => {
+        expect(component.costBreakdownTotal).toBe(30);
+      });
+      it('should get contractedRateTotal as total', () => {
+        expect(component.contractedRateTotal).toBe(10);
+      });
+      it('should get nonContractedRateTotal as total', () => {
+        expect(component.nonContractedRateTotal).toBe(20);
+      });
     });
   });
-
 
   describe('when edit mode is updated', () => {
     let isEditMode$: Subject<boolean>;
@@ -121,8 +142,8 @@ describe('InvoiceAmountComponent', () => {
       component.costBreakdownOptions.push({
         label: 'Fuel Surcharge - Miles',
         value: {
-            accessorialCode: '405',
-            name: 'Fuel Surcharge - Miles'
+          accessorialCode: '405',
+          name: 'Fuel Surcharge - Miles'
         }
       });
     });
@@ -136,12 +157,12 @@ describe('InvoiceAmountComponent', () => {
       chargeLineItemOptions$.next(accessorialDetailResponse);
     });
 
-    it ('should not display charge options already in list', done => {
+    it('should not display charge options already in list', done => {
       component._formGroup = new FormGroup({
         amountOfInvoice: new FormControl(10),
         costBreakdownItems: new FormArray([new FormGroup({
-            charge: new FormControl('Fuel Surcharge - Miles'),
-          })
+          charge: new FormControl('Fuel Surcharge - Miles'),
+        })
         ])
       });
 
@@ -304,7 +325,7 @@ describe('InvoiceAmountComponent', () => {
 
       it('should populate cost breakdown line item', done => {
         const control = component.costBreakdownItems.controls[0];
-        control.patchValue({ charge: component.costBreakdownOptions[0].value });
+        control.patchValue({charge: component.costBreakdownOptions[0].value});
         component.pendingAccessorialCode = 'TST';
         rateEngineCallResult$.next({
           mode: 'LTL',
