@@ -68,7 +68,7 @@ export class InvoiceAmountComponent implements OnInit {
   setUpOverrideStandardPaymentTermsSubscription(): void {
     this.subscriptionManager.manage(this.isPaymentOverrideSelected.valueChanges
       .subscribe((selected: string) => {
-        const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value ? true : false;
+        const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value;
         if (!selectedBool) {
           this.overridePaymentTermsFormGroup.controls.paymentTerms.reset();
         }
@@ -76,7 +76,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   enableDisableOverrideStandardPaymentTerms(disable: boolean): void {
-      this.overridePaymentTermsOptions[0].disabled = disable;
+    this.overridePaymentTermsOptions[0].disabled = disable;
   }
 
   enableDisableCurrency(disable: boolean): void {
@@ -139,7 +139,8 @@ export class InvoiceAmountComponent implements OnInit {
         const carrierSummary = rateEngineResult.carrierRateSummaries[0];
         const leg = carrierSummary.legs[0];
         // Check if accessorial code is contained in the description of the response
-        const accessorial = leg.carrierRate.lineItems.find(item => item.accessorial && item.description.substr(0, 3) === this.pendingAccessorialCode);
+        const accessorial = leg.carrierRate.lineItems.find(item => item.accessorial
+          && item.description.substr(0, 3) === this.pendingAccessorialCode);
 
         // If a match is found, update the pending line item with information from the response
         if (accessorial) {
@@ -163,14 +164,14 @@ export class InvoiceAmountComponent implements OnInit {
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
-    givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ? invoiceAmountDetail.currency : '');
+    givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
     if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
       ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
         this.overridePaymentTermsOptions[0], true);
     }
-    this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ? invoiceAmountDetail.standardPaymentTermsOverride : '');
+    this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ?? '');
 
-    givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ? invoiceAmountDetail.mileage : '');
+    givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
   }
@@ -206,7 +207,9 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   get costBreakdownItemsControls(): AbstractControl[] {
-    return this._formGroup.get('costBreakdownItems') ? (this._formGroup.get('costBreakdownItems') as FormArray).controls : new FormArray([]).controls;
+    return this._formGroup.get('costBreakdownItems')
+      ? (this._formGroup.get('costBreakdownItems') as FormArray).controls
+      : new FormArray([]).controls;
   }
 
   get costBreakdownTotal(): number {
@@ -219,6 +222,28 @@ export class InvoiceAmountComponent implements OnInit {
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
     this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
+    return totalAmount;
+  }
+
+  get contractedRateTotal(): number {
+    let totalAmount = 0;
+    this.costBreakdownItemsControls.forEach(c => {
+      if (c?.get('totalAmount')?.value
+        && c?.get('rateSource')?.value === 'Contract') {
+        totalAmount += parseFloat(c?.get('totalAmount')?.value);
+      }
+    });
+    return totalAmount;
+  }
+
+  get nonContractedRateTotal(): number {
+    let totalAmount = 0;
+    this.costBreakdownItemsControls.forEach(c => {
+      if (c?.get('totalAmount')?.value
+        && c?.get('rateSource')?.value !== 'Contract') {
+        totalAmount += parseFloat(c?.get('totalAmount')?.value);
+      }
+    });
     return totalAmount;
   }
 
@@ -235,9 +260,8 @@ export class InvoiceAmountComponent implements OnInit {
 
   addNewEmptyLineItem(): void {
     this.costBreakdownItemsControls.push(this.createEmptyLineItemGroup());
-    if (this.costBreakdownOptions.length === 0)
-    {
-        this.getAccessorialDetails.emit();
+    if (this.costBreakdownOptions.length === 0) {
+      this.getAccessorialDetails.emit();
     }
   }
 
