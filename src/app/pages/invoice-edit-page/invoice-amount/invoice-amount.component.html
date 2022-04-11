@@ -14,9 +14,10 @@
                               *ngIf="isPrepaid"
       >
       </app-fal-currency-input>
-      <input  class="form-control input_na" disabled type="text" value="N/A" *ngIf="!isPrepaid">
+      <input class="form-control input_na" disabled type="text" value="N/A" *ngIf="!isPrepaid">
 
-      <small class="error-text col-2" *ngIf="!_formGroup.get('amountOfInvoice')?.value && isPrepaid" [ngClass]="{ 'mt-3' : true }">
+      <small class="error-text col-2" *ngIf="!_formGroup.get('amountOfInvoice')?.value && isPrepaid"
+             [ngClass]="{ 'mt-3' : true }">
         Invoice Net Amount is missing
       </small>
     </div>
@@ -113,7 +114,8 @@
                      [clearable]="false"
                      bindLabel="label"
                      bindValue="value"
-                     (ngModelChange)="onSelectRate($event)"
+                     (change)="updateCostBreakdownOptions()"
+                     (ngModelChange)="onSelectRate($event, _)"
                      placeholder="Select One...">
           </ng-select>
         </div>
@@ -185,7 +187,15 @@
          *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && isPrepaid">
       <div class="row">
         <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-8 text-left text-bold">Cost Breakdown Total:</span>
+          <span class="px-3 col-md-8 text-right">Contracted Rate Total:</span>
+          <span class="col-md-4 text-right p-0">{{ contractedRateTotal | currency}}</span>
+        </div>
+        <div class="row d-flex justify-content-between">
+          <span class="px-3 col-md-8 text-right">Non-Contracted Rate Total:</span>
+          <span class="col-md-4 text-right p-0">{{ nonContractedRateTotal | currency}}</span>
+        </div>
+        <div class="row d-flex justify-content-between">
+          <span class="px-3 col-md-8 text-right text-bold">Cost Breakdown Total:</span>
           <span class="col-md-4 text-right text-bold p-0">{{ costBreakdownTotal | currency}}</span>
         </div>
       </div>
