@@ -3,7 +3,7 @@
     <div *ngIf="showShippingItemField" class="col-md-12 mb-30">
       <label for="shippingPoint"
              class="shippingPoint">
-        Location
+        {{ addressType === 'origin' ? 'Shipping Point(optional)' : 'Location'}}
       </label>
       <ng-select id="shippingPoint"
                  [items]="shippingPointItems"
@@ -12,7 +12,7 @@
       </ng-select>
       <elm-input-subtext *ngIf="_formGroup.get('shippingPoint')?.errors?.required"
                          [isError]="true">
-        Shipping point is required
+        {{ addressType === 'origin' ? 'Shipping Point' : 'Location'}} is required
       </elm-input-subtext>
     </div>
     <div class="col-md-12">
