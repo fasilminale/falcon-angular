@@ -97,5 +97,36 @@ describe('FreightOrderDetailsComponent', () => {
          } as FreightOrder
        ]);
      });
+
+    it('should set pallet counts to zero if volumes are zero.', done => {
+      loadFreightOrders$.subscribe(() => {
+
+        expect(component.totalPalletCount).toBe(0);
+        expect(component.freightOrders[0].palletCount).toBe(0);
+        expect(component.freightOrders[1].palletCount).toBe(0);
+
+        done();
+      });
+      loadFreightOrders$.next([
+        {
+          freightOrderId: 'TestId1',
+          volumeGross: {
+            value: 0
+          },
+          weightGross: {
+            value: 100.012
+          }
+        } as FreightOrder,
+        {
+          freightOrderId: 'TestId2',
+          volumeGross: {
+            value: 0
+          },
+          weightGross: {
+            value: 200.023
+          }
+        } as FreightOrder
+      ]);
+    });
   });
 });

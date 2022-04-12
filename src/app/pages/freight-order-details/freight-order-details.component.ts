@@ -2,6 +2,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
+import { NumberFormatter } from 'src/app/utils/number-formatter';
 
 @Component({
   selector: 'app-freight-order-details',
@@ -39,7 +40,6 @@ export class FreightOrderDetailsComponent implements OnInit {
       this.totalVolume = this.getTotalVolume();
       this.totalPalletCount = this.getTotalPalletCount();
     }));
-
   }
 
   getTotalGrossWeight(): number{
@@ -47,7 +47,7 @@ export class FreightOrderDetailsComponent implements OnInit {
     this.freightOrders.forEach(fo => {
       totalGrossWeight += fo?.weightGross?.value;
     });
-    return this.truncateData(totalGrossWeight);
+    return NumberFormatter.truncateData(totalGrossWeight);
   }
 
   getTotalVolume(): number{
@@ -55,7 +55,7 @@ export class FreightOrderDetailsComponent implements OnInit {
     this.freightOrders.forEach(fo => {
       totalVolume += fo?.volumeGross?.value;
     });
-    return this.truncateData(totalVolume);
+    return NumberFormatter.truncateData(totalVolume);
   }
 
   getTotalPalletCount(): number{
@@ -63,7 +63,7 @@ export class FreightOrderDetailsComponent implements OnInit {
       fo.palletCount = this.getPalletQuantity(fo?.volumeGross?.value);
     });
 
-    return this.truncateData(this.freightOrders.reduce((i, fo) => {
+    return NumberFormatter.truncateData(this.freightOrders.reduce((i, fo) => {
        return i + fo.palletCount;
     }, 0));
 
@@ -74,37 +74,8 @@ export class FreightOrderDetailsComponent implements OnInit {
   }
 
   getPalletQuantity(inputFt3: number): number {
-    return this.truncateData((inputFt3 / 60));
+    return NumberFormatter.truncateData((inputFt3 / 60));
   }
 
-  /**
-   * Truncates data to the nearest 3rd decimal place and rounds up.
-   * @param inputData - The data to be truncated.
-   */
-  truncateData(inputData: number): number {
-    if (this.getNumDecimalPlaces(inputData) > 3) {
-      return (Math.round((inputData + Number.EPSILON) * 1000) / 1000);
-    } else {
-      return inputData;
-    }
-  }
-
-  /**
-   * Calculates the number of decimal places in a number from a number or string including scientific notation.
-   * @param num - Number of String to be analysed
-   * @private
-   */
-  getNumDecimalPlaces(num: number | string): number {
-    const match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
-    if (!match) {
-      return 0;
-    }
-    return Math.max(
-      0,
-      // Number of digits right of decimal point.
-      (match[1] ? match[1].length : 0)
-      // Adjust for scientific notation.
-      - (match[2] ? +match[2] : 0));
-  }
 
 }
