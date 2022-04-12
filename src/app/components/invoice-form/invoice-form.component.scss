@@ -97,14 +97,6 @@
   border-color: $cardinal-red;
 }
 
-.ng-select.disabled ::ng-deep .ng-select-container,
-.ng-select.ng-select-disabled ::ng-deep .ng-select-container,
-::ng-deep .ng-select.ng-select-disabled ::ng-deep .ng-select-container{
-  color: black;
-  background-color: #e9ecef;
-  opacity: 1;
-}
-
 .ng-select.ng-select-disabled .ng-arrow-wrapper {
   display: none;
 }
@@ -212,11 +204,11 @@
 }
 
 .radio-dev-disabled {
-  background-color: #e9ecef;
+  background-color: #e5e4e4;
 }
 
 .radio-dev-disabled ::ng-deep .elm-input {
-  background-color: #e9ecef;
+  background-color: #e5e4e4;
   padding-bottom: 0px;
   border: solid 0px transparent;
   border-radius: 3px;
