@@ -23,7 +23,6 @@ export class FreightOrderDetailsComponent implements OnInit {
 
   }
 
-
   ngOnInit(): void {
   }
 
@@ -46,25 +45,28 @@ export class FreightOrderDetailsComponent implements OnInit {
   getTotalGrossWeight(): number{
     let totalGrossWeight = 0;
     this.freightOrders.forEach(fo => {
-      totalGrossWeight += fo.weightGross.value;
+      totalGrossWeight += fo?.weightGross?.value;
     });
-    return totalGrossWeight;
+    return this.truncateData(totalGrossWeight);
   }
 
   getTotalVolume(): number{
     let totalVolume = 0;
     this.freightOrders.forEach(fo => {
-      totalVolume += fo.volumeGross.value;
+      totalVolume += fo?.volumeGross?.value;
     });
-    return totalVolume;
+    return this.truncateData(totalVolume);
   }
 
   getTotalPalletCount(): number{
-    let totalPalletCount = 0;
     this.freightOrders.forEach(fo => {
-     totalPalletCount += this.getPalletQuantity(fo.volumeGross.value);
+      fo.palletCount = this.getPalletQuantity(fo?.volumeGross?.value);
     });
-    return totalPalletCount;
+
+    return this.truncateData(this.freightOrders.reduce((i, fo) => {
+       return i + fo.palletCount;
+    }, 0));
+
   }
 
   editFreightOrder(freightOrder: any) {
