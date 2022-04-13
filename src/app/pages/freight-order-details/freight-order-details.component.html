@@ -1,4 +1,33 @@
 <div class="px-3">
+  <div class="col-lg-6">
+
+    <div class="row">
+      <div class="col">
+        <label>Total Gross Weight (lb)</label>
+
+      </div>
+      <div class="col">
+        <label>Total Volume (ft<sup>3</sup>)</label>
+
+      </div>
+      <div class="col">
+        <label>Total Pallet Ct (plt)</label>
+
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col">
+        <input type="text=" [value]="totalGrossWeight" [disabled]="true" class="form-control col-1" matInput [(ngModel)]="totalGrossWeight" >
+      </div>
+      <div class="col">
+        <input type="text=" [value]="totalVolume" [disabled]="true" class="form-control col-1" matInput [(ngModel)]="totalVolume" >
+      </div>
+      <div class="col">
+        <input type="text=" [value]="totalPalletCount" [disabled]="true" class="form-control col-1" matInput [(ngModel)]="totalPalletCount" >
+      </div>
+    </div>
+  </div>
+
   <elm-section-header [sectionTitle]="freightOrderTitle">
   </elm-section-header>
 
@@ -68,7 +97,7 @@
     <ng-container matColumnDef="pallets">
       <th id="pallets" class="px-3" mat-header-cell *matHeaderCellDef>Pallets</th>
       <td class="px-3" mat-cell *matCellDef="let freightOrder">
-        <input type="text=" [value]="freightOrder?.pallets?.value ? freightOrder?.pallets?.value : 'N/A'" [disabled]="freightOrder.isEdit" class="form-control col-11" matInput>
+        <input type="text=" [value]="freightOrder.palletCount" [disabled]="freightOrder.isEdit" class="form-control col-11" matInput>
       </td>
     </ng-container>
 
