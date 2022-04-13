@@ -153,10 +153,10 @@ export class InvoiceAmountComponent implements OnInit {
             });
           }
         }
+        // Update invoice total and available accessorial options
+        this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+        this.updateCostBreakdownOptions();
       }
-      // Update invoice total and available accessorial options
-      this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-      this.updateCostBreakdownOptions();
     }));
   }
 
@@ -290,12 +290,12 @@ export class InvoiceAmountComponent implements OnInit {
       lineItemFormGroup.get('type')?.setValue('N/A');
       lineItemFormGroup.get('quantity')?.setValue('N/A');
       lineItemFormGroup.get('totalAmount')?.valueChanges
-        .subscribe(() => this.rateEngineCall.emit(value.accessorialCode));
+        .subscribe(() => this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal));
     } else {
       lineItemFormGroup.get('rateSource')?.setValue('Contract');
+      this.pendingAccessorialCode = value.accessorialCode;
+      this.rateEngineCall.emit(value.accessorialCode);
     }
-    this.pendingAccessorialCode = value.accessorialCode;
-    this.rateEngineCall.emit(value.accessorialCode);
   }
 
   /**
