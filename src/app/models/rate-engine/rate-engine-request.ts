@@ -36,6 +36,7 @@ export interface Leg {
 }
 
 export interface CarrierRate {
+  totalCost: number;
   lineItems: Array<LineItem>;
 }
 
