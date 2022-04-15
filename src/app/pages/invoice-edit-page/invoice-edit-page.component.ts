@@ -91,6 +91,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   private loadInvoice(invoice: InvoiceDataModel): void {
+    console.log('Loading: ', invoice);
     this.invoice = invoice;
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
@@ -127,8 +128,7 @@ export class InvoiceEditPageComponent implements OnInit {
         erpInvoiceNumber: invoice.erpInvoiceNumber,
         erpRemittanceNumber: invoice.erpRemittanceNumber,
         vendorId: invoice.remitVendorId,
-        amountOfPayment: parseInt(invoice.amountOfPayment),
-
+        amountOfPayment: parseFloat(invoice.amountOfPayment),
       }
     });
 
