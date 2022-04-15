@@ -35,8 +35,7 @@ describe('FreightOrderDetailsComponent', () => {
     expect(freightOrder.isEdit).toBe(false);
    });
 
-
-   describe('when freight orders are loaded', () => {
+  describe('when freight orders are loaded', () => {
     let loadFreightOrders$: Subject<FreightOrder[]>;
     beforeEach(() => {
       loadFreightOrders$ = new Subject();
@@ -57,7 +56,77 @@ describe('FreightOrderDetailsComponent', () => {
         } as FreightOrder
       ]);
     });
+
+    it('should set total volume, weight and pallet count.', done => {
+       loadFreightOrders$.subscribe(() => {
+         expect(component.totalVolume).toBe(350.09);
+         expect(component.freightOrders[0].palletCount).toBe(1.667);
+         expect(component.freightOrders[1].palletCount).toBe(3.334);
+         expect(component.freightOrders[2].palletCount).toBe(0.834);
+         expect(component.totalGrossWeight).toBe(350.092);
+         expect(component.totalPalletCount).toBe(5.835);
+         done();
+       });
+       loadFreightOrders$.next([
+        {
+           freightOrderId: 'TestId1',
+           volumeGross: {
+             value: 100.012
+           },
+           weightGross: {
+             value: 100.012
+           }
+         } as FreightOrder,
+         {
+           freightOrderId: 'TestId2',
+           volumeGross: {
+             value: 200.023
+           },
+           weightGross: {
+             value: 200.023
+           }
+         } as FreightOrder,
+         {
+           freightOrderId: 'TestId3',
+           volumeGross: {
+             value: 50.0567
+           },
+           weightGross: {
+             value: 50.0567
+           }
+         } as FreightOrder
+       ]);
+     });
+
+    it('should set pallet counts to zero if volumes are zero.', done => {
+      loadFreightOrders$.subscribe(() => {
+
+        expect(component.totalPalletCount).toBe(0);
+        expect(component.freightOrders[0].palletCount).toBe(0);
+        expect(component.freightOrders[1].palletCount).toBe(0);
+
+        done();
+      });
+      loadFreightOrders$.next([
+        {
+          freightOrderId: 'TestId1',
+          volumeGross: {
+            value: 0
+          },
+          weightGross: {
+            value: 100.012
+          }
+        } as FreightOrder,
+        {
+          freightOrderId: 'TestId2',
+          volumeGross: {
+            value: 0
+          },
+          weightGross: {
+            value: 200.023
+          }
+        } as FreightOrder
+      ]);
+    });
   });
-
-
 });

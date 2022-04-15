@@ -420,29 +420,43 @@ describe('InvoiceAmountComponent', () => {
   });
 
   describe('select rate charge', () => {
-    const lineItem: AbstractControl = new FormControl({});
+    let lineItem: FormGroup;
     beforeEach(() => {
+      spyOn(component.rateEngineCall, 'emit');
       component._formGroup = new FormGroup({
         amountOfInvoice: new FormControl(10),
         costBreakdownItems: new FormArray([new FormGroup({
           charge: new FormControl('Fuel Surcharge - Miles'),
-          totalCost: new FormControl(10)
+          totalAmount: new FormControl(10)
         })
         ])
       });
+      lineItem = component.createEmptyLineItemGroup();
+      component.costBreakdownItemsControls.push(lineItem);
     });
+
     it('should call rate engine', () => {
-      const rateEngineEmitter = spyOn(component.rateEngineCall, 'emit');
       const selectedCharge = {accessorialCode: 'TST', name: 'TestChargeCode'};
       component.onSelectRate(selectedCharge, lineItem);
-      expect(rateEngineEmitter).toHaveBeenCalledWith(selectedCharge.accessorialCode);
+      expect(component.rateEngineCall.emit).toHaveBeenCalledWith(selectedCharge.accessorialCode);
     });
 
     it('should not call rate engine', () => {
-      const rateEngineEmitter = spyOn(component.rateEngineCall, 'emit');
       const selectedCharge = {accessorialCode: 'OTHER', name: 'OTHER'};
       component.onSelectRate(selectedCharge, lineItem);
-      expect(rateEngineEmitter).not.toHaveBeenCalled();
+      expect(component.rateEngineCall.emit).not.toHaveBeenCalled();
+    });
+
+    it('should recalculate total cost', () => {
+      const selectedCharge = {accessorialCode: 'OTHER', name: 'OTHER'};
+      const amountOfInvoiceControl = component._formGroup.get('amountOfInvoice');
+      const totalCost = amountOfInvoiceControl?.value;
+      expect(amountOfInvoiceControl).not.toBeFalsy();
+      component.onSelectRate(selectedCharge, lineItem);
+      const lineItemTotalAmountControl = lineItem.get('totalAmount');
+      expect(lineItemTotalAmountControl).not.toBeFalsy();
+      lineItemTotalAmountControl?.setValue(40.00);
+      expect(amountOfInvoiceControl?.value).toEqual(totalCost + 40);
     });
 
   });

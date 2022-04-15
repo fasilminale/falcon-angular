@@ -134,32 +134,30 @@ export class InvoiceAmountComponent implements OnInit {
    *  the response from rate engine.
    */
   @Input() set rateEngineCallResult$(observable: Observable<RatesResponse>) {
-    this.subscriptionManager.manage(observable.subscribe(
-      rateEngineResult => {
-        const carrierSummary = rateEngineResult.carrierRateSummaries[0];
-        const leg = carrierSummary.legs[0];
-        // Check if accessorial code is contained in the description of the response
-        const accessorial = leg.carrierRate.lineItems.find(item => item.accessorial
-          && item.description.substr(0, 3) === this.pendingAccessorialCode);
+    this.subscriptionManager.manage(observable.subscribe(rateEngineResult => {
+      const carrierSummary = rateEngineResult.carrierRateSummaries[0];
+      const leg = carrierSummary.legs[0];
+      // Check if accessorial code is contained in the description of the response
+      const accessorial = leg.carrierRate.lineItems.find(item => item.accessorial
+        && item.description.substr(0, 3) === this.pendingAccessorialCode);
 
-        // If a match is found, update the pending line item with information from the response
-        if (accessorial) {
-          for (const control of this.costBreakdownItemsControls) {
-            if (control.value?.charge?.accessorialCode === this.pendingAccessorialCode) {
-              control.patchValue({
-                rate: accessorial.rate,
-                type: accessorial.rateType,
-                totalAmount: accessorial.lineItemTotal,
-                message: accessorial.message
-              });
-            }
+      // If a match is found, update the pending line item with information from the response
+      if (accessorial) {
+        for (const control of this.costBreakdownItemsControls) {
+          if (control.value?.charge?.accessorialCode === this.pendingAccessorialCode) {
+            control.patchValue({
+              rate: accessorial.rate,
+              type: accessorial.rateType,
+              totalAmount: accessorial.lineItemTotal,
+              message: accessorial.message
+            });
           }
-          // Update invoice total and available accessorial options
-          this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-          this.updateCostBreakdownOptions();
         }
+        // Update invoice total and available accessorial options
+        this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+        this.updateCostBreakdownOptions();
       }
-    ));
+    }));
   }
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
@@ -267,10 +265,10 @@ export class InvoiceAmountComponent implements OnInit {
 
   createEmptyLineItemGroup(): FormGroup {
     const charge = new FormControl(null);
-    const rateSource = new FormControl('Manual');
-    const rate = new FormControl('');
-    const type = new FormControl('');
-    const quantity = new FormControl(0);
+    const rateSource = new FormControl('');
+    const rate = new FormControl('N/A');
+    const type = new FormControl('N/A');
+    const quantity = new FormControl('N/A');
     const totalAmount = new FormControl(0);
     const message = new FormControl('');
     const contracted = new FormControl(false);
@@ -283,14 +281,21 @@ export class InvoiceAmountComponent implements OnInit {
    *  Rate Management is not called if 'OTHER' is selected.
    */
   onSelectRate(value: any, lineItem: AbstractControl): void {
-    lineItem.patchValue({ rate: null, type: null, quantity: 0, totalAmount: 0});
+    lineItem.patchValue({rate: null, type: null, quantity: 0, totalAmount: 0});
     this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+    const lineItemFormGroup = (lineItem as FormGroup);
     if (value.accessorialCode === 'OTHER') {
-      return;
+      lineItemFormGroup.get('rateSource')?.setValue('Manual');
+      lineItemFormGroup.get('rate')?.setValue('N/A');
+      lineItemFormGroup.get('type')?.setValue('N/A');
+      lineItemFormGroup.get('quantity')?.setValue('N/A');
+      lineItemFormGroup.get('totalAmount')?.valueChanges
+        .subscribe(() => this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal));
+    } else {
+      lineItemFormGroup.get('rateSource')?.setValue('Contract');
+      this.pendingAccessorialCode = value.accessorialCode;
+      this.rateEngineCall.emit(value.accessorialCode);
     }
-
-    this.pendingAccessorialCode = value.accessorialCode;
-    this.rateEngineCall.emit(value.accessorialCode);
   }
 
   /**

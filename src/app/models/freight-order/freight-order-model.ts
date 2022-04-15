@@ -50,6 +50,7 @@ export interface FreightOrder {
   tmsLoadId: string;
   trackingNumbers: string;
   isEdit?: boolean;
+  palletCount: number;
 }
 
 export interface RoutePlan {
