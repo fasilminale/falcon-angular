@@ -115,7 +115,7 @@ export class InvoiceEditPageComponent implements OnInit {
       freightOrders: invoice.freightOrders
     });
     this.loadInvoiceOverviewDetail$.next({
-      invoiceNetAmount: invoice.amountOfInvoice ? parseInt(invoice.amountOfInvoice) : 0.0,
+      invoiceNetAmount: invoice.amountOfInvoice ? parseFloat(invoice.amountOfInvoice) : 0.0,
       invoiceDate: new Date(invoice.invoiceDate),
       businessUnit: invoice.businessUnit,
       billToAddress: invoice.billTo,
@@ -127,8 +127,7 @@ export class InvoiceEditPageComponent implements OnInit {
         erpInvoiceNumber: invoice.erpInvoiceNumber,
         erpRemittanceNumber: invoice.erpRemittanceNumber,
         vendorId: invoice.remitVendorId,
-        amountOfPayment: parseInt(invoice.amountOfPayment),
-
+        amountOfPayment: parseFloat(invoice.amountOfPayment),
       }
     });
 
