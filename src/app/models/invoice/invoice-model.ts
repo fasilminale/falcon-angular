@@ -85,6 +85,8 @@ export class InvoiceDataModel {
   estimatedPickupDateTime: string;
   pickupDateTime: string;
   deliveryDateTime: string;
+  overriddenDeliveryDateTime: string;
+  assumedDeliveryDateTime: string;
 
   /* --- AUTOMATED INVOICE: COST BREAKDOWN FIELDS --- */
   deliveryInstructions: Array<string>;
@@ -177,6 +179,8 @@ export class InvoiceDataModel {
     this.estimatedPickupDateTime = date(json?.estimatedPickupDateTime);
     this.pickupDateTime = date(json?.pickupDateTime);
     this.deliveryDateTime = date(json?.deliveryDateTime);
+    this.overriddenDeliveryDateTime = date(json?.overriddenDeliveryDateTime);
+    this.assumedDeliveryDateTime = date(json?.assumedDeliveryDateTime);
 
     // AUTOMATED INVOICE: COST BREAKDOWN
     this.deliveryInstructions = json?.deliveryInstructions ?? [];

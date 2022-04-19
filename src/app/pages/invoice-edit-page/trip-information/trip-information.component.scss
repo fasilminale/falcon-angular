@@ -58,3 +58,29 @@
 
   }
 }
+
+#delivery-date-label {
+  display: flex;
+  flex-direction: row;
+  justify-items: flex-start;
+  align-items: center;
+}
+
+#override-assume-delivery-date-container {
+  display: flex;
+  flex-direction: row;
+  justify-items: flex-start;
+  align-items: center;
+}
+
+.delivery-date-icon {
+  bottom: 1px;
+  position: relative;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.delivery-date-icon-message {
+  top: 1px;
+  position: relative;
+  color: rgba(0, 0, 0, 0.87);
+}

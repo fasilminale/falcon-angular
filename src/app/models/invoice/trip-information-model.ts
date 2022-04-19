@@ -20,6 +20,8 @@ export interface TripInformation {
   destinationAddress?: ShippingPointLocation
   billToAddress?: ShippingPointLocation
   freightOrders: FreightOrder[]
+  overriddenDeliveryDateTime?: Date;
+  assumedDeliveryDateTime?: Date;
 }
 
 export interface InvoiceAllocationDetail {

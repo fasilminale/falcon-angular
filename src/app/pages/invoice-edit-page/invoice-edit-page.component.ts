@@ -98,6 +98,8 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isEditableInvoice = StatusUtil.isEditable(invoice.status);
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
+    console.log(`invoice override ${invoice.overriddenDeliveryDateTime}`)
+    console.log(`invoice assumed ${invoice.assumedDeliveryDateTime}`)
     this.loadTripInformation$.next({
       tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),
@@ -112,7 +114,9 @@ export class InvoiceEditPageComponent implements OnInit {
       serviceLevel: invoice.serviceLevel,
       carrier: invoice.carrier,
       carrierMode: invoice.mode,
-      freightOrders: invoice.freightOrders
+      freightOrders: invoice.freightOrders,
+      overriddenDeliveryDateTime: invoice.overriddenDeliveryDateTime ? new Date(invoice.overriddenDeliveryDateTime) : undefined,
+      assumedDeliveryDateTime: invoice.assumedDeliveryDateTime ? new Date(invoice.assumedDeliveryDateTime) : undefined,
     });
     this.loadInvoiceOverviewDetail$.next({
       invoiceNetAmount: invoice.amountOfInvoice ? parseFloat(invoice.amountOfInvoice) : 0.0,

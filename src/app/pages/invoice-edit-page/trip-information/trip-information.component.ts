@@ -76,6 +76,8 @@ export class TripInformationComponent implements OnInit {
     this.serviceLevelControl
   ]);
   private tripInformation: TripInformation = {} as TripInformation;
+  public assumedDeliveryDateTime: Date | undefined;
+  public overriddenDeliveryDateTime: Date | undefined;
 
   public showFreightOrderSection = false;
   loadOriginAddress$ = new Subject<ShippingPointLocation>();
@@ -175,7 +177,8 @@ export class TripInformationComponent implements OnInit {
       this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
       this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
       this.pickUpDateControl.setValue(tripInfo.pickUpDate ?? undefined);
-      this.deliveryDateControl.setValue(tripInfo.deliveryDate ?? undefined);
+      this.deriveDeliveryDate(tripInfo);
+      this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
       this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
       this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
       this.freightPaymentTermsControl.setValue(tripInfo.freightPaymentTerms ?? undefined);
@@ -193,6 +196,24 @@ export class TripInformationComponent implements OnInit {
       this.formGroup.updateValueAndValidity();
       this.formGroup.disable();
     }));
+  }
+
+  deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
+    let dateToReturn: Date | undefined = undefined;
+    console.log(`trip override ${tripInfo.overriddenDeliveryDateTime}`)
+    console.log(`trip assumed ${tripInfo.assumedDeliveryDateTime}`)
+    this.overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
+    this.assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
+    if (!this.overriddenDeliveryDateTime && !this.assumedDeliveryDateTime) {
+      dateToReturn = tripInfo.deliveryDate ?? undefined;
+    }
+    else if (this.overriddenDeliveryDateTime) {
+      dateToReturn = this.overriddenDeliveryDateTime ?? undefined;
+    }
+    else if (this.assumedDeliveryDateTime) {
+      dateToReturn = this.assumedDeliveryDateTime ?? undefined;
+    }
+    return dateToReturn;
   }
 
   toggleFreightOrderDetailsSection(): void {
