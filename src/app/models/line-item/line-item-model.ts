@@ -23,6 +23,17 @@ export interface CostLineItem {
   manual: boolean;
 }
 
+export interface DisputeLineItem {
+  comment: string;
+  attachment: string;
+  createdDate: string;
+  createdBy: string;
+  disputeStatus: KeyedLabel;
+  responseComment: string;
+  closedDate: string;
+  closedBy: string;
+}
+
 export interface GlLineItem {
   allocationPercent: number;
   customerCategory: string;

@@ -1,6 +1,6 @@
 import {StatusModel} from './status-model';
 import * as moment from 'moment';
-import {CostLineItem, GlLineItem, ManualLineItem} from '../line-item/line-item-model';
+import {CostLineItem, DisputeLineItem, GlLineItem, ManualLineItem} from '../line-item/line-item-model';
 import {formatCurrency} from '@angular/common';
 import {Milestone} from '../milestone/milestone-model';
 import {Attachment} from '../attachment/attachment-model';
@@ -96,6 +96,7 @@ export class InvoiceDataModel {
   plannedInvoiceNetAmount: string;
   distance: string;
   costLineItems: Array<CostLineItem>;
+  disputeLineItems: Array<DisputeLineItem>;
   totalGlAmount: string;
   glLineItems: Array<GlLineItem>;
   freightOrders: Array<FreightOrder>;
@@ -188,6 +189,7 @@ export class InvoiceDataModel {
     this.plannedInvoiceNetAmount = currency(json?.plannedInvoiceNetAmount);
     this.distance = json?.distance ?? '';
     this.costLineItems = json?.costLineItems ?? [];
+    this.disputeLineItems = json?.disputeLineItems ?? [];
     this.totalGlAmount = currency(json?.totalGlAmount);
     this.glLineItems = json?.glLineItems ?? [];
     this.freightOrders = json?.freightOrders ?? [];

@@ -221,6 +221,21 @@ describe('InvoiceAmountComponent', () => {
             manual: false
           }
         ],
+        disputeLineItems: [
+          {
+            comment: 'test comment',
+            attachment: 'test.jpg',
+            createdDate: '2022-04-04',
+            createdBy: 'test@test.com',
+            closedDate: '2022-05-04',
+            closedBy: 'test@test.com',
+            responseComment: 'test comment',
+            disputeStatus: {
+              key: 'OPEN',
+              label: 'Open'
+            }
+          }
+        ],
         standardPaymentTermsOverride: 'TestTerms',
         mileage: '100'
       });
@@ -257,10 +272,16 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should not populate form when no invoice amount details when form group has no fields set', done => {
-      component._formGroup = new FormGroup({costBreakdownItems: new FormArray([])});
+      component._formGroup = new FormGroup(
+        {
+          costBreakdownItems: new FormArray([]),
+          disputeLineItems: new FormArray([])
+        }
+      );
       loadInvoiceAmountDetail$.subscribe(() => {
         expect(component._formGroup.value).toEqual({
-          costBreakdownItems: []
+          costBreakdownItems: [],
+          disputeLineItems: []
         });
         done();
       });
@@ -299,6 +320,7 @@ describe('InvoiceAmountComponent', () => {
             manual: false
           }
         ],
+        disputeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
         mileage: '100'
       });
