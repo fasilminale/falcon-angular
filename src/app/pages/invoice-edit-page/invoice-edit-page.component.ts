@@ -98,8 +98,6 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isEditableInvoice = StatusUtil.isEditable(invoice.status);
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
-    console.log(`invoice override ${invoice.overriddenDeliveryDateTime}`)
-    console.log(`invoice assumed ${invoice.assumedDeliveryDateTime}`)
     this.loadTripInformation$.next({
       tripId: invoice.tripId,
       invoiceDate: new Date(invoice.invoiceDate),

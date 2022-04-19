@@ -144,7 +144,9 @@ describe('InvoiceEditPageComponent', () => {
             type: {key: 'TEST', label: 'Test Milestone'},
             timestamp: new Date().toISOString(),
             user: 'Test User'
-          }]
+          }],
+          overriddenDeliveryDateTime: new Date().toISOString(),
+          assumedDeliveryDateTime: new Date().toISOString()
         };
         asSpy(invoiceService.getInvoice).and.returnValue(of(testInvoice));
       });

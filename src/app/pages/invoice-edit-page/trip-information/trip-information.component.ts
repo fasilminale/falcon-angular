@@ -177,7 +177,6 @@ export class TripInformationComponent implements OnInit {
       this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
       this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
       this.pickUpDateControl.setValue(tripInfo.pickUpDate ?? undefined);
-      this.deriveDeliveryDate(tripInfo);
       this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
       this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
       this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
@@ -200,8 +199,6 @@ export class TripInformationComponent implements OnInit {
 
   deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
     let dateToReturn: Date | undefined = undefined;
-    console.log(`trip override ${tripInfo.overriddenDeliveryDateTime}`)
-    console.log(`trip assumed ${tripInfo.assumedDeliveryDateTime}`)
     this.overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
     this.assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
     if (!this.overriddenDeliveryDateTime && !this.assumedDeliveryDateTime) {
