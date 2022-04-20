@@ -3,7 +3,7 @@ import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@a
 import {Observable} from 'rxjs';
 import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
-import {CostLineItem} from 'src/app/models/line-item/line-item-model';
+import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
 import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
 import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
 import {map} from 'rxjs/operators';
@@ -17,6 +17,9 @@ import {ElmFormHelper} from '@elm/elm-styleguide-ui';
   styleUrls: ['./invoice-amount.component.scss']
 })
 export class InvoiceAmountComponent implements OnInit {
+
+  public readonly dateFormat = 'MM-dd-YYYY';
+  public readonly ellipsisPipeLimit = 10;
 
   _formGroup = new FormGroup({});
   amountOfInvoiceControl = new FormControl();
@@ -51,6 +54,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
+  disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
 
   @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
@@ -126,6 +130,8 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.setControl('mileage', new FormControl());
     this.insertBreakDownItems();
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems);
+    this.insertDisputeLineItems();
+    givenFormGroup.setControl('disputeLineItems', this.disputeLineItems);
     this._formGroup = givenFormGroup;
   }
 
@@ -171,7 +177,9 @@ export class InvoiceAmountComponent implements OnInit {
 
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
+    (givenFormGroup.get('disputeLineItems') as FormArray).clear();
     this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
+    this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
   }
 
   insertBreakDownItems(costBreakdownItems?: CostLineItem[]): void {
@@ -204,9 +212,34 @@ export class InvoiceAmountComponent implements OnInit {
     }
   }
 
+  insertDisputeLineItems(disputeLineItems?: DisputeLineItem[]): void {
+    if (disputeLineItems && disputeLineItems.length > 0) {
+      this.disputeLineItems = new FormArray([]);
+      disputeLineItems.forEach((disputeLineItem) => {
+        console.log(disputeLineItem);
+        this.disputeLineItemControls.push(new FormGroup({
+          comment: new FormControl(disputeLineItem.comment),
+          attachment: new FormControl(disputeLineItem.attachment),
+          createdDate: new FormControl(disputeLineItem.createdDate),
+          createdBy: new FormControl(disputeLineItem.createdBy),
+          disputeStatus: new FormControl(disputeLineItem.disputeStatus),
+          responseComment: new FormControl(disputeLineItem.responseComment ?? 'N/A'),
+          closedDate: new FormControl(disputeLineItem.closedDate ?? 'N/A'),
+          closedBy: new FormControl(disputeLineItem.closedBy ?? 'N/A')
+        }));
+      });
+    }
+  }
+
   get costBreakdownItemsControls(): AbstractControl[] {
     return this._formGroup.get('costBreakdownItems')
       ? (this._formGroup.get('costBreakdownItems') as FormArray).controls
+      : new FormArray([]).controls;
+  }
+
+  get disputeLineItemControls(): AbstractControl[] {
+    return this._formGroup.get('disputeLineItems')
+      ? (this._formGroup.get('disputeLineItems') as FormArray).controls
       : new FormArray([]).controls;
   }
 

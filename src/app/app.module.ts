@@ -79,6 +79,7 @@ import { FalDeleteModalComponent } from './components/fal-delete-modal/fal-delet
 import {BuildInfoService} from './services/build-info-service';
 import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
 import {RateService} from './services/rate-service';
+import {EllipsisPipe} from './utils/ellipsis-pipe';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -173,7 +174,8 @@ const oktaConfig = {
     InvoiceAllocationComponent,
     InfoIconTooltipComponent,
     FalDeleteModalComponent,
-    NewUserLogoutPageComponent
+    NewUserLogoutPageComponent,
+    EllipsisPipe
   ],
   imports: [
     BrowserModule,

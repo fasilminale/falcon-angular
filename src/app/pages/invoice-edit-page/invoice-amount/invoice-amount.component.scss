@@ -67,10 +67,28 @@ app-fal-radio-input ::ng-deep .background-disabled,
  }
 
  .cost-breakdown-total-div {
-
     background-color:#f6f6f6;
-
  }
+
+.dispute-item-header {
+  background-color: #f6f6f6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.dispute-item-header > div{
+  font-size: 14px;
+  font-weight: 700;
+}
+.dispute-item-row {
+  margin-bottom: 24px;
+}
+.download-icon {
+  display:inline-flex;
+  vertical-align:top;
+}
+.download-text {
+  margin-left: 8px;
+}
 
 .no-results{
   display: flex;

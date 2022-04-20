@@ -133,6 +133,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
     this.loadInvoiceAmountDetail$.next({
       costLineItems: invoice.costLineItems,
+      disputeLineItems: invoice.disputeLineItems,
       amountOfInvoice: invoice.amountOfInvoice,
       mileage: invoice.distance,
       currency: invoice.currency,
