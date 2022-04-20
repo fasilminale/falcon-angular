@@ -1,0 +1,38 @@
+<div mat-dialog-title class="d-flex align-items-center">
+  <span class="headline2">{{data.title}}</span>
+  <elm-close-button class="dialog-close-button" mat-dialog-close></elm-close-button>
+</div>
+<form [formGroup]="form">
+  <div mat-dialog-content class="modal-height">
+    <div class="elm-h3" innerHTML="{{data.innerHtmlMessage}}"></div>
+    <label for="comment-input" class="fal-label">
+      {{data.commentSectionFieldName}}
+    </label>
+    <textarea id="comment-input"
+              formControlName="comment"
+              [ngClass]="!form.get('comment')?.value && form.dirty && data.requireField ? 'error' : ''"
+              class="form-control"
+    ></textarea>
+    <small class="error-text" *ngIf="!form.get('comment')?.value && form.dirty && data.requireField">
+      {{data.commentSectionFieldName}} is required
+    </small>
+  </div>
+
+  <div mat-dialog-actions class="float-right">
+    <elm-button buttonStyle="secondary"
+                class="ms-auto"
+                mat-dialog-close
+                id="cancel"
+                aria-label="cancel">
+      {{data.cancelButtonText}}
+    </elm-button>
+    <elm-button [buttonStyle]="primaryButtonStyle"
+                class="ms-3"
+                (buttonClick)="confirm()"
+                [isDisabled]="!form.get('comment')?.value && data.requireField"
+                id="confirm"
+                aria-label="confirm">
+      {{data.confirmButtonText}}
+    </elm-button>
+  </div>
+</form>

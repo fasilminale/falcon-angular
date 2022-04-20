@@ -271,7 +271,7 @@ describe('InvoiceDetailPageComponent', () => {
     spyOn(component, 'requireDeleteReason').and.callThrough();
     spyOn(router, 'navigate').and.stub();
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
-    spyOn(component.util, 'openDeleteModal').and.callThrough();
+    spyOn(component.util, 'openCommentModal').and.callThrough();
 
     component.deleteInvoice();
     fixture.detectChanges();

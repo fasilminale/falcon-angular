@@ -94,17 +94,22 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   }
 
   public deleteInvoice(): void {
+    const modalData = {
+      title: 'Delete Invoice',
+      innerHtmlMessage: `Are you sure you want to delete this invoice?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+      confirmButtonText: 'Delete Invoice',
+      confirmButtonStyle: 'destructive',
+      cancelButtonText: 'Cancel'
+    };
     const dialogResult: Observable<string | boolean> =
       this.requireDeleteReason()
-        ? this.util.openDeleteModal()
-        : this.util.openConfirmationModal({
-          title: 'Delete Invoice',
-          innerHtmlMessage: `Are you sure you want to delete this invoice?
-               <br/><br/><strong>This action cannot be undone.</strong>`,
-          confirmButtonText: 'Delete Invoice',
-          confirmButtonStyle: 'destructive',
-          cancelButtonText: 'Cancel'
-        });
+        ? this.util.openCommentModal({
+          ...modalData,
+          commentSectionFieldName: 'Reason for Deletion',
+          requireField: true
+        })
+        : this.util.openConfirmationModal(modalData);
     dialogResult.subscribe(result => {
         if (result) {
           const request = this.requireDeleteReason()

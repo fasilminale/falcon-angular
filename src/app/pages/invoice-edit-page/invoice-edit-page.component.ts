@@ -158,17 +158,22 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickDeleteButton(): void {
+    const modalData = {
+      title: 'Delete Invoice',
+      innerHtmlMessage: `Are you sure you want to delete this invoice?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+      confirmButtonText: 'Delete Invoice',
+      confirmButtonStyle: 'destructive',
+      cancelButtonText: 'Cancel'
+    };
     const dialogResult: Observable<string | boolean> =
       this.requireDeleteReason()
-        ? this.util.openDeleteModal()
-        : this.util.openConfirmationModal({
-          title: 'Delete Invoice',
-          innerHtmlMessage: `Are you sure you want to delete this invoice?
-               <br/><br/><strong>This action cannot be undone.</strong>`,
-          confirmButtonText: 'Delete Invoice',
-          confirmButtonStyle: 'destructive',
-          cancelButtonText: 'Cancel'
-        });
+        ? this.util.openCommentModal({
+          ...modalData,
+          commentSectionFieldName: 'Reason for Deletion',
+          requireField: true
+        })
+        : this.util.openConfirmationModal(modalData);
     dialogResult.subscribe((result: string | boolean) => {
       if (result) {
         const request = this.requireDeleteReason()
@@ -181,6 +186,43 @@ export class InvoiceEditPageComponent implements OnInit {
           ),
           () => this.toastService.openErrorToast(
             `Failure, invoice was not deleted.`
+          )
+        );
+      }
+    });
+  }
+
+  public disputeAction(action: string): void {
+    const dialogResult: Observable<string | boolean> =
+      this.util.openCommentModal({
+        title: `${action} Dispute`,
+        innerHtmlMessage: `Are you sure you want to ${action.toLowerCase()} this dispute?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+        confirmButtonText: `${action} Dispute`,
+        confirmButtonStyle: action === 'Deny' ? 'destructive' : 'primary',
+        cancelButtonText: 'Cancel',
+        commentSectionFieldName: 'Response Comment',
+        requireField: action === 'Deny'
+      });
+    dialogResult.subscribe(result => {
+      if (result) {
+        const request = this.resolveDispute(
+          {action: action === 'Deny' ? 'DENIED' : 'ACCEPTED', comment: result, userId: this.userInfo?.email}
+        );
+        request.subscribe(
+          (invoice: InvoiceDataModel) => {
+            this.toastService.openSuccessToast(`Success, dispute was closed.`);
+            this.loadInvoiceAmountDetail$.next({
+              costLineItems: invoice.costLineItems,
+              disputeLineItems: invoice.disputeLineItems,
+              amountOfInvoice: invoice.amountOfInvoice,
+              mileage: invoice.distance,
+              currency: invoice.currency,
+              standardPaymentTermsOverride: invoice.standardPaymentTermsOverride
+            });
+          },
+          () => this.toastService.openErrorToast(
+            `Failure, dispute was not closed.`
           )
         );
       }
@@ -294,5 +336,9 @@ export class InvoiceEditPageComponent implements OnInit {
 
   private requireDeleteReason(): boolean {
     return this.isAutoInvoice && this.isApprovedInvoice;
+  }
+
+  private resolveDispute(disputeParameters: any): Observable<any> {
+    return this.invoiceService.resolveDispute(this.falconInvoiceNumber, disputeParameters);
   }
 }
