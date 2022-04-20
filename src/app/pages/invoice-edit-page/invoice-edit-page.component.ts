@@ -18,6 +18,7 @@ import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detai
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
+import {WebServices} from "../../services/web-services";
 
 
 @Component({
@@ -199,7 +200,18 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickSaveButton(): void {
-    this.showNotYetImplementedModal('Save Invoice');
+    if (this.invoiceFormGroup.valid) {
+      console.log(`fields to save ${JSON.stringify(this.invoiceFormGroup.value)}`);
+      const objectToSave = {...this.invoice, ...this.invoiceFormGroup.value};
+/*      this.invoiceService.updateInvoice(objectToSave).subscribe(
+        {
+          next: (value) => { console.log(`Invoice updated successfully!`)},
+          error: (error) => { console.error(` Invoice failed to update ${JSON.stringify(error)}`)},
+          completed: () => {}
+        }
+      )*/
+    }
+    // this.showNotYetImplementedModal('Save Invoice');
   }
 
   clickSubmitForApprovalButton(): void {
