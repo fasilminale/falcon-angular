@@ -1,7 +1,8 @@
-import { CostLineItem } from "../line-item/line-item-model";
+import {CostLineItem, DisputeLineItem} from '../line-item/line-item-model';
 
 export interface InvoiceAmountDetail {
     costLineItems: CostLineItem[],
+    disputeLineItems: DisputeLineItem[],
     amountOfInvoice: string,
     currency: string,
     standardPaymentTermsOverride: string,
