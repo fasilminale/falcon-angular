@@ -112,7 +112,9 @@ export class InvoiceEditPageComponent implements OnInit {
       serviceLevel: invoice.serviceLevel,
       carrier: invoice.carrier,
       carrierMode: invoice.mode,
-      freightOrders: invoice.freightOrders
+      freightOrders: invoice.freightOrders,
+      overriddenDeliveryDateTime: invoice.overriddenDeliveryDateTime ? new Date(invoice.overriddenDeliveryDateTime) : undefined,
+      assumedDeliveryDateTime: invoice.assumedDeliveryDateTime ? new Date(invoice.assumedDeliveryDateTime) : undefined,
     });
     this.loadInvoiceOverviewDetail$.next({
       invoiceNetAmount: invoice.amountOfInvoice ? parseFloat(invoice.amountOfInvoice) : 0.0,

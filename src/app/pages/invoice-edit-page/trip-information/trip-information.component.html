@@ -47,9 +47,14 @@
       </elm-input-subtext>
     </div>
     <div class="col-4">
-      <label for="deliveryDateInput"
+      <label id="delivery-date-label" for="deliveryDateInput"
              class="fal-label">
         Delivery Date
+        <span id="override-assume-delivery-date-container" *ngIf="overriddenDeliveryDateTime || assumedDeliveryDateTime">
+          &nbsp;
+          <mat-icon class="delivery-date-icon">label_important</mat-icon>
+          <span class="delivery-date-icon-message">{{ overriddenDeliveryDateTime ? 'OVERRIDDEN' : 'ASSUMED' }}</span>
+        </span>
       </label>
       <elm-date-picker id="deliveryDateInput"
                        class="fal-label"

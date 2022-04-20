@@ -79,6 +79,7 @@ import { FalDeleteModalComponent } from './components/fal-delete-modal/fal-delet
 import {BuildInfoService} from './services/build-info-service';
 import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
 import {RateService} from './services/rate-service';
+import {MatIconModule} from "@angular/material/icon";
 import {EllipsisPipe} from './utils/ellipsis-pipe';
 
 const getOktaConfig = () => {
@@ -177,35 +178,36 @@ const oktaConfig = {
     NewUserLogoutPageComponent,
     EllipsisPipe
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule, // must be imported immediately after BrowserModule
-    AppRoutingModule,
-    HttpClientModule,
-    NavigationModule,
-    ButtonModule,
-    ProgressModule,
-    ContainersModule,
-    DataTableModule,
-    NgSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbDatepickerModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatSidenavModule,
-    MatListModule,
-    MatTableModule,
-    MatTooltipModule,
-    MatChipsModule,
-    NgbModule,
-    NgbTooltipModule,
-    NgxCurrencyModule,
-    InputMaskModule,
-    InputsModule,
-    ModalsModule,
-    ServicesModule,
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule, // must be imported immediately after BrowserModule
+        AppRoutingModule,
+        HttpClientModule,
+        NavigationModule,
+        ButtonModule,
+        ProgressModule,
+        ContainersModule,
+        DataTableModule,
+        NgSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbDatepickerModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatSidenavModule,
+        MatListModule,
+        MatTableModule,
+        MatTooltipModule,
+        MatChipsModule,
+        NgbModule,
+        NgbTooltipModule,
+        NgxCurrencyModule,
+        InputMaskModule,
+        InputsModule,
+        ModalsModule,
+        ServicesModule,
+        MatIconModule,
+    ],
   providers: [
     WebServices,
     MatSnackBar,
