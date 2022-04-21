@@ -59,7 +59,7 @@ describe('InvoiceEditPageComponent', () => {
     utilService = TestBed.inject(UtilService);
     spyOn(utilService, 'openErrorModal').and.returnValue(of());
     spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
-    spyOn(utilService, 'openCommentModal').and.returnValue(of('deleteReason'));
+    spyOn(utilService, 'openCommentModal').and.returnValue(of({ comment: 'deleteReason' }));
 
     // Mock Toast Service
     toastService = TestBed.inject(ToastService);

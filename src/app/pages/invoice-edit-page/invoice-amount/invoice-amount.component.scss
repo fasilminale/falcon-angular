@@ -38,6 +38,10 @@ app-fal-radio-input ::ng-deep .background-disabled,
     font-weight: 700;
   }
 
+  .action-label{
+    padding-left: 5em;
+  }
+
   .override-stp-checkbox-div{
     flex-grow: 0.5;
     align-self: center;

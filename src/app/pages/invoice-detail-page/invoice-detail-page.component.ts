@@ -14,7 +14,7 @@ import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
-import {UtilService} from '../../services/util-service';
+import {CommentModel, UtilService} from '../../services/util-service';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -102,7 +102,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
       confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
-    const dialogResult: Observable<string | boolean> =
+    const dialogResult: Observable<CommentModel | boolean> =
       this.requireDeleteReason()
         ? this.util.openCommentModal({
           ...modalData,

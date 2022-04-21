@@ -27,7 +27,7 @@ export class FalCommentModalComponent implements OnInit {
   }
 
   async confirm(): Promise<void>  {
-    this.dialogRef.close(this.form.get('comment')?.value);
+    this.dialogRef.close({ comment: this.form.get('comment')?.value});
   }
 
 }
