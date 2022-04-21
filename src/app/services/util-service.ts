@@ -5,7 +5,7 @@ import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {TemplateInputModalComponent} from '../components/template-input-modal/template-input-modal.component';
 import {Milestone} from '../models/milestone/milestone-model';
-import {FalDeleteModalComponent} from '../components/fal-delete-modal/fal-delete-modal.component';
+import {FalCommentModalComponent} from '../components/fal-comment-modal/fal-comment-modal.component';
 
 @Injectable()
 export class UtilService {
@@ -46,8 +46,8 @@ export class UtilService {
       ));
   }
 
-  public openDeleteModal(): Observable<string> {
-    return this.dialog.open(FalDeleteModalComponent)
+  public openCommentModal(data: CommentModalData): Observable<string> {
+    return this.dialog.open(FalCommentModalComponent, {autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<string>>(result => of(result)));
   }
@@ -88,6 +88,11 @@ export type ConfirmationModalData = {
   confirmButtonText?: string,
   confirmButtonStyle?: string,
   cancelButtonText?: string
+};
+
+export type CommentModalData = ConfirmationModalData & {
+  commentSectionFieldName: string;
+  requireField: boolean;
 };
 
 export type ErrorModalData = {

@@ -75,7 +75,7 @@ import { InvoiceAmountComponent } from './pages/invoice-edit-page/invoice-amount
 import { InvoiceAllocationComponent } from './pages/invoice-edit-page/invoice-allocation/invoice-allocation.component';
 import { InfoIconTooltipComponent } from './components/info-icon-tooltip/info-icon-tooltip.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import { FalDeleteModalComponent } from './components/fal-delete-modal/fal-delete-modal.component';
+import { FalCommentModalComponent } from './components/fal-comment-modal/fal-comment-modal.component';
 import {BuildInfoService} from './services/build-info-service';
 import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
 import {RateService} from './services/rate-service';
@@ -174,7 +174,7 @@ const oktaConfig = {
     InvoiceAmountComponent,
     InvoiceAllocationComponent,
     InfoIconTooltipComponent,
-    FalDeleteModalComponent,
+    FalCommentModalComponent,
     NewUserLogoutPageComponent,
     EllipsisPipe
   ],

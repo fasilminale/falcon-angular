@@ -79,6 +79,7 @@
          [rateEngineCallResult$]="rateEngineCallResult$.asObservable()"
          (getAccessorialDetails)="getAccessorialList()"
          (rateEngineCall)="getRates($event)"
+         (resolveDisputeCall)="disputeAction($event)"
          >
         </app-invoice-amount>
         <hr>

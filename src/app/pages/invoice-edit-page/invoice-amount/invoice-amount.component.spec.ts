@@ -483,4 +483,13 @@ describe('InvoiceAmountComponent', () => {
 
   });
 
+  describe('resolve dispute', () => {
+    it('should emit call to resolve dispute', () => {
+      const resolveDisputeEmitter = spyOn(component.resolveDisputeCall, 'emit');
+      const action = 'Accept';
+      component.resolveDispute(action);
+      expect(resolveDisputeEmitter).toHaveBeenCalledWith(action);
+    });
+  });
+
 });

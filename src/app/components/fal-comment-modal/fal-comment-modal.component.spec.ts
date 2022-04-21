@@ -1,27 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FalDeleteModalComponent } from './fal-delete-modal.component';
+import { FalCommentModalComponent } from './fal-comment-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {MatDialogRef} from '@angular/material/dialog';
-import {of} from 'rxjs';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
-describe('FalDeleteModalComponent', () => {
+describe('FalCommentModalComponent', () => {
   const MOCK_DIALOG = {
     close: () => {
     }
   };
 
-  let component: FalDeleteModalComponent;
-  let fixture: ComponentFixture<FalDeleteModalComponent>;
+  let component: FalCommentModalComponent;
+  let fixture: ComponentFixture<FalCommentModalComponent>;
   let dialogRef: MatDialogRef<any>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
-      declarations: [ FalDeleteModalComponent ],
+      declarations: [ FalCommentModalComponent ],
       providers: [
         {
-          provide: MatDialogRef, useValue: MOCK_DIALOG
+          provide: MatDialogRef, useValue: MOCK_DIALOG,
+        },
+        {
+          provide: MAT_DIALOG_DATA, useValue: {}
         }
       ]
     })
@@ -29,7 +31,7 @@ describe('FalDeleteModalComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FalDeleteModalComponent);
+    fixture = TestBed.createComponent(FalCommentModalComponent);
     dialogRef = TestBed.inject(MatDialogRef);
     component = fixture.componentInstance;
     fixture.detectChanges();
