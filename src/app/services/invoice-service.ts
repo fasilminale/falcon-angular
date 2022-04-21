@@ -3,8 +3,9 @@ import {mergeMap} from 'rxjs/operators';
 import {Observable, of, Subject} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {InvoiceDataModel} from '../models/invoice/invoice-model';
+import {Invoice, InvoiceDataModel} from '../models/invoice/invoice-model';
 import { FreightOrder } from '../models/invoice/freight-model';
+import {EditAutoInvoiceModel} from "../models/invoice/edit-auto-invoice.model";
 
 @Injectable()
 export class InvoiceService {
@@ -66,6 +67,13 @@ export class InvoiceService {
     return this.web.httpPut(
       `${environment.baseServiceUrl}/v1/invoice/${invoice.falconInvoiceNumber}`,
       invoice
+    );
+  }
+
+  public updateAutoInvoice(body: EditAutoInvoiceModel, falconInvoiceNumber: string): Observable<InvoiceDataModel> {
+    return this.web.httpPut<InvoiceDataModel>(
+      `${environment.baseServiceUrl}/v1/invoice/auto/${falconInvoiceNumber}`,
+      body
     );
   }
 
