@@ -6,7 +6,7 @@
   <div mat-dialog-content class="modal-height">
     <div class="elm-h3" innerHTML="{{data.innerHtmlMessage}}"></div>
     <label for="comment-input" class="fal-label">
-      {{data.commentSectionFieldName}}
+      {{data.commentSectionFieldName}} {{!data.requireField ? '(Optional)' : ''}}
     </label>
     <textarea id="comment-input"
               formControlName="comment"

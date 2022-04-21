@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {UtilService} from '../../services/util-service';
+import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
@@ -166,7 +166,7 @@ export class InvoiceEditPageComponent implements OnInit {
       confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
-    const dialogResult: Observable<string | boolean> =
+    const dialogResult: Observable<CommentModel | boolean> =
       this.requireDeleteReason()
         ? this.util.openCommentModal({
           ...modalData,
@@ -174,7 +174,7 @@ export class InvoiceEditPageComponent implements OnInit {
           requireField: true
         })
         : this.util.openConfirmationModal(modalData);
-    dialogResult.subscribe((result: string | boolean) => {
+    dialogResult.subscribe((result: CommentModel | boolean) => {
       if (result) {
         const request = this.requireDeleteReason()
           ? this.deleteInvoiceWithReason({deletedReason: result})
@@ -193,7 +193,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   public disputeAction(action: string): void {
-    const dialogResult: Observable<string | boolean> =
+    const dialogResult: Observable<any> =
       this.util.openCommentModal({
         title: `${action} Dispute`,
         innerHtmlMessage: `Are you sure you want to ${action.toLowerCase()} this dispute?
@@ -207,7 +207,7 @@ export class InvoiceEditPageComponent implements OnInit {
     dialogResult.subscribe(result => {
       if (result) {
         const request = this.resolveDispute(
-          {action: action === 'Deny' ? 'DENIED' : 'ACCEPTED', comment: result, userId: this.userInfo?.email}
+          {action: action === 'Deny' ? 'DENIED' : 'ACCEPTED', comment: result.comment, userId: this.userInfo?.email}
         );
         request.subscribe(
           (invoice: InvoiceDataModel) => {

@@ -225,7 +225,7 @@ export class InvoiceAmountComponent implements OnInit {
           createdDate: new FormControl(disputeLineItem.createdDate),
           createdBy: new FormControl(disputeLineItem.createdBy),
           disputeStatus: new FormControl(disputeLineItem.disputeStatus),
-          responseComment: new FormControl(disputeLineItem.responseComment ?? 'N/A'),
+          responseComment: new FormControl(disputeLineItem.responseComment ? disputeLineItem.responseComment : 'N/A'),
           closedDate: new FormControl(disputeLineItem.closedDate ?? 'N/A'),
           closedBy: new FormControl(disputeLineItem.closedBy ?? 'N/A')
         }));

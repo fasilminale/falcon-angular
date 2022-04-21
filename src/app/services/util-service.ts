@@ -46,10 +46,10 @@ export class UtilService {
       ));
   }
 
-  public openCommentModal(data: CommentModalData): Observable<string> {
+  public openCommentModal(data: CommentModalData): Observable<CommentModel> {
     return this.dialog.open(FalCommentModalComponent, {autoFocus: false, data})
       .afterClosed()
-      .pipe(mergeMap<any, Observable<string>>(result => of(result)));
+      .pipe(mergeMap<any, Observable<CommentModel>>(result => of(result)));
   }
 
   public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {
@@ -93,6 +93,10 @@ export type ConfirmationModalData = {
 export type CommentModalData = ConfirmationModalData & {
   commentSectionFieldName: string;
   requireField: boolean;
+};
+
+export type CommentModel = {
+  comment: string;
 };
 
 export type ErrorModalData = {
