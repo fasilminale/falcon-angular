@@ -10,7 +10,7 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ToastService, UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
-import {UtilService} from '../../services/util-service';
+import {CommentModel, UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
 
@@ -357,12 +357,12 @@ describe('InvoiceEditPageComponent', () => {
     deleteModal$.next('deleteReason');
   });
 
-  it('resolve dispute', done => {
+  it('resolve dispute accept action', done => {
     // Setup
     const invoice = new InvoiceDataModel();
     const resolveDisputeResult$ = new Subject<any>();
     asSpy(invoiceService.resolveDispute).and.returnValue(resolveDisputeResult$.asObservable());
-    const resolveDisputeModal$ = new Subject<string>();
+    const resolveDisputeModal$ = new Subject<CommentModel>();
     asSpy(utilService.openCommentModal).and.returnValue(resolveDisputeModal$.asObservable());
     component.disputeAction('Accept');
 
@@ -377,14 +377,60 @@ describe('InvoiceEditPageComponent', () => {
     });
 
     // Run Test
-    resolveDisputeModal$.next('comments');
+    resolveDisputeModal$.next({ comment: 'comments' });
+  });
+
+  it('resolve dispute accept with no comments', done => {
+    // Setup
+    const invoice = new InvoiceDataModel();
+    const resolveDisputeResult$ = new Subject<any>();
+    asSpy(invoiceService.resolveDispute).and.returnValue(resolveDisputeResult$.asObservable());
+    const resolveDisputeModal$ = new Subject<CommentModel>();
+    asSpy(utilService.openCommentModal).and.returnValue(resolveDisputeModal$.asObservable());
+    component.disputeAction('Accept');
+
+    // Assertions
+    resolveDisputeModal$.subscribe(() => {
+      expect(utilService.openCommentModal).toHaveBeenCalled();
+      resolveDisputeResult$.next(invoice);
+    });
+    resolveDisputeResult$.subscribe(() => {
+      expect(invoiceService.resolveDispute).toHaveBeenCalled();
+      done();
+    });
+
+    // Run Test
+    resolveDisputeModal$.next({ comment: '' });
+  });
+
+  it('resolve dispute deny action', done => {
+    // Setup
+    const invoice = new InvoiceDataModel();
+    const resolveDisputeResult$ = new Subject<any>();
+    asSpy(invoiceService.resolveDispute).and.returnValue(resolveDisputeResult$.asObservable());
+    const resolveDisputeModal$ = new Subject<CommentModel>();
+    asSpy(utilService.openCommentModal).and.returnValue(resolveDisputeModal$.asObservable());
+    component.disputeAction('Deny');
+
+    // Assertions
+    resolveDisputeModal$.subscribe(() => {
+      expect(utilService.openCommentModal).toHaveBeenCalled();
+      resolveDisputeResult$.next(invoice);
+    });
+    resolveDisputeResult$.subscribe(() => {
+      expect(invoiceService.resolveDispute).toHaveBeenCalled();
+      done();
+    });
+
+    // Run Test
+    resolveDisputeModal$.next({ comment: '' });
   });
 
   it('resolve dispute failure', done => {
     // Setup
     const resolveDisputeResult$ = new Subject<any>();
     asSpy(invoiceService.resolveDispute).and.returnValue(resolveDisputeResult$.asObservable());
-    const resolveDisputeModal$ = new Subject<string>();
+    const resolveDisputeModal$ = new Subject<CommentModel>();
     asSpy(utilService.openCommentModal).and.returnValue(resolveDisputeModal$.asObservable());
     component.disputeAction('Accept');
     const TEST_DELETE_FAILURE = new Error('TEST DELETE FAILURE');
@@ -405,7 +451,7 @@ describe('InvoiceEditPageComponent', () => {
     );
 
     // Run Test
-    resolveDisputeModal$.next('comments');
+    resolveDisputeModal$.next({ comment: 'comments' });
   });
 
   describe('Not Implemented Button:', () => {
