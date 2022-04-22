@@ -323,6 +323,138 @@ describe('TripInformationComponent', () => {
     expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
   });
 
+  it('should load trip information and use overriddenDeliveryDateTime when overriddenDeliveryDateTime given', () => {
+    const overriddenDeliveryDateTime = new Date(new Date().setFullYear(1971, 2, 11));
+    const tripInformation: TripInformation = {
+      bolNumber: 'TestBolNumber',
+      carrier: {
+        scac: 'TestScac',
+        name: 'TestCarrierName'
+
+      },
+      carrierMode: {
+        mode: 'CarrierMode',
+        reportModeDescription: 'ReportModeDescription',
+        reportKeyMode: 'ReportKeyMode'
+      },
+      deliveryDate: new Date(),
+      freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+      invoiceDate: new Date(),
+      pickUpDate: new Date(),
+      proTrackingNumber: 'TestProTrackingNumber',
+      serviceLevel: {
+        level: 'TL1',
+        name: 'TestLevel'
+      },
+      tripId: 'TestTripId',
+      freightOrders: [],
+      overriddenDeliveryDateTime
+    };
+    const tripInformation$ = new Subject<TripInformation>();
+    component.loadTripInformation$ = tripInformation$.asObservable();
+    tripInformation$.next(tripInformation);
+    fixture.detectChanges();
+    expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
+    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
+    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
+    expect(component.deliveryDateControl.value).toEqual(tripInformation.overriddenDeliveryDateTime);
+    expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
+    expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
+    expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
+    expect(component.carrierControl.value).toEqual(tripInformation.carrier);
+    expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
+    expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+  });
+
+  it('should load trip information and use assumedDeliveryDateTime when assumedDeliveryDateTime given', () => {
+    const assumedDeliveryDateTime = new Date(new Date().setFullYear(2011, 8, 6));
+    const tripInformation: TripInformation = {
+      bolNumber: 'TestBolNumber',
+      carrier: {
+        scac: 'TestScac',
+        name: 'TestCarrierName'
+
+      },
+      carrierMode: {
+        mode: 'CarrierMode',
+        reportModeDescription: 'ReportModeDescription',
+        reportKeyMode: 'ReportKeyMode'
+      },
+      deliveryDate: new Date(),
+      freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+      invoiceDate: new Date(),
+      pickUpDate: new Date(),
+      proTrackingNumber: 'TestProTrackingNumber',
+      serviceLevel: {
+        level: 'TL1',
+        name: 'TestLevel'
+      },
+      tripId: 'TestTripId',
+      freightOrders: [],
+      assumedDeliveryDateTime
+    };
+    const tripInformation$ = new Subject<TripInformation>();
+    component.loadTripInformation$ = tripInformation$.asObservable();
+    tripInformation$.next(tripInformation);
+    fixture.detectChanges();
+    expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
+    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
+    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
+    expect(component.deliveryDateControl.value).toEqual(tripInformation.assumedDeliveryDateTime);
+    expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
+    expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
+    expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
+    expect(component.carrierControl.value).toEqual(tripInformation.carrier);
+    expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
+    expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+  });
+
+  it('should load trip information and use overriddenDeliveryDateTime ' +
+    'when both overriddenDeliveryDateTime and assumedDeliveryDateTime given', () => {
+    const overriddenDeliveryDateTime = new Date(new Date().setFullYear(1971, 2, 11));
+    const assumedDeliveryDateTime = new Date(new Date().setFullYear(2011, 8, 6));
+    const tripInformation: TripInformation = {
+      bolNumber: 'TestBolNumber',
+      carrier: {
+        scac: 'TestScac',
+        name: 'TestCarrierName'
+
+      },
+      carrierMode: {
+        mode: 'CarrierMode',
+        reportModeDescription: 'ReportModeDescription',
+        reportKeyMode: 'ReportKeyMode'
+      },
+      deliveryDate: new Date(),
+      freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+      invoiceDate: new Date(),
+      pickUpDate: new Date(),
+      proTrackingNumber: 'TestProTrackingNumber',
+      serviceLevel: {
+        level: 'TL1',
+        name: 'TestLevel'
+      },
+      tripId: 'TestTripId',
+      freightOrders: [],
+      overriddenDeliveryDateTime,
+      assumedDeliveryDateTime
+    };
+    const tripInformation$ = new Subject<TripInformation>();
+    component.loadTripInformation$ = tripInformation$.asObservable();
+    tripInformation$.next(tripInformation);
+    fixture.detectChanges();
+    expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
+    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
+    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
+    expect(component.deliveryDateControl.value).toEqual(tripInformation.overriddenDeliveryDateTime);
+    expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
+    expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
+    expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
+    expect(component.carrierControl.value).toEqual(tripInformation.carrier);
+    expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
+    expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+  });
+
   describe('should toggle freight orders section', () => {
     it('toggles freight order section', () => {
       fixture.detectChanges();

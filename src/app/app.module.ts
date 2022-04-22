@@ -75,10 +75,11 @@ import { InvoiceAmountComponent } from './pages/invoice-edit-page/invoice-amount
 import { InvoiceAllocationComponent } from './pages/invoice-edit-page/invoice-allocation/invoice-allocation.component';
 import { InfoIconTooltipComponent } from './components/info-icon-tooltip/info-icon-tooltip.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import { FalDeleteModalComponent } from './components/fal-delete-modal/fal-delete-modal.component';
+import { FalCommentModalComponent } from './components/fal-comment-modal/fal-comment-modal.component';
 import {BuildInfoService} from './services/build-info-service';
 import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
 import {RateService} from './services/rate-service';
+import {MatIconModule} from "@angular/material/icon";
 import {EllipsisPipe} from './utils/ellipsis-pipe';
 
 const getOktaConfig = () => {
@@ -173,39 +174,40 @@ const oktaConfig = {
     InvoiceAmountComponent,
     InvoiceAllocationComponent,
     InfoIconTooltipComponent,
-    FalDeleteModalComponent,
+    FalCommentModalComponent,
     NewUserLogoutPageComponent,
     EllipsisPipe
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule, // must be imported immediately after BrowserModule
-    AppRoutingModule,
-    HttpClientModule,
-    NavigationModule,
-    ButtonModule,
-    ProgressModule,
-    ContainersModule,
-    DataTableModule,
-    NgSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbDatepickerModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatSidenavModule,
-    MatListModule,
-    MatTableModule,
-    MatTooltipModule,
-    MatChipsModule,
-    NgbModule,
-    NgbTooltipModule,
-    NgxCurrencyModule,
-    InputMaskModule,
-    InputsModule,
-    ModalsModule,
-    ServicesModule,
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule, // must be imported immediately after BrowserModule
+        AppRoutingModule,
+        HttpClientModule,
+        NavigationModule,
+        ButtonModule,
+        ProgressModule,
+        ContainersModule,
+        DataTableModule,
+        NgSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbDatepickerModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatSidenavModule,
+        MatListModule,
+        MatTableModule,
+        MatTooltipModule,
+        MatChipsModule,
+        NgbModule,
+        NgbTooltipModule,
+        NgxCurrencyModule,
+        InputMaskModule,
+        InputsModule,
+        ModalsModule,
+        ServicesModule,
+        MatIconModule,
+    ],
   providers: [
     WebServices,
     MatSnackBar,

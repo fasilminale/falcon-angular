@@ -14,7 +14,7 @@ import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
-import {UtilService} from '../../services/util-service';
+import {CommentModel, UtilService} from '../../services/util-service';
 
 @Component({
   selector: 'app-detail-create-page',
@@ -94,17 +94,22 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   }
 
   public deleteInvoice(): void {
-    const dialogResult: Observable<string | boolean> =
-      this.requireDeleteReason()
-        ? this.util.openDeleteModal()
-        : this.util.openConfirmationModal({
-          title: 'Delete Invoice',
-          innerHtmlMessage: `Are you sure you want to delete this invoice?
+    const modalData = {
+      title: 'Delete Invoice',
+      innerHtmlMessage: `Are you sure you want to delete this invoice?
                <br/><br/><strong>This action cannot be undone.</strong>`,
-          confirmButtonText: 'Delete Invoice',
-          confirmButtonStyle: 'destructive',
-          cancelButtonText: 'Cancel'
-        });
+      confirmButtonText: 'Delete Invoice',
+      confirmButtonStyle: 'destructive',
+      cancelButtonText: 'Cancel'
+    };
+    const dialogResult: Observable<CommentModel | boolean> =
+      this.requireDeleteReason()
+        ? this.util.openCommentModal({
+          ...modalData,
+          commentSectionFieldName: 'Reason for Deletion',
+          requireField: true
+        })
+        : this.util.openConfirmationModal(modalData);
     dialogResult.subscribe(result => {
         if (result) {
           const request = this.requireDeleteReason()

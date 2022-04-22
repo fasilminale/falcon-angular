@@ -59,6 +59,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
   @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
+  @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
   }
@@ -216,14 +217,13 @@ export class InvoiceAmountComponent implements OnInit {
     if (disputeLineItems && disputeLineItems.length > 0) {
       this.disputeLineItems = new FormArray([]);
       disputeLineItems.forEach((disputeLineItem) => {
-        console.log(disputeLineItem);
         this.disputeLineItemControls.push(new FormGroup({
           comment: new FormControl(disputeLineItem.comment),
           attachment: new FormControl(disputeLineItem.attachment),
           createdDate: new FormControl(disputeLineItem.createdDate),
           createdBy: new FormControl(disputeLineItem.createdBy),
           disputeStatus: new FormControl(disputeLineItem.disputeStatus),
-          responseComment: new FormControl(disputeLineItem.responseComment ?? 'N/A'),
+          responseComment: new FormControl(disputeLineItem.responseComment ? disputeLineItem.responseComment : 'N/A'),
           closedDate: new FormControl(disputeLineItem.closedDate ?? 'N/A'),
           closedBy: new FormControl(disputeLineItem.closedBy ?? 'N/A')
         }));
@@ -346,5 +346,9 @@ export class InvoiceAmountComponent implements OnInit {
       return opt;
     }).filter(Boolean);
     this.filteredCostBreakdownOptions.push(CostBreakDownUtils.toOption({name: 'OTHER', accessorialCode: 'OTHER'}));
+  }
+
+  resolveDispute(action: string): void {
+    this.resolveDisputeCall.emit(action);
   }
 }

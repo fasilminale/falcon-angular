@@ -216,7 +216,7 @@
       <div class="col-2">Response Comments</div>
       <div class="col-1">Closed Date</div>
       <div class="col-1">Closed By</div>
-      <div class="col-2">Actions</div>
+      <div class="col-2 action-label">Actions</div>
     </div>
     <ng-container *ngIf="disputeLineItemControls && disputeLineItemControls.length > 0 && isPrepaid">
       <div *ngFor="let _ of disputeLineItemControls; index as i"
@@ -241,6 +241,11 @@
                 matTooltipClass="newLine">Download</span>
         </div>
 
+        <!-- Dispute Line Item - Created Date -->
+        <div class="col-1">
+          {{_.value.createdDate | date: dateFormat}}
+        </div>
+
         <!-- Dispute Line Item - Created By -->
         <div class="col-1 dispute-item-row">
           <span *ngIf="_.value.createdBy?.length > ellipsisPipeLimit"
@@ -251,11 +256,6 @@
           <span *ngIf="_.value.createdBy?.length <= ellipsisPipeLimit">
             {{_.value.createdBy || 'N/A'}}
           </span>
-        </div>
-
-        <!-- Dispute Line Item - Created Date -->
-        <div class="col-1">
-          {{_.value.createdDate | date: dateFormat}}
         </div>
 
         <!-- Dispute Line Item - Response Status -->
@@ -272,6 +272,11 @@
           ></textarea>
         </div>
 
+        <!-- Dispute Line Item - Closed Date -->
+        <div class="col-1">
+          {{(_.value.closedDate | date: dateFormat) || 'N/A'}}
+        </div>
+
         <!-- Dispute Line Item - Closed By -->
         <div class="col-1">
           <span *ngIf="_.value.closedBy?.length > ellipsisPipeLimit"
@@ -284,27 +289,22 @@
           </span>
         </div>
 
-        <!-- Dispute Line Item - Closed Date -->
-        <div class="col-1">
-          {{(_.value.closedDate | date: dateFormat) || 'N/A'}}
-        </div>
-
         <div class="col-2">
           <span *ngIf="_.value.disputeStatus.key === 'OPEN'">
             <elm-button buttonType="button"
                         buttonStyle="text"
-                        [padding]="'0 0'"
+                        [padding]="'0 10px'"
                         id="dispute-accept-button"
                         [isDisabled]="readOnlyForm"
-                        (buttonClick)="addNewEmptyLineItem()">
+                        (buttonClick)="resolveDispute('Accept')">
               <span>Accept</span>
             </elm-button>
             <elm-button buttonType="button"
                         buttonStyle="text"
-                        [padding]="'0 20px'"
+                        [padding]="'0 10px'"
                         id="dispute-deny-button"
                         [isDisabled]="readOnlyForm"
-                        (buttonClick)="addNewEmptyLineItem()">
+                        (buttonClick)="resolveDispute('Deny')">
               <span>Deny</span>
             </elm-button>
           </span>
@@ -313,6 +313,9 @@
       </div>
 
     </ng-container>
+    <div class="no-results" *ngIf="disputeLineItemControls && disputeLineItemControls.length == 0">
+      No disputes
+    </div>
   </div>
 
   <div class="no-results" *ngIf="!isPrepaid">
