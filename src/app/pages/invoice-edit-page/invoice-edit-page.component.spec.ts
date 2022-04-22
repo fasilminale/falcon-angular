@@ -3,7 +3,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceEditPageComponent} from './invoice-edit-page.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {of, Subject} from 'rxjs';
+import {of, Subject, throwError} from 'rxjs';
 import {InvoiceService} from '../../services/invoice-service';
 import {MockParamMap} from '../../testing/test-utils';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
@@ -13,6 +13,7 @@ import {asSpy} from '../../testing/test-utils.spec';
 import {UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
+import {FormControl} from "@angular/forms";
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -33,7 +34,6 @@ describe('InvoiceEditPageComponent', () => {
       imports: [FalconTestingModule],
       declarations: [InvoiceEditPageComponent]
     }).compileComponents();
-
     // Mock Router
     router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
@@ -376,12 +376,185 @@ describe('InvoiceEditPageComponent', () => {
     it('#clickSaveAsTemplateButton', createHasNotBeenImplementedTest(
       'Save As Template', () => component.clickSaveAsTemplateButton()
     ));
-    it('#clickSaveButton', createHasNotBeenImplementedTest(
-      'Save Invoice', () => component.clickSaveButton()
-    ));
-    it('#clickSubmitForApprovalButton', createHasNotBeenImplementedTest(
-      'Submit For Approval', () => component.clickSubmitForApprovalButton()
-    ));
+  });
+
+  describe('clickSaveButton method', () => {
+
+    const setUpControls = () => {
+      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+        mode: 'TL',
+        reportKeyMode: 'TL',
+        reportModeDescription: 'TRUCKLOAD'
+      }))
+      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+        scac: 'ABCD',
+        name: 'The ABCD Group',
+      }));
+      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+        level: 'GRD',
+        name: 'GROUND',
+      }));
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'))
+    }
+
+    it('should call performPostUpdateActions when update succeeds', () => {
+
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      setUpControls();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
+
+      component.clickSaveButton();
+
+      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`);
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+
+    });
+
+    it('should not call performPostUpdateActions when update fails', () => {
+
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      setUpControls();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
+
+      component.clickSaveButton();
+
+      expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+    });
+  });
+
+  describe('clickSubmitForApprovalButton method', () => {
+
+    const setUpControls = () => {
+      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+        mode: 'TL',
+        reportKeyMode: 'TL',
+        reportModeDescription: 'TRUCKLOAD'
+      }))
+      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+        scac: 'ABCD',
+        name: 'The ABCD Group',
+      }));
+      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+        level: 'GRD',
+        name: 'GROUND',
+      }));
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'))
+    }
+
+    it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
+
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678'
+      setUpControls();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
+      spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
+
+      component.clickSubmitForApprovalButton();
+
+      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated and submitted for approval.`);
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
+
+    });
+
+    it('should not call performPostUpdateActions or submitForApproval when update fails', () => {
+      component.falconInvoiceNumber = 'F0000001234';
+      setUpControls();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
+      spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
+
+      component.clickSubmitForApprovalButton();
+
+      expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
+
+    });
+
+    it('should not call performPostUpdateActions when update succeeds and submit for approval fails', () => {
+
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678'
+      setUpControls();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
+      spyOn(invoiceService, 'submitForApproval').and.returnValue(throwError(new Error('Bad')));
+
+      component.clickSubmitForApprovalButton();
+
+      expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
+
+    });
+
+  });
+
+  describe('performPostUpdateActions method', () => {
+
+    it('should call ngOnInit and openSuccessToast when invoked', () => {
+      const successMessage = 'I am a success message';
+      spyOn(component, 'ngOnInit');
+      spyOn(toastService, 'openSuccessToast');
+
+      component.performPostUpdateActions(successMessage);
+
+      expect(component.ngOnInit).toHaveBeenCalledOnceWith();
+      expect(toastService.openSuccessToast).toHaveBeenCalledOnceWith(successMessage);
+
+    });
+  });
+
+  describe('mapTripInformationToEditAutoInvoiceModel method', () => {
+
+    const setUpControls = () => {
+      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+        mode: 'TL',
+        reportKeyMode: 'TL',
+        reportModeDescription: 'TRUCKLOAD'
+      }))
+      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+        scac: 'ABCD',
+        name: 'The ABCD Group',
+      }));
+      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+        level: 'GRD',
+        name: 'GROUND',
+      }));
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'))
+    }
+
+    it('should return EditAutoInvoiceModel object', () => {
+
+      setUpControls();
+      const result = component.mapTripInformationToEditAutoInvoiceModel();
+
+      expect(result).toEqual({
+        mode: {
+          mode: component.tripInformationFormGroup.controls.carrierMode.value.mode,
+          reportKeyMode: component.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
+          reportModeDescription: component.tripInformationFormGroup.controls.carrierMode.value.reportModeDescription
+        },
+        carrier: {
+          scac: component.tripInformationFormGroup.controls.carrier.value.scac,
+          name: component.tripInformationFormGroup.controls.carrier.value.name,
+        },
+        serviceLevel: {
+          level: component.tripInformationFormGroup.controls.serviceLevel.value.level,
+          name: component.tripInformationFormGroup.controls.serviceLevel.value.name,
+        },
+        pickupDateTime: component.tripInformationFormGroup.controls.pickUpDate.value
+      })
+    });
   });
 
 });
