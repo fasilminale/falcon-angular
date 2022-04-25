@@ -1,6 +1,4 @@
 import {Component, Inject, OnInit } from '@angular/core';
-import {UtilService} from '../../services/util-service';
-import {Component, Inject, OnInit} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
@@ -281,6 +279,7 @@ export class InvoiceEditPageComponent implements OnInit {
   performPostUpdateActions(successMessage: string): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.ngOnInit();
+    this.clickToggleEditMode();
     this.toastService.openSuccessToast(successMessage);
   }
 
