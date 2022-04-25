@@ -1,14 +1,17 @@
 import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
-import {of} from 'rxjs';
+import {of, Subscription, throwError} from 'rxjs';
 import {InvoiceService} from './invoice-service';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
+import {EditAutoInvoiceModel} from "../models/invoice/edit-auto-invoice.model";
+import {environment} from "../../environments/environment";
 
 describe('InvoiceService', () => {
 
   let invoiceService: InvoiceService;
   let web: WebServices;
   let invoice: any;
+  let subscription: Subscription;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -23,6 +26,11 @@ describe('InvoiceService', () => {
       externalInvoiceNumber: '3456',
       invoiceDate: new Date()
     };
+    subscription = new Subscription();
+  });
+
+  afterEach(() => {
+    subscription.unsubscribe();
   });
 
   it('should create', () => {
@@ -81,6 +89,40 @@ describe('InvoiceService', () => {
     const freightOrders = await invoiceService.getFreightOrderDetails().toPromise();
     expect(freightOrders.length).toBe(1);
 
+  });
+
+  it('should return Observable when updateAutoInvoice invoked', (done) => {
+     const body: EditAutoInvoiceModel = {}
+     const falconInvoiceNumber = 'F0000001234'
+     const env = environment;
+     env.baseServiceUrl = 'https://somedomain.com';
+     spyOn(web, 'httpPut').and.returnValue(of(invoice));
+     subscription.add(invoiceService.updateAutoInvoice(body, falconInvoiceNumber).subscribe(
+       (result) => {
+         expect(result).toEqual(invoice);
+         expect(web.httpPut).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/auto/${falconInvoiceNumber}`, body);
+         done();
+       },
+       () => fail(`Subscription should have succeeded`)
+     ))
+  });
+
+  it('should return error when updateAutoInvoice invoked and fails', (done) => {
+    const body: EditAutoInvoiceModel = {}
+    const falconInvoiceNumber = 'F0000001234'
+    const env = environment;
+    env.baseServiceUrl = 'https://somedomain.com';
+    spyOn(web, 'httpPut').and.returnValue(throwError(new Error('Bad')));
+    subscription.add(invoiceService.updateAutoInvoice(body, falconInvoiceNumber).subscribe(
+      (result) => {
+        fail(`Subscription should have failed`);
+      },
+      (error: Error) => {
+        expect(error.message).toEqual('Bad');
+        expect(web.httpPut).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/auto/${falconInvoiceNumber}`, body);
+        done();
+      }
+    ))
   });
 
 });

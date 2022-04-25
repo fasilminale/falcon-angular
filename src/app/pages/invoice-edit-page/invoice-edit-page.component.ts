@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit } from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
@@ -6,7 +6,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
-import {Observable, of, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
@@ -18,6 +18,8 @@ import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detai
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
+import {EditAutoInvoiceModel} from "../../models/invoice/edit-auto-invoice.model";
+import {switchMap} from "rxjs/operators";
 
 
 @Component({
@@ -243,11 +245,63 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickSaveButton(): void {
-    this.showNotYetImplementedModal('Save Invoice');
+    if (this.invoiceFormGroup.valid) {
+      this.subscriptions.manage(
+        this.updateInvoice().subscribe(
+          () => {
+            this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated.`);
+          },
+          (error) => console.error(error)
+        )
+      )
+    }
+  }
+
+  updateInvoice(): Observable<InvoiceDataModel> {
+    return this.invoiceService.updateAutoInvoice(this.mapTripInformationToEditAutoInvoiceModel(), this.falconInvoiceNumber )
   }
 
   clickSubmitForApprovalButton(): void {
-    this.showNotYetImplementedModal('Submit For Approval');
+    this.subscriptions.manage(
+      this.updateInvoice().pipe(
+        switchMap((model: InvoiceDataModel) => {
+          return this.invoiceService.submitForApproval(model.falconInvoiceNumber)
+        })
+      ).subscribe(
+        (value) => {
+          this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated and submitted for approval.`);
+        },
+        (error) => console.error(error)
+      )
+    )
+  }
+
+  performPostUpdateActions(successMessage: string): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.ngOnInit();
+    this.clickToggleEditMode();
+    this.toastService.openSuccessToast(successMessage);
+  }
+
+  mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
+
+    const editAutoInvoiceModel: EditAutoInvoiceModel = {
+      mode: {
+        mode: this.tripInformationFormGroup.controls.carrierMode.value.mode,
+        reportKeyMode: this.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
+        reportModeDescription: this.tripInformationFormGroup.controls.carrierMode.value.reportModeDescription
+      },
+      carrier: {
+        scac: this.tripInformationFormGroup.controls.carrier.value.scac,
+        name: this.tripInformationFormGroup.controls.carrier.value.name,
+      },
+      serviceLevel: {
+        level: this.tripInformationFormGroup.controls.serviceLevel.value.level,
+        name: this.tripInformationFormGroup.controls.serviceLevel.value.name,
+      },
+      pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value
+    }
+    return editAutoInvoiceModel;
   }
 
   private createRequest(accessorialCode: string): RateEngineRequest {
