@@ -2,7 +2,7 @@ export interface RemitHistoryItem {
   erpInvoiceNumber: string;
   erpRemittanceNumber: string;
   remitVendorId: string;
-  amountOfPayment: string;
+  amountOfPayment: number;
   dateOfPayment: string;
   remitStatus: string;
 }

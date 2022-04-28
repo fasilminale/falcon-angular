@@ -52,7 +52,8 @@ export class InvoiceOverviewComponent implements OnInit {
         this.erpInvoiceNumbers.push(item.erpInvoiceNumber);
         this.erpRemittanceNumbers.push(item.erpRemittanceNumber);
         this.vendorIds.push(item.remitVendorId)
-        this.amountOfPayments.push(item.amountOfPayment ?? 'N/A')
+        const amountOfPaymentString = item.amountOfPayment ? item.amountOfPayment + '' : undefined;
+        this.amountOfPayments.push(amountOfPaymentString ?? 'N/A')
         this.dateOfPayments.push(item.dateOfPayment ?? 'N/A')
       })
     }
