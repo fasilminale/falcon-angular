@@ -1,4 +1,5 @@
 import {Location} from '../location/location-model';
+import {RemitHistoryItem} from "./remit-history-item";
 
 export interface InvoiceOverviewDetail {
     invoiceNetAmount?: number;
@@ -9,7 +10,7 @@ export interface InvoiceOverviewDetail {
     carrier?: string;
     carrierMode?:string;
     businessUnit?: string;
-    remittanceInformation?: RemittanceInformation;
+    remitHistory?: Array<RemitHistoryItem>;
 }
 
 export interface RemittanceInformation {
