@@ -19,8 +19,18 @@ export interface CostLineItem {
   rateAmount: number;
   rateType: string;
   chargeLineTotal: number;
+  requestStatus: KeyedLabel;
+  createdBy: string;
+  createdDate: string;
+  closedBy: string;
+  closedDate: string;
+  carrierComment: string;
+  responseComment: string;
+  rateResponse: string;
+  attachment: string;
   message: string;
   manual: boolean;
+  expanded: boolean;
 }
 
 export interface DisputeLineItem {

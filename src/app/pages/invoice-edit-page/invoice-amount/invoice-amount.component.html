@@ -80,11 +80,12 @@
     <div class="col-12">Cost breakdown</div>
     <div class="row my-3 mx-0 cost-breakdown-item-header">
       <div class="col-3">Charge</div>
-      <div class="col-1">Rate Source</div>
-      <div class="col-2">Rate</div>
+      <div class="col-1">Attachment</div>
+      <div class="col-2">Rate Source</div>
+      <div class="col-1">Rate</div>
       <div class="col-2">Type</div>
-      <div class="col-2">Quantity</div>
-      <div class="col-2">Total</div>
+      <div class="col-1">Quantity</div>
+      <div class="total-column-header">Total</div>
     </div>
     <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && isPrepaid">
       <div *ngFor="let _ of costBreakdownItemsControls; index as i"
@@ -93,7 +94,7 @@
            [formGroupName]="i">
 
         <!-- Cost breakdown item- Charge -->
-        <div class="col-3" *ngIf="_.get('contracted')?.value">
+        <div class="col-3" *ngIf="!_.get('manual')?.value">
           <input type="text"
                  class="form-control"
                  formControlName="charge"
@@ -107,7 +108,7 @@
           </small>
         </div>
 
-        <div class="col-3" *ngIf="!_.get('contracted')?.value">
+        <div class="col-3" *ngIf="_.get('manual')?.value">
           <ng-select id="chargeField"
                      formControlName="charge"
                      [items]="filteredCostBreakdownOptions"
@@ -120,7 +121,16 @@
           </ng-select>
         </div>
 
+        <!-- Cost Line Item - Attachments -->
         <div class="col-1">
+          <div class="material-icons download-icon">file_download</div>
+          <span [matTooltipPosition]="'below'"
+                [matTooltip]="'Download Attachment'"
+                [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
+                matTooltipClass="newLine">Download</span>
+        </div>
+
+        <div class="col-2">
           <input type="text"
                  class="form-control"
                  formControlName="rateSource"
@@ -129,7 +139,7 @@
         </div>
 
         <!-- Cost breakdown item - Rate -->
-        <div class="col-2">
+        <div class="col-1">
           <input type="text"
                  class="form-control text-right"
                  formControlName="rate"
@@ -147,7 +157,7 @@
         </div>
 
         <!-- Cost breakdown item - Quantity -->
-        <div class="col-2">
+        <div class="col-1">
           <input type="text"
                  class="form-control"
                  formControlName="quantity"
@@ -157,7 +167,7 @@
         </div>
 
         <!-- Cost breakdown item - totalAmount -->
-        <div class="col-2">
+        <div class="total-column">
           <app-fal-currency-input
             [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
             formControlName="totalAmount"
@@ -171,7 +181,63 @@
             Base Rate Amount is required
           </small>
         </div>
+        <div class="expand-button" *ngIf="_.value.entrySource === 'CP'">
+          <span *ngIf="!_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
+            expand_more
+          </span>
+          <span *ngIf="_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
+            expand_less
+          </span>
+        </div>
+        <elm-card class="col-12 accessorial-details-section" *ngIf="_.value.expanded">
+          <div class="accessorial-details">
+            <div class="col-12">
+              <div class="row accessorial-details-row">
+                <div class="col-1 accessorial-detail">
+                  <span class="label-text">Entry Source</span>
+                  <span class="value-text">{{_.value.entrySource}}</span>
+                </div>
+              </div>
+              <div class="row accessorial-details-row">
+                <div class="col-1 accessorial-detail ">
+                  <span class="label-text">Request Status</span>
+                  <span class="value-text">{{_.value.requestStatus}}</span>
+                </div>
 
+                <div class="col-1 accessorial-detail ">
+                  <span class="label-text">Created By</span>
+                  <span class="value-text">{{_.value.createdBy}}</span>
+                </div>
+                <div class="col-1 accessorial-detail">
+                  <span class="label-text">Created Date</span>
+                  <span class="value-text">{{_.value.createdDate | date: dateFormat}}</span>
+                </div>
+                <div class="col-9 accessorial-detail">
+                  <span class="label-text">Carrier Comment</span>
+                  <span class="value-text">{{_.value.carrierComment}}</span>
+                </div>
+              </div>
+              <div class="row accessorial-details-row-end">
+                <div class="col-1 accessorial-detail">
+                  <span class="label-text">Rate Response</span>
+                  <span class="value-text">{{_.value.rateResponse}}</span>
+                </div>
+                <div class="col-1 accessorial-detail">
+                  <span class="label-text">Closed By</span>
+                  <span class="value-text">{{_.value.closedBy}}</span>
+                </div>
+                <div class="col-1 accessorial-detail">
+                  <span class="label-text">Closed Date</span>
+                  <span class="value-text">{{_.value.closedDate | date: dateFormat}}</span>
+                </div>
+                <div class="col-9 accessorial-detail">
+                  <span class="label-text">Response Comment</span>
+                  <span class="value-text">{{_.value.responseComment}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </elm-card>
       </div>
     </ng-container>
     <elm-button buttonType="button"
@@ -308,7 +374,6 @@
               <span>Deny</span>
             </elm-button>
           </span>
-
         </div>
       </div>
 
