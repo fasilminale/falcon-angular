@@ -122,3 +122,48 @@ app-fal-radio-input ::ng-deep .background-disabled,
 #override-stp-checkbox {
   padding-top: 40px;
 }
+
+.expand-button {
+  padding: 8px;
+  flex-basis: 2em;
+}
+
+.total-column-header {
+  flex-basis: 19em;
+}
+
+.total-column {
+  flex-basis: 16em;
+}
+
+.accessorial-details-section {
+  margin-top: 24px;
+}
+
+.accessorial-details {
+  padding: 24px 24px 40px 24px;
+}
+
+.accessorial-details-row{
+  margin-bottom: 1rem;
+}
+
+.accessorial-details-row-end{
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+
+.accessorial-detail {
+  display:flex;
+  flex-direction: column;
+}
+
+.label-text {
+  font-size: 14px;
+  color: #7F7F7F
+}
+
+.value-text {
+  font-size: 14px;
+  color: #333333
+}
