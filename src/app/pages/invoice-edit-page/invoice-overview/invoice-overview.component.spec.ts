@@ -5,7 +5,6 @@ import { FalconTestingModule } from '../../../testing/falcon-testing.module';
 import {Subject, Subscription} from 'rxjs';
 import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
 import { FreightPaymentTerms } from 'src/app/models/invoice/trip-information-model';
-import {RemitHistoryItem} from "../../../models/invoice/remit-history-item";
 
 describe('InvoiceOverviewComponent', () => {
   let component: InvoiceOverviewComponent;
