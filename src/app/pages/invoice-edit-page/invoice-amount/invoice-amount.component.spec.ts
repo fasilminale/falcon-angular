@@ -217,8 +217,21 @@ describe('InvoiceAmountComponent', () => {
             rateType: 'FLAT',
             quantity: 1,
             costName: 'TestCostName',
+            requestStatus: {
+              key: 'OPEN',
+              label: 'Open'
+            },
+            createdBy: 'test@test.com',
+            createdDate: '2022-04-25T00:05:00.000Z',
+            carrierComment: 'test comment',
+            rateResponse: 'Successful',
+            closedBy: 'test@test.com',
+            closedDate: '2022-04-26T00:05:00.000Z',
+            responseComment: 'test',
+            attachment: 'test.jpg',
             message: '',
-            manual: false
+            manual: false,
+            expanded: false
           }
         ],
         disputeLineItems: [
@@ -316,8 +329,21 @@ describe('InvoiceAmountComponent', () => {
             rateType: 'FLAT',
             quantity: 1,
             costName: 'TestCostName',
+            requestStatus: {
+              key: 'OPEN',
+              label: 'Open'
+            },
+            createdBy: 'test@test.com',
+            createdDate: '2022-04-25T00:05:00.000Z',
+            carrierComment: 'test comment',
+            rateResponse: 'Successful',
+            closedBy: 'test@test.com',
+            closedDate: '2022-04-26T00:05:00.000Z',
+            responseComment: 'test',
+            attachment: 'test.jpg',
             message: '',
-            manual: false
+            manual: false,
+            expanded: false
           }
         ],
         disputeLineItems: [],
@@ -489,6 +515,16 @@ describe('InvoiceAmountComponent', () => {
       const action = 'Accept';
       component.resolveDispute(action);
       expect(resolveDisputeEmitter).toHaveBeenCalledWith(action);
+    });
+  });
+
+  describe('accessorial details view', () => {
+    it('should expand', () => {
+      const costLineItem = {
+        expanded: false
+      };
+      component.onExpandCostLineItem(costLineItem);
+      expect(costLineItem.expanded).toBeTrue();
     });
   });
 
