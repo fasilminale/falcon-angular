@@ -137,6 +137,13 @@ describe('InvoiceEditPageComponent', () => {
             zipCode: '55555',
             country: 'country'
           },
+          remitHistory: {
+            erpInvoiceNumber: '1234',
+            erpRemittanceNumber: '5678',
+            remitVendorId: 'ZXCV',
+            amountOfPayment: 873.83,
+            dateOfPayment: '2022-03-09T15:31:30.986Z'
+          },
           standardPaymentTermsOverride: '',
           status: {key: 'FAKE', label: 'Fake Status'},
           vendorNumber: '123',

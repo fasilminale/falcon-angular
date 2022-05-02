@@ -16,6 +16,7 @@ import {CarrierReference, CarrierUtils, EMPTY_CARRIER_REFERENCE} from '../master
 import {Location, EMPTY_LOCATION} from '../location/location-model';
 import { ServiceLevel } from '../master-data-models/service-level-model';
 import { SelectOption } from '../select-option-model/select-option-model';
+import {RemitHistoryItem} from "./remit-history-item";
 
 export class InvoiceDataModel {
 
@@ -49,11 +50,7 @@ export class InvoiceDataModel {
   attachments: Array<Attachment>;
 
   /* --- AUTOMATED INVOICE: REMITTANCE FIELDS --- */
-  erpInvoiceNumber: string;
-  erpRemittanceNumber: string;
-  remitVendorId: string;
-  amountOfPayment: string;
-  dateOfPayment: string;
+  remitHistory: Array<RemitHistoryItem> = [];
 
   /* --- AUTOMATED INVOICE: TRIP FIELDS --- */
   tripId: string;
@@ -134,11 +131,9 @@ export class InvoiceDataModel {
     this.attachments = json?.attachments ?? [];
 
     // AUTOMATED INVOICE: REMITTANCE
-    this.erpInvoiceNumber = json?.erpInvoiceNumber ?? '';
-    this.erpRemittanceNumber = json?.erpRemittanceNumber ?? '';
-    this.remitVendorId = json?.remitVendorId ?? '';
-    this.amountOfPayment = currency(json?.amountOfPayment);
-    this.dateOfPayment = date(json?.dateOfPayment);
+    json?.remitHistory?.forEach((item: any) => {
+      this.remitHistory.push(item as RemitHistoryItem);
+    });
 
     // AUTOMATED INVOICE: TRIP
     this.tripId = json?.tripId ?? '';

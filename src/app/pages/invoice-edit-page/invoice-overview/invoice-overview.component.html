@@ -9,7 +9,7 @@
 
 <elm-card id="backrgound-grey">
     <div class="row p-4">
-        <div class="col-md-8">
+        <div class="col-md-7 col-lg-7 col-xl-7">
             <div class="row invoice-info-first-row">
                 <div class="col invoice-info ">
                     <span class="label-text">Invoice Net amount</span>
@@ -61,7 +61,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5 col-lg-5 col-xl-5">
             <div class="d-flex align-items-center mb-3">
                 <span class="remittance-header">Remittance Information</span>
                 <app-info-icon-tooltip
@@ -70,31 +70,27 @@
             </div>
             <div class="remittance-info-div">
 
-                <div class="row">
-                    <span class="col-7 label-text">ERP Invoice Number</span>
-                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpInvoiceNumber : 'N/A'}}</span>
+                <div class="remit-row">
+                    <span class="label-text">ERP Invoice Number</span>
+                    <span *ngFor="let value of erpInvoiceNumbers" class="value-text">{{ value}}</span>
                 </div>
-                <div class="row">
-                    <span class="col-7 label-text">ERP Remittance Number</span>
-                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.erpRemittanceNumber ? invoiceOverviewDetail?.remittanceInformation?.erpRemittanceNumber : 'N/A'}}</span>
+                <div class="remit-row">
+                    <span class="label-text">ERP Remittance Number</span>
+                    <span *ngFor="let value of erpRemittanceNumbers" class="value-text">{{ value}}</span>
                 </div>
-                <div class="row">
-                    <span class="col-7 label-text">Vendor ID</span>
-                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.vendorId ? invoiceOverviewDetail?.remittanceInformation?.vendorId : 'N/A'}}</span>
+                <div class="remit-row">
+                    <span class="label-text">Vendor ID</span>
+                    <span *ngFor="let value of vendorIds" class="value-text">{{ value}}</span>
                 </div>
-                <div class="row">
-                    <span class="col-7 label-text">Amount of Payment</span>
-                    <span class="col-5 value-text">{{ invoiceOverviewDetail?.remittanceInformation?.amountOfPayment ? invoiceOverviewDetail?.remittanceInformation?.amountOfPayment: 'N/A'}}</span>
+                <div class="remit-row">
+                    <span class="label-text">Amount of Payment</span>
+                    <span *ngFor="let value of amountOfPayments" class="value-text">{{ value === 'N/A' ? 'N/A' : value | currency:'USD'}}</span>
                 </div>
-                <div class="row">
-                    <span class="col-7 label-text">Date of Payment</span>
-                    <span class="col-5 value-text"><span class="col value-text">{{ invoiceOverviewDetail?.remittanceInformation?.dateOfPayment ? invoiceOverviewDetail?.remittanceInformation?.dateOfPayment: 'N/A'}}</span>
-                </span>
+                <div class="remit-row">
+                    <span class="label-text">Date of Payment</span>
+                    <span *ngFor="let value of dateOfPayments" class="value-text">{{ value === 'N/A' ? 'N/A' : value | date:'MM-dd-yyyy'}}</span>
                 </div>
-
-
             </div>
-
         </div>
 
     </div>
