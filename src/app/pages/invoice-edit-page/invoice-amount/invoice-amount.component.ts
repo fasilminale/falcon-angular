@@ -195,8 +195,16 @@ export class InvoiceAmountComponent implements OnInit {
           type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
           quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity : 'N/A'),
           totalAmount: new FormControl(costBreakdownItem.chargeLineTotal || 0),
-          message: new FormControl(costBreakdownItem.message ?? ''),
-          contracted: new FormControl(true)
+          requestStatus: new FormControl(costBreakdownItem.requestStatus?.label ?? 'N/A'),
+          message: new FormControl(costBreakdownItem.message ?? 'N/A'),
+          createdBy: new FormControl(costBreakdownItem.createdBy ?? 'N/A'),
+          createdDate: new FormControl(costBreakdownItem.createdDate ?? 'N/A'),
+          closedBy: new FormControl(costBreakdownItem.closedBy ?? 'N/A'),
+          closedDate: new FormControl(costBreakdownItem.closedDate ?? 'N/A'),
+          carrierComment: new FormControl(costBreakdownItem.carrierComment ?? 'N/A'),
+          responseComment: new FormControl(costBreakdownItem.responseComment ?? 'N/A'),
+          rateResponse: new FormControl(costBreakdownItem.rateResponse ?? 'N/A'),
+          manual: new FormControl(false)
         }));
       });
     } else {
@@ -208,7 +216,7 @@ export class InvoiceAmountComponent implements OnInit {
         type: new FormControl(''),
         quantity: new FormControl(''),
         totalAmount: new FormControl(''),
-        contracted: new FormControl(true)
+        manual: new FormControl(false)
       }));
     }
   }
@@ -333,9 +341,14 @@ export class InvoiceAmountComponent implements OnInit {
     const quantity = new FormControl('N/A');
     const totalAmount = new FormControl(0);
     const message = new FormControl('');
-    const contracted = new FormControl(false);
+    const manual = new FormControl(true);
+    const expanded = new FormControl(false);
 
-    return new FormGroup({charge, rateSource, rate, type, quantity, totalAmount, message, contracted});
+    return new FormGroup({charge, rateSource, rate, type, quantity, totalAmount, message, manual});
+  }
+
+  onExpandCostLineItem(costLineItem: any): void {
+    costLineItem.expanded = !costLineItem.expanded;
   }
 
   /**

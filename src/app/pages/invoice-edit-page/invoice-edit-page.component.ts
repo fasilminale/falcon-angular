@@ -127,12 +127,7 @@ export class InvoiceEditPageComponent implements OnInit {
       carrier: `${invoice?.carrier?.scac} (${invoice?.carrier?.name})`,
       carrierMode: `${invoice.mode?.reportKeyMode} (${invoice.mode?.reportModeDescription})`,
       freightPaymentTerms: invoice.freightPaymentTerms,
-      remittanceInformation: {
-        erpInvoiceNumber: invoice.erpInvoiceNumber,
-        erpRemittanceNumber: invoice.erpRemittanceNumber,
-        vendorId: invoice.remitVendorId,
-        amountOfPayment: parseFloat(invoice.amountOfPayment),
-      }
+      remitHistory: invoice.remitHistory
     });
 
     this.loadInvoiceAmountDetail$.next({
