@@ -29,6 +29,7 @@ describe('RateService', () => {
         legs: [
           {
             carrierRate: {
+              accessorialList: [],
               lineItems: [
                 {
                   description: 'TST - TestChargeCode',

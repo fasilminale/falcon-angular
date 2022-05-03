@@ -54,6 +54,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
+  pendingChargeLineItems = new FormArray([]);
   disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
 
@@ -129,8 +130,10 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.setControl('overridePaymentTerms', this.overridePaymentTermsFormGroup);
     givenFormGroup.setControl('paymentTerms', new FormControl(''));
     givenFormGroup.setControl('mileage', new FormControl());
-    this.insertBreakDownItems();
+    this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls);
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems);
+    this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls);
+    givenFormGroup.setControl('pendingChargeLineItems', this.pendingChargeLineItems);
     this.insertDisputeLineItems();
     givenFormGroup.setControl('disputeLineItems', this.disputeLineItems);
     this._formGroup = givenFormGroup;
@@ -178,37 +181,44 @@ export class InvoiceAmountComponent implements OnInit {
 
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
+    (givenFormGroup.get('pendingChargeLineItems') as FormArray).clear();
     (givenFormGroup.get('disputeLineItems') as FormArray).clear();
-    this.insertBreakDownItems(invoiceAmountDetail?.costLineItems);
+    this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls, invoiceAmountDetail?.costLineItems);
+    this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls, invoiceAmountDetail?.pendingChargeLineItems);
     this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
   }
 
-  insertBreakDownItems(costBreakdownItems?: CostLineItem[]): void {
-    if (costBreakdownItems && costBreakdownItems.length > 0) {
-      this.costBreakdownItems = new FormArray([]);
-      costBreakdownItems.forEach((costBreakdownItem) => {
-        this.costBreakdownItemsControls.push(new FormGroup({
-          charge: new FormControl(costBreakdownItem.chargeCode),
-          rateSource: new FormControl(costBreakdownItem.rateSource?.label ?? 'N/A'),
-          entrySource: new FormControl(costBreakdownItem.entrySource?.label ?? 'N/A'),
-          rate: new FormControl(costBreakdownItem.rateAmount ? `${costBreakdownItem.rateAmount}` : 'N/A'),
-          type: new FormControl(costBreakdownItem.rateType ? costBreakdownItem.rateType : ''),
-          quantity: new FormControl(costBreakdownItem.quantity ? costBreakdownItem.quantity : 'N/A'),
-          totalAmount: new FormControl(costBreakdownItem.chargeLineTotal || 0),
-          requestStatus: new FormControl(costBreakdownItem.requestStatus?.label ?? 'N/A'),
-          message: new FormControl(costBreakdownItem.message ?? 'N/A'),
-          createdBy: new FormControl(costBreakdownItem.createdBy ?? 'N/A'),
-          createdDate: new FormControl(costBreakdownItem.createdDate ?? 'N/A'),
-          closedBy: new FormControl(costBreakdownItem.closedBy ?? 'N/A'),
-          closedDate: new FormControl(costBreakdownItem.closedDate ?? 'N/A'),
-          carrierComment: new FormControl(costBreakdownItem.carrierComment ?? 'N/A'),
-          responseComment: new FormControl(costBreakdownItem.responseComment ?? 'N/A'),
-          rateResponse: new FormControl(costBreakdownItem.rateResponse ?? 'N/A'),
+  insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
+    if (lineItems && lineItems.length > 0) {
+      items = new FormArray([]);
+      lineItems.forEach((lineItem) => {
+        controls.push(new FormGroup({
+          accessorial: new FormControl(lineItem.accessorial ?? false),
+          charge: new FormControl(lineItem.chargeCode),
+          rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
+          entrySource: new FormControl(lineItem.entrySource?.label ?? 'N/A'),
+          rate: new FormControl(lineItem.rateAmount ? `${lineItem.rateAmount}` : 'N/A'),
+          type: new FormControl(lineItem.rateType ? lineItem.rateType : ''),
+          quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
+          totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
+          requestStatus: new FormControl(lineItem.requestStatus?.label ?? 'N/A'),
+          message: new FormControl(lineItem.message ?? 'N/A'),
+          createdBy: new FormControl(lineItem.createdBy ?? 'N/A'),
+          createdDate: new FormControl(lineItem.createdDate ?? 'N/A'),
+          closedBy: new FormControl(lineItem.closedBy ?? 'N/A'),
+          closedDate: new FormControl(lineItem.closedDate ?? 'N/A'),
+          carrierComment: new FormControl(lineItem.carrierComment ?? 'N/A'),
+          responseComment: new FormControl(lineItem.responseComment ?? 'N/A'),
+          rateResponse: new FormControl(lineItem.rateResponse ?? 'N/A'),
+          autoApproved: new FormControl(lineItem.autoApproved ?? false),
+          attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
+          planned: new FormControl(lineItem.planned ?? false),
+          fuel: new FormControl(lineItem.planned ?? false),
           manual: new FormControl(false)
         }));
       });
     } else {
-      this.costBreakdownItemsControls.push(new FormGroup({
+      controls.push(new FormGroup({
         charge: new FormControl(''),
         rateSource: new FormControl(''),
         entrySource: new FormControl(''),
@@ -242,6 +252,12 @@ export class InvoiceAmountComponent implements OnInit {
   get costBreakdownItemsControls(): AbstractControl[] {
     return this._formGroup.get('costBreakdownItems')
       ? (this._formGroup.get('costBreakdownItems') as FormArray).controls
+      : new FormArray([]).controls;
+  }
+
+  get pendingChargeLineItemControls(): AbstractControl[] {
+    return this._formGroup.get('pendingChargeLineItems')
+      ? (this._formGroup.get('pendingChargeLineItems') as FormArray).controls
       : new FormArray([]).controls;
   }
 

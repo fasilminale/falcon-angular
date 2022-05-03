@@ -229,11 +229,17 @@ describe('InvoiceAmountComponent', () => {
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
             attachment: 'test.jpg',
+            accessorial: true,
+            autoApproved: false,
+            attachmentRequired: false,
+            planned: false,
+            fuel: false,
             message: '',
             manual: false,
             expanded: false
           }
         ],
+        pendingChargeLineItems: [],
         disputeLineItems: [
           {
             comment: 'test comment',
@@ -288,12 +294,14 @@ describe('InvoiceAmountComponent', () => {
       component._formGroup = new FormGroup(
         {
           costBreakdownItems: new FormArray([]),
+          pendingChargeLineItems: new FormArray([]),
           disputeLineItems: new FormArray([])
         }
       );
       loadInvoiceAmountDetail$.subscribe(() => {
         expect(component._formGroup.value).toEqual({
           costBreakdownItems: [],
+          pendingChargeLineItems: [],
           disputeLineItems: []
         });
         done();
@@ -341,11 +349,17 @@ describe('InvoiceAmountComponent', () => {
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
             attachment: 'test.jpg',
+            accessorial: true,
+            autoApproved: false,
+            attachmentRequired: false,
+            planned: false,
+            fuel: false,
             message: '',
             manual: false,
             expanded: false
           }
         ],
+        pendingChargeLineItems: [],
         disputeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
         mileage: '100'
@@ -383,6 +397,7 @@ describe('InvoiceAmountComponent', () => {
             legs: [
               {
                 carrierRate: {
+                  accessorialList: [],
                   lineItems: [
                     {
                       description: 'TST - TestChargeCode',
@@ -417,6 +432,7 @@ describe('InvoiceAmountComponent', () => {
             legs: [
               {
                 carrierRate: {
+                  accessorialList: [],
                   lineItems: [
                     {
                       description: 'OTH - OtherChargeCode',
