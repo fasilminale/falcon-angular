@@ -15,8 +15,7 @@ export class InvoiceOverviewComponent implements OnInit {
     this.subscriptionManager.manage(observable.subscribe(
       invoiceOverviewDetail => {
         this.invoiceOverviewDetail = invoiceOverviewDetail
-        // If ever we want to show more than one payment reversal, just enlarge the slice.
-        this.formatRemitData(this.invoiceOverviewDetail.remitHistory?.slice(0, 2) ?? [])
+        this.formatRemitData(this.invoiceOverviewDetail.remitHistory ?? [])
       }
     ));
   }
