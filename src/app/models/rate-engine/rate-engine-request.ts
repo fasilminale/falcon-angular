@@ -56,6 +56,16 @@ export interface LineItem {
 export interface CalcDetail {
   name: string;
   accessorialCode: string;
+  autoApprove?: boolean;
+  attachmentRequired?: boolean;
+  carrierEligible?: boolean;
+  fuel?: boolean;
+  variables?: Array<CalcDetailVariable>;
+}
+
+export interface CalcDetailVariable {
+  variable: string;
+  quantity: number;
 }
 
 export interface Location {

@@ -108,16 +108,9 @@
         </div>
 
         <div class="col-3" *ngIf="!_.get('contracted')?.value">
-          <ng-select id="chargeField"
-                     formControlName="charge"
-                     [items]="filteredCostBreakdownOptions"
-                     [clearable]="false"
-                     bindLabel="label"
-                     bindValue="value"
-                     (change)="updateCostBreakdownOptions()"
-                     (ngModelChange)="onSelectRate($event, _)"
-                     placeholder="Select One...">
-          </ng-select>
+          <elm-text-input id="chargeField"
+                          formControlName="charge">
+          </elm-text-input>
         </div>
 
         <div class="col-1">
@@ -178,7 +171,7 @@
                 buttonStyle="text"
                 id="add-new-line-item-button"
                 [isDisabled]="readOnlyForm"
-                (buttonClick)="addNewEmptyLineItem()">
+                (buttonClick)="onAddChargeButtonClick()">
       <u>+ Add New Charge</u>
     </elm-button>
 

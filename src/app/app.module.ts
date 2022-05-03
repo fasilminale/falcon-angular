@@ -64,23 +64,24 @@ import {EnvironmentService} from './services/environment-service/environment-ser
 import {MasterDataUploadErrorModalComponent} from './components/master-data-upload-error-modal/master-data-upload-error-modal.component';
 import {WindowService} from './services/window-service/window-service';
 import {RoleGuard} from './components/role-guard/role-guard';
-import { InvoiceEditPageComponent } from './pages/invoice-edit-page/invoice-edit-page.component';
-import { MilestonePanelComponent } from './components/milestone-panel/milestone-panel.component';
-import { InvoiceOverviewComponent } from './pages/invoice-edit-page/invoice-overview/invoice-overview.component';
-import { TripInformationComponent } from './pages/invoice-edit-page/trip-information/trip-information.component';
-import { AllocationComponent } from './pages/invoice-edit-page/allocation/allocation.component';
-import { FalAddressComponent } from './components/fal-address/fal-address.component';
-import { FreightOrderDetailsComponent } from './pages/freight-order-details/freight-order-details.component';
-import { InvoiceAmountComponent } from './pages/invoice-edit-page/invoice-amount/invoice-amount.component';
-import { InvoiceAllocationComponent } from './pages/invoice-edit-page/invoice-allocation/invoice-allocation.component';
-import { InfoIconTooltipComponent } from './components/info-icon-tooltip/info-icon-tooltip.component';
+import {InvoiceEditPageComponent} from './pages/invoice-edit-page/invoice-edit-page.component';
+import {MilestonePanelComponent} from './components/milestone-panel/milestone-panel.component';
+import {InvoiceOverviewComponent} from './pages/invoice-edit-page/invoice-overview/invoice-overview.component';
+import {TripInformationComponent} from './pages/invoice-edit-page/trip-information/trip-information.component';
+import {AllocationComponent} from './pages/invoice-edit-page/allocation/allocation.component';
+import {FalAddressComponent} from './components/fal-address/fal-address.component';
+import {FreightOrderDetailsComponent} from './pages/freight-order-details/freight-order-details.component';
+import {InvoiceAmountComponent} from './pages/invoice-edit-page/invoice-amount/invoice-amount.component';
+import {InvoiceAllocationComponent} from './pages/invoice-edit-page/invoice-allocation/invoice-allocation.component';
+import {InfoIconTooltipComponent} from './components/info-icon-tooltip/info-icon-tooltip.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import { FalCommentModalComponent } from './components/fal-comment-modal/fal-comment-modal.component';
+import {FalCommentModalComponent} from './components/fal-comment-modal/fal-comment-modal.component';
 import {BuildInfoService} from './services/build-info-service';
 import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
 import {RateService} from './services/rate-service';
-import {MatIconModule} from "@angular/material/icon";
+import {MatIconModule} from '@angular/material/icon';
 import {EllipsisPipe} from './utils/ellipsis-pipe';
+import {FalNewChargeModalComponent} from './components/fal-new-charge-modal/fal-new-charge-modal.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -175,39 +176,40 @@ const oktaConfig = {
     InvoiceAllocationComponent,
     InfoIconTooltipComponent,
     FalCommentModalComponent,
+    FalNewChargeModalComponent,
     NewUserLogoutPageComponent,
     EllipsisPipe
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule, // must be imported immediately after BrowserModule
-        AppRoutingModule,
-        HttpClientModule,
-        NavigationModule,
-        ButtonModule,
-        ProgressModule,
-        ContainersModule,
-        DataTableModule,
-        NgSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgbDatepickerModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        MatSidenavModule,
-        MatListModule,
-        MatTableModule,
-        MatTooltipModule,
-        MatChipsModule,
-        NgbModule,
-        NgbTooltipModule,
-        NgxCurrencyModule,
-        InputMaskModule,
-        InputsModule,
-        ModalsModule,
-        ServicesModule,
-        MatIconModule,
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule, // must be imported immediately after BrowserModule
+    AppRoutingModule,
+    HttpClientModule,
+    NavigationModule,
+    ButtonModule,
+    ProgressModule,
+    ContainersModule,
+    DataTableModule,
+    NgSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbDatepickerModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatSidenavModule,
+    MatListModule,
+    MatTableModule,
+    MatTooltipModule,
+    MatChipsModule,
+    NgbModule,
+    NgbTooltipModule,
+    NgxCurrencyModule,
+    InputMaskModule,
+    InputsModule,
+    ModalsModule,
+    ServicesModule,
+    MatIconModule,
+  ],
   providers: [
     WebServices,
     MatSnackBar,

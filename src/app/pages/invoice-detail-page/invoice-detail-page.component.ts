@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ConfirmationModalComponent, ElmLinkInterface} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, ConfirmationModalData, ElmLinkInterface} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
@@ -94,7 +94,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   }
 
   public deleteInvoice(): void {
-    const modalData = {
+    const modalData: ConfirmationModalData = {
       title: 'Delete Invoice',
       innerHtmlMessage: `Are you sure you want to delete this invoice?
                <br/><br/><strong>This action cannot be undone.</strong>`,
