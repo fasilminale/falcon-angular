@@ -14,15 +14,19 @@ export class InvoiceFilterModalComponent implements OnInit {
 
   originCities: Array<SelectOption<string>> = [];
   destinationCities: Array<SelectOption<string>> = [];
+  masterDataScacs: Array<SelectOption<string>> = [];
+  sortedMasterDataScacs: Array<SelectOption<string>> = [];
 
   constructor(private dialogRef: MatDialogRef<InvoiceFilterModalComponent>,
               public filterService: FilterService, @Inject(MAT_DIALOG_DATA) data: any) {
     this.resetForm();
     this.originCities = data.originCities;
     this.destinationCities = data.destinationCities;
+    this.masterDataScacs = data.masterDataScacs;
   }
 
   ngOnInit(): void {
+    this.sortedMasterDataScacs = this.sortScacs(this.masterDataScacs);
   }
 
   resetForm(): void {
@@ -44,6 +48,20 @@ export class InvoiceFilterModalComponent implements OnInit {
 
   compareCitiesWith(item: any, value: any) {
     return item.value === value;
+  }
+
+  sortScacs(scacs: Array<SelectOption<string>>) : Array<SelectOption<string>> {
+    return scacs.sort(this.compareScacs)
+  }
+
+  compareScacs( a: SelectOption<string>, b: SelectOption<string> ): number {
+    if ( a.label < b.label ){
+      return -1;
+    }
+    if ( a.label > b.label ){
+      return 1;
+    }
+    return 0;
   }
 
 }

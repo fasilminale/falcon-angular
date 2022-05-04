@@ -59,6 +59,10 @@ export class InvoiceService {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/originDestinationCities`);
   }
 
+  public getMasterDataScacs(): Observable<Array<any>> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/carriers`);
+  }
+
   public getInvoice(invoiceNumber: string): Observable<InvoiceDataModel> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}`);
   }

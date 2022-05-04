@@ -13,7 +13,8 @@ export class FiltersModel {
     initial: new FormControl(),
     originCity: new FormControl(),
     destinationCity: new FormControl(),
-    invoiceStatuses: new FormArray([])
+    invoiceStatuses: new FormArray([]),
+    scac: new FormControl()
   });
 
   constructor() {
@@ -24,7 +25,8 @@ export class FiltersModel {
 
     this.form.patchValue({
       originCity: null,
-      destinationCity: null
+      destinationCity: null,
+      scac: null
     });
     (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }
@@ -95,7 +97,8 @@ export class FiltersModel {
     return {
       invoiceStatuses: this.form.get('invoiceStatuses')?.value,
       originCity: this.form.get('originCity')?.value,
-      destinationCity: this.form.get('destinationCity')?.value
+      destinationCity: this.form.get('destinationCity')?.value,
+      carrierSCAC: this.form.get('scac')?.value ? [this.form.get('scac')?.value] : []
     };
   }
 

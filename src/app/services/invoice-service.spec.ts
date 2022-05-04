@@ -125,4 +125,34 @@ describe('InvoiceService', () => {
     ))
   });
 
+  it('should return Observable when getMasterDataScacs invoked', (done) => {
+    const env = environment;
+    env.baseServiceUrl = 'https://somedomain.com';
+    spyOn(web, 'httpGet').and.returnValue(of([]));
+    subscription.add(invoiceService.getMasterDataScacs().subscribe(
+      (result) => {
+        expect(result).toEqual([]);
+        expect(web.httpGet).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/carriers`);
+        done();
+      },
+      () => fail(`Subscription should have succeeded`)
+    ))
+  });
+
+  it('should return error when getMasterDataScacs invoked and fails', (done) => {
+    const env = environment;
+    env.baseServiceUrl = 'https://somedomain.com';
+    spyOn(web, 'httpGet').and.returnValue(throwError(new Error('Bad')));
+    subscription.add(invoiceService.getMasterDataScacs().subscribe(
+      (result) => {
+        fail(`Subscription should have failed`);
+      },
+      (error: Error) => {
+        expect(error.message).toEqual('Bad');
+        expect(web.httpGet).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/carriers`);
+        done();
+      }
+    ))
+  });
+
 });

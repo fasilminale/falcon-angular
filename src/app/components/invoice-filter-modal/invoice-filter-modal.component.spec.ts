@@ -29,7 +29,7 @@ describe('LoadsFilterModalComponent', () => {
       imports: [AppModule, HttpClientTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [FilterService,
-        {provide: MatDialogRef, useValue: dialogMock}, 
+        {provide: MatDialogRef, useValue: dialogMock},
         { provide: MAT_DIALOG_DATA, useValue: dialogDataMock}
       ]
     })
@@ -41,7 +41,6 @@ describe('LoadsFilterModalComponent', () => {
     http = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(InvoiceFilterModalComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush([]);
   });
 
@@ -55,38 +54,48 @@ describe('LoadsFilterModalComponent', () => {
 
   describe('resetForm', () => {
     it('should reset the form to the global', () => {
+      spyOn(component, 'sortScacs');
+      fixture.detectChanges();
       const invoiceStatuses = component.filterService.invoiceFilterModel.form.get('invoiceStatuses') as FormArray;
       invoiceStatuses.push(new FormControl('CREATED'));
       component.filterService.invoiceFilterModel.form?.get('originCity')?.setValue('TestOriginCity');
       component.filterService.invoiceFilterModel.form?.get('destinationCity')?.setValue('TestDestinationCity');
+      component.filterService.invoiceFilterModel.form?.get('scac')?.setValue('TestScac');
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual([]);
       expect(component.localFilterModel.form.get('originCity')?.value).toBeNull();
       expect(component.localFilterModel.form.get('destinationCity')?.value).toBeNull();
+      expect(component.localFilterModel.form.get('scac')?.value).toBeNull();
       component.resetForm();
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
       expect(component.localFilterModel.form.get('originCity')?.value).toEqual('TestOriginCity');
       expect(component.localFilterModel.form.get('destinationCity')?.value).toEqual('TestDestinationCity');
+      expect(component.localFilterModel.form.get('scac')?.value).toEqual('TestScac');
 
     });
   });
 
   describe('clearFilters', () => {
     it('should clear all filters', fakeAsync(() => {
+      spyOn(component, 'sortScacs');
+      fixture.detectChanges();
       const invoiceStatuses = component.localFilterModel.form.get('invoiceStatuses') as FormArray;
       invoiceStatuses.push(new FormControl('TEST'));
       component.filterService.invoiceFilterModel.form?.get('originCity')?.setValue('TestOriginCity');
       component.filterService.invoiceFilterModel.form?.get('destinationCity')?.setValue('TestDestinationCity');
+      component.filterService.invoiceFilterModel.form?.get('scac')?.setValue('TestScac');
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual(['TEST']);
       component.clearFilters();
       expect(component.localFilterModel.form.get('invoiceStatuses')?.value).toEqual([]);
       expect(component.localFilterModel.form.get('originCity')?.value).toBeNull();
       expect(component.localFilterModel.form.get('destinationCity')?.value).toBeNull();
-
+      expect(component.localFilterModel.form.get('scac')?.value).toBeNull();
     }));
   });
 
   describe('onSubmit', () => {
     it('should close the modal', () => {
+      spyOn(component, 'sortScacs');
+      fixture.detectChanges();
       spyOn(injectedMatDialogRef, 'close').and.callThrough();
       component.onSubmit();
       fixture.detectChanges();
@@ -96,12 +105,61 @@ describe('LoadsFilterModalComponent', () => {
 
   describe('should compare with city', () => {
     it('should return true', () => {
+      spyOn(component, 'sortScacs');
+      fixture.detectChanges();
       expect(component.compareCitiesWith({value: 'New York'}, 'New York')).toBeTrue();
     });
 
     it('should return false', () => {
+      spyOn(component, 'sortScacs');
+      fixture.detectChanges();
       expect(component.compareCitiesWith({value: 'New York'}, 'Chicago')).toBeFalse();
     });
 
+  });
+
+  describe('sortScacs', () => {
+    it('should sort scacs in ascending order', () => {
+      component.masterDataScacs = [
+        {
+          value: 'EFGH',
+          label: 'EFGH (Kramerica)'
+        },
+        {
+          value: 'MNOP',
+          label: 'MNOP (Gigantech)'
+        },
+        {
+          value: 'IJKL',
+          label: 'IJKL (The Human Fund)'
+        },
+        {
+          value: 'ABCD',
+          label: 'ABCD (Vandalay Industries)'
+        }
+      ]
+
+      fixture.detectChanges();
+
+      expect(component.sortedMasterDataScacs).toEqual([
+        {
+          value: 'ABCD',
+          label: 'ABCD (Vandalay Industries)'
+        },
+        {
+          value: 'EFGH',
+          label: 'EFGH (Kramerica)'
+        },
+        {
+          value: 'IJKL',
+          label: 'IJKL (The Human Fund)'
+        },
+        {
+          value: 'MNOP',
+          label: 'MNOP (Gigantech)'
+        }
+      ])
+
+    });
   });
 });

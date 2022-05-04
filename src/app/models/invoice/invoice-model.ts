@@ -258,5 +258,12 @@ export class InvoiceUtils {
       value: city
     };
   }
+
+  static toScacOption(carrier: any): SelectOption<string> {
+    return {
+      label: `${carrier.scac} (${carrier.name})`,
+      value: carrier.scac
+    };
+  }
 }
 
