@@ -81,6 +81,7 @@ import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-
 import {RateService} from './services/rate-service';
 import {MatIconModule} from "@angular/material/icon";
 import {EllipsisPipe} from './utils/ellipsis-pipe';
+import { FalAccessorialDetailComponent } from './components/fal-accessorial-detail/fal-accessorial-detail.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -176,7 +177,8 @@ const oktaConfig = {
     InfoIconTooltipComponent,
     FalCommentModalComponent,
     NewUserLogoutPageComponent,
-    EllipsisPipe
+    EllipsisPipe,
+    FalAccessorialDetailComponent
   ],
     imports: [
         BrowserModule,

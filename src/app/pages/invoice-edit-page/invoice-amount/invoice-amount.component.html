@@ -95,7 +95,8 @@
 
         <!-- Cost breakdown item- Charge -->
         <div class="col-3" *ngIf="!_.get('manual')?.value">
-          <input type="text"
+          <input id="cost-line-item-charge"
+                 type="text"
                  class="form-control"
                  formControlName="charge"
                  maxlength="4"
@@ -109,7 +110,7 @@
         </div>
 
         <div class="col-3" *ngIf="_.get('manual')?.value">
-          <ng-select id="chargeField"
+          <ng-select id="cost-line-item-charge-select"
                      formControlName="charge"
                      [items]="filteredCostBreakdownOptions"
                      [clearable]="false"
@@ -131,7 +132,8 @@
         </div>
 
         <div class="col-2">
-          <input type="text"
+          <input id="cost-line-item-rate-source"
+                 type="text"
                  class="form-control"
                  formControlName="rateSource"
                  [attr.disabled]="readOnlyForm ? '': null"
@@ -140,7 +142,8 @@
 
         <!-- Cost breakdown item - Rate -->
         <div class="col-1">
-          <input type="text"
+          <input id="cost-line-item-rate"
+                 type="text"
                  class="form-control text-right"
                  formControlName="rate"
                  [attr.disabled]="readOnlyForm ? '': null"
@@ -149,7 +152,8 @@
 
         <!-- Cost breakdown item - Type -->
         <div class="col-2">
-          <input type="text"
+          <input id="cost-line-item-type"
+                 type="text"
                  class="form-control"
                  formControlName="type"
                  [attr.disabled]="readOnlyForm ? '' : null"
@@ -158,7 +162,8 @@
 
         <!-- Cost breakdown item - Quantity -->
         <div class="col-1">
-          <input type="text"
+          <input id="cost-line-item-quantity"
+                 type="text"
                  class="form-control"
                  formControlName="quantity"
                  maxlength="10"
@@ -189,58 +194,14 @@
             expand_less
           </span>
         </div>
-        <elm-card class="col-12 accessorial-details-section" *ngIf="_.value.expanded">
-          <div class="accessorial-details">
-            <div class="col-12">
-              <div class="row accessorial-details-row">
-                <div class="col-1 accessorial-detail">
-                  <span class="label-text">Entry Source</span>
-                  <span class="value-text">{{_.value.entrySource}}</span>
-                </div>
-              </div>
-              <div class="row accessorial-details-row">
-                <div class="col-1 accessorial-detail ">
-                  <span class="label-text">Request Status</span>
-                  <span class="value-text">{{_.value.requestStatus}}</span>
-                </div>
-
-                <div class="col-1 accessorial-detail ">
-                  <span class="label-text">Created By</span>
-                  <span class="value-text">{{_.value.createdBy}}</span>
-                </div>
-                <div class="col-1 accessorial-detail">
-                  <span class="label-text">Created Date</span>
-                  <span class="value-text">{{_.value.createdDate | date: dateFormat}}</span>
-                </div>
-                <div class="col-9 accessorial-detail">
-                  <span class="label-text">Carrier Comment</span>
-                  <span class="value-text">{{_.value.carrierComment}}</span>
-                </div>
-              </div>
-              <div class="row accessorial-details-row-end">
-                <div class="col-1 accessorial-detail">
-                  <span class="label-text">Rate Response</span>
-                  <span class="value-text">{{_.value.rateResponse}}</span>
-                </div>
-                <div class="col-1 accessorial-detail">
-                  <span class="label-text">Closed By</span>
-                  <span class="value-text">{{_.value.closedBy}}</span>
-                </div>
-                <div class="col-1 accessorial-detail">
-                  <span class="label-text">Closed Date</span>
-                  <span class="value-text">{{_.value.closedDate | date: dateFormat}}</span>
-                </div>
-                <div class="col-9 accessorial-detail">
-                  <span class="label-text">Response Comment</span>
-                  <span class="value-text">{{_.value.responseComment}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </elm-card>
+        <app-fal-accessorial-detail [lineItem]="_"></app-fal-accessorial-detail>
       </div>
     </ng-container>
-    <elm-button buttonType="button"
+    <div class="no-results" *ngIf="costBreakdownItems && costBreakdownItems.length == 0">
+      No Cost Breakdown Charges
+    </div>
+    <elm-button class="add-new-line-item-button"
+                buttonType="button"
                 buttonStyle="text"
                 id="add-new-line-item-button"
                 [isDisabled]="readOnlyForm"
@@ -270,6 +231,8 @@
       Cost Breakdown Total must equal Invoice Net Amount
     </small>
 
+  </div>
+  <div class="cost-breakdown-div my-3" formArrayName="pendingChargeLineItems">
     <div class="col-12">Pending Charges</div>
     <div class="row my-3 mx-0 pending-line-item-header">
       <div class="col-3">Charge</div>
@@ -282,9 +245,6 @@
       <div class="col-2 pending-action-label">Actions</div>
     </div>
 
-
-  </div>
-  <div class="cost-breakdown-div my-3" formArrayName="pendingChargeLineItems">
     <ng-container *ngIf="pendingChargeLineItemControls && pendingChargeLineItemControls.length > 0 && isPrepaid">
     <div *ngFor="let _ of pendingChargeLineItemControls; index as j"
          class="row"
@@ -293,7 +253,8 @@
 
       <!-- Pending Line Item- Charge -->
       <div class="col-3">
-        <input type="text"
+        <input id="pending-line-item-charge"
+               type="text"
                class="form-control"
                formControlName="charge"
                maxlength="4"
@@ -316,7 +277,8 @@
       </div>
 
       <div class="col-1">
-        <input type="text"
+        <input id="pending-line-item-rate-source"
+               type="text"
                class="form-control"
                formControlName="rateSource"
                [attr.disabled]="readOnlyForm ? '': null"
@@ -325,7 +287,8 @@
 
       <!-- Pending breakdown item - Rate -->
       <div class="col-1">
-        <input type="text"
+        <input id="pending-line-item-rate"
+               type="text"
                class="form-control text-right"
                formControlName="rate"
                [attr.disabled]="readOnlyForm ? '': null"
@@ -334,7 +297,8 @@
 
       <!-- Pending breakdown item - Type -->
       <div class="col-1">
-        <input type="text"
+        <input id="pending-line-item-type"
+               type="text"
                class="form-control"
                formControlName="type"
                [attr.disabled]="readOnlyForm ? '' : null"
@@ -343,7 +307,8 @@
 
       <!-- Pending breakdown item - Quantity -->
       <div class="col-1">
-        <input type="text"
+        <input id="pending-line-item-quantity"
+               type="text"
                class="form-control"
                formControlName="quantity"
                maxlength="10"
@@ -354,6 +319,7 @@
       <!-- Pending breakdown item - totalAmount -->
       <div class="total-column">
         <app-fal-currency-input
+          id="pending-line-item-total"
           [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
           formControlName="totalAmount"
           [isDisabled]="readOnlyForm"
@@ -404,57 +370,14 @@
             expand_less
           </span>
       </div>
-      <elm-card class="col-12 accessorial-details-section" *ngIf="_.value.expanded">
-        <div class="accessorial-details">
-          <div class="col-12">
-            <div class="row accessorial-details-row">
-              <div class="col-1 accessorial-detail">
-                <span class="label-text">Entry Source</span>
-                <span class="value-text">{{_.value.entrySource}}</span>
-              </div>
-            </div>
-            <div class="row accessorial-details-row">
-              <div class="col-1 accessorial-detail ">
-                <span class="label-text">Request Status</span>
-                <span class="value-text">{{_.value.requestStatus}}</span>
-              </div>
 
-              <div class="col-1 accessorial-detail ">
-                <span class="label-text">Created By</span>
-                <span class="value-text">{{_.value.createdBy}}</span>
-              </div>
-              <div class="col-1 accessorial-detail">
-                <span class="label-text">Created Date</span>
-                <span class="value-text">{{_.value.createdDate | date: dateFormat}}</span>
-              </div>
-              <div class="col-9 accessorial-detail">
-                <span class="label-text">Carrier Comment</span>
-                <span class="value-text">{{_.value.carrierComment}}</span>
-              </div>
-            </div>
-            <div class="row accessorial-details-row-end">
-              <div class="col-1 accessorial-detail">
-                <span class="label-text">Rate Response</span>
-                <span class="value-text">{{_.value.rateResponse}}</span>
-              </div>
-              <div class="col-1 accessorial-detail">
-                <span class="label-text">Closed By</span>
-                <span class="value-text">{{_.value.closedBy}}</span>
-              </div>
-              <div class="col-1 accessorial-detail">
-                <span class="label-text">Closed Date</span>
-                <span class="value-text">{{_.value.closedDate | date: dateFormat}}</span>
-              </div>
-              <div class="col-9 accessorial-detail">
-                <span class="label-text">Response Comment</span>
-                <span class="value-text">{{_.value.responseComment}}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </elm-card>
+      <app-fal-accessorial-detail [lineItem]="_"></app-fal-accessorial-detail>
+
     </div>
   </ng-container>
+    <div class="no-results" *ngIf="pendingChargeLineItems && pendingChargeLineItems.length == 0">
+      No Pending Charges
+    </div>
   </div>
 
   <div class="cost-breakdown-div my-3" formArrayName="disputeLineItems">
@@ -565,7 +488,7 @@
 
     </ng-container>
     <div class="no-results" *ngIf="disputeLineItemControls && disputeLineItemControls.length == 0">
-      No disputes
+      No Disputes
     </div>
   </div>
 
