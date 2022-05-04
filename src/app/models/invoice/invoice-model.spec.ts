@@ -1,7 +1,8 @@
-import {InvoiceDataModel} from './invoice-model';
+import {InvoiceDataModel, InvoiceUtils} from './invoice-model';
 import {TestBed} from '@angular/core/testing';
 import {StatusModel} from './status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import {SelectOption} from "../select-option-model/select-option-model";
 
 describe('Invoice Model Tests', () => {
 
@@ -125,5 +126,19 @@ describe('Invoice Model Tests', () => {
     const termsInvoiceTest = new InvoiceDataModel(invoice);
     expect(termsInvoiceTest).not.toBeNull();
     expect(termsInvoiceTest.standardPaymentTermsOverride).toEqual('14 Day');
+  });
+
+  describe('InvoiceUtils', () => {
+
+    it('should construct SelectOption when toScacOption invoked ', () => {
+      const carrier = {
+        scac: 'ABCD',
+        name: 'Vandalay Industries'
+      }
+
+      const result: SelectOption<string> = InvoiceUtils.toScacOption(carrier);
+
+      expect(result.label).toEqual(`ABCD (Vandalay Industries)`)
+    });
   });
 });

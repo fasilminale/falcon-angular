@@ -17,6 +17,7 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {saveAs} from 'file-saver';
 import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
 import { InvoiceService } from 'src/app/services/invoice-service';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -46,12 +47,14 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   totalSearchResult = 0;
   selectedInvoiceStatuses: Array<string> = [];
   invoiceCountLabel = 'Invoices';
+  subscription: Subscription = new Subscription();
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   invoiceFilter!: MatDialogRef<any>;
   invoiceStatuses: Array<StatusModel> = [];
   public originCities: Array<SelectOption<string>> = [];
   public destinationCities: Array<SelectOption<string>> = [];
+  public masterDataScacs: Array<SelectOption<string>> = [];
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
@@ -88,11 +91,19 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
          this.originCities = opts[0].originCities.map(InvoiceUtils.toOption);
          this.destinationCities = opts[0].destinationCities.map(InvoiceUtils.toOption);
        }
-    })
+    });
+    this.subscription.add(this.invoiceService.getMasterDataScacs().subscribe(
+      opts => {
+        if(opts && opts.length > 0) {
+          this.masterDataScacs = opts.map(InvoiceUtils.toScacOption);
+        }
+      }
+    ));
   }
 
   ngOnDestroy(): void {
     this.userService.searchState = this.paginationModel;
+    this.subscription.unsubscribe();
   }
 
   getTableData(numberPerPage: number, isInvoiceSearched = false): void {
@@ -173,7 +184,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     this.invoiceFilter = this.dialog.open(InvoiceFilterModalComponent, {
       data: {
         originCities: this.originCities,
-        destinationCities: this.destinationCities
+        destinationCities: this.destinationCities,
+        masterDataScacs: this.masterDataScacs
       },
       minWidth: '525px',
       width: '33vw',

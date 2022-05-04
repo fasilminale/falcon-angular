@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ChipComponent, FilterChip} from './chip.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormControl} from '@angular/forms';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
@@ -42,6 +42,7 @@ describe('ChipComponent', () => {
     loadStatusArray.push(new FormControl(value ? value : 'CREATED'));
     component.filtersModel.form.get('originCity')?.setValue('TestOriginCity')
     component.filtersModel.form.get('destinationCity')?.setValue('TestDestinationCity')
+    component.filtersModel.form.get('scac')?.setValue('ABCD')
   }
 
   it('should create', () => {
@@ -63,7 +64,7 @@ describe('ChipComponent', () => {
       addFilter('SUBMITTED');
       component.updateChipFilters();
       fixture.detectChanges();
-      expect(component.chips.length).toBe(3);
+      expect(component.chips.length).toBe(4);
     });
   });
 
@@ -97,10 +98,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
-      expect(component.chips.length).toBe(3);
+      expect(component.chips.length).toBe(4);
       component.removeChip('invoiceStatuses');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual([]);
-      expect(component.chips.length).toBe(2);
+      expect(component.chips.length).toBe(3);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -109,10 +110,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('originCity')?.value).toEqual('TestOriginCity');
-      expect(component.chips.length).toBe(3);
+      expect(component.chips.length).toBe(4);
       component.removeChip('originCity');
       expect(component.filtersModel.form.get('originCity')?.value).toBeNull();
-      expect(component.chips.length).toBe(2);
+      expect(component.chips.length).toBe(3);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -121,10 +122,22 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('destinationCity')?.value).toEqual('TestDestinationCity');
-      expect(component.chips.length).toBe(3);
+      expect(component.chips.length).toBe(4);
       component.removeChip('destinationCity');
       expect(component.filtersModel.form.get('destinationCity')?.value).toBeNull();
-      expect(component.chips.length).toBe(2);
+      expect(component.chips.length).toBe(3);
+      expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
+    });
+
+    it('should properly remove scac, update the chips, and emit', () => {
+      addFilter();
+      component.updateChipFilters();
+      spyOn(component.chipRemovedEvent, 'emit');
+      expect(component.filtersModel.form.get('scac')?.value).toEqual('ABCD');
+      expect(component.chips.length).toBe(4);
+      component.removeChip('scac');
+      expect(component.filtersModel.form.get('scac')?.value).toBeNull();
+      expect(component.chips.length).toBe(3);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -136,7 +149,7 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
-      expect(component.chips.length).toBe(3);
+      expect(component.chips.length).toBe(4);
       component.clearFilters();
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual([]);
       expect(component.chips.length).toBe(0);
