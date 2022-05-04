@@ -11,6 +11,7 @@ export interface ManualLineItem {
 }
 
 export interface CostLineItem {
+  accessorial: boolean;
   chargeCode: string;
   rateSource: KeyedLabel;
   entrySource: KeyedLabel;
@@ -28,6 +29,10 @@ export interface CostLineItem {
   responseComment: string;
   rateResponse: string;
   attachment: string;
+  autoApproved: boolean;
+  attachmentRequired: boolean;
+  planned: boolean;
+  fuel: boolean;
   message: string;
   manual: boolean;
   expanded: boolean;

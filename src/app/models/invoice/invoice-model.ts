@@ -95,6 +95,7 @@ export class InvoiceDataModel {
   plannedInvoiceNetAmount: string;
   distance: string;
   costLineItems: Array<CostLineItem>;
+  pendingChargeLineItems: Array<CostLineItem>;
   disputeLineItems: Array<DisputeLineItem>;
   totalGlAmount: string;
   glLineItems: Array<GlLineItem>;
@@ -188,6 +189,7 @@ export class InvoiceDataModel {
     this.plannedInvoiceNetAmount = currency(json?.plannedInvoiceNetAmount);
     this.distance = json?.distance ?? '';
     this.costLineItems = json?.costLineItems ?? [];
+    this.pendingChargeLineItems = json?.pendingChargeLineItems ?? [];
     this.disputeLineItems = json?.disputeLineItems ?? [];
     this.totalGlAmount = currency(json?.totalGlAmount);
     this.glLineItems = json?.glLineItems ?? [];
