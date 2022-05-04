@@ -217,17 +217,6 @@ export class InvoiceAmountComponent implements OnInit {
           manual: new FormControl(false)
         }));
       });
-    } else {
-      controls.push(new FormGroup({
-        charge: new FormControl(''),
-        rateSource: new FormControl(''),
-        entrySource: new FormControl(''),
-        rate: new FormControl(''),
-        type: new FormControl(''),
-        quantity: new FormControl(''),
-        totalAmount: new FormControl(''),
-        manual: new FormControl(false)
-      }));
     }
   }
 
