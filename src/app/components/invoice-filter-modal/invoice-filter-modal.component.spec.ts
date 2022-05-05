@@ -123,40 +123,41 @@ describe('LoadsFilterModalComponent', () => {
       component.masterDataScacs = [
         {
           value: 'EFGH',
-          label: 'EFGH (Kramerica)'
-        },
-        {
-          value: 'MNOP',
-          label: 'MNOP (Gigantech)'
-        },
-        {
-          value: 'IJKL',
-          label: 'IJKL (The Human Fund)'
+          label: 'Kramerica (EFGH)'
         },
         {
           value: 'ABCD',
-          label: 'ABCD (Vandalay Industries)'
-        }
+          label: 'Vandalay Industries (ABCD)'
+        },
+        {
+          value: 'MNOP',
+          label: 'Gigantech (MNOP)'
+        },
+        {
+          value: 'IJKL',
+          label: 'The Human Fund (IJKL)'
+        },
+
       ]
 
       fixture.detectChanges();
 
       expect(component.sortedMasterDataScacs).toEqual([
         {
-          value: 'ABCD',
-          label: 'ABCD (Vandalay Industries)'
+          value: 'MNOP',
+          label: 'Gigantech (MNOP)'
         },
         {
           value: 'EFGH',
-          label: 'EFGH (Kramerica)'
+          label: 'Kramerica (EFGH)'
         },
         {
           value: 'IJKL',
-          label: 'IJKL (The Human Fund)'
+          label: 'The Human Fund (IJKL)'
         },
         {
-          value: 'MNOP',
-          label: 'MNOP (Gigantech)'
+          value: 'ABCD',
+          label: 'Vandalay Industries (ABCD)'
         }
       ])
 

@@ -138,7 +138,7 @@ describe('Invoice Model Tests', () => {
 
       const result: SelectOption<string> = InvoiceUtils.toScacOption(carrier);
 
-      expect(result.label).toEqual(`ABCD (Vandalay Industries)`)
+      expect(result.label).toEqual(`Vandalay Industries (ABCD)`)
     });
   });
 });

@@ -263,7 +263,7 @@ export class InvoiceUtils {
 
   static toScacOption(carrier: any): SelectOption<string> {
     return {
-      label: `${carrier.scac} (${carrier.name})`,
+      label: `${carrier.name} (${carrier.scac})`,
       value: carrier.scac
     };
   }
