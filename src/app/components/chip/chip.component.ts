@@ -36,6 +36,7 @@ export class ChipComponent implements OnChanges {
     const statusForm = this.filtersModel.form.get('invoiceStatuses');
     const originCity = this.filtersModel.form.get('originCity');
     const destinationCity = this.filtersModel.form.get('destinationCity');
+    const scac = this.filtersModel.form.get('scac');
 
     if (statusForm?.value.length > 0) {
       this.chips.push(
@@ -52,6 +53,12 @@ export class ChipComponent implements OnChanges {
     if(destinationCity?.value?.length > 0) {
       this.chips.push(
         this.formatChip('Dest:&nbsp', destinationCity as FormGroup, 'destinationCity')
+      );
+    }
+
+    if(scac?.value?.length > 0) {
+      this.chips.push(
+        this.formatChip('SCAC:&nbsp', scac as FormGroup, 'scac')
       );
     }
   }

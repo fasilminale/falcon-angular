@@ -132,6 +132,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
     this.loadInvoiceAmountDetail$.next({
       costLineItems: invoice.costLineItems,
+      pendingChargeLineItems: invoice.pendingChargeLineItems,
       disputeLineItems: invoice.disputeLineItems,
       amountOfInvoice: invoice.amountOfInvoice,
       mileage: invoice.distance,
@@ -212,6 +213,7 @@ export class InvoiceEditPageComponent implements OnInit {
             this.toastService.openSuccessToast(`Success, dispute was closed.`);
             this.loadInvoiceAmountDetail$.next({
               costLineItems: invoice.costLineItems,
+              pendingChargeLineItems: invoice.pendingChargeLineItems,
               disputeLineItems: invoice.disputeLineItems,
               amountOfInvoice: invoice.amountOfInvoice,
               mileage: invoice.distance,

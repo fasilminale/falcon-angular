@@ -36,6 +36,7 @@ export interface Leg {
 }
 
 export interface CarrierRate {
+  accessorialList: Array<AccessorialCode>;
   lineItems: Array<LineItem>;
 }
 
@@ -51,6 +52,13 @@ export interface LineItem {
   quantity: number;
   message: string;
   accessorial: boolean;
+}
+
+export interface AccessorialCode {
+  accessorialCode: string;
+  calculationResult: string;
+  name: string;
+  rate: number;
 }
 
 export interface CalcDetail {

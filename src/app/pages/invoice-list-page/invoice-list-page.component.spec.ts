@@ -121,6 +121,13 @@ describe('InvoiceListPageComponent', () => {
       originCities: ['New York'],
       destinationCities: ['Chicago']
     }]);
+    http.expectOne(`${environment.baseServiceUrl}/v1/carriers`).flush([{
+      scac: 'ABCD',
+      name: 'Vandalay Industries'
+    },{
+      scac: 'EFGH',
+      name: 'Kramerica'
+    }]);
   });
 
   afterEach(() => {

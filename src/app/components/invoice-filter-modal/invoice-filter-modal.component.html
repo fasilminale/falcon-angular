@@ -38,7 +38,19 @@
     </div>
 
     <hr>
-    
+
+    <div class="row mt-4 px-3">
+      <h6 class="px-0">Carrier</h6>
+      <ng-select id="masterDataScacs"
+        [items]="sortedMasterDataScacs"
+        bindLabel="label"
+        bindValue="value"
+        placeholder="Select One..."
+        formControlName="scac"
+        >
+      </ng-select>
+    </div>
+
     <div class="row mt-4 px-3">
       <h6 class="px-0">Origin</h6>
       <label class="elm-field-label1" for="originCity">
@@ -55,7 +67,7 @@
      >
 </ng-select>
     </div>
-    
+
     <div class="row mt-2 px-3">
       <h6 class="px-0">Destination</h6>
       <label class="elm-field-label1" for="destinationCity">
@@ -69,7 +81,7 @@
       placeholder="Select One..."
       [compareWith]="compareCitiesWith"
      ></ng-select>
-    
+
     </div>
 
   </form>

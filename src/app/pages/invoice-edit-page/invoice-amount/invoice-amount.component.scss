@@ -38,7 +38,11 @@ app-fal-radio-input ::ng-deep .background-disabled,
     font-weight: 700;
   }
 
-  .action-label{
+  .pending-action-label{
+    padding-left: 8em;
+  }
+
+  .dispute-action-label{
     padding-left: 5em;
   }
 
@@ -74,6 +78,22 @@ app-fal-radio-input ::ng-deep .background-disabled,
     background-color:#f6f6f6;
  }
 
+.pending-line-item-header {
+  background-color: #f6f6f6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.pending-line-item-header > div{
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pending-total-column-header {
+  flex-basis: 19em;
+  text-align: right;
+}
+
 .dispute-item-header {
   background-color: #f6f6f6;
   padding-top: 10px;
@@ -90,6 +110,13 @@ app-fal-radio-input ::ng-deep .background-disabled,
   display:inline-flex;
   vertical-align:top;
 }
+
+.edit-icon {
+  display:inline-flex;
+  vertical-align:top;
+  padding: 6px;
+}
+
 .download-text {
   margin-left: 8px;
 }
@@ -123,6 +150,10 @@ app-fal-radio-input ::ng-deep .background-disabled,
   padding-top: 40px;
 }
 
+.re-rate-button {
+  padding-top: 46px;
+}
+
 .expand-button {
   padding: 8px;
   flex-basis: 2em;
@@ -134,36 +165,4 @@ app-fal-radio-input ::ng-deep .background-disabled,
 
 .total-column {
   flex-basis: 16em;
-}
-
-.accessorial-details-section {
-  margin-top: 24px;
-}
-
-.accessorial-details {
-  padding: 24px 24px 40px 24px;
-}
-
-.accessorial-details-row{
-  margin-bottom: 1rem;
-}
-
-.accessorial-details-row-end{
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-}
-
-.accessorial-detail {
-  display:flex;
-  flex-direction: column;
-}
-
-.label-text {
-  font-size: 14px;
-  color: #7F7F7F
-}
-
-.value-text {
-  font-size: 14px;
-  color: #333333
 }

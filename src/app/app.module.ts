@@ -82,6 +82,7 @@ import {RateService} from './services/rate-service';
 import {MatIconModule} from '@angular/material/icon';
 import {EllipsisPipe} from './utils/ellipsis-pipe';
 import {FalNewChargeModalComponent} from './components/fal-new-charge-modal/fal-new-charge-modal.component';
+import {FalAccessorialDetailComponent} from './components/fal-accessorial-detail/fal-accessorial-detail.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -178,7 +179,8 @@ const oktaConfig = {
     FalCommentModalComponent,
     FalNewChargeModalComponent,
     NewUserLogoutPageComponent,
-    EllipsisPipe
+    EllipsisPipe,
+    FalAccessorialDetailComponent
   ],
   imports: [
     BrowserModule,
