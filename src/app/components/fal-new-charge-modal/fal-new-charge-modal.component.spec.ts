@@ -4,7 +4,7 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {SubjectValue} from '@elm/elm-styleguide-ui';
 
-fdescribe('FalCommentModalComponent', () => {
+describe('FalCommentModalComponent', () => {
 
   let component: FalNewChargeModalComponent;
   let fixture: ComponentFixture<FalNewChargeModalComponent>;
