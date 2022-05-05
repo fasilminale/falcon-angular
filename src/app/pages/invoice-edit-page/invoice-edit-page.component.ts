@@ -102,6 +102,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoiceStatus = invoice.status.label;
     this.loadTripInformation$.next({
       tripId: invoice.tripId,
+      vendorNumber: invoice.vendorNumber ?? undefined,
       invoiceDate: new Date(invoice.invoiceDate),
       pickUpDate: invoice.pickupDateTime ? new Date(invoice.pickupDateTime) : undefined,
       deliveryDate: invoice.deliveryDateTime ? new Date(invoice.deliveryDateTime) : undefined,

@@ -54,6 +54,7 @@ export class TripInformationComponent implements OnInit {
   public filteredServiceLevels: Array<SelectOption<ServiceLevel>> = [];
 
   public tripIdControl = new FormControl();
+  public vendorNumberControl = new FormControl({}, [required]);
   public freightOrders = new FormControl();
   public invoiceDateControl = new FormControl({}, [required]);
   public pickUpDateControl = new FormControl({}, [required, validateDate]);
@@ -118,6 +119,7 @@ export class TripInformationComponent implements OnInit {
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
     givenFormGroup.setControl('tripId', this.tripIdControl);
+    givenFormGroup.setControl('vendorNumber', this.vendorNumberControl);
     givenFormGroup.setControl('invoiceDate', this.invoiceDateControl);
     givenFormGroup.setControl('pickUpDate', this.pickUpDateControl);
     givenFormGroup.setControl('deliveryDate', this.deliveryDateControl);
@@ -175,6 +177,9 @@ export class TripInformationComponent implements OnInit {
       this.tripInformation = tripInfo;
       this.formGroup.enable();
       this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
+      console.log(`ASAASASA ${tripInfo.vendorNumber}`);
+      this.vendorNumberControl.setValue(tripInfo.vendorNumber);
+      this.vendorNumberControl.markAsDirty();
       this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
       this.pickUpDateControl.setValue(tripInfo.pickUpDate ?? undefined);
       this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
