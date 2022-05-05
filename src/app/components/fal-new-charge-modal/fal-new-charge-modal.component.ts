@@ -52,32 +52,32 @@ export class FalNewChargeModalComponent {
   }
 
   confirm(): void {
-    if (!this.chargeControl.value) {
-      return;
+    let result: NewChargeModalOutput;
+    if (this.chargeControl.value) {
+      const selected: CalcDetail = {
+        accessorialCode: this.chargeControl.value.accessorialCode,
+        attachmentRequired: this.chargeControl.value.attachmentRequired,
+        autoApprove: this.chargeControl.value.autoApprove,
+        carrierEligible: this.chargeControl.value.carrierEligible,
+        fuel: this.chargeControl.value.fuel,
+        name: this.chargeControl.value.name,
+        variables: []
+      };
+      this.getVariableControlNames()
+        .forEach(vcName => {
+          const control = this.variableControls.get(vcName);
+          if (control) {
+            selected.variables?.push({
+              variable: vcName,
+              quantity: control.value
+            });
+          }
+        });
+      result = {
+        selected,
+        comment: this.commentControl.value
+      };
     }
-    const selected: CalcDetail = {
-      accessorialCode: this.chargeControl.value.accessorialCode,
-      attachmentRequired: this.chargeControl.value.attachmentRequired,
-      autoApprove: this.chargeControl.value.autoApprove,
-      carrierEligible: this.chargeControl.value.carrierEligible,
-      fuel: this.chargeControl.value.fuel,
-      name: this.chargeControl.value.name,
-      variables: []
-    };
-    this.getVariableControlNames()
-      .forEach(vcName => {
-        const control = this.variableControls.get(vcName);
-        if (control) {
-          selected.variables?.push({
-            variable: vcName,
-            quantity: control.value
-          });
-        }
-      });
-    const result: NewChargeModalOutput = {
-      selected,
-      comment: this.commentControl.value
-    };
     this.dialogRef.close(result);
   }
 

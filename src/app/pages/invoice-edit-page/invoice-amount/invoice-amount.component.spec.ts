@@ -1,11 +1,10 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem} from 'src/app/models/line-item/line-item-model';
 import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-
 import {InvoiceAmountComponent} from './invoice-amount.component';
 import {RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
 
@@ -17,8 +16,7 @@ describe('InvoiceAmountComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
       declarations: [InvoiceAmountComponent]
-    })
-      .compileComponents();
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -139,41 +137,18 @@ describe('InvoiceAmountComponent', () => {
     beforeEach(() => {
       chargeLineItemOptions$ = new Subject();
       component.chargeLineItemOptions$ = chargeLineItemOptions$.asObservable();
-      component.costBreakdownOptions.push({
+      component.costBreakdownOptions$.value.push({
         label: 'Fuel Surcharge - Miles',
         value: {
           accessorialCode: '405',
           name: 'Fuel Surcharge - Miles'
         }
       });
+      // force an update because arrays don't trigger the value change event
+      component.costBreakdownOptions$.value = component.costBreakdownOptions$.value;
     });
 
-    it('should populate cost breakdown charge options', done => {
-
-      chargeLineItemOptions$.subscribe(() => {
-        expect(component.filteredCostBreakdownOptions.length).toEqual(2);
-        done();
-      });
-      chargeLineItemOptions$.next(accessorialDetailResponse);
-    });
-
-    it('should not display charge options already in list', done => {
-      component._formGroup = new FormGroup({
-        amountOfInvoice: new FormControl(10),
-        costBreakdownItems: new FormArray([new FormGroup({
-          charge: new FormControl('Fuel Surcharge - Miles'),
-        })
-        ])
-      });
-
-      chargeLineItemOptions$.subscribe(() => {
-        expect(component.filteredCostBreakdownOptions.length).toEqual(1);
-        done();
-      });
-      chargeLineItemOptions$.next(accessorialDetailResponse);
-    });
   });
-
 
   describe('when invoice amount detail is loaded', () => {
     let loadInvoiceAmountDetail$: Subject<InvoiceAmountDetail>;
@@ -196,7 +171,6 @@ describe('InvoiceAmountComponent', () => {
     it('should populate form with invoice amount details', done => {
       loadInvoiceAmountDetail$.subscribe(() => {
         const formGroupValue = component._formGroup.value;
-
         expect(formGroupValue.currency).toBe('USD');
         expect(formGroupValue.amountOfInvoice).toBe('1000');
         expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual(['override']);
@@ -263,7 +237,6 @@ describe('InvoiceAmountComponent', () => {
     it('should not populate form when no invoice amount details', done => {
       loadInvoiceAmountDetail$.subscribe(() => {
         const formGroupValue = component._formGroup.value;
-
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe('');
         expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual([]);
@@ -312,7 +285,6 @@ describe('InvoiceAmountComponent', () => {
     it('should not populate form when no invoice amount details', done => {
       loadInvoiceAmountDetail$.subscribe(() => {
         const formGroupValue = component._formGroup.value;
-
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe('');
         expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual([]);
@@ -373,7 +345,7 @@ describe('InvoiceAmountComponent', () => {
     describe('when an empty line item is added', () => {
       beforeEach(() => {
         component.addNewEmptyLineItem();
-        component.costBreakdownOptions.push({
+        component.costBreakdownOptions$.value.push({
           label: 'TST - TestChargeCode',
           value: {
             accessorialCode: 'TST',
@@ -385,9 +357,10 @@ describe('InvoiceAmountComponent', () => {
         expect(component.costBreakdownItems.length).toEqual(1);
       });
 
-      it('should populate cost breakdown line item', done => {
+      // FIXME in FAL-547 - this feature is temporarily unsupported
+      xit('should populate cost breakdown line item', done => {
         const control = component.costBreakdownItems.controls[0];
-        control.patchValue({charge: component.costBreakdownOptions[0].value});
+        control.patchValue({charge: component.costBreakdownOptions$.value[0].value});
         component.pendingAccessorialCode = 'TST';
         rateEngineCallResult$.next({
           mode: 'LTL',
@@ -422,7 +395,9 @@ describe('InvoiceAmountComponent', () => {
         done();
       });
 
-      it('should populate cost breakdown line item', done => {
+
+      // FIXME in FAL-547 - this feature is temporarily unsupported
+      xit('should populate cost breakdown line item', done => {
         component.pendingAccessorialCode = 'OTH';
         rateEngineCallResult$.next({
           mode: 'LTL',
@@ -459,14 +434,12 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should disable overrideStandardPaymentTerms checkbox when enableDisableOverrideStandardPaymentTerms invoked with true', () => {
-
       component.overridePaymentTermsOptions[0].disabled = false;
       component.enableDisableOverrideStandardPaymentTerms(true);
       expect(component.overridePaymentTermsOptions[0].disabled).toBeTrue();
     });
 
     it('should disable currency radios when enableDisableCurrency invoked with true', () => {
-
       component._formGroup.controls.currency.enable();
       expect(component._formGroup.controls.currency.disabled).toBeFalse();
       component.enableDisableCurrency(true);
@@ -474,7 +447,6 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should enable currency radios when enableDisableCurrency invoked with false', () => {
-
       component._formGroup.controls.currency.disable();
       expect(component._formGroup.controls.currency.disabled).toBeTrue();
       component.enableDisableCurrency(false);

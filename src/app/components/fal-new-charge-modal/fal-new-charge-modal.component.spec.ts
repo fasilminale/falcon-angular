@@ -1,38 +1,32 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {FalNewChargeModalComponent} from './fal-new-charge-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {SubjectValue} from '@elm/elm-styleguide-ui';
 
-describe('FalCommentModalComponent', () => {
-  const MOCK_DIALOG = {
-    close: () => {
-    }
-  };
+fdescribe('FalCommentModalComponent', () => {
 
   let component: FalNewChargeModalComponent;
   let fixture: ComponentFixture<FalNewChargeModalComponent>;
-  let dialogRef: MatDialogRef<any>;
+  let afterClosed$: SubjectValue<any>;
+  let MOCK_DIALOG: any;
 
   beforeEach(async () => {
+    afterClosed$ = new SubjectValue<any>(false);
+    MOCK_DIALOG = {
+      close: () => {
+      },
+      afterClosed: () => afterClosed$.asObservable(),
+    };
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
       declarations: [FalNewChargeModalComponent],
       providers: [
-        {
-          provide: MatDialogRef, useValue: MOCK_DIALOG,
-        },
-        {
-          provide: MAT_DIALOG_DATA, useValue: {}
-        }
+        {provide: MatDialogRef, useValue: MOCK_DIALOG},
+        {provide: MAT_DIALOG_DATA, useValue: {}}
       ]
-    })
-      .compileComponents();
-  });
-
-  beforeEach(() => {
+    }).compileComponents();
     fixture = TestBed.createComponent(FalNewChargeModalComponent);
-    dialogRef = TestBed.inject(MatDialogRef);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -42,8 +36,8 @@ describe('FalCommentModalComponent', () => {
   });
 
   it('should confirm', () => {
-    spyOn(dialogRef, 'close');
+    spyOn(MOCK_DIALOG, 'close');
     component.confirm();
-    expect(dialogRef.close).toHaveBeenCalled();
+    expect(MOCK_DIALOG.close).toHaveBeenCalled();
   });
 });
