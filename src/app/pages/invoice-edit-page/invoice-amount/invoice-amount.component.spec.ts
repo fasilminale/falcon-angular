@@ -1,27 +1,63 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
-import {Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem} from 'src/app/models/line-item/line-item-model';
 import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {InvoiceAmountComponent} from './invoice-amount.component';
-import {RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
+import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
+import {SelectOption} from '../../../models/select-option-model/select-option-model';
+import {UtilService} from '../../../services/util-service';
+import {NewChargeModalInput, NewChargeModalOutput} from '../../../components/fal-new-charge-modal/fal-new-charge-modal.component';
 
 describe('InvoiceAmountComponent', () => {
+
+  const TEST_VARIABLE_NAME = 'Test Variable';
+  const TEST_CALC_DETAIL: CalcDetail = {
+    accessorialCode: 'TEST',
+    name: 'Test Calc Detail',
+    variables: [
+      {
+        variable: TEST_VARIABLE_NAME,
+        quantity: 0
+      }
+    ]
+  };
+  const TEST_CALC_DETAIL_OPTION = CostBreakDownUtils.toOption(TEST_CALC_DETAIL);
+
+  const OTHER_CALC_DETAIL = {
+    name: 'OTHER',
+    accessorialCode: 'OTHER',
+    variables: [
+      {
+        variable: 'Amount',
+        quantity: 0.00
+      }
+    ]
+  };
+  const OTHER_CALC_DETAIL_OPTION = CostBreakDownUtils.toOption(OTHER_CALC_DETAIL);
+
   let component: InvoiceAmountComponent;
   let fixture: ComponentFixture<InvoiceAmountComponent>;
+  let utilService: UtilService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
-      declarations: [InvoiceAmountComponent]
+      providers: [{
+        provide: UtilService, useValue: {
+          openNewChargeModal: (data: NewChargeModalInput): Observable<NewChargeModalOutput> => {
+            throw new Error('Spy On this function instead!');
+          }
+        }
+      }],
+      declarations: [InvoiceAmountComponent],
     }).compileComponents();
-  });
-
-  beforeEach(() => {
+    utilService = TestBed.inject(UtilService);
     fixture = TestBed.createComponent(InvoiceAmountComponent);
     component = fixture.componentInstance;
+    component.formGroup = new FormGroup({});
     fixture.detectChanges();
   });
 
@@ -30,13 +66,11 @@ describe('InvoiceAmountComponent', () => {
   });
 
   it('should set form control', () => {
-    component.formGroup = new FormGroup({});
     expect(component._formGroup.get('amountOfInvoice')).toBeDefined();
     expect(component._formGroup.get('currency')).toBeDefined();
     expect(component._formGroup.get('mileage')).toBeDefined();
     expect(component._formGroup.get('paymentTerms')).toBeDefined();
     expect(component._formGroup.get('overridePaymentTerms')).toBeDefined();
-
   });
 
   describe('Cost Breakdown / Rate Totals', () => {
@@ -51,23 +85,19 @@ describe('InvoiceAmountComponent', () => {
     });
     describe('> After Adding Line Items', () => {
       beforeEach(() => {
-        component._formGroup = new FormGroup({
-          amountOfInvoice: new FormControl(30),
-          costBreakdownItems: new FormArray([
-            new FormGroup({
-              totalAmount: new FormControl(10),
-              rateSource: new FormControl('Contract')
-            }),
-            new FormGroup({
-              totalAmount: new FormControl(20),
-              rateSource: new FormControl('Manual')
-            }),
-            new FormGroup({
-              totalAmount: new FormControl(),
-              rateSource: new FormControl('Manual')
-            })
-          ])
-        });
+        component.amountOfInvoiceControl.setValue(30);
+        component.costBreakdownItems.push(new FormGroup({
+          totalAmount: new FormControl(10),
+          rateSource: new FormControl('Contract')
+        }));
+        component.costBreakdownItems.push(new FormGroup({
+          totalAmount: new FormControl(20),
+          rateSource: new FormControl('Manual')
+        }));
+        component.costBreakdownItems.push(new FormGroup({
+          totalAmount: new FormControl(),
+          rateSource: new FormControl('Manual')
+        }));
       });
       it('should get costBreakdownTotal as total', () => {
         expect(component.costBreakdownTotal).toBe(30);
@@ -459,16 +489,13 @@ describe('InvoiceAmountComponent', () => {
     let lineItem: FormGroup;
     beforeEach(() => {
       spyOn(component.rateEngineCall, 'emit');
-      component._formGroup = new FormGroup({
-        amountOfInvoice: new FormControl(10),
-        costBreakdownItems: new FormArray([new FormGroup({
-          charge: new FormControl('Fuel Surcharge - Miles'),
-          totalAmount: new FormControl(10)
-        })
-        ])
-      });
+      component.amountOfInvoiceControl.setValue(10);
+      component.costBreakdownItems.push(new FormGroup({
+        charge: new FormControl('Fuel Surcharge - Miles'),
+        totalAmount: new FormControl(10)
+      }));
       lineItem = component.createEmptyLineItemGroup();
-      component.costBreakdownItemsControls.push(lineItem);
+      component.costBreakdownItems.push(lineItem);
     });
 
     it('should call rate engine', () => {
@@ -478,21 +505,20 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should not call rate engine', () => {
-      const selectedCharge = {accessorialCode: 'OTHER', name: 'OTHER'};
-      component.onSelectRate(selectedCharge, lineItem);
+      component.onSelectRate(OTHER_CALC_DETAIL, lineItem);
       expect(component.rateEngineCall.emit).not.toHaveBeenCalled();
     });
 
-    it('should recalculate total cost', () => {
-      const selectedCharge = {accessorialCode: 'OTHER', name: 'OTHER'};
-      const amountOfInvoiceControl = component._formGroup.get('amountOfInvoice');
-      const totalCost = amountOfInvoiceControl?.value;
-      expect(amountOfInvoiceControl).not.toBeFalsy();
-      component.onSelectRate(selectedCharge, lineItem);
+    it('should recalculate total cost', done => {
+      const totalCost = component.amountOfInvoiceControl.value;
+      component.onSelectRate(OTHER_CALC_DETAIL, lineItem);
       const lineItemTotalAmountControl = lineItem.get('totalAmount');
       expect(lineItemTotalAmountControl).not.toBeFalsy();
+      lineItem.valueChanges.subscribe(() => {
+        expect(component.amountOfInvoiceControl.value).toEqual(totalCost + 40);
+        done();
+      });
       lineItemTotalAmountControl?.setValue(40.00);
-      expect(amountOfInvoiceControl?.value).toEqual(totalCost + 40);
     });
 
   });
@@ -516,4 +542,93 @@ describe('InvoiceAmountComponent', () => {
     });
   });
 
+  it('should match cost breakdown to calc detail control', () => {
+    const control = component.createEmptyLineItemGroup();
+    control.get('charge')?.setValue(TEST_CALC_DETAIL);
+    const result = component.costBreakdownOptionMatchesControl(TEST_CALC_DETAIL_OPTION, control);
+    expect(result).toBeTrue();
+  });
+
+  it('should match cost breakdown to label control', () => {
+    const control = component.createEmptyLineItemGroup();
+    control.get('charge')?.setValue(TEST_CALC_DETAIL_OPTION.label);
+    const result = component.costBreakdownOptionMatchesControl(TEST_CALC_DETAIL_OPTION, control);
+    expect(result).toBeTrue();
+  });
+
+  it('should NOT match cost breakdown to calc detail or label control', () => {
+    const control = component.createEmptyLineItemGroup();
+    control.get('charge')?.setValue(TEST_CALC_DETAIL);
+    const result = component.costBreakdownOptionMatchesControl(OTHER_CALC_DETAIL_OPTION, control);
+    expect(result).toBeFalse();
+  });
+
+  it('should filter options that are already present in cost breakdown', () => {
+    const input: Array<SelectOption<CalcDetail>> = [TEST_CALC_DETAIL_OPTION];
+    const control = component.createEmptyLineItemGroup();
+    control.get('charge')?.setValue(TEST_CALC_DETAIL);
+    component.costBreakdownItems.push(control);
+    const output = component.filterCostBreakdownOptions(input);
+    expect(output).toEqual([OTHER_CALC_DETAIL_OPTION]);
+  });
+
+  it('should NOT filter options that are NOT already present in cost breakdown', () => {
+    const input: Array<SelectOption<CalcDetail>> = [TEST_CALC_DETAIL_OPTION];
+    const output = component.filterCostBreakdownOptions(input);
+    expect(output).toEqual([
+      TEST_CALC_DETAIL_OPTION,
+      OTHER_CALC_DETAIL_OPTION
+    ]);
+  });
+
+  it('should call onAddChargeButtonClick and cancel adding charge', async () => {
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openNewChargeModal').and.returnValue(of(undefined));
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    const originalCostLineItemCount = component.costBreakdownItems.length;
+    const promise = component.onAddChargeButtonClick();
+    // simulate returning empty accessorial details
+    component.costBreakdownOptions$.value = [];
+    await promise;
+    expect(component.getAccessorialDetails.emit).toHaveBeenCalledTimes(1);
+    expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
+    expect(component.rateEngineCall.emit).not.toHaveBeenCalled();
+    expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount);
+  });
+
+  it('should call onAddChargeButtonClick and select other charge', async () => {
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      selected: OTHER_CALC_DETAIL,
+      comment: 'some comment'
+    }));
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    const originalCostLineItemCount = component.costBreakdownItems.length;
+    const promise = component.onAddChargeButtonClick();
+    // simulate returning empty accessorial details
+    component.costBreakdownOptions$.value = [];
+    await promise;
+    expect(component.getAccessorialDetails.emit).toHaveBeenCalledTimes(1);
+    expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
+    expect(component.rateEngineCall.emit).not.toHaveBeenCalled();
+    expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
+  });
+
+  it('should call onAddChargeButtonClick and select accessorial charge', async () => {
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      selected: TEST_CALC_DETAIL,
+      comment: 'some comment'
+    }));
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    const originalCostLineItemCount = component.costBreakdownItems.length;
+    const promise = component.onAddChargeButtonClick();
+    // simulate returning empty accessorial details
+    component.costBreakdownOptions$.value = [];
+    await promise;
+    expect(component.getAccessorialDetails.emit).toHaveBeenCalledTimes(1);
+    expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
+    expect(component.rateEngineCall.emit).toHaveBeenCalledTimes(1);
+    expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
+  });
 });

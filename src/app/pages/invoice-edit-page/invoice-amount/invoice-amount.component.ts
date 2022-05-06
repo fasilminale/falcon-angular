@@ -239,9 +239,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   get costBreakdownItemsControls(): AbstractControl[] {
-    return this._formGroup.get('costBreakdownItems')
-      ? (this._formGroup.get('costBreakdownItems') as FormArray).controls
-      : new FormArray([]).controls;
+    return this.costBreakdownItems.controls;
   }
 
   get pendingChargeLineItemControls(): AbstractControl[] {
@@ -300,7 +298,6 @@ export class InvoiceAmountComponent implements OnInit {
   get hasMileage(): boolean {
     return !!this._formGroup?.get('mileage')?.value;
   }
-
 
   async onAddChargeButtonClick(): Promise<void> {
     if (this.costBreakdownOptions$.value.length === 0) {
@@ -372,7 +369,7 @@ export class InvoiceAmountComponent implements OnInit {
       lineItemFormGroup.get('type')?.setValue('N/A');
       lineItemFormGroup.get('quantity')?.setValue('N/A');
       lineItemFormGroup.get('totalAmount')?.valueChanges
-        .subscribe(() => this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal));
+        .subscribe(() => this.amountOfInvoiceControl.setValue(this.costBreakdownTotal));
     } else {
       lineItemFormGroup.get('rateSource')?.setValue('Contract');
       this.pendingAccessorialCode = value.accessorialCode;
@@ -385,26 +382,26 @@ export class InvoiceAmountComponent implements OnInit {
    * Appends option 'OTHER' since it should always be available, but is not returned from backend.
    */
   filterCostBreakdownOptions(originalList: Array<SelectOption<CalcDetail>>): Array<SelectOption<CalcDetail>> {
-    const filteredList = originalList.filter(opt => {
-      for (const control of this.costBreakdownItemsControls) {
-        if (control.value?.charge?.accessorialCode === opt.value?.accessorialCode
-          || control.value?.charge === opt.label) {
-          return false;
-        }
-      }
-      return true;
-    }).filter(Boolean);
+    const filteredList = originalList.filter(
+      opt => this.costBreakdownItemsControls.every(
+        control => !this.costBreakdownOptionMatchesControl(opt, control)
+      )
+    );
     filteredList.push(CostBreakDownUtils.toOption({
       name: 'OTHER',
       accessorialCode: 'OTHER',
-      variables: [
-        {
-          variable: 'Amount',
-          quantity: 0.00
-        }
-      ]
+      variables: [{
+        variable: 'Amount',
+        quantity: 0.00
+      }]
     }));
     return filteredList;
+  }
+
+  costBreakdownOptionMatchesControl(opt: SelectOption<CalcDetail>, control: AbstractControl): boolean {
+    const chargeValue = control.get('charge')?.value;
+    return chargeValue.accessorialCode === opt.value.accessorialCode
+      || chargeValue === opt.label;
   }
 
   resolveDispute(action: string): void {
