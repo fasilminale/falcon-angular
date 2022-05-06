@@ -22,7 +22,13 @@
                class="fal-label">
           {{vcName}}
         </label>
-        <elm-text-input [id]="vcName + 'Input'"
+        <app-fal-currency-input *ngIf="vcName === 'Amount'"
+                                [id]="vcName + 'Input'"
+                                [isError]="variableControls.get(vcName)?.invalid ?? false"
+                                [formControlName]="vcName">
+        </app-fal-currency-input>
+        <elm-text-input *ngIf="vcName !== 'Amount'"
+                        [id]="vcName + 'Input'"
                         [formControlName]="vcName"
                         [errorSpacing]="true">
         </elm-text-input>
@@ -39,9 +45,9 @@
         Comment
       </label>
       <elm-textarea-input id="commentInput"
-                      formControlName="comment"
-                      [errorSpacing]="true"
-      type>
+                          formControlName="comment"
+                          [errorSpacing]="true"
+                          type>
       </elm-textarea-input>
       <elm-input-subtext *ngIf="commentControl.invalid ?? false"
                          class="input-error"
