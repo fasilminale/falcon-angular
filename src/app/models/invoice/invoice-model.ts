@@ -267,5 +267,12 @@ export class InvoiceUtils {
       value: carrier.scac
     };
   }
+
+  static toShippingPointCode(carrierShippingPoints: any): SelectOption<string> {
+    return {
+      label: `${carrierShippingPoints.shippingPointCode}`,
+      value: carrierShippingPoints.shippingPointCode
+    };
+  }
 }
 
