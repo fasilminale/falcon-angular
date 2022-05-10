@@ -36,6 +36,7 @@ export class ChipComponent implements OnChanges {
     const statusForm = this.filtersModel.form.get('invoiceStatuses');
     const originCity = this.filtersModel.form.get('originCity');
     const destinationCity = this.filtersModel.form.get('destinationCity');
+    const shippingPointCode = this.filtersModel.form.get('shippingPoints');
     const scac = this.filtersModel.form.get('scac');
 
     if (statusForm?.value.length > 0) {
@@ -59,6 +60,12 @@ export class ChipComponent implements OnChanges {
     if(scac?.value?.length > 0) {
       this.chips.push(
         this.formatChip('SCAC:&nbsp', scac as FormGroup, 'scac')
+      );
+    }
+    
+    if(shippingPointCode?.value?.length > 0) {
+      this.chips.push(
+        this.formatChip('Shipping:&nbsp', shippingPointCode as FormGroup, 'shippingPointCode')
       );
     }
   }

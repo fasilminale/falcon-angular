@@ -117,6 +117,7 @@ describe('InvoiceListPageComponent', () => {
     http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(userInfo);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush([]);
+    http.expectOne(`${environment.baseServiceUrl}/v1/carrierShippingPoints`).flush([]);
     http.expectOne(`${environment.baseServiceUrl}/v1/originDestinationCities`).flush([{
       originCities: ['New York'],
       destinationCities: ['Chicago']

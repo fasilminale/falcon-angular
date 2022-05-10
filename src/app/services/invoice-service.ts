@@ -63,6 +63,10 @@ export class InvoiceService {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/carriers`);
   }
 
+  public getMasterDataShippingPoints(): Observable<Array<any>> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/carrierShippingPoints`);
+  }
+
   public getInvoice(invoiceNumber: string): Observable<InvoiceDataModel> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}`);
   }
