@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit } from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {FormGroup} from '@angular/forms';
@@ -20,6 +20,7 @@ import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models
 import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from "../../models/invoice/edit-auto-invoice.model";
 import {switchMap} from "rxjs/operators";
+import {TripInformationComponent} from "./trip-information/trip-information.component";
 
 
 @Component({
@@ -56,6 +57,7 @@ export class InvoiceEditPageComponent implements OnInit {
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
+  @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
 
   constructor(private util: UtilService,
               private route: ActivatedRoute,
@@ -243,7 +245,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickSaveButton(): void {
-    if (this.invoiceFormGroup.valid) {
+    if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
       this.subscriptions.manage(
         this.updateInvoice().subscribe(
           () => {
@@ -260,18 +262,20 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickSubmitForApprovalButton(): void {
-    this.subscriptions.manage(
-      this.updateInvoice().pipe(
-        switchMap((model: InvoiceDataModel) => {
-          return this.invoiceService.submitForApproval(model.falconInvoiceNumber)
-        })
-      ).subscribe(
-        (value) => {
-          this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated and submitted for approval.`);
-        },
-        (error) => console.error(error)
+    if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
+      this.subscriptions.manage(
+        this.updateInvoice().pipe(
+          switchMap((model: InvoiceDataModel) => {
+            return this.invoiceService.submitForApproval(model.falconInvoiceNumber)
+          })
+        ).subscribe(
+          (value) => {
+            this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated and submitted for approval.`);
+          },
+          (error) => console.error(error)
+        )
       )
-    )
+    }
   }
 
   performPostUpdateActions(successMessage: string): void {

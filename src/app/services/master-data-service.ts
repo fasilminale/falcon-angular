@@ -6,6 +6,7 @@ import {Carrier, CarrierReference} from '../models/master-data-models/carrier-mo
 import {CarrierModeCode} from '../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel} from '../models/master-data-models/service-level-model';
 import {CarrierSCAC} from '../models/master-data-models/carrier-scac';
+import {CarrierDetailModel} from "../models/master-data-models/carrier-detail-model";
 
 
 @Injectable()
@@ -36,6 +37,10 @@ export class MasterDataService {
 
   public getServiceLevels(): Observable<Array<ServiceLevel>> {
     return this.getAllOfMasterDataType('serviceLevels');
+  }
+
+  public getCarrierDetails(): Observable<Array<CarrierDetailModel>> {
+    return this.getAllOfMasterDataType('carrierDetails');
   }
 
   private getAllOfMasterDataType(masterDataType: string): Observable<Array<any>> {

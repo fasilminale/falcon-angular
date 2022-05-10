@@ -139,6 +139,11 @@
                          [isError]="true">
         Carrier is missing
       </elm-input-subtext>
+      <elm-input-subtext *ngIf="!carrierDetailFound"
+                         class="input-error"
+                         [isError]="true">
+        Carrier Detail is missing
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="carrierModeInput"
