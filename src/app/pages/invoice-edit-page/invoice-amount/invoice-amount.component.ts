@@ -6,10 +6,11 @@ import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-
 import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
 import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
 import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
-import {map} from 'rxjs/operators';
+import {first, map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
-import {ElmFormHelper} from '@elm/elm-styleguide-ui';
+import {ElmFormHelper, SubjectValue} from '@elm/elm-styleguide-ui';
+import {UtilService} from '../../../services/util-service';
 
 @Component({
   selector: 'app-invoice-amount',
@@ -49,7 +50,7 @@ export class InvoiceAmountComponent implements OnInit {
     paymentTerms: new FormControl('')
   });
 
-  public costBreakdownOptions: Array<SelectOption<CalcDetail>> = [];
+  public costBreakdownOptions$: SubjectValue<Array<SelectOption<CalcDetail>>> = new SubjectValue<Array<SelectOption<CalcDetail>>>([]);
   public filteredCostBreakdownOptions: Array<SelectOption<CalcDetail>> = [];
 
   readOnlyForm = true;
@@ -62,7 +63,8 @@ export class InvoiceAmountComponent implements OnInit {
   @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
   @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
+  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
+              private utilService: UtilService) {
   }
 
   ngOnInit(): void {
@@ -102,8 +104,7 @@ export class InvoiceAmountComponent implements OnInit {
       })
     ).subscribe(
       opts => {
-        this.costBreakdownOptions = opts;
-        this.updateCostBreakdownOptions();
+        this.costBreakdownOptions$.value = opts;
       }
     ));
   }
@@ -165,13 +166,12 @@ export class InvoiceAmountComponent implements OnInit {
         }
         // Update invoice total and available accessorial options
         this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-        this.updateCostBreakdownOptions();
       }
     }));
   }
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
-    givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ? invoiceAmountDetail.amountOfInvoice : '');
+    givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ?? '');
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
     if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
       ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
@@ -239,9 +239,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   get costBreakdownItemsControls(): AbstractControl[] {
-    return this._formGroup.get('costBreakdownItems')
-      ? (this._formGroup.get('costBreakdownItems') as FormArray).controls
-      : new FormArray([]).controls;
+    return this.costBreakdownItems.controls;
   }
 
   get pendingChargeLineItemControls(): AbstractControl[] {
@@ -301,10 +299,38 @@ export class InvoiceAmountComponent implements OnInit {
     return !!this._formGroup?.get('mileage')?.value;
   }
 
+  async onAddChargeButtonClick(): Promise<void> {
+    if (this.costBreakdownOptions$.value.length === 0) {
+      this.getAccessorialDetails.emit();
+      // if we need to get the details, then we should wait until they are populated
+      await this.costBreakdownOptions$.asObservable().pipe(first()).toPromise();
+    }
+    const filteredCostBreakdownOptions = this.filterCostBreakdownOptions(this.costBreakdownOptions$.value);
+    const newChargeDetails = await this.utilService.openNewChargeModal({
+      costBreakdownOptions: filteredCostBreakdownOptions
+    }).pipe(first()).toPromise();
+    if (newChargeDetails) {
+      // TODO still need to save the comment from newChargeDetails on the invoice somewhere...
+      const newLineItemGroup = this.createEmptyLineItemGroup();
+      this.costBreakdownItemsControls.push(newLineItemGroup);
+      newLineItemGroup.get('charge')?.setValue(newChargeDetails.selected.name);
+      if ('OTHER' === newChargeDetails.selected.name) {
+        const variables = newChargeDetails.selected.variables ?? [];
+        newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
+        newLineItemGroup.get('rateSource')?.setValue('Manual');
+        this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+      } else {
+        // FIXME in FAL-547
+        newLineItemGroup.get('rateSource')?.setValue('Contract');
+        this.pendingAccessorialCode = newChargeDetails.selected.accessorialCode;
+        this.rateEngineCall.emit(this.pendingAccessorialCode);
+      }
+    }
+  }
 
   addNewEmptyLineItem(): void {
     this.costBreakdownItemsControls.push(this.createEmptyLineItemGroup());
-    if (this.costBreakdownOptions.length === 0) {
+    if (this.costBreakdownOptions$.value.length === 0) {
       this.getAccessorialDetails.emit();
     }
   }
@@ -328,6 +354,8 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   /**
+   * TODO remove this deprecated method once it is safe to do so.
+   * @deprecated
    *  Calls rate engine for rate information to an accessorial.
    *  Rate Management is not called if 'OTHER' is selected.
    */
@@ -341,7 +369,7 @@ export class InvoiceAmountComponent implements OnInit {
       lineItemFormGroup.get('type')?.setValue('N/A');
       lineItemFormGroup.get('quantity')?.setValue('N/A');
       lineItemFormGroup.get('totalAmount')?.valueChanges
-        .subscribe(() => this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal));
+        .subscribe(() => this.amountOfInvoiceControl.setValue(this.costBreakdownTotal));
     } else {
       lineItemFormGroup.get('rateSource')?.setValue('Contract');
       this.pendingAccessorialCode = value.accessorialCode;
@@ -350,20 +378,30 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   /**
-   *  Called after a rate is applied to a pending accessorial.
-   *  Removes the accessorial from the selectable list of options.
-   *  'OTHER' will always be an available option.
+   * Removes already selected accessorials from the selectable list of options.
+   * Appends option 'OTHER' since it should always be available, but is not returned from backend.
    */
-  updateCostBreakdownOptions(): void {
-    this.filteredCostBreakdownOptions = this.costBreakdownOptions.filter(opt => {
-      for (const control of this.costBreakdownItemsControls) {
-        if (control.value?.charge?.accessorialCode === opt.value?.accessorialCode || control.value?.charge === opt.label) {
-          return null;
-        }
-      }
-      return opt;
-    }).filter(Boolean);
-    this.filteredCostBreakdownOptions.push(CostBreakDownUtils.toOption({name: 'OTHER', accessorialCode: 'OTHER'}));
+  filterCostBreakdownOptions(originalList: Array<SelectOption<CalcDetail>>): Array<SelectOption<CalcDetail>> {
+    const filteredList = originalList.filter(
+      opt => this.costBreakdownItemsControls.every(
+        control => !this.costBreakdownOptionMatchesControl(opt, control)
+      )
+    );
+    filteredList.push(CostBreakDownUtils.toOption({
+      name: 'OTHER',
+      accessorialCode: 'OTHER',
+      variables: [{
+        variable: 'Amount',
+        quantity: 0.00
+      }]
+    }));
+    return filteredList;
+  }
+
+  costBreakdownOptionMatchesControl(opt: SelectOption<CalcDetail>, control: AbstractControl): boolean {
+    const chargeValue = control.get('charge')?.value;
+    return chargeValue.accessorialCode === opt.value.accessorialCode
+      || chargeValue === opt.label;
   }
 
   resolveDispute(action: string): void {

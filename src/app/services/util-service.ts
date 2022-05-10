@@ -1,11 +1,22 @@
 import {Injectable} from '@angular/core';
-import {ConfirmationModalComponent, ElmGenericModalData, ErrorModalComponent, GenericModalComponent} from '@elm/elm-styleguide-ui';
+import {
+  ConfirmationModalComponent,
+  ConfirmationModalData,
+  ElmGenericModalData,
+  ErrorModalComponent,
+  GenericModalComponent, ModalService
+} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {TemplateInputModalComponent} from '../components/template-input-modal/template-input-modal.component';
 import {Milestone} from '../models/milestone/milestone-model';
 import {FalCommentModalComponent} from '../components/fal-comment-modal/fal-comment-modal.component';
+import {
+  FalNewChargeModalComponent,
+  NewChargeModalInput,
+  NewChargeModalOutput
+} from '../components/fal-new-charge-modal/fal-new-charge-modal.component';
 
 @Injectable()
 export class UtilService {
@@ -52,6 +63,12 @@ export class UtilService {
       .pipe(mergeMap<any, Observable<CommentModel>>(result => of(result)));
   }
 
+  public openNewChargeModal(data: NewChargeModalInput): Observable<NewChargeModalOutput> {
+    return this.dialog.open(FalNewChargeModalComponent, {autoFocus: false, data})
+      .afterClosed()
+      .pipe(mergeMap<any, Observable<NewChargeModalOutput>>(result => of(result)));
+  }
+
   public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {
     return this.dialog.open(
       TemplateInputModalComponent,
@@ -82,14 +99,6 @@ export class UtilService {
 
 }
 
-export type ConfirmationModalData = {
-  title: string,
-  innerHtmlMessage: string,
-  confirmButtonText?: string,
-  confirmButtonStyle?: string,
-  cancelButtonText?: string
-};
-
 export type CommentModalData = ConfirmationModalData & {
   commentSectionFieldName: string;
   requireField: boolean;
@@ -108,3 +117,5 @@ type Template = {
   name: string;
   description: string;
 };
+
+

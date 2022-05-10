@@ -21,6 +21,7 @@ import {MasterDataService} from '../services/master-data-service';
 import {UserService} from '../services/user-service';
 import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {RateService} from '../services/rate-service';
+import {NgSelectModule} from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [],
@@ -31,6 +32,7 @@ import {RateService} from '../services/rate-service';
     NoopAnimationsModule,
     MatDialogModule,
     OktaAuthModule,
+    NgSelectModule,
   ],
   providers: [
     // PROVIDE EXTERNAL

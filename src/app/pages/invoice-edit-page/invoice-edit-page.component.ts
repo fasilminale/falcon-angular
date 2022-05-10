@@ -13,7 +13,7 @@ import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../
 import {SubjectValue} from '../../utils/subject-value';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-import {ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalData, ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
 import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
@@ -157,7 +157,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickDeleteButton(): void {
-    const modalData = {
+    const modalData: ConfirmationModalData = {
       title: 'Delete Invoice',
       innerHtmlMessage: `Are you sure you want to delete this invoice?
                <br/><br/><strong>This action cannot be undone.</strong>`,
