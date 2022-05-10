@@ -25,12 +25,12 @@ export class InvoiceFilterModalComponent implements OnInit {
     this.originCities = data.originCities;
     this.destinationCities = data.destinationCities;
     this.masterDataScacs = data.masterDataScacs;
-    this.sortedMasterDataShippingPoints = data.masterDataShippingPoints;
+    this.masterDataShippingPoints = data.masterDataShippingPoints;
   }
 
   ngOnInit(): void {
     this.sortedMasterDataScacs = this.sortScacs(this.masterDataScacs);
-    // this.sortedMasterDataShippingPoints = this.sortShippingPoints(this.masterDataShippingPoints);
+    this.sortedMasterDataShippingPoints = this.sortShippingPoints(this.masterDataShippingPoints);
   }
 
   resetForm(): void {
