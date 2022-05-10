@@ -14,6 +14,7 @@ import {CommentModel, UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
 import {FormControl} from "@angular/forms";
+import {TripInformationComponent} from "./trip-information/trip-information.component";
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -32,7 +33,7 @@ describe('InvoiceEditPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
-      declarations: [InvoiceEditPageComponent]
+      declarations: [InvoiceEditPageComponent, TripInformationComponent]
     }).compileComponents();
     // Mock Router
     router = TestBed.inject(Router);
@@ -532,6 +533,21 @@ describe('InvoiceEditPageComponent', () => {
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
     });
+
+    it('should not call update or performPostUpdateActions when trip componenet carrierDetailsFound is false', () => {
+      component.tripInformationComponent.carrierDetailFound = false;
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      setUpControls();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
+
+      component.clickSaveButton();
+
+      expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
+
+    });
   });
 
   describe('clickSubmitForApprovalButton method', () => {
@@ -602,6 +618,23 @@ describe('InvoiceEditPageComponent', () => {
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
       expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
 
+    });
+
+    it('should not invoke update, submit for approval or performPostUpdateActions when trip information carrierDetailsFound is false', () => {
+      component.tripInformationComponent.carrierDetailFound = false;
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678'
+      setUpControls();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
+      spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
+
+      component.clickSubmitForApprovalButton();
+
+      expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
+      expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
     });
 
   });

@@ -89,4 +89,13 @@ describe('MasterDataService', () => {
     });
   });
 
+  describe('#getCarrierDetails', () => {
+    it('should call api', async () => {
+      spyOn(web, 'httpGet').and.returnValue(of([]));
+      const serviceLevels = await masterDataService.getCarrierDetails().toPromise();
+      expect(serviceLevels).toEqual([]);
+      expect(web.httpGet).toHaveBeenCalledWith(`${environment.baseServiceUrl}/v1/carrierDetails`);
+    });
+  });
+
 });

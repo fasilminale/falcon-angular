@@ -113,7 +113,7 @@
                         buttonType="button"
                         buttonStyle="secondary"
                         class="fake-form-control"
-                        [isDisabled]="!isEditMode$.value || !invoiceFormGroup.valid"
+                        [isDisabled]="!isEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound"
                         (buttonClick)="clickSaveButton()">
               Save
             </elm-button>
@@ -123,7 +123,7 @@
                         buttonType="button"
                         buttonStyle="primary"
                         class="fake-form-control"
-                        [isDisabled]="!isEditMode$.value || !invoiceFormGroup.valid"
+                        [isDisabled]="!isEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound"
                         (buttonClick)="clickSubmitForApprovalButton()">
               Submit for Approval
             </elm-button>

@@ -17,6 +17,7 @@ import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
 import {DateParserFormatter} from '../../../utils/date-parser-formatter';
+import {CarrierDetailModel} from "../../../models/master-data-models/carrier-detail-model";
 
 const {required} = Validators;
 
@@ -49,11 +50,13 @@ export class TripInformationComponent implements OnInit {
   public carrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
   public serviceLevelOptions: Array<SelectOption<ServiceLevel>> = [];
   public carrierSCACs: Array<CarrierSCAC> = [];
+  public carrierDetails: Array<CarrierDetailModel> = [];
 
   public filteredCarrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
   public filteredServiceLevels: Array<SelectOption<ServiceLevel>> = [];
 
   public tripIdControl = new FormControl();
+  public vendorNumberControl = new FormControl({}, [required]);
   public freightOrders = new FormControl();
   public invoiceDateControl = new FormControl({}, [required]);
   public pickUpDateControl = new FormControl({}, [required, validateDate]);
@@ -80,6 +83,7 @@ export class TripInformationComponent implements OnInit {
   public overriddenDeliveryDateTime: Date | undefined;
 
   public showFreightOrderSection = false;
+  carrierDetailFound = true;
   loadOriginAddress$ = new Subject<ShippingPointLocation>();
   loadDestinationAddress$ = new Subject<ShippingPointLocation>();
   loadBillToAddress$ = new Subject<ShippingPointLocation>();
@@ -98,16 +102,19 @@ export class TripInformationComponent implements OnInit {
       forkJoin([this.masterData.getCarrierSCACs(),
         this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions)),
         this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions)),
-        this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions))]).subscribe(
+        this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions)),
+        this.masterData.getCarrierDetails()]).subscribe(
 
         ([carrierSCACs,
                carrierModeCodes,
                carrierReferences,
-               serviceLevels]) => {
+               serviceLevels,
+               carrierDetails]) => {
           this.carrierSCACs = carrierSCACs;
           this.carrierModeOptions = carrierModeCodes;
           this.carrierOptions = carrierReferences;
           this.serviceLevelOptions = serviceLevels;
+          this.carrierDetails = carrierDetails;
           this.carrierModeControl.setValue(this.tripInformation.carrierMode);
           this.carrierModeControl.updateValueAndValidity();
           this.filteredCarrierModeOptionsPopulatedSubject.next(0);
@@ -118,6 +125,7 @@ export class TripInformationComponent implements OnInit {
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
     givenFormGroup.setControl('tripId', this.tripIdControl);
+    givenFormGroup.setControl('vendorNumber', this.vendorNumberControl);
     givenFormGroup.setControl('invoiceDate', this.invoiceDateControl);
     givenFormGroup.setControl('pickUpDate', this.pickUpDateControl);
     givenFormGroup.setControl('deliveryDate', this.deliveryDateControl);
@@ -162,6 +170,21 @@ export class TripInformationComponent implements OnInit {
     }).filter(Boolean);
   }
 
+  populateVendorNumberByScac(scac: CarrierReference): void {
+    const foundCarrierDetails: CarrierDetailModel | undefined = this.carrierDetails.find((carrierDetail) => {
+      return carrierDetail.carrierSCAC === scac.scac;
+    });
+
+    if (foundCarrierDetails) {
+      this.vendorNumberControl.setValue(foundCarrierDetails.vendorNumber);
+      this.carrierDetailFound = true;
+    }
+    else {
+      this.carrierDetailFound = false;
+    }
+
+  }
+
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
       isEditMode => isEditMode
@@ -175,6 +198,8 @@ export class TripInformationComponent implements OnInit {
       this.tripInformation = tripInfo;
       this.formGroup.enable();
       this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
+      this.vendorNumberControl.setValue(tripInfo.vendorNumber);
+      this.vendorNumberControl.markAsDirty();
       this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
       this.pickUpDateControl.setValue(tripInfo.pickUpDate ?? undefined);
       this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
@@ -237,6 +262,7 @@ export class TripInformationComponent implements OnInit {
   refreshCarrierData(): void {
     this.filteredCarrierModeOptions = this.filterCarrierModes();
     this.filteredServiceLevels = this.filterServiceLevels();
+    this.populateVendorNumberByScac(this.carrierControl.value);
 
     if (!this.filteredCarrierModeOptions.some(opt => opt.value?.mode === this.carrierModeControl?.value?.mode)) {
       this.carrierModeControl.setValue(null);
