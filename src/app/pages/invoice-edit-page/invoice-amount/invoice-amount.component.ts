@@ -193,6 +193,7 @@ export class InvoiceAmountComponent implements OnInit {
       items = new FormArray([]);
       lineItems.forEach((lineItem) => {
         controls.push(new FormGroup({
+          attachment: new FormControl(lineItem.attachment ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
           charge: new FormControl(lineItem.chargeCode),
           rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
@@ -407,4 +408,11 @@ export class InvoiceAmountComponent implements OnInit {
   resolveDispute(action: string): void {
     this.resolveDisputeCall.emit(action);
   }
+
+  public downloadAttachment(url: string): void {
+    if (url) {
+      window.open(url);
+    }
+  }
+
 }
