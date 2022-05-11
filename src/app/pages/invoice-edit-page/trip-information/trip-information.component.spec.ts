@@ -255,7 +255,7 @@ describe('TripInformationComponent', () => {
       component.populateVendorNumberByScac({scac: 'EFGH', name: 'Kramerica'});
 
       expect(component.carrierDetailFound).toBeFalse();
-      expect(component.vendorNumberControl.value).toEqual({});
+      expect(component.vendorNumberControl.value).toBeNull();
     });
   });
 

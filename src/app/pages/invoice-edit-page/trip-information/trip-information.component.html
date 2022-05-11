@@ -132,7 +132,7 @@
                  placeholder="Select One..."
                  (change)="refreshCarrierData()"
                  [compareWith]="compareCarrierWith"
-                 [ngClass]="{'error': !carrierControl.value }">
+                 [ngClass]="{'error': !carrierControl.value || !carrierDetailFound}">
       </ng-select>
       <elm-input-subtext *ngIf="!carrierControl.value"
                          class="input-error"
@@ -142,7 +142,7 @@
       <elm-input-subtext *ngIf="!carrierDetailFound"
                          class="input-error"
                          [isError]="true">
-        Carrier Detail is missing
+        SCAC needs to be updated in Carrier Detail
       </elm-input-subtext>
     </div>
     <div class="col-4">
