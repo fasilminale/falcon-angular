@@ -180,6 +180,7 @@ export class TripInformationComponent implements OnInit {
       this.carrierDetailFound = true;
     }
     else {
+      this.vendorNumberControl.setValue(null);
       this.carrierDetailFound = false;
     }
 
