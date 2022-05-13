@@ -78,7 +78,7 @@ describe('SearchComponent', () => {
         component.controlGroup.markAsDirty();
         fixture.detectChanges();
         component.submit();
-        expect(emit).toHaveBeenCalledWith('F0000000001');
+        expect(emit).toHaveBeenCalledWith('F0000000001' as any);
       });
     })
 
@@ -90,9 +90,9 @@ describe('SearchComponent', () => {
     });
 
     it( 'Should not show when there is an error', () => {
-      component.controlGroup.controls.control.setValue('');
-      document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
-      fixture.detectChanges();
+      component.controlGroup.controls.control.setValue(null);
+      component.submitted = true;
+      component.showHelperText();
       expect(component.showHelperText()).toBeFalse();
     });
   });
