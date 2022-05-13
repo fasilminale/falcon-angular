@@ -18,7 +18,8 @@ import {Sort} from '@angular/material/sort';
 import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
 import * as saveAsFunctions from 'file-saver';
-import {FormArray, FormControl} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl} from '@angular/forms';
+import {SearchComponent} from "../../components/search/search.component";
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -37,6 +38,7 @@ class DialogMock {
 
 describe('InvoiceListPageComponent', () => {
   let component: InvoiceListPageComponent;
+  let searchComponent: SearchComponent;
   let fixture: ComponentFixture<InvoiceListPageComponent>;
   let webservice: WebServices;
   let http: HttpTestingController;
@@ -88,8 +90,9 @@ describe('InvoiceListPageComponent', () => {
         FalconTestingModule,
         RouterTestingModule,
       ],
-      declarations: [InvoiceListPageComponent],
+      declarations: [InvoiceListPageComponent, SearchComponent],
       providers: [
+        FormBuilder,
         {
           provide: MatDialog,
           useClass: DialogMock
@@ -112,7 +115,9 @@ describe('InvoiceListPageComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(InvoiceListPageComponent);
+    const searchComponentFixture: ComponentFixture<SearchComponent> = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
+    searchComponent = searchComponentFixture.componentInstance;
     fixture.detectChanges();
     http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(userInfo);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
@@ -340,11 +345,15 @@ describe('InvoiceListPageComponent', () => {
       tick(150);
     }
 
-    it('should call resetTable on apply', fakeAsync(() => {
+    it('should call resetTable and clear search control on apply', fakeAsync(() => {
       spyOn(component, 'resetTable').and.callThrough();
+      spyOn(component.searchComponent, 'clear');
+      component.searchValue = 'qwerty';
       openModal();
       http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
       expect(component.resetTable).toHaveBeenCalled();
+      expect(component.searchComponent.clear).toHaveBeenCalled();
+      expect(component.searchValue).toEqual('');
     }));
   });
 

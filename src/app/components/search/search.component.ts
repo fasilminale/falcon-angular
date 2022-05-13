@@ -10,9 +10,8 @@ import {PaginationModel} from '../../models/PaginationModel';
 })
 export class SearchComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
-  @Input() label = 'Enter the Falcon Invoice Number - 11 characters required';
-  @Input() minLengthMessage = 'Falcon Invoice Number must be 11 characters';
-  @Input() invalidIdMessage = 'Falcon Invoice Number is not found';
+  @Input() label = 'Enter all or partial Falcon Invoice or Invoice Reference';
+  @Input() invalidIdMessage = 'No invoices found';
   @Input() requiredMessage = 'Falcon Invoice Number is required';
   @Input() patternMessage = 'Falcon Invoice Number is invalid';
   @Input() totalResults = 0;
@@ -29,7 +28,7 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.controlGroup = this.fb.group({
-        control: [null, [Validators.pattern('^[A-Za-z0-9]*$'), Validators.required, Validators.minLength(11)]]
+        control: [null, [Validators.pattern('^[A-Za-z0-9]*$'), Validators.required]]
       }, {updateOn: 'submit'}
     );
   }
@@ -49,9 +48,6 @@ export class SearchComponent implements OnInit {
     if (this.controlGroup.controls.control.hasError('badID')) {
       return this.invalidIdMessage;
     }
-    if (this.controlGroup.controls.control.hasError('minlength')) {
-      return this.minLengthMessage;
-    }
     if (this.controlGroup.controls.control.hasError('required') && this.submitted) {
       return this.requiredMessage;
     }
@@ -64,8 +60,12 @@ export class SearchComponent implements OnInit {
   submit(): void {
     this.submitted = true;
     if (this.controlGroup.valid && this.controlGroup.dirty) {
-      //this.totalResults = -1; // this is for redetect ngonchanges
       this.submitEvent.emit(this.controlGroup.controls.control.value);
     }
+  }
+
+  clear(): void {
+    this.controlGroup.controls.control.setValue('');
+    this.submitted = false;
   }
 }
