@@ -232,7 +232,13 @@ describe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
-            attachment: 'test.jpg',
+            attachment: {
+              fileName: 'test.jpg',
+              url: 'signedurl/test.jpg',
+              type: 'Documentation',
+              deleted: false,
+              uploaded: true
+            },
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
@@ -350,7 +356,13 @@ describe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
-            attachment: 'test.jpg',
+            attachment: {
+              fileName: 'test.jpg',
+              url: 'signedurl/test.jpg',
+              type: 'Documentation',
+              deleted: false,
+              uploaded: true
+            },
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
