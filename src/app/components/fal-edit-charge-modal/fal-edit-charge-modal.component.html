@@ -1,0 +1,56 @@
+<div mat-dialog-title class="d-flex align-items-center" xmlns="http://www.w3.org/1999/html">
+  <span class="headline2">{{data.title ?? 'Update Charge Details'}}</span>
+  <elm-close-button class="dialog-close-button" mat-dialog-close></elm-close-button>
+</div>
+<form [formGroup]="form">
+  <div mat-dialog-content class="modal-height">
+    <div class="elm-h3" innerHTML="{{data.innerHtmlMessage ?? ''}}"></div>
+    <label for="cost-line-item-charge" class="fal-label">
+      Charge
+    </label>
+    <elm-text-input id="cost-line-item-charge"
+                    formControlName="charge"
+                    [errorSpacing]="false">
+    </elm-text-input>
+    <form formGroupName="variables">
+      <div *ngFor="let vcName of getVariableControlNames()">
+        <label [for]="vcName + 'Input'"
+               class="fal-label">
+          {{vcName}}
+        </label>
+        <app-fal-currency-input *ngIf="vcName === 'Amount'"
+                                [id]="vcName + 'Input'"
+                                [isError]="variableControls.get(vcName)?.invalid ?? false"
+                                [formControlName]="vcName">
+        </app-fal-currency-input>
+        <elm-text-input *ngIf="vcName !== 'Amount'"
+                        [id]="vcName + 'Input'"
+                        [formControlName]="vcName"
+                        [errorSpacing]="true">
+        </elm-text-input>
+        <elm-input-subtext *ngIf="variableControls.get(vcName)?.invalid ?? false"
+                           class="input-error"
+                           [isError]="true">
+          {{vcName}} is missing
+        </elm-input-subtext>
+      </div>
+    </form>
+  </div>
+  <div mat-dialog-actions class="float-right">
+    <elm-button buttonStyle="secondary"
+                class="ms-auto"
+                [mat-dialog-close]="undefined"
+                id="cancel"
+                aria-label="cancel">
+      {{data.cancelButtonText ?? 'Close'}}
+    </elm-button>
+    <elm-button [buttonStyle]="data.confirmButtonStyle ?? 'primary'"
+                class="ms-3"
+                (buttonClick)="confirm()"
+                [isDisabled]="form.invalid"
+                id="confirm"
+                aria-label="confirm">
+      {{data.confirmButtonText ?? 'Accept Charge Update'}}
+    </elm-button>
+  </div>
+</form>

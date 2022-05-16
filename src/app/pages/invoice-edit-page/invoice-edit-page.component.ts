@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit } from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
@@ -18,7 +18,7 @@ import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detai
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
-import {EditAutoInvoiceModel} from "../../models/invoice/edit-auto-invoice.model";
+import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
 import {switchMap} from "rxjs/operators";
 
 
@@ -281,7 +281,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
-
+    const pendingCostLineItems = this.invoiceAmountFormGroup.controls.pendingChargeLineItems as FormArray;
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
       mode: {
         mode: this.tripInformationFormGroup.controls.carrierMode.value.mode,
@@ -296,8 +296,16 @@ export class InvoiceEditPageComponent implements OnInit {
         level: this.tripInformationFormGroup.controls.serviceLevel.value.level,
         name: this.tripInformationFormGroup.controls.serviceLevel.value.name,
       },
-      pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value
-    }
+      pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value,
+      pendingChargeLineItems: pendingCostLineItems.controls.map((lineItem: AbstractControl) => {
+        return {
+          ...lineItem.value,
+          closedBy: null,
+          closedDate: null,
+          responseComment: null
+        };
+      })
+    };
     return editAutoInvoiceModel;
   }
 

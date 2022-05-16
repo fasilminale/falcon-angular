@@ -9,7 +9,7 @@ import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from 
 import {first, map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
-import {ElmFormHelper, SubjectValue} from '@elm/elm-styleguide-ui';
+import {ElmFormHelper, SubjectValue, ToastService} from '@elm/elm-styleguide-ui';
 import {UtilService} from '../../../services/util-service';
 
 @Component({
@@ -64,6 +64,7 @@ export class InvoiceAmountComponent implements OnInit {
   @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
+              private toastService: ToastService,
               private utilService: UtilService) {
   }
 
@@ -162,6 +163,18 @@ export class InvoiceAmountComponent implements OnInit {
               totalAmount: accessorial.lineItemTotal,
               message: accessorial.message
             });
+            break;
+          }
+        }
+        for (const control of this.pendingChargeLineItemControls) {
+          if (control.value.accessorialCode === this.pendingAccessorialCode) {
+            control.patchValue({
+              rate: accessorial.rate || 0,
+              type: accessorial.rateType,
+              totalAmount: accessorial.lineItemTotal || 0,
+              message: accessorial.message
+            });
+            break;
           }
         }
         // Update invoice total and available accessorial options
@@ -192,7 +205,14 @@ export class InvoiceAmountComponent implements OnInit {
     if (lineItems && lineItems.length > 0) {
       items = new FormArray([]);
       lineItems.forEach((lineItem) => {
+        const variables: FormArray = new FormArray([])
+        if (lineItem.variables.length > 0) {
+          lineItem.variables.forEach((variable: any) => {
+            variables.push(new FormControl(variable));
+          });
+        }
         controls.push(new FormGroup({
+          accessorialCode: new FormControl(lineItem.accessorialCode ?? 'N/A'),
           accessorial: new FormControl(lineItem.accessorial ?? false),
           charge: new FormControl(lineItem.chargeCode),
           rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
@@ -210,6 +230,7 @@ export class InvoiceAmountComponent implements OnInit {
           carrierComment: new FormControl(lineItem.carrierComment ?? 'N/A'),
           responseComment: new FormControl(lineItem.responseComment ?? 'N/A'),
           rateResponse: new FormControl(lineItem.rateResponse ?? 'N/A'),
+          variables,
           autoApproved: new FormControl(lineItem.autoApproved ?? false),
           attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
           planned: new FormControl(lineItem.planned ?? false),
@@ -351,6 +372,24 @@ export class InvoiceAmountComponent implements OnInit {
 
   onExpandCostLineItem(costLineItem: any): void {
     costLineItem.expanded = !costLineItem.expanded;
+  }
+
+  async onEditCostLineItem(costLineItem: AbstractControl): Promise<void> {
+    const editChargeDetails = await this.utilService.openEditChargeModal({
+      costLineItem
+    }).pipe(first()).toPromise();
+    if (editChargeDetails) {
+      const costLineItems = this.pendingChargeLineItemControls;
+      const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.charge = lineItem.value?.charge);
+      if (existingCostLineItem) {
+        this.toastService.openSuccessToast(`Success. Variables have been updated for the line item.`);
+        existingCostLineItem.patchValue({
+          variables: editChargeDetails.variables
+        });
+        existingCostLineItem.markAsDirty();
+        this.onSelectRate(existingCostLineItem.value, existingCostLineItem);
+      }
+    }
   }
 
   /**

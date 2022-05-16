@@ -17,6 +17,11 @@ import {
   NewChargeModalInput,
   NewChargeModalOutput
 } from '../components/fal-new-charge-modal/fal-new-charge-modal.component';
+import {
+  EditChargeModalInput,
+  EditChargeModalOutput,
+  FalEditChargeModalComponent
+} from '../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 
 @Injectable()
 export class UtilService {
@@ -67,6 +72,12 @@ export class UtilService {
     return this.dialog.open(FalNewChargeModalComponent, {autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<NewChargeModalOutput>>(result => of(result)));
+  }
+
+  public openEditChargeModal(data: EditChargeModalInput): Observable<EditChargeModalOutput> {
+    return this.dialog.open(FalEditChargeModalComponent, {autoFocus: false, data})
+      .afterClosed()
+      .pipe(mergeMap<any, Observable<EditChargeModalOutput>>(result => of(result)));
   }
 
   public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {

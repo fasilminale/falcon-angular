@@ -328,20 +328,20 @@
       </div>
 
       <div class="col-2" *ngIf="_.value.requestStatus === 'Open'">
-        <div class="material-icons edit-icon">edit</div>
+        <div class="material-icons edit-icon" (click)="onEditCostLineItem(_)">edit</div>
         <elm-button buttonType="button"
                     buttonStyle="text"
                     [padding]="'10px'"
                     id="pending-accept-button"
-                    [isDisabled]="readOnlyForm">
+                    [isDisabled]="readOnlyForm || _.dirty">
           <span>Accept</span>
         </elm-button>
         <elm-button buttonType="button"
                     buttonStyle="text"
                     [padding]="'10px'"
                     id="pending-delete-button"
-                    [isDisabled]="readOnlyForm">
-          <span>Delete</span>
+                    [isDisabled]="readOnlyForm || _.dirty">
+          <span>Deny</span>
         </elm-button>
       </div>
 

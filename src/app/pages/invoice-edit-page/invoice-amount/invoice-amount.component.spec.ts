@@ -11,7 +11,7 @@ import {SelectOption} from '../../../models/select-option-model/select-option-mo
 import {UtilService} from '../../../services/util-service';
 import {NewChargeModalInput, NewChargeModalOutput} from '../../../components/fal-new-charge-modal/fal-new-charge-modal.component';
 
-describe('InvoiceAmountComponent', () => {
+fdescribe('InvoiceAmountComponent', () => {
 
   const TEST_VARIABLE_NAME = 'Test Variable';
   const TEST_CALC_DETAIL: CalcDetail = {
@@ -213,6 +213,7 @@ describe('InvoiceAmountComponent', () => {
         amountOfInvoice: '1000',
         costLineItems: [
           {
+            accessorialCode: 'TST',
             chargeCode: 'TestChargeCode',
             rateSource: {key: 'CONTRACT', label: 'Contract'},
             entrySource: {key: 'AUTO', label: 'AUTO'},
@@ -233,6 +234,7 @@ describe('InvoiceAmountComponent', () => {
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
             attachment: 'test.jpg',
+            variables: [],
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
@@ -331,6 +333,7 @@ describe('InvoiceAmountComponent', () => {
         amountOfInvoice: '1000',
         costLineItems: [
           {
+            accessorialCode: 'TST',
             chargeCode: 'TestChargeCode',
             rateSource: {key: 'CONTRACT', label: 'Contract'},
             entrySource: {key: 'AUTO', label: 'AUTO'},
@@ -351,6 +354,7 @@ describe('InvoiceAmountComponent', () => {
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
             attachment: 'test.jpg',
+            variables: [],
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
