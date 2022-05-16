@@ -643,4 +643,10 @@ describe('InvoiceAmountComponent', () => {
     expect(component.rateEngineCall.emit).toHaveBeenCalledTimes(1);
     expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
   });
+
+  it('should download attachment', () => {
+    spyOn(component, 'downloadAttachment').and.callThrough();
+    component.downloadAttachment('url');
+    expect(component.downloadAttachment).toHaveBeenCalled();
+  });
 });
