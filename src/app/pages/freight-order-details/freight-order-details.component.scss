@@ -25,6 +25,7 @@ td.mat-cell, th.mat-header-cell{
 
 th.mat-header-cell {
     background-color: #f6f6f6;
+  font-size: 10pt;
 }
 
 .missing-error {
@@ -42,4 +43,40 @@ th.mat-header-cell {
 
 .input-error ::ng-deep .elm-input-subtext{
   margin-top: 0;
+}
+
+.padding-right-5 {
+  padding-right: 5px;
+}
+
+.padding-left-5 {
+  padding-left: 5px;
+}
+
+.width-60 {
+  width: 60px;
+}
+
+.width-80 {
+  width: 80px;
+}
+
+.width-90 {
+  width: 90px;
+}
+
+.width-100 {
+  width: 100px;
+}
+
+.width-110 {
+  width: 110px;
+}
+
+.width-140 {
+  width: 140px;
+}
+
+.width-150 {
+  width: 150px;
 }
