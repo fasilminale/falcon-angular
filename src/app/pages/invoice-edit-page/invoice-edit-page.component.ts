@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {FormGroup} from '@angular/forms';
+import {Form, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
@@ -14,12 +14,15 @@ import {SubjectValue} from '../../utils/subject-value';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {ConfirmationModalData, ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
-import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
-import {EditAutoInvoiceModel} from "../../models/invoice/edit-auto-invoice.model";
-import {switchMap} from "rxjs/operators";
+import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
+import {switchMap} from 'rxjs/operators';
+import {RateableInvoiceModel} from '../../models/invoice/rateable-invoice-model';
+import {Location} from '../../models/location/location-model';
+import {CostLineItem} from '../../models/line-item/line-item-model';
 
 
 @Component({
@@ -250,19 +253,19 @@ export class InvoiceEditPageComponent implements OnInit {
           },
           (error) => console.error(error)
         )
-      )
+      );
     }
   }
 
   updateInvoice(): Observable<InvoiceDataModel> {
-    return this.invoiceService.updateAutoInvoice(this.mapTripInformationToEditAutoInvoiceModel(), this.falconInvoiceNumber )
+    return this.invoiceService.updateAutoInvoice(this.mapTripInformationToEditAutoInvoiceModel(), this.falconInvoiceNumber);
   }
 
   clickSubmitForApprovalButton(): void {
     this.subscriptions.manage(
       this.updateInvoice().pipe(
         switchMap((model: InvoiceDataModel) => {
-          return this.invoiceService.submitForApproval(model.falconInvoiceNumber)
+          return this.invoiceService.submitForApproval(model.falconInvoiceNumber);
         })
       ).subscribe(
         (value) => {
@@ -270,18 +273,17 @@ export class InvoiceEditPageComponent implements OnInit {
         },
         (error) => console.error(error)
       )
-    )
+    );
   }
 
   performPostUpdateActions(successMessage: string): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top: 0, behavior: 'smooth'});
     this.ngOnInit();
     this.clickToggleEditMode();
     this.toastService.openSuccessToast(successMessage);
   }
 
   mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
-
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
       mode: {
         mode: this.tripInformationFormGroup.controls.carrierMode.value.mode,
@@ -297,8 +299,68 @@ export class InvoiceEditPageComponent implements OnInit {
         name: this.tripInformationFormGroup.controls.serviceLevel.value.name,
       },
       pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value
-    }
+    };
     return editAutoInvoiceModel;
+  }
+
+  getRateableInvoice(): RateableInvoiceModel {
+    const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
+    const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
+    return {
+      mode: this.tripInformationFormGroup.controls.carrierMode.value,
+      carrier: this.tripInformationFormGroup.controls.carrier.value,
+      origin: this.extractLocation(originAddressFormGroup),
+      destination: this.extractLocation(destinationAddressFormGroup),
+      costLineItems: [],
+    };
+  }
+
+  extractLocation(locationFormGroup: FormGroup): Location {
+    return {
+      name: locationFormGroup.controls.name.value,
+      city: locationFormGroup.controls.city.value,
+      country: locationFormGroup.controls.country.value,
+      zipCode: locationFormGroup.controls.zipCode.value,
+      state: locationFormGroup.controls.state.value,
+      address: locationFormGroup.controls.streetAddress.value,
+      address2: locationFormGroup.controls.streetAddress2.value,
+    };
+  }
+
+  getCostLineItems(): Array<CostLineItem> {
+    const results: Array<CostLineItem> = [];
+    const costBreakdownItems = this.invoiceAmountFormGroup.controls.costBreakdownItems as FormArray;
+    for (const control of costBreakdownItems.controls) {
+      const item = control as FormGroup;
+      results.push({
+        accessorial: item.controls.accessorial.value,
+        chargeCode: item.controls.charge.value,
+        attachment: '',
+        attachmentRequired: false,
+        autoApproved: false,
+        carrierComment: '',
+        chargeLineTotal: 0,
+        closedBy: '',
+        closedDate: '',
+        costName: '',
+        createdBy: '',
+        createdDate: '',
+        entrySource: { key: '', label: ''},
+        expanded: false,
+        fuel: false,
+        manual: false,
+        message: '',
+        planned: false,
+        quantity: 0,
+        rateAmount: 0,
+        rateResponse: '',
+        rateSource: { key: '', label: ''},
+        rateType: '',
+        requestStatus: { key: '', label: ''},
+        responseComment: ''
+      });
+    }
+    return results;
   }
 
   private createRequest(accessorialCode: string): RateEngineRequest {
@@ -349,8 +411,11 @@ export class InvoiceEditPageComponent implements OnInit {
   getRates(accessorialCode: string): void {
     if (this.checkAccessorialData(this.invoice) && accessorialCode) {
       const request: RateEngineRequest = this.createRequest(accessorialCode);
+      console.log('CALLING RATE ENGINE');
       this.subscriptions.manage(
-        this.rateService.getRates(request).subscribe(response => this.rateEngineCallResult$.next(response))
+        this.rateService.getRates(request).subscribe(
+          response => this.rateEngineCallResult$.next(response)
+        )
       );
     }
   }

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
@@ -62,6 +62,8 @@ export class InvoiceAmountComponent implements OnInit {
   @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
   @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
   @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
+
+  rateEngineCallResponse: Subscription = new Subscription();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private utilService: UtilService) {
@@ -145,7 +147,9 @@ export class InvoiceAmountComponent implements OnInit {
    *  the response from rate engine.
    */
   @Input() set rateEngineCallResult$(observable: Observable<RatesResponse>) {
-    this.subscriptionManager.manage(observable.subscribe(rateEngineResult => {
+    this.rateEngineCallResponse.unsubscribe();
+    this.rateEngineCallResponse = observable.subscribe(rateEngineResult => {
+      console.log('RECEIVED RATE ENGINE RESPONSE', rateEngineResult);
       const carrierSummary = rateEngineResult.carrierRateSummaries[0];
       const leg = carrierSummary.legs[0];
       // Check if accessorial code is contained in the description of the response
@@ -154,8 +158,12 @@ export class InvoiceAmountComponent implements OnInit {
 
       // If a match is found, update the pending line item with information from the response
       if (accessorial) {
-        for (const control of this.costBreakdownItemsControls) {
-          if (control.value?.charge?.accessorialCode === this.pendingAccessorialCode) {
+        console.log('found accessorial');
+        console.log('controls: ', this.costBreakdownItems.controls.map(c => c.get('charge')?.value));
+        for (const control of this.costBreakdownItems.controls) {
+          const chargeValue = control.get('charge')?.value;
+          if (chargeValue.accessorialCode === this.pendingAccessorialCode) {
+            console.log('found control');
             control.patchValue({
               rate: accessorial.rate,
               type: accessorial.rateType,
@@ -167,7 +175,8 @@ export class InvoiceAmountComponent implements OnInit {
         // Update invoice total and available accessorial options
         this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
       }
-    }));
+      console.log('END RATE ENGINE RESPONSE');
+    });
   }
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
