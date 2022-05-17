@@ -244,6 +244,7 @@ describe('InvoiceAmountComponent', () => {
           }
         ],
         pendingChargeLineItems: [],
+        deniedChargeLineItems: [],
         disputeLineItems: [
           {
             comment: 'test comment',
@@ -362,6 +363,7 @@ describe('InvoiceAmountComponent', () => {
           }
         ],
         pendingChargeLineItems: [],
+        deniedChargeLineItems: [],
         disputeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
         mileage: '100'

@@ -9,8 +9,10 @@ import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from 
 import {first, map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
-import {ElmFormHelper, SubjectValue} from '@elm/elm-styleguide-ui';
-import {UtilService} from '../../../services/util-service';
+import {ConfirmationModalData, ElmFormHelper, SubjectValue, ToastService} from '@elm/elm-styleguide-ui';
+import {CommentModel, UtilService} from '../../../services/util-service';
+import {UserService} from '../../../services/user-service';
+import {UserInfoModel} from '../../../models/user-info/user-info-model';
 
 @Component({
   selector: 'app-invoice-amount',
@@ -56,15 +58,18 @@ export class InvoiceAmountComponent implements OnInit {
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
   pendingChargeLineItems = new FormArray([]);
+  deniedChargeLineItems = new FormArray([]);
   disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
+  @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
 
   @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
   @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
   @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-              private utilService: UtilService) {
+              private utilService: UtilService,
+              private toastService: ToastService) {
   }
 
   ngOnInit(): void {
@@ -135,6 +140,8 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems);
     this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls);
     givenFormGroup.setControl('pendingChargeLineItems', this.pendingChargeLineItems);
+    this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls);
+    givenFormGroup.setControl('deniedChargeLineItems', this.deniedChargeLineItems);
     this.insertDisputeLineItems();
     givenFormGroup.setControl('disputeLineItems', this.disputeLineItems);
     this._formGroup = givenFormGroup;
@@ -185,6 +192,7 @@ export class InvoiceAmountComponent implements OnInit {
     (givenFormGroup.get('disputeLineItems') as FormArray).clear();
     this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls, invoiceAmountDetail?.costLineItems);
     this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls, invoiceAmountDetail?.pendingChargeLineItems);
+    this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls, invoiceAmountDetail?.deniedChargeLineItems);
     this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
   }
 
@@ -245,6 +253,12 @@ export class InvoiceAmountComponent implements OnInit {
   get pendingChargeLineItemControls(): AbstractControl[] {
     return this._formGroup.get('pendingChargeLineItems')
       ? (this._formGroup.get('pendingChargeLineItems') as FormArray).controls
+      : new FormArray([]).controls;
+  }
+
+  get deniedChargeLineItemControls(): AbstractControl[] {
+    return this._formGroup.get('deniedChargeLineItems')
+      ? (this._formGroup.get('deniedChargeLineItems') as FormArray).controls
       : new FormArray([]).controls;
   }
 
@@ -351,6 +365,75 @@ export class InvoiceAmountComponent implements OnInit {
 
   onExpandCostLineItem(costLineItem: any): void {
     costLineItem.expanded = !costLineItem.expanded;
+  }
+
+  acceptCharge(costLineItem: any): void {
+    const modalData: ConfirmationModalData = {
+      title: 'Accept Charge',
+      innerHtmlMessage: `Are you sure you want to accept this charge?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+      confirmButtonText: 'Accept Charge',
+      confirmButtonStyle: 'primary',
+      cancelButtonText: 'Cancel'
+    };
+    this.displayPendingChargeModal(modalData).subscribe(result => {
+      if (result) {
+        const index = this.pendingChargeLineItemControls.findIndex(lineItem => lineItem.value.charge === costLineItem.charge);
+        const pendingLineItem: AbstractControl | null = this.pendingChargeLineItems.get(index.toString());
+
+        if (pendingLineItem !== null) {
+          this.pendingChargeLineItems.removeAt(index);
+          this.setPendingChargeResponse('Accepted', pendingLineItem, result);
+          this.costBreakdownItemsControls.push(pendingLineItem);
+          this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+          this.toastService.openSuccessToast(`Success. Charge was approved.`);
+        }
+      }
+    });
+  }
+
+  denyCharge(costLineItem: any): void {
+    const modalData: ConfirmationModalData = {
+      title: 'Deny Charge',
+      innerHtmlMessage: `Are you sure you want to deny this charge?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+      confirmButtonText: 'Deny Charge',
+      confirmButtonStyle: 'destructive',
+      cancelButtonText: 'Cancel'
+    };
+    this.displayPendingChargeModal(modalData).subscribe(result => {
+      if (result) {
+        const index = this.pendingChargeLineItemControls.findIndex(lineItem => lineItem.value.charge === costLineItem.charge);
+        const pendingLineItem: AbstractControl | null = this.pendingChargeLineItems.get(index.toString());
+
+        if (pendingLineItem !== null) {
+          this.pendingChargeLineItems.removeAt(index);
+          this.setPendingChargeResponse('Denied', pendingLineItem, result);
+          this.deniedChargeLineItemControls.push(pendingLineItem);
+          this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+          this.toastService.openSuccessToast(`Success. Charge was denied.`);
+        }
+      }
+    });
+  }
+
+  private setPendingChargeResponse(responseStatus: string, pendingLineItem: AbstractControl, result: CommentModel | boolean): void {
+    pendingLineItem.get('requestStatus')?.setValue(responseStatus);
+    if (typeof result !== 'boolean') {
+      pendingLineItem.get('responseComment')?.setValue(result.comment);
+    }
+    pendingLineItem.get('closedDate')?.setValue(Date.now());
+    pendingLineItem.get('closedBy')?.setValue(this.userInfo?.email);
+  }
+
+  private displayPendingChargeModal(modalData: ConfirmationModalData): Observable<CommentModel | boolean> {
+    const dialogResult: Observable<CommentModel | boolean> =
+      this.utilService.openCommentModal({
+        ...modalData,
+        commentSectionFieldName: 'Response Comment',
+        requireField: modalData.title === 'Deny Charge'
+      });
+    return dialogResult;
   }
 
   /**

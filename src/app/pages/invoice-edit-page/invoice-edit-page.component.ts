@@ -136,6 +136,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.loadInvoiceAmountDetail$.next({
       costLineItems: invoice.costLineItems,
       pendingChargeLineItems: invoice.pendingChargeLineItems,
+      deniedChargeLineItems: invoice.deniedChargeLineItems,
       disputeLineItems: invoice.disputeLineItems,
       amountOfInvoice: invoice.amountOfInvoice,
       mileage: invoice.distance,
@@ -217,6 +218,7 @@ export class InvoiceEditPageComponent implements OnInit {
             this.loadInvoiceAmountDetail$.next({
               costLineItems: invoice.costLineItems,
               pendingChargeLineItems: invoice.pendingChargeLineItems,
+              deniedChargeLineItems: invoice.deniedChargeLineItems,
               disputeLineItems: invoice.disputeLineItems,
               amountOfInvoice: invoice.amountOfInvoice,
               mileage: invoice.distance,
