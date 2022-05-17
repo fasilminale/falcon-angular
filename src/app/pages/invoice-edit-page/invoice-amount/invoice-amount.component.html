@@ -118,10 +118,12 @@
 
         <!-- Cost Line Item - Attachments -->
         <div class="col-1">
-          <div *ngIf="_.get('attachment')" class="material-icons download-icon">file_download</div>
-          <span *ngIf="_.get('attachment')" [matTooltipPosition]="'below'"
+          <div *ngIf="_.get('attachment')?.value?.url" class="material-icons download-icon"
+               (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
+          <span *ngIf="_.get('attachment')?.value?.url" [matTooltipPosition]="'below'"
                 [matTooltip]="'Download Attachment'"
                 [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
+                (click)="downloadAttachment(_.get('attachment')?.value?.url)"
                 matTooltipClass="newLine">Download</span>
         </div>
 
@@ -263,11 +265,13 @@
 
       <!-- Pending Line Item - Attachments -->
       <div class="col-1">
-        <div *ngIf="_.get('attachment')" class="material-icons download-icon">file_download</div>
-        <span *ngIf="_.get('attachment')" [matTooltipPosition]="'below'"
+        <div *ngIf="_.get('attachment')?.value?.url" class="material-icons download-icon"
+             (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
+        <span *ngIf="_.get('attachment')?.value?.url" [matTooltipPosition]="'below'"
               [matTooltip]="'Download Attachment'"
               [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
-              matTooltipClass="newLine">Download</span>
+              matTooltipClass="newLine"
+              (click)="downloadAttachment(_.get('attachment')?.value?.url)">Download</span>
       </div>
 
       <div class="col-1">
@@ -407,11 +411,13 @@
 
         <!-- Dispute Line Item - Attachments -->
         <div class="col-1">
-          <div class="material-icons download-icon">file_download</div>
+          <div class="material-icons download-icon"
+               (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
           <span [matTooltipPosition]="'below'"
                 [matTooltip]="'Download Attachment'"
                 [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
-                matTooltipClass="newLine">Download</span>
+                matTooltipClass="newLine"
+                (click)="downloadAttachment(_.get('attachment')?.value?.url)">Download</span>
         </div>
 
         <!-- Dispute Line Item - Created Date -->

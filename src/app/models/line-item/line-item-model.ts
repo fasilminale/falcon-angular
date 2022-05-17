@@ -1,4 +1,5 @@
 import {Measurement, UnitOfMeasure} from '../measurement/measurement-model';
+import {Attachment} from '../attachment/attachment-model';
 import {KeyedLabel} from '../generic/keyed-label';
 
 export interface ManualLineItem {
@@ -28,7 +29,7 @@ export interface CostLineItem {
   carrierComment: string;
   responseComment: string;
   rateResponse: string;
-  attachment: string;
+  attachment: Attachment;
   autoApproved: boolean;
   attachmentRequired: boolean;
   planned: boolean;

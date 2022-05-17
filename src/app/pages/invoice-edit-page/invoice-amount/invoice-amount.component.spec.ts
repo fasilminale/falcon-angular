@@ -232,7 +232,13 @@ describe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
-            attachment: 'test.jpg',
+            attachment: {
+              fileName: 'test.jpg',
+              url: 'signedurl/test.jpg',
+              type: 'Documentation',
+              deleted: false,
+              uploaded: true
+            },
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
@@ -351,7 +357,13 @@ describe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
-            attachment: 'test.jpg',
+            attachment: {
+              fileName: 'test.jpg',
+              url: 'signedurl/test.jpg',
+              type: 'Documentation',
+              deleted: false,
+              uploaded: true
+            },
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
@@ -632,5 +644,11 @@ describe('InvoiceAmountComponent', () => {
     expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
     expect(component.rateEngineCall.emit).toHaveBeenCalledTimes(1);
     expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
+  });
+
+  it('should download attachment', () => {
+    spyOn(component, 'downloadAttachment').and.callThrough();
+    component.downloadAttachment('url');
+    expect(component.downloadAttachment).toHaveBeenCalled();
   });
 });
