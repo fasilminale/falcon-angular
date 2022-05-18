@@ -99,7 +99,6 @@
                  type="text"
                  class="form-control"
                  formControlName="charge"
-                 maxlength="4"
                  [attr.disabled]="readOnlyForm ? '': null"
                  [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
           />
@@ -253,7 +252,6 @@
                type="text"
                class="form-control"
                formControlName="charge"
-               maxlength="4"
                [attr.disabled]="readOnlyForm ? '': null"
                [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
         />

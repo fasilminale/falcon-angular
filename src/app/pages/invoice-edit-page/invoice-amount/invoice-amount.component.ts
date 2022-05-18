@@ -219,6 +219,7 @@ export class InvoiceAmountComponent implements OnInit {
           carrierComment: new FormControl(lineItem.carrierComment ?? 'N/A'),
           responseComment: new FormControl(lineItem.responseComment ?? 'N/A'),
           rateResponse: new FormControl(lineItem.rateResponse ?? 'N/A'),
+          step: new FormControl(lineItem.step ?? 'N/A'),
           autoApproved: new FormControl(lineItem.autoApproved ?? false),
           attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
           planned: new FormControl(lineItem.planned ?? false),
@@ -386,6 +387,9 @@ export class InvoiceAmountComponent implements OnInit {
           this.pendingChargeLineItems.removeAt(index);
           this.setPendingChargeResponse('Accepted', pendingLineItem, result);
           this.costBreakdownItemsControls.push(pendingLineItem);
+          this.costBreakdownItemsControls.sort((a, b) => {
+            return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
+          });
           this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
           this.toastService.openSuccessToast(`Success. Charge was approved.`);
         }
@@ -418,7 +422,7 @@ export class InvoiceAmountComponent implements OnInit {
     });
   }
 
-  private setPendingChargeResponse(responseStatus: string, pendingLineItem: AbstractControl, result: CommentModel | boolean): void {
+  setPendingChargeResponse(responseStatus: string, pendingLineItem: AbstractControl, result: CommentModel | boolean): void {
     pendingLineItem.get('requestStatus')?.setValue(responseStatus);
     if (typeof result !== 'boolean') {
       pendingLineItem.get('responseComment')?.setValue(result.comment);
@@ -427,7 +431,7 @@ export class InvoiceAmountComponent implements OnInit {
     pendingLineItem.get('closedBy')?.setValue(this.userInfo?.email);
   }
 
-  private displayPendingChargeModal(modalData: ConfirmationModalData): Observable<CommentModel | boolean> {
+  displayPendingChargeModal(modalData: ConfirmationModalData): Observable<CommentModel | boolean> {
     const dialogResult: Observable<CommentModel | boolean> =
       this.utilService.openCommentModal({
         ...modalData,

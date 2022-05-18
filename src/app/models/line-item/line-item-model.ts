@@ -30,6 +30,7 @@ export interface CostLineItem {
   responseComment: string;
   rateResponse: string;
   attachment: Attachment;
+  step: string;
   autoApproved: boolean;
   attachmentRequired: boolean;
   planned: boolean;

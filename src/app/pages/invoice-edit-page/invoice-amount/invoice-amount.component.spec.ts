@@ -8,8 +8,13 @@ import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-det
 import {InvoiceAmountComponent} from './invoice-amount.component';
 import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
-import {UtilService} from '../../../services/util-service';
+import {CommentModalData, CommentModel, UtilService} from '../../../services/util-service';
 import {NewChargeModalInput, NewChargeModalOutput} from '../../../components/fal-new-charge-modal/fal-new-charge-modal.component';
+import {asSpy} from '../../../testing/test-utils.spec';
+import {InvoiceDataModel} from '../../../models/invoice/invoice-model';
+import {ConfirmationModalData} from '@elm/elm-styleguide-ui';
+import {FalCommentModalComponent} from '../../../components/fal-comment-modal/fal-comment-modal.component';
+import {mergeMap} from 'rxjs/operators';
 
 describe('InvoiceAmountComponent', () => {
 
@@ -38,6 +43,14 @@ describe('InvoiceAmountComponent', () => {
   };
   const OTHER_CALC_DETAIL_OPTION = CostBreakDownUtils.toOption(OTHER_CALC_DETAIL);
 
+  const TEST_MODAL_DATA: ConfirmationModalData = {
+    title: 'title',
+    innerHtmlMessage: '',
+    confirmButtonText: 'Confirm',
+    confirmButtonStyle: 'primary',
+    cancelButtonText: 'Cancel'
+  };
+
   let component: InvoiceAmountComponent;
   let fixture: ComponentFixture<InvoiceAmountComponent>;
   let utilService: UtilService;
@@ -49,6 +62,9 @@ describe('InvoiceAmountComponent', () => {
         provide: UtilService, useValue: {
           openNewChargeModal: (data: NewChargeModalInput): Observable<NewChargeModalOutput> => {
             throw new Error('Spy On this function instead!');
+          },
+          openCommentModal: (data: CommentModalData): Observable<CommentModel> => {
+            return of({comment: ''});
           }
         }
       }],
@@ -239,6 +255,7 @@ describe('InvoiceAmountComponent', () => {
               deleted: false,
               uploaded: true
             },
+            step: '1',
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
@@ -249,7 +266,43 @@ describe('InvoiceAmountComponent', () => {
             expanded: false
           }
         ],
-        pendingChargeLineItems: [],
+        pendingChargeLineItems: [{
+          chargeCode: 'TestCharge',
+          rateSource: {key: 'CONTRACT', label: 'Contract'},
+          entrySource: {key: 'AUTO', label: 'AUTO'},
+          chargeLineTotal: 100,
+          rateAmount: 100,
+          rateType: 'FLAT',
+          quantity: 1,
+          costName: 'TestCostName',
+          requestStatus: {
+            key: 'OPEN',
+            label: 'Open'
+          },
+          createdBy: 'test@test.com',
+          createdDate: '2022-04-25T00:05:00.000Z',
+          carrierComment: 'test comment',
+          rateResponse: 'Successful',
+          closedBy: 'test@test.com',
+          closedDate: '2022-04-26T00:05:00.000Z',
+          responseComment: 'test',
+          attachment: {
+            fileName: 'test.jpg',
+            url: 'signedurl/test.jpg',
+            type: 'Documentation',
+            deleted: false,
+            uploaded: true
+          },
+          step: '1',
+          accessorial: true,
+          autoApproved: false,
+          attachmentRequired: false,
+          planned: false,
+          fuel: false,
+          message: '',
+          manual: false,
+          expanded: false
+        }],
         deniedChargeLineItems: [],
         disputeLineItems: [
           {
@@ -305,6 +358,7 @@ describe('InvoiceAmountComponent', () => {
         {
           costBreakdownItems: new FormArray([]),
           pendingChargeLineItems: new FormArray([]),
+          deniedChargeLineItems: new FormArray([]),
           disputeLineItems: new FormArray([])
         }
       );
@@ -312,6 +366,7 @@ describe('InvoiceAmountComponent', () => {
         expect(component._formGroup.value).toEqual({
           costBreakdownItems: [],
           pendingChargeLineItems: [],
+          deniedChargeLineItems: [],
           disputeLineItems: []
         });
         done();
@@ -364,6 +419,7 @@ describe('InvoiceAmountComponent', () => {
               deleted: false,
               uploaded: true
             },
+            step: '1',
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
@@ -384,6 +440,56 @@ describe('InvoiceAmountComponent', () => {
       component.isPaymentOverrideSelected.at(0).setValue(null);
       expect(component.overridePaymentTermsFormGroup.controls.paymentTerms.value).toBeNull();
       done();
+    });
+
+    it('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
+      component.pendingChargeLineItems.push(new FormGroup({
+        charge: new FormControl('Charge')
+      }));
+      component.costBreakdownItems.push(new FormGroup({
+        charge: new FormControl('Other Charge')
+      }));
+
+      const modalResponse$ = new Subject<any>();
+      spyOn(component, 'displayPendingChargeModal').and.returnValue(modalResponse$.asObservable());
+      component.acceptCharge(component.pendingChargeLineItems.controls[0].value);
+
+      modalResponse$.subscribe(() => {
+        expect(component.pendingChargeLineItems.length).toEqual(0);
+        expect(component.deniedChargeLineItems.length).toEqual(0);
+        expect(component.costBreakdownItems.length).toEqual(2);
+        done();
+      });
+
+      modalResponse$.next({comment: ''});
+    });
+
+    it('should call denyCharge and add the line item to denied charges', async (done) => {
+      component.pendingChargeLineItems.push(new FormGroup({
+        charge: new FormControl('Pending Charge')
+      }));
+      component.costBreakdownItems.push(new FormGroup({
+        charge: new FormControl('Other Charge')
+      }));
+
+      const modalResponse$ = new Subject<any>();
+      spyOn(component, 'displayPendingChargeModal').and.returnValue(modalResponse$.asObservable());
+      component.denyCharge(component.pendingChargeLineItems.controls[0].value);
+
+      modalResponse$.subscribe(() => {
+        expect(component.pendingChargeLineItems.length).toEqual(0);
+        expect(component.deniedChargeLineItems.length).toEqual(1);
+        expect(component.costBreakdownItems.length).toEqual(1);
+        done();
+      });
+
+      modalResponse$.next({comment: 'deny reason'});
+    });
+
+    it('should call openCommentModal and return result', async () => {
+      spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: ''}));
+      component.displayPendingChargeModal(TEST_MODAL_DATA);
+      expect(utilService.openCommentModal).toHaveBeenCalled();
     });
 
     describe('when an empty line item is added', () => {
