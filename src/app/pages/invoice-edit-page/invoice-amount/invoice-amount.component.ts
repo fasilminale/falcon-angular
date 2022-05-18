@@ -378,23 +378,8 @@ export class InvoiceAmountComponent implements OnInit {
       confirmButtonStyle: 'primary',
       cancelButtonText: 'Cancel'
     };
-    this.displayPendingChargeModal(modalData).subscribe(result => {
-      if (result) {
-        const index = this.pendingChargeLineItemControls.findIndex(lineItem => lineItem.value.charge === costLineItem.charge);
-        const pendingLineItem: AbstractControl | null = this.pendingChargeLineItems.get(index.toString());
-
-        if (pendingLineItem !== null) {
-          this.pendingChargeLineItems.removeAt(index);
-          this.setPendingChargeResponse('Accepted', pendingLineItem, result);
-          this.costBreakdownItemsControls.push(pendingLineItem);
-          this.costBreakdownItemsControls.sort((a, b) => {
-            return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
-          });
-          this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-          this.toastService.openSuccessToast(`Success. Charge was approved.`);
-        }
-      }
-    });
+    const modalResult = this.displayPendingChargeModal(modalData);
+    this.handlePendingChargeResult(modalResult, costLineItem, 'Accepted');
   }
 
   denyCharge(costLineItem: any): void {
@@ -406,17 +391,29 @@ export class InvoiceAmountComponent implements OnInit {
       confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
-    this.displayPendingChargeModal(modalData).subscribe(result => {
+    const modalResult = this.displayPendingChargeModal(modalData);
+    this.handlePendingChargeResult(modalResult, costLineItem, 'Denied');
+  }
+
+  handlePendingChargeResult(modalResult: Observable<boolean | CommentModel>, costLineItem: any, action: string): void {
+    modalResult.subscribe(result => {
       if (result) {
         const index = this.pendingChargeLineItemControls.findIndex(lineItem => lineItem.value.charge === costLineItem.charge);
         const pendingLineItem: AbstractControl | null = this.pendingChargeLineItems.get(index.toString());
 
         if (pendingLineItem !== null) {
           this.pendingChargeLineItems.removeAt(index);
-          this.setPendingChargeResponse('Denied', pendingLineItem, result);
-          this.deniedChargeLineItemControls.push(pendingLineItem);
+          this.setPendingChargeResponse(action, pendingLineItem, result);
+          if (action === 'Accepted') {
+            this.costBreakdownItemsControls.push(pendingLineItem);
+            this.costBreakdownItemsControls.sort((a, b) => {
+              return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
+            });
+          } else {
+            this.deniedChargeLineItemControls.push(pendingLineItem);
+          }
           this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-          this.toastService.openSuccessToast(`Success. Charge was denied.`);
+          this.toastService.openSuccessToast(`Success. Charge was ${action.toLowerCase()}.`);
         }
       }
     });
