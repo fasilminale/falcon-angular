@@ -444,7 +444,11 @@ describe('InvoiceAmountComponent', () => {
 
     it('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
       component.pendingChargeLineItems.push(new FormGroup({
-        charge: new FormControl('Charge')
+        charge: new FormControl('Charge'),
+        requestStatus: new FormControl('Successful'),
+        responseComment: new FormControl('N/A'),
+        closedDate: new FormControl('N/A'),
+        closedBy: new FormControl('N/A')
       }));
       component.costBreakdownItems.push(new FormGroup({
         charge: new FormControl('Other Charge')
@@ -466,7 +470,11 @@ describe('InvoiceAmountComponent', () => {
 
     it('should call denyCharge and add the line item to denied charges', async (done) => {
       component.pendingChargeLineItems.push(new FormGroup({
-        charge: new FormControl('Pending Charge')
+        charge: new FormControl('Pending Charge'),
+        requestStatus: new FormControl('Successful'),
+        responseComment: new FormControl('N/A'),
+        closedDate: new FormControl('N/A'),
+        closedBy: new FormControl('N/A')
       }));
       component.costBreakdownItems.push(new FormGroup({
         charge: new FormControl('Other Charge')
