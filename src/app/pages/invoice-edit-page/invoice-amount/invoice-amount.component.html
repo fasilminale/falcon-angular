@@ -99,7 +99,6 @@
                  type="text"
                  class="form-control"
                  formControlName="charge"
-                 maxlength="4"
                  [attr.disabled]="readOnlyForm ? '': null"
                  [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
           />
@@ -253,7 +252,6 @@
                type="text"
                class="form-control"
                formControlName="charge"
-               maxlength="4"
                [attr.disabled]="readOnlyForm ? '': null"
                [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
         />
@@ -337,15 +335,19 @@
                     buttonStyle="text"
                     [padding]="'10px'"
                     id="pending-accept-button"
-                    [isDisabled]="readOnlyForm">
+                    [isDisabled]="readOnlyForm"
+                    (buttonClick)="acceptCharge(_.value)"
+        >
           <span>Accept</span>
         </elm-button>
         <elm-button buttonType="button"
                     buttonStyle="text"
                     [padding]="'10px'"
                     id="pending-delete-button"
-                    [isDisabled]="readOnlyForm">
-          <span>Delete</span>
+                    [isDisabled]="readOnlyForm"
+                    (buttonClick)="denyCharge(_.value)"
+        >
+          <span>Deny</span>
         </elm-button>
       </div>
 
