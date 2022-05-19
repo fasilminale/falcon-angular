@@ -303,16 +303,14 @@ export class InvoiceEditPageComponent implements OnInit {
     return editAutoInvoiceModel;
   }
 
-  getRateableInvoice(): RateableInvoiceModel {
+  updateInvoiceFromForms(): void {
+    this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode.value;
+    this.invoice.carrier = this.tripInformationFormGroup.controls.carrier.value;
     const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
+    this.invoice.origin = this.extractLocation(originAddressFormGroup);
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
-    return {
-      mode: this.tripInformationFormGroup.controls.carrierMode.value,
-      carrier: this.tripInformationFormGroup.controls.carrier.value,
-      origin: this.extractLocation(originAddressFormGroup),
-      destination: this.extractLocation(destinationAddressFormGroup),
-      costLineItems: [],
-    };
+    this.invoice.destination = this.extractLocation(destinationAddressFormGroup);
+    this.invoice.costLineItems = this.getCostLineItems();
   }
 
   extractLocation(locationFormGroup: FormGroup): Location {
@@ -333,34 +331,39 @@ export class InvoiceEditPageComponent implements OnInit {
     for (const control of costBreakdownItems.controls) {
       const item = control as FormGroup;
       results.push({
-        accessorial: item.controls.accessorial.value,
-        chargeCode: item.controls.charge.value,
-        attachment: '',
-        attachmentRequired: false,
-        autoApproved: false,
-        carrierComment: '',
-        chargeLineTotal: 0,
-        closedBy: '',
-        closedDate: '',
+        chargeCode: this.handleNAValues(item.controls.charge?.value),
+        attachmentLink: this.handleNAValues(item.controls.attachment?.value),
+        attachmentRequired: this.handleNAValues(item.controls.attachmentRequired?.value),
+        autoApproved: this.handleNAValues(item.controls.autoApproved?.value),
+        carrierComment: this.handleNAValues(item.controls.carrierComment?.value),
+        chargeLineTotal: this.handleNAValues(item.controls.totalAmount?.value),
+        closedBy: this.handleNAValues(item.controls.closedBy?.value),
+        closedDate: this.handleNAValues(item.controls.closedDate?.value),
         costName: '',
-        createdBy: '',
-        createdDate: '',
-        entrySource: { key: '', label: ''},
+        createdBy: this.handleNAValues(item.controls.createdBy?.value),
+        createdDate: this.handleNAValues(item.controls.createdDate?.value),
+        entrySource: this.handleNAValues(item.controls.entrySourcePair?.value),
         expanded: false,
-        fuel: false,
-        manual: false,
-        message: '',
-        planned: false,
-        quantity: 0,
-        rateAmount: 0,
-        rateResponse: '',
-        rateSource: { key: '', label: ''},
-        rateType: '',
-        requestStatus: { key: '', label: ''},
-        responseComment: ''
+        fuel: this.handleNAValues(item.controls.fuel?.value),
+        manual: this.handleNAValues(item.controls.manual?.value),
+        message: this.handleNAValues(item.controls.message?.value),
+        planned: this.handleNAValues(item.controls.planned?.value),
+        quantity: this.handleNAValues(item.controls.quantity?.value),
+        rateAmount: this.handleNAValues(item.controls.rate?.value),
+        rateResponse: this.handleNAValues(item.controls.rateResponse?.value),
+        rateSource: this.handleNAValues(item.controls.rateSourcePair?.value),
+        rateType: this.handleNAValues(item.controls.type?.value),
+        requestStatus: this.handleNAValues(item.controls.requestStatus?.value),
+        responseComment: this.handleNAValues(item.controls.responseComment?.value),
+        lineItemType: this.handleNAValues(item.controls.lineItemType?.value)
       });
     }
+    console.log(results);
     return results;
+  }
+
+  private handleNAValues(value: any): any {
+    return value === 'N/A' ? null : value;
   }
 
   private createRequest(accessorialCode: string): RateEngineRequest {
@@ -409,13 +412,10 @@ export class InvoiceEditPageComponent implements OnInit {
    *  Rate management is not called if checkAccessorialData() returns false,indicating required data is missing.
    */
   getRates(accessorialCode: string): void {
-    if (this.checkAccessorialData(this.invoice) && accessorialCode) {
-      const request: RateEngineRequest = this.createRequest(accessorialCode);
-      console.log('CALLING RATE ENGINE');
-      this.subscriptions.manage(
-        this.rateService.getRates(request).subscribe(
-          response => this.rateEngineCallResult$.next(response)
-        )
+    this.updateInvoiceFromForms();
+    if (this.checkAccessorialData(this.invoice)) {
+      this.rateService.rateInvoice(this.invoice).subscribe(
+        ratedInvoiced => this.loadInvoice(ratedInvoiced)
       );
     }
   }
@@ -434,6 +434,11 @@ export class InvoiceEditPageComponent implements OnInit {
     const shipDateExists: boolean = invoice.pickupDateTime != null;
     const originExists: boolean = invoice.origin != null;
     const destinationExists: boolean = invoice.destination != null;
+    console.log('modeExists=', modeExists);
+    console.log('carrierExists=', carrierExists);
+    console.log('shipDateExists=', shipDateExists);
+    console.log('originExists=', originExists);
+    console.log('destinationExists=', destinationExists);
     return modeExists && carrierExists && shipDateExists && originExists && destinationExists;
   }
 

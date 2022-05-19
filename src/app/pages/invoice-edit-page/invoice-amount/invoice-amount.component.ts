@@ -199,13 +199,14 @@ export class InvoiceAmountComponent implements OnInit {
 
   insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
     if (lineItems && lineItems.length > 0) {
-      items = new FormArray([]);
       lineItems.forEach((lineItem) => {
-        controls.push(new FormGroup({
+        const group = new FormGroup({
           accessorial: new FormControl(lineItem.accessorial ?? false),
           charge: new FormControl(lineItem.chargeCode),
           rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
+          rateSourcePair: new FormControl(lineItem.rateSource),
           entrySource: new FormControl(lineItem.entrySource?.label ?? 'N/A'),
+          entrySourcePair: new FormControl(lineItem.entrySource),
           rate: new FormControl(lineItem.rateAmount ? `${lineItem.rateAmount}` : 'N/A'),
           type: new FormControl(lineItem.rateType ? lineItem.rateType : ''),
           quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
@@ -222,9 +223,17 @@ export class InvoiceAmountComponent implements OnInit {
           autoApproved: new FormControl(lineItem.autoApproved ?? false),
           attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
           planned: new FormControl(lineItem.planned ?? false),
-          fuel: new FormControl(lineItem.planned ?? false),
-          manual: new FormControl(false)
-        }));
+          fuel: new FormControl(lineItem.fuel ?? false),
+          manual: new FormControl(false),
+          lineItemType: new FormControl(lineItem.lineItemType ?? null)
+        });
+        group.get('rateSourcePair')?.valueChanges?.subscribe(
+          value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
+        );
+        group.get('entrySourcePair')?.valueChanges?.subscribe(
+          value => group.get('entrySource')?.setValue(value?.label ?? 'N/A')
+        );
+        controls.push(group);
       });
     }
   }
@@ -326,11 +335,16 @@ export class InvoiceAmountComponent implements OnInit {
       if ('OTHER' === newChargeDetails.selected.name) {
         const variables = newChargeDetails.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
-        newLineItemGroup.get('rateSource')?.setValue('Manual');
+        newLineItemGroup.get('rate')?.setValue('N/A');
+        newLineItemGroup.get('type')?.setValue('N/A');
+        newLineItemGroup.get('quantity')?.setValue('N/A');
+        newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
         this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
       } else {
         // FIXME in FAL-547
-        newLineItemGroup.get('rateSource')?.setValue('Contract');
+        newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
+        newLineItemGroup.get('accessorialCode')?.setValue(newChargeDetails.selected.accessorialCode);
+        newLineItemGroup.get('lineItemType')?.setValue('ACCESSORIAL');
         this.pendingAccessorialCode = newChargeDetails.selected.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
       }
@@ -347,6 +361,7 @@ export class InvoiceAmountComponent implements OnInit {
   createEmptyLineItemGroup(): FormGroup {
     const charge = new FormControl(null);
     const rateSource = new FormControl('');
+    const rateSourcePair = new FormControl(null);
     const rate = new FormControl('N/A');
     const type = new FormControl('N/A');
     const quantity = new FormControl('N/A');
@@ -354,37 +369,27 @@ export class InvoiceAmountComponent implements OnInit {
     const message = new FormControl('');
     const manual = new FormControl(true);
     const expanded = new FormControl(false);
-
-    return new FormGroup({charge, rateSource, rate, type, quantity, totalAmount, message, manual});
+    const lineItemType = new FormControl(null);
+    const accessorialCode = new FormControl(null);
+    const group = new FormGroup({
+      charge, rateSource, rateSourcePair,
+      rate, type, quantity, totalAmount,
+      message, manual, expanded, lineItemType,
+      accessorialCode
+    });
+    group.get('rateSourcePair')?.valueChanges?.subscribe(
+      value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
+    );
+    group.get('entrySourcePair')?.valueChanges?.subscribe(
+      value => group.get('entrySource')?.setValue(value?.label ?? 'N/A')
+    );
+    return group;
   }
 
   onExpandCostLineItem(costLineItem: any): void {
     costLineItem.expanded = !costLineItem.expanded;
   }
 
-  /**
-   * TODO remove this deprecated method once it is safe to do so.
-   * @deprecated
-   *  Calls rate engine for rate information to an accessorial.
-   *  Rate Management is not called if 'OTHER' is selected.
-   */
-  onSelectRate(value: any, lineItem: AbstractControl): void {
-    lineItem.patchValue({rate: null, type: null, quantity: 0, totalAmount: 0});
-    this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-    const lineItemFormGroup = (lineItem as FormGroup);
-    if (value.accessorialCode === 'OTHER') {
-      lineItemFormGroup.get('rateSource')?.setValue('Manual');
-      lineItemFormGroup.get('rate')?.setValue('N/A');
-      lineItemFormGroup.get('type')?.setValue('N/A');
-      lineItemFormGroup.get('quantity')?.setValue('N/A');
-      lineItemFormGroup.get('totalAmount')?.valueChanges
-        .subscribe(() => this.amountOfInvoiceControl.setValue(this.costBreakdownTotal));
-    } else {
-      lineItemFormGroup.get('rateSource')?.setValue('Contract');
-      this.pendingAccessorialCode = value.accessorialCode;
-      this.rateEngineCall.emit(value.accessorialCode);
-    }
-  }
 
   /**
    * Removes already selected accessorials from the selectable list of options.

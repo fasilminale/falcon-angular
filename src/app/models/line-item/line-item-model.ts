@@ -11,7 +11,8 @@ export interface ManualLineItem {
 }
 
 export interface CostLineItem {
-  accessorial: boolean;
+  accessorial?: boolean;
+  accessorialCode?: string;
   chargeCode: string;
   rateSource: KeyedLabel;
   entrySource: KeyedLabel;
@@ -28,7 +29,7 @@ export interface CostLineItem {
   carrierComment: string;
   responseComment: string;
   rateResponse: string;
-  attachment: string;
+  attachmentLink: string;
   autoApproved: boolean;
   attachmentRequired: boolean;
   planned: boolean;
@@ -36,6 +37,12 @@ export interface CostLineItem {
   message: string;
   manual: boolean;
   expanded: boolean;
+  step?: string;
+  runningTotal?: number;
+  lineItemType?: string;
+
+  //private List<Accessorial.AccessorialVariable> variables = new ArrayList<>();
+
 }
 
 export interface DisputeLineItem {
