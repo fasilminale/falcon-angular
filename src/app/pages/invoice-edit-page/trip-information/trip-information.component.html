@@ -53,7 +53,7 @@
                        formControlName="pickUpDate"
                        [ngClass]="{'field-invalid': !pickUpDateControl.value}">
       </elm-date-picker>
-      <elm-input-subtext *ngIf="!pickUpDateControl.value && !pickUpDateControl.hasError('dateBefore')"
+      <elm-input-subtext *ngIf="(!pickUpDateControl.value || pickUpDateControl.invalid) && !pickUpDateControl.hasError('dateBefore')"
                          [isError]="true">
         Pick up Date is missing
       </elm-input-subtext>
