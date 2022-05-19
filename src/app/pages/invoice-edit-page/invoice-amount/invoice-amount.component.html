@@ -121,6 +121,7 @@
                       buttonType="button"
                       buttonStyle="text"
                       class="flex-shrink-1"
+                      *ngIf="_.get('attachment')?.value?.url"
                       (click)="downloadAttachment(_.get('attachment')?.value?.url)">
             <div class="material-icons download-icon"
                  (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
@@ -269,6 +270,7 @@
                     buttonType="button"
                     buttonStyle="text"
                     class="flex-shrink-1"
+                    *ngIf="_.get('attachment')?.value?.url"
                     (click)="downloadAttachment(_.get('attachment')?.value?.url)">
           <div class="material-icons download-icon"
                (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
@@ -417,6 +419,7 @@
                       buttonType="button"
                       buttonStyle="text"
                       class="flex-shrink-1"
+                      *ngIf="_.get('attachment')?.value?.url"
                       (click)="downloadAttachment(_.get('attachment')?.value?.url)">
                 <div class="material-icons download-icon"
                    (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
