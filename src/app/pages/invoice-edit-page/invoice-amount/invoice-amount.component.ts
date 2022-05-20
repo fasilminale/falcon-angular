@@ -64,6 +64,9 @@ export class InvoiceAmountComponent implements OnInit {
   @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
 
   rateEngineCallResponse: Subscription = new Subscription();
+  chargeLineItemOptionsSubscription: Subscription = new Subscription();
+  updateIsEditModeSubscription: Subscription = new Subscription();
+  loadInvoiceOverviewDetailSubscription: Subscription = new Subscription();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private utilService: UtilService) {
@@ -100,7 +103,8 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   @Input() set chargeLineItemOptions$(observable: Observable<RateDetailResponse>) {
-    this.subscriptionManager.manage(observable.pipe(
+    this.chargeLineItemOptionsSubscription.unsubscribe();
+    this.chargeLineItemOptionsSubscription = observable.pipe(
       map(response => {
         return CostBreakDownUtils.toOptions(response.calcDetails);
       })
@@ -108,23 +112,25 @@ export class InvoiceAmountComponent implements OnInit {
       opts => {
         this.costBreakdownOptions$.value = opts;
       }
-    ));
+    );
   }
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
-    this.subscriptionManager.manage(observable.subscribe(
+    this.updateIsEditModeSubscription.unsubscribe();
+    this.updateIsEditModeSubscription = observable.subscribe(
       isEditMode => {
         this.readOnlyForm = !isEditMode;
         this.enableDisableOverrideStandardPaymentTerms(this.readOnlyForm);
         this.enableDisableCurrency(this.readOnlyForm);
       }
-    ));
+    );
   }
 
   @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
-    this.subscriptionManager.manage(observable.subscribe(
+    this.loadInvoiceOverviewDetailSubscription.unsubscribe();
+    this.loadInvoiceOverviewDetailSubscription = observable.subscribe(
       invoiceOverviewDetail => this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID'
-    ));
+    );
   }
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
@@ -142,42 +148,42 @@ export class InvoiceAmountComponent implements OnInit {
     this._formGroup = givenFormGroup;
   }
 
-  /**
-   *  Applies the response from rate engine to the pending accessorial that is expecting
-   *  the response from rate engine.
-   */
-  @Input() set rateEngineCallResult$(observable: Observable<RatesResponse>) {
-    this.rateEngineCallResponse.unsubscribe();
-    this.rateEngineCallResponse = observable.subscribe(rateEngineResult => {
-      console.log('RECEIVED RATE ENGINE RESPONSE', rateEngineResult);
-      const carrierSummary = rateEngineResult.carrierRateSummaries[0];
-      const leg = carrierSummary.legs[0];
-      // Check if accessorial code is contained in the description of the response
-      const accessorial = leg.carrierRate.lineItems.find(item => item.accessorial
-        && item.description.substr(0, 3) === this.pendingAccessorialCode);
-
-      // If a match is found, update the pending line item with information from the response
-      if (accessorial) {
-        console.log('found accessorial');
-        console.log('controls: ', this.costBreakdownItems.controls.map(c => c.get('charge')?.value));
-        for (const control of this.costBreakdownItems.controls) {
-          const chargeValue = control.get('charge')?.value;
-          if (chargeValue.accessorialCode === this.pendingAccessorialCode) {
-            console.log('found control');
-            control.patchValue({
-              rate: accessorial.rate,
-              type: accessorial.rateType,
-              totalAmount: accessorial.lineItemTotal,
-              message: accessorial.message
-            });
-          }
-        }
-        // Update invoice total and available accessorial options
-        this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-      }
-      console.log('END RATE ENGINE RESPONSE');
-    });
-  }
+  // /**
+  //  *  Applies the response from rate engine to the pending accessorial that is expecting
+  //  *  the response from rate engine.
+  //  */
+  // @Input() set rateEngineCallResult$(observable: Observable<RatesResponse>) {
+  //   this.rateEngineCallResponse.unsubscribe();
+  //   this.rateEngineCallResponse = observable.subscribe(rateEngineResult => {
+  //     console.log('RECEIVED RATE ENGINE RESPONSE', rateEngineResult);
+  //     const carrierSummary = rateEngineResult.carrierRateSummaries[0];
+  //     const leg = carrierSummary.legs[0];
+  //     // Check if accessorial code is contained in the description of the response
+  //     const accessorial = leg.carrierRate.lineItems.find(item => item.accessorial
+  //       && item.description.substr(0, 3) === this.pendingAccessorialCode);
+  //
+  //     // If a match is found, update the pending line item with information from the response
+  //     if (accessorial) {
+  //       console.log('found accessorial');
+  //       console.log('controls: ', this.costBreakdownItems.controls.map(c => c.get('charge')?.value));
+  //       for (const control of this.costBreakdownItems.controls) {
+  //         const chargeValue = control.get('charge')?.value;
+  //         if (chargeValue.accessorialCode === this.pendingAccessorialCode) {
+  //           console.log('found control');
+  //           control.patchValue({
+  //             rate: accessorial.rate,
+  //             type: accessorial.rateType,
+  //             totalAmount: accessorial.lineItemTotal,
+  //             message: accessorial.message
+  //           });
+  //         }
+  //       }
+  //       // Update invoice total and available accessorial options
+  //       this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+  //     }
+  //     console.log('END RATE ENGINE RESPONSE');
+  //   });
+  // }
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ?? '');
@@ -202,6 +208,7 @@ export class InvoiceAmountComponent implements OnInit {
       lineItems.forEach((lineItem) => {
         const group = new FormGroup({
           accessorial: new FormControl(lineItem.accessorial ?? false),
+          accessorialCode: new FormControl(lineItem.accessorialCode),
           charge: new FormControl(lineItem.chargeCode),
           rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
           rateSourcePair: new FormControl(lineItem.rateSource),
@@ -220,7 +227,7 @@ export class InvoiceAmountComponent implements OnInit {
           carrierComment: new FormControl(lineItem.carrierComment ?? 'N/A'),
           responseComment: new FormControl(lineItem.responseComment ?? 'N/A'),
           rateResponse: new FormControl(lineItem.rateResponse ?? 'N/A'),
-          autoApproved: new FormControl(lineItem.autoApproved ?? false),
+          autoApproved: new FormControl(lineItem.autoApproved ?? true),
           attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
           planned: new FormControl(lineItem.planned ?? false),
           fuel: new FormControl(lineItem.fuel ?? false),
@@ -324,16 +331,16 @@ export class InvoiceAmountComponent implements OnInit {
       await this.costBreakdownOptions$.asObservable().pipe(first()).toPromise();
     }
     const filteredCostBreakdownOptions = this.filterCostBreakdownOptions(this.costBreakdownOptions$.value);
-    const newChargeDetails = await this.utilService.openNewChargeModal({
+    const modalResponse = await this.utilService.openNewChargeModal({
       costBreakdownOptions: filteredCostBreakdownOptions
     }).pipe(first()).toPromise();
-    if (newChargeDetails) {
+    if (modalResponse) {
       // TODO still need to save the comment from newChargeDetails on the invoice somewhere...
       const newLineItemGroup = this.createEmptyLineItemGroup();
       this.costBreakdownItemsControls.push(newLineItemGroup);
-      newLineItemGroup.get('charge')?.setValue(newChargeDetails.selected.name);
-      if ('OTHER' === newChargeDetails.selected.name) {
-        const variables = newChargeDetails.selected.variables ?? [];
+      newLineItemGroup.get('charge')?.setValue(modalResponse.selected.name);
+      if ('OTHER' === modalResponse.selected.name) {
+        const variables = modalResponse.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
         newLineItemGroup.get('rate')?.setValue('N/A');
         newLineItemGroup.get('type')?.setValue('N/A');
@@ -343,9 +350,9 @@ export class InvoiceAmountComponent implements OnInit {
       } else {
         // FIXME in FAL-547
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
-        newLineItemGroup.get('accessorialCode')?.setValue(newChargeDetails.selected.accessorialCode);
+        newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
         newLineItemGroup.get('lineItemType')?.setValue('ACCESSORIAL');
-        this.pendingAccessorialCode = newChargeDetails.selected.accessorialCode;
+        this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
       }
     }
@@ -371,11 +378,12 @@ export class InvoiceAmountComponent implements OnInit {
     const expanded = new FormControl(false);
     const lineItemType = new FormControl(null);
     const accessorialCode = new FormControl(null);
+    const autoApproved = new FormControl(true);
     const group = new FormGroup({
       charge, rateSource, rateSourcePair,
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
-      accessorialCode
+      accessorialCode, autoApproved
     });
     group.get('rateSourcePair')?.valueChanges?.subscribe(
       value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')

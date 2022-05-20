@@ -331,6 +331,7 @@ export class InvoiceEditPageComponent implements OnInit {
     for (const control of costBreakdownItems.controls) {
       const item = control as FormGroup;
       results.push({
+        accessorialCode: this.handleNAValues(item.controls.accessorialCode?.value),
         chargeCode: this.handleNAValues(item.controls.charge?.value),
         attachmentLink: this.handleNAValues(item.controls.attachment?.value),
         attachmentRequired: this.handleNAValues(item.controls.attachmentRequired?.value),
@@ -358,7 +359,6 @@ export class InvoiceEditPageComponent implements OnInit {
         lineItemType: this.handleNAValues(item.controls.lineItemType?.value)
       });
     }
-    console.log(results);
     return results;
   }
 
@@ -434,11 +434,6 @@ export class InvoiceEditPageComponent implements OnInit {
     const shipDateExists: boolean = invoice.pickupDateTime != null;
     const originExists: boolean = invoice.origin != null;
     const destinationExists: boolean = invoice.destination != null;
-    console.log('modeExists=', modeExists);
-    console.log('carrierExists=', carrierExists);
-    console.log('shipDateExists=', shipDateExists);
-    console.log('originExists=', originExists);
-    console.log('destinationExists=', destinationExists);
     return modeExists && carrierExists && shipDateExists && originExists && destinationExists;
   }
 
