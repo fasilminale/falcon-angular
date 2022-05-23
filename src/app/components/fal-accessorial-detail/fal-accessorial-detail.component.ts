@@ -15,7 +15,7 @@ import {AbstractControl, FormControl} from '@angular/forms';
         <div class="row accessorial-details-row">
           <div class="col-1 accessorial-detail ">
             <span class="label-text">Request Status</span>
-            <span class="value-text">{{lineItem.value.requestStatus}}</span>
+            <span class="value-text">{{lineItem.value.requestStatus.label}}</span>
           </div>
 
           <div class="col-1 accessorial-detail ">

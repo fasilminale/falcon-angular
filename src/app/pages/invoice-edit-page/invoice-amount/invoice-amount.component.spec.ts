@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Observable, of, Subject} from 'rxjs';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
-import {CostLineItem} from 'src/app/models/line-item/line-item-model';
+import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
 import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {InvoiceAmountComponent} from './invoice-amount.component';
@@ -10,8 +10,9 @@ import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from 
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {UtilService} from '../../../services/util-service';
 import {NewChargeModalInput, NewChargeModalOutput} from '../../../components/fal-new-charge-modal/fal-new-charge-modal.component';
+import {FalEditChargeModalComponent} from '../../../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 
-fdescribe('InvoiceAmountComponent', () => {
+describe('InvoiceAmountComponent', () => {
 
   const TEST_VARIABLE_NAME = 'Test Variable';
   const TEST_CALC_DETAIL: CalcDetail = {
@@ -49,7 +50,8 @@ fdescribe('InvoiceAmountComponent', () => {
         provide: UtilService, useValue: {
           openNewChargeModal: (data: NewChargeModalInput): Observable<NewChargeModalOutput> => {
             throw new Error('Spy On this function instead!');
-          }
+          },
+          openEditChargeModal: FalEditChargeModalComponent
         }
       }],
       declarations: [InvoiceAmountComponent],
@@ -183,7 +185,7 @@ fdescribe('InvoiceAmountComponent', () => {
   describe('when invoice amount detail is loaded', () => {
     let loadInvoiceAmountDetail$: Subject<InvoiceAmountDetail>;
     let loadInvoiceOverviewDetail$: Subject<InvoiceOverviewDetail>;
-    let rateEngineCallResult$: Subject<RatesResponse>;
+    //let rateEngineCallResult$: Subject<RatesResponse>;
     beforeEach(() => {
       loadInvoiceAmountDetail$ = new Subject();
       component.formGroup = new FormGroup({});
@@ -193,10 +195,10 @@ fdescribe('InvoiceAmountComponent', () => {
       loadInvoiceOverviewDetail$ = new Subject();
       component.loadInvoiceOverviewDetail$ = loadInvoiceOverviewDetail$.asObservable();
     });
-    beforeEach(() => {
-      rateEngineCallResult$ = new Subject();
-      component.rateEngineCallResult$ = rateEngineCallResult$.asObservable();
-    });
+    // beforeEach(() => {
+    //   rateEngineCallResult$ = new Subject();
+    //   component.rateEngineCallResult$ = rateEngineCallResult$.asObservable();
+    // });
 
     it('should populate form with invoice amount details', done => {
       loadInvoiceAmountDetail$.subscribe(() => {
@@ -233,7 +235,7 @@ fdescribe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
-            attachment: 'test.jpg',
+            attachmentLink: 'test.jpg',
             variables: [],
             accessorial: true,
             autoApproved: false,
@@ -276,7 +278,17 @@ fdescribe('InvoiceAmountComponent', () => {
         expect(formGroupValue.mileage).toBe('');
         done();
       });
-      loadInvoiceAmountDetail$.next({costLineItems: [{} as CostLineItem]} as InvoiceAmountDetail);
+      loadInvoiceAmountDetail$.next({
+        costLineItems: [{
+          variables: []
+        } as any],
+        pendingChargeLineItems: [{
+          variables: []
+        } as any],
+        disputeLineItems: [{
+          variables: []
+        } as any],
+      } as InvoiceAmountDetail);
     });
 
     it('should set isPrepaid to True', done => {
@@ -311,7 +323,17 @@ fdescribe('InvoiceAmountComponent', () => {
         });
         done();
       });
-      loadInvoiceAmountDetail$.next({costLineItems: [{} as CostLineItem]} as InvoiceAmountDetail);
+      loadInvoiceAmountDetail$.next({
+        costLineItems: [{
+          variables: []
+        } as any],
+        pendingChargeLineItems: [{
+          variables: []
+        } as any],
+        disputeLineItems: [{
+          variables: []
+        } as any],
+      } as InvoiceAmountDetail);
     });
 
     it('should not populate form when no invoice amount details', done => {
@@ -353,7 +375,7 @@ fdescribe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
-            attachment: 'test.jpg',
+            attachmentLink: 'test.jpg',
             variables: [],
             accessorial: true,
             autoApproved: false,
@@ -396,35 +418,35 @@ fdescribe('InvoiceAmountComponent', () => {
         const control = component.costBreakdownItems.controls[0];
         control.patchValue({charge: component.costBreakdownOptions$.value[0].value});
         component.pendingAccessorialCode = 'TST';
-        rateEngineCallResult$.next({
-          mode: 'LTL',
-          carrierRateSummaries: [{
-            totalCost: '0',
-            scac: 'ODFL',
-            legs: [
-              {
-                carrierRate: {
-                  accessorialList: [],
-                  lineItems: [
-                    {
-                      description: 'TST - TestChargeCode',
-                      rate: '100',
-                      rateType: 'FLAT',
-                      lineItemTotal: '100',
-                      lineItemType: 'ACCESSORIAL',
-                      runningTotal: '100',
-                      step: '1',
-                      costName: 'TestCostName',
-                      quantity: 0,
-                      message: '',
-                      accessorial: true
-                    }
-                  ]
-                }
-              }
-            ]
-          }]
-        });
+        // rateEngineCallResult$.next({
+        //   mode: 'LTL',
+        //   carrierRateSummaries: [{
+        //     totalCost: '0',
+        //     scac: 'ODFL',
+        //     legs: [
+        //       {
+        //         carrierRate: {
+        //           accessorialList: [],
+        //           lineItems: [
+        //             {
+        //               description: 'TST - TestChargeCode',
+        //               rate: '100',
+        //               rateType: 'FLAT',
+        //               lineItemTotal: '100',
+        //               lineItemType: 'ACCESSORIAL',
+        //               runningTotal: '100',
+        //               step: '1',
+        //               costName: 'TestCostName',
+        //               quantity: 0,
+        //               message: '',
+        //               accessorial: true
+        //             }
+        //           ]
+        //         }
+        //       }
+        //     ]
+        //   }]
+        // });
         expect(component.filteredCostBreakdownOptions.length).toEqual(1);
         done();
       });
@@ -433,35 +455,35 @@ fdescribe('InvoiceAmountComponent', () => {
       // FIXME in FAL-547 - this feature is temporarily unsupported
       xit('should populate cost breakdown line item', done => {
         component.pendingAccessorialCode = 'OTH';
-        rateEngineCallResult$.next({
-          mode: 'LTL',
-          carrierRateSummaries: [{
-            totalCost: '0',
-            scac: 'ODFL',
-            legs: [
-              {
-                carrierRate: {
-                  accessorialList: [],
-                  lineItems: [
-                    {
-                      description: 'OTH - OtherChargeCode',
-                      rate: '100',
-                      rateType: 'FLAT',
-                      lineItemTotal: '100',
-                      lineItemType: 'ACCESSORIAL',
-                      runningTotal: '100',
-                      step: '1',
-                      costName: 'TestCostName',
-                      quantity: 0,
-                      message: '',
-                      accessorial: true
-                    }
-                  ]
-                }
-              }
-            ]
-          }]
-        });
+        // rateEngineCallResult$.next({
+        //   mode: 'LTL',
+        //   carrierRateSummaries: [{
+        //     totalCost: '0',
+        //     scac: 'ODFL',
+        //     legs: [
+        //       {
+        //         carrierRate: {
+        //           accessorialList: [],
+        //           lineItems: [
+        //             {
+        //               description: 'OTH - OtherChargeCode',
+        //               rate: '100',
+        //               rateType: 'FLAT',
+        //               lineItemTotal: '100',
+        //               lineItemType: 'ACCESSORIAL',
+        //               runningTotal: '100',
+        //               step: '1',
+        //               costName: 'TestCostName',
+        //               quantity: 0,
+        //               message: '',
+        //               accessorial: true
+        //             }
+        //           ]
+        //         }
+        //       }
+        //     ]
+        //   }]
+        // });
         expect(component.filteredCostBreakdownOptions.length).toEqual(2);
         done();
       });
@@ -634,5 +656,26 @@ fdescribe('InvoiceAmountComponent', () => {
     expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
     expect(component.rateEngineCall.emit).toHaveBeenCalledTimes(1);
     expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
+  });
+
+  it('should call onEditCostLineItem and emit to rate engine', async () => {
+    component._formGroup = new FormGroup({
+      pendingChargeLineItems: new FormArray([
+        new FormGroup({
+          charge: new FormControl('test')
+        })
+      ])
+    });
+    const costLineItem = component.pendingChargeLineItemControls[0];
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      charge: 'test',
+      variables: []
+    }));
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    const promise = component.onEditCostLineItem(costLineItem);
+    await promise;
+    expect(utilService.openEditChargeModal).toHaveBeenCalledTimes(1);
+    expect(component.rateEngineCall.emit).toHaveBeenCalled();
   });
 });

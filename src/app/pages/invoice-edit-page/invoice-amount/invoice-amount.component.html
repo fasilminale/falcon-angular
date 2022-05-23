@@ -327,7 +327,7 @@
         </small>
       </div>
 
-      <div class="col-2" *ngIf="_.value.requestStatus === 'Open'">
+      <div class="col-2" *ngIf="_.value.requestStatus.label === 'Open'">
         <div class="material-icons edit-icon" (click)="onEditCostLineItem(_)">edit</div>
         <elm-button buttonType="button"
                     buttonStyle="text"
@@ -345,7 +345,7 @@
         </elm-button>
       </div>
 
-      <div class="col-2" *ngIf="_.value.requestStatus === 'Error'">
+      <div class="col-2" *ngIf="_.value.requestStatus.label === 'Error'">
           <elm-button buttonType="button"
                       buttonStyle="text"
                       [margin]="'0 0 0 120px'"

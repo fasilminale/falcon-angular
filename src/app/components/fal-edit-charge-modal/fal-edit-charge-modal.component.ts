@@ -2,14 +2,10 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {buttonStyleOptions} from '@elm/elm-styleguide-ui';
-import {SelectOption} from '../../models/select-option-model/select-option-model';
-import {CalcDetail} from '../../models/rate-engine/rate-engine-request';
 import {Subscription} from 'rxjs';
-import {CostLineItem} from '../../models/line-item/line-item-model';
-import {parse} from 'jasmine-spec-reporter/built/configuration-parser';
 
 @Component({
-  selector: 'app-fal-new-charge-modal',
+  selector: 'app-fal-edit-charge-modal',
   templateUrl: './fal-edit-charge-modal.component.html',
   styleUrls: ['./fal-edit-charge-modal.component.scss']
 })
@@ -28,7 +24,7 @@ export class FalEditChargeModalComponent {
         new FormControl(variable.quantity));
     });
 
-    this.chargeControl.patchValue(data.costLineItem.value?.charge);
+    this.chargeControl.patchValue(data.costLineItem?.value?.charge);
     this.form = new FormGroup({
       charge: this.chargeControl,
       variables: this.variableControls
@@ -42,7 +38,7 @@ export class FalEditChargeModalComponent {
 
   confirm(): void {
     let result: EditChargeModalOutput;
-    if (this.chargeControl.value) {
+    if (this.chargeControl?.value) {
       const variables: any = [];
       this.getVariableControlNames()
         .forEach(vcName => {
@@ -55,7 +51,7 @@ export class FalEditChargeModalComponent {
           }
         });
       result = {
-        charge: this.chargeControl.value,
+        charge: this.chargeControl?.value,
         variables
       };
     }

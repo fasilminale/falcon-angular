@@ -4,8 +4,9 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {SubjectValue} from '@elm/elm-styleguide-ui';
 import {CalcDetail} from '../../models/rate-engine/rate-engine-request';
+import {FormGroup} from '@angular/forms';
 
-describe('FalCommentModalComponent', () => {
+describe('FalEditChargeModalComponent', () => {
   const TEST_VARIABLE_NAME = 'Test Variable';
   const TEST_CALC_DETAIL: CalcDetail = {
     accessorialCode: 'TEST',

@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit } from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
+import {AbstractControl, Form, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
@@ -14,12 +14,15 @@ import {SubjectValue} from '../../utils/subject-value';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {ConfirmationModalData, ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
-import { InvoiceAmountDetail } from 'src/app/models/invoice/invoice-amount-detail-model';
+import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
-import {switchMap} from "rxjs/operators";
+import {switchMap} from 'rxjs/operators';
+import {RateableInvoiceModel} from '../../models/invoice/rateable-invoice-model';
+import {Location} from '../../models/location/location-model';
+import {CostLineItem} from '../../models/line-item/line-item-model';
 
 
 @Component({
@@ -250,19 +253,19 @@ export class InvoiceEditPageComponent implements OnInit {
           },
           (error) => console.error(error)
         )
-      )
+      );
     }
   }
 
   updateInvoice(): Observable<InvoiceDataModel> {
-    return this.invoiceService.updateAutoInvoice(this.mapTripInformationToEditAutoInvoiceModel(), this.falconInvoiceNumber )
+    return this.invoiceService.updateAutoInvoice(this.mapTripInformationToEditAutoInvoiceModel(), this.falconInvoiceNumber);
   }
 
   clickSubmitForApprovalButton(): void {
     this.subscriptions.manage(
       this.updateInvoice().pipe(
         switchMap((model: InvoiceDataModel) => {
-          return this.invoiceService.submitForApproval(model.falconInvoiceNumber)
+          return this.invoiceService.submitForApproval(model.falconInvoiceNumber);
         })
       ).subscribe(
         (value) => {
@@ -270,18 +273,17 @@ export class InvoiceEditPageComponent implements OnInit {
         },
         (error) => console.error(error)
       )
-    )
+    );
   }
 
   performPostUpdateActions(successMessage: string): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top: 0, behavior: 'smooth'});
     this.ngOnInit();
     this.clickToggleEditMode();
     this.toastService.openSuccessToast(successMessage);
   }
 
   mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
-    const pendingCostLineItems = this.invoiceAmountFormGroup.controls.pendingChargeLineItems as FormArray;
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
       mode: {
         mode: this.tripInformationFormGroup.controls.carrierMode.value.mode,
@@ -296,17 +298,74 @@ export class InvoiceEditPageComponent implements OnInit {
         level: this.tripInformationFormGroup.controls.serviceLevel.value.level,
         name: this.tripInformationFormGroup.controls.serviceLevel.value.name,
       },
-      pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value,
-      pendingChargeLineItems: pendingCostLineItems.controls.map((lineItem: AbstractControl) => {
-        return {
-          ...lineItem.value,
-          closedBy: null,
-          closedDate: null,
-          responseComment: null
-        };
-      })
+      pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value
     };
     return editAutoInvoiceModel;
+  }
+
+  updateInvoiceFromForms(): void {
+    this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode.value;
+    this.invoice.carrier = this.tripInformationFormGroup.controls.carrier.value;
+    const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
+    this.invoice.origin = this.extractLocation(originAddressFormGroup);
+    const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
+    this.invoice.destination = this.extractLocation(destinationAddressFormGroup);
+    this.invoice.costLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems);
+    this.invoice.pendingChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems);
+  }
+
+  extractLocation(locationFormGroup: FormGroup): Location {
+    return {
+      name: locationFormGroup.controls.name.value,
+      city: locationFormGroup.controls.city.value,
+      country: locationFormGroup.controls.country.value,
+      zipCode: locationFormGroup.controls.zipCode.value,
+      state: locationFormGroup.controls.state.value,
+      address: locationFormGroup.controls.streetAddress.value,
+      address2: locationFormGroup.controls.streetAddress2.value,
+    };
+  }
+
+  getLineItems(items: AbstractControl): Array<CostLineItem> {
+    const results: Array<CostLineItem> = [];
+    const lineItems = items as FormArray;
+    for (const control of lineItems.controls) {
+      const item = control as FormGroup;
+      results.push({
+        accessorialCode: this.handleNAValues(item.controls.accessorialCode?.value),
+        chargeCode: this.handleNAValues(item.controls.charge?.value),
+        attachmentLink: this.handleNAValues(item.controls.attachment?.value),
+        attachmentRequired: this.handleNAValues(item.controls.attachmentRequired?.value),
+        autoApproved: this.handleNAValues(item.controls.autoApproved?.value),
+        carrierComment: this.handleNAValues(item.controls.carrierComment?.value),
+        chargeLineTotal: this.handleNAValues(item.controls.totalAmount?.value),
+        closedBy: this.handleNAValues(item.controls.closedBy?.value),
+        closedDate: this.handleNAValues(item.controls.closedDate?.value),
+        costName: '',
+        createdBy: this.handleNAValues(item.controls.createdBy?.value),
+        createdDate: this.handleNAValues(item.controls.createdDate?.value),
+        entrySource: this.handleNAValues(item.controls.entrySourcePair?.value),
+        expanded: false,
+        fuel: this.handleNAValues(item.controls.fuel?.value),
+        manual: this.handleNAValues(item.controls.manual?.value),
+        message: this.handleNAValues(item.controls.message?.value),
+        planned: this.handleNAValues(item.controls.planned?.value),
+        quantity: this.handleNAValues(item.controls.quantity?.value),
+        rateAmount: this.handleNAValues(item.controls.rate?.value),
+        rateResponse: this.handleNAValues(item.controls.rateResponse?.value),
+        rateSource: this.handleNAValues(item.controls.rateSourcePair?.value),
+        rateType: this.handleNAValues(item.controls.type?.value),
+        requestStatus: this.handleNAValues(item.controls.requestStatus?.value),
+        responseComment: this.handleNAValues(item.controls.responseComment?.value),
+        lineItemType: this.handleNAValues(item.controls.lineItemType?.value),
+        variables: item.controls.variables?.value
+      });
+    }
+    return results;
+  }
+
+  private handleNAValues(value: any): any {
+    return value === 'N/A' ? null : value;
   }
 
   private createRequest(accessorialCode: string): RateEngineRequest {
@@ -355,10 +414,12 @@ export class InvoiceEditPageComponent implements OnInit {
    *  Rate management is not called if checkAccessorialData() returns false,indicating required data is missing.
    */
   getRates(accessorialCode: string): void {
-    if (this.checkAccessorialData(this.invoice) && accessorialCode) {
-      const request: RateEngineRequest = this.createRequest(accessorialCode);
-      this.subscriptions.manage(
-        this.rateService.getRates(request).subscribe(response => this.rateEngineCallResult$.next(response))
+    this.updateInvoiceFromForms();
+    if (this.checkAccessorialData(this.invoice)) {
+      this.rateService.rateInvoice(this.invoice).subscribe(
+        ratedInvoiced => {
+          return this.loadInvoice(ratedInvoiced);
+        }
       );
     }
   }
