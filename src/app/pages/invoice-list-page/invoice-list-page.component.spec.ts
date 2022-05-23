@@ -127,6 +127,11 @@ describe('InvoiceListPageComponent', () => {
         shippingPointCode: 'd36'
       }
     ]);
+    http.expectOne(`${environment.baseServiceUrl}/v1/carrierModeCodes`).flush([
+      {
+        mode: 'LNHL'
+      }
+    ]);
     http.expectOne(`${environment.baseServiceUrl}/v1/originDestinationCities`).flush([{
       originCities: ['New York'],
       destinationCities: ['Chicago']

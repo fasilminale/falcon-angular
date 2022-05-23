@@ -18,6 +18,8 @@ export class InvoiceFilterModalComponent implements OnInit {
   sortedMasterDataScacs: Array<SelectOption<string>> = [];
   masterDataShippingPoints: Array<SelectOption<string>> = [];
   sortedMasterDataShippingPoints: Array<SelectOption<string>> = [];
+  masterDataModes: Array<SelectOption<string>> = [];
+  sortedMasterDataModes: Array<SelectOption<string>> = [];
 
   constructor(private dialogRef: MatDialogRef<InvoiceFilterModalComponent>,
               public filterService: FilterService, @Inject(MAT_DIALOG_DATA) data: any) {
@@ -26,11 +28,13 @@ export class InvoiceFilterModalComponent implements OnInit {
     this.destinationCities = data.destinationCities;
     this.masterDataScacs = data.masterDataScacs;
     this.masterDataShippingPoints = data.masterDataShippingPoints;
+    this.masterDataModes = data.masterDataModes;
   }
 
   ngOnInit(): void {
     this.sortedMasterDataScacs = this.sortScacs(this.masterDataScacs);
     this.sortedMasterDataShippingPoints = this.sortShippingPoints(this.masterDataShippingPoints);
+    this.sortedMasterDataModes = this.sortModes(this.masterDataModes);
   }
 
   resetForm(): void {
@@ -73,6 +77,20 @@ export class InvoiceFilterModalComponent implements OnInit {
   }
 
   compareShippingPoints( a: SelectOption<string>, b: SelectOption<string> ): number {
+    if ( a.label < b.label ){
+      return -1;
+    }
+    if ( a.label > b.label ){
+      return 1;
+    }
+    return 0;
+  }
+
+  sortModes(modes: Array<SelectOption<string>>) : Array<SelectOption<string>> {
+    return modes.sort(this.compareModes)
+  }
+
+  compareModes( a: SelectOption<string>, b: SelectOption<string> ): number {
     if ( a.label < b.label ){
       return -1;
     }
