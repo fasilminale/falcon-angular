@@ -412,7 +412,7 @@ export class InvoiceAmountComponent implements OnInit {
     }).pipe(first()).toPromise();
     if (editChargeDetails) {
       const costLineItems = this.pendingChargeLineItemControls;
-      const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.charge = lineItem.value?.charge);
+      const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.charge === lineItem.value?.charge);
       if (existingCostLineItem) {
         this.toastService.openSuccessToast(`Success. Variables have been updated for the line item.`);
         existingCostLineItem.patchValue({

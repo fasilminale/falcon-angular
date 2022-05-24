@@ -118,6 +118,12 @@ app-fal-radio-input ::ng-deep .background-disabled,
   cursor: pointer;
 }
 
+.edit-icon-invisible {
+  display:inline-flex;
+  vertical-align:top;
+  padding: 6px 18px;
+}
+
 .download-text {
   margin-left: 8px;
 }
