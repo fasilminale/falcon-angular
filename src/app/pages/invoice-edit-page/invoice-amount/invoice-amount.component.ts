@@ -219,6 +219,7 @@ export class InvoiceAmountComponent implements OnInit {
           quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
           totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
           requestStatus: new FormControl(lineItem.requestStatus?.label ?? 'N/A'),
+          requestStatusPair: new FormControl(lineItem.requestStatus),
           message: new FormControl(lineItem.message ?? 'N/A'),
           createdBy: new FormControl(lineItem.createdBy ?? 'N/A'),
           createdDate: new FormControl(lineItem.createdDate ?? 'N/A'),
@@ -232,13 +233,17 @@ export class InvoiceAmountComponent implements OnInit {
           planned: new FormControl(lineItem.planned ?? false),
           fuel: new FormControl(lineItem.fuel ?? false),
           manual: new FormControl(false),
-          lineItemType: new FormControl(lineItem.lineItemType ?? null)
+          lineItemType: new FormControl(lineItem.lineItemType ?? null),
+          variables: new FormControl(lineItem.variables ?? [])
         });
         group.get('rateSourcePair')?.valueChanges?.subscribe(
           value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
         );
         group.get('entrySourcePair')?.valueChanges?.subscribe(
           value => group.get('entrySource')?.setValue(value?.label ?? 'N/A')
+        );
+        group.get('requestStatusPair')?.valueChanges?.subscribe(
+          value => group.get('requestStatus')?.setValue(value?.label ?? 'N/A')
         );
         controls.push(group);
       });
@@ -335,7 +340,6 @@ export class InvoiceAmountComponent implements OnInit {
       costBreakdownOptions: filteredCostBreakdownOptions
     }).pipe(first()).toPromise();
     if (modalResponse) {
-      // TODO still need to save the comment from newChargeDetails on the invoice somewhere...
       const newLineItemGroup = this.createEmptyLineItemGroup();
       this.costBreakdownItemsControls.push(newLineItemGroup);
       newLineItemGroup.get('charge')?.setValue(modalResponse.selected.name);
@@ -346,12 +350,13 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('type')?.setValue('N/A');
         newLineItemGroup.get('quantity')?.setValue('N/A');
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
+        newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
         this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
       } else {
-        // FIXME in FAL-547
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
         newLineItemGroup.get('lineItemType')?.setValue('ACCESSORIAL');
+        newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
       }
@@ -379,11 +384,14 @@ export class InvoiceAmountComponent implements OnInit {
     const lineItemType = new FormControl(null);
     const accessorialCode = new FormControl(null);
     const autoApproved = new FormControl(true);
+    const responseComment = new FormControl(null);
+    const variables = new FormControl([]);
     const group = new FormGroup({
       charge, rateSource, rateSourcePair,
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
-      accessorialCode, autoApproved
+      accessorialCode, autoApproved,
+      variables, responseComment
     });
     group.get('rateSourcePair')?.valueChanges?.subscribe(
       value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')

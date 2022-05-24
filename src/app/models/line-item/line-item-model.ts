@@ -1,5 +1,6 @@
 import {Measurement, UnitOfMeasure} from '../measurement/measurement-model';
 import {KeyedLabel} from '../generic/keyed-label';
+import {CalcDetailVariable} from '../rate-engine/rate-engine-request';
 
 export interface ManualLineItem {
   lineItemNumber: string;
@@ -40,9 +41,7 @@ export interface CostLineItem {
   step?: string;
   runningTotal?: number;
   lineItemType?: string;
-
-  //private List<Accessorial.AccessorialVariable> variables = new ArrayList<>();
-
+  variables: Array<CalcDetailVariable>;
 }
 
 export interface DisputeLineItem {

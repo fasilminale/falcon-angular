@@ -342,10 +342,10 @@ export class InvoiceEditPageComponent implements OnInit {
         carrierComment: this.handleNAValues(item.controls?.carrierComment?.value),
         chargeLineTotal: this.handleNAValues(item.controls?.totalAmount?.value),
         closedBy: this.handleNAValues(item.controls?.closedBy?.value),
-        //closedDate: this.handleNAValues(item.controls.closedDate?.value),
+        closedDate: this.handleNAValues(item.controls.closedDate?.value),
         costName: '',
         createdBy: this.handleNAValues(item.controls?.createdBy?.value),
-        //createdDate: this.handleNAValues(item.controls.createdDate?.value),
+        createdDate: this.handleNAValues(item.controls.createdDate?.value),
         entrySource: this.handleNAValues(item.controls?.entrySourcePair?.value),
         expanded: false,
         fuel: this.handleNAValues(item.controls?.fuel?.value),
@@ -357,9 +357,10 @@ export class InvoiceEditPageComponent implements OnInit {
         rateResponse: this.handleNAValues(item.controls?.rateResponse?.value),
         rateSource: this.handleNAValues(item.controls?.rateSourcePair?.value),
         rateType: this.handleNAValues(item.controls?.type?.value),
-        requestStatus: this.handleNAValues(item.controls?.requestStatus?.value),
+        requestStatus: this.handleNAValues(item.controls?.requestStatusPair?.value),
         responseComment: this.handleNAValues(item.controls?.responseComment?.value),
-        lineItemType: this.handleNAValues(item.controls?.lineItemType?.value)
+        lineItemType: this.handleNAValues(item.controls?.lineItemType?.value),
+        variables: item.controls?.variables?.value ?? []
       });
     }
     return results;

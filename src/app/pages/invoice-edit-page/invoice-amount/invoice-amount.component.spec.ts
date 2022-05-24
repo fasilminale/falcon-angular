@@ -240,7 +240,8 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false
+            expanded: false,
+            variables: []
           }
         ],
         pendingChargeLineItems: [],
@@ -358,7 +359,8 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false
+            expanded: false,
+            variables: []
           }
         ],
         pendingChargeLineItems: [],
