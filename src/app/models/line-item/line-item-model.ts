@@ -23,9 +23,9 @@ export interface CostLineItem {
   chargeLineTotal: number;
   requestStatus: KeyedLabel;
   createdBy: string;
-  createdDate: string;
+  createdDate?: string;
   closedBy: string;
-  closedDate: string;
+  closedDate?: string;
   carrierComment: string;
   responseComment: string;
   rateResponse: string;
