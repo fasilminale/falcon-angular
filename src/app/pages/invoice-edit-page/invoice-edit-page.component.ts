@@ -95,7 +95,7 @@ export class InvoiceEditPageComponent implements OnInit {
     }
   }
 
-  private loadInvoice(invoice: InvoiceDataModel): void {
+  public loadInvoice(invoice: InvoiceDataModel): void {
     this.invoice = invoice;
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
@@ -304,8 +304,8 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   updateInvoiceFromForms(): void {
-    this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode.value;
-    this.invoice.carrier = this.tripInformationFormGroup.controls.carrier.value;
+    this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode?.value;
+    this.invoice.carrier = this.tripInformationFormGroup.controls.carrier?.value;
     const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
     this.invoice.origin = this.extractLocation(originAddressFormGroup);
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
@@ -316,56 +316,59 @@ export class InvoiceEditPageComponent implements OnInit {
 
   extractLocation(locationFormGroup: FormGroup): Location {
     return {
-      name: locationFormGroup.controls.name.value,
-      city: locationFormGroup.controls.city.value,
-      country: locationFormGroup.controls.country.value,
-      zipCode: locationFormGroup.controls.zipCode.value,
-      state: locationFormGroup.controls.state.value,
-      address: locationFormGroup.controls.streetAddress.value,
-      address2: locationFormGroup.controls.streetAddress2.value,
+      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
+      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
+      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
+      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
+      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
+      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
+      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value)
     };
   }
 
   getLineItems(items: AbstractControl): Array<CostLineItem> {
     const results: Array<CostLineItem> = [];
     const lineItems = items as FormArray;
+    if (!lineItems?.controls) {
+      return [];
+    }
     for (const control of lineItems.controls) {
       const item = control as FormGroup;
       results.push({
-        accessorialCode: this.handleNAValues(item.controls.accessorialCode?.value),
-        chargeCode: this.handleNAValues(item.controls.charge?.value),
-        attachmentLink: this.handleNAValues(item.controls.attachment?.value),
-        attachmentRequired: this.handleNAValues(item.controls.attachmentRequired?.value),
-        autoApproved: this.handleNAValues(item.controls.autoApproved?.value),
-        carrierComment: this.handleNAValues(item.controls.carrierComment?.value),
-        chargeLineTotal: this.handleNAValues(item.controls.totalAmount?.value),
-        closedBy: this.handleNAValues(item.controls.closedBy?.value),
-        closedDate: this.handleNAValues(item.controls.closedDate?.value),
+        accessorialCode: this.handleNAValues(item.controls?.accessorialCode?.value),
+        chargeCode: this.handleNAValues(item.controls?.charge?.value),
+        attachmentLink: this.handleNAValues(item.controls?.attachment?.value),
+        attachmentRequired: this.handleNAValues(item.controls?.attachmentRequired?.value),
+        autoApproved: this.handleNAValues(item.controls?.autoApproved?.value),
+        carrierComment: this.handleNAValues(item.controls?.carrierComment?.value),
+        chargeLineTotal: this.handleNAValues(item.controls?.totalAmount?.value),
+        closedBy: this.handleNAValues(item.controls?.closedBy?.value),
+        //closedDate: this.handleNAValues(item.controls.closedDate?.value),
         costName: '',
-        createdBy: this.handleNAValues(item.controls.createdBy?.value),
-        createdDate: this.handleNAValues(item.controls.createdDate?.value),
-        entrySource: this.handleNAValues(item.controls.entrySourcePair?.value),
+        createdBy: this.handleNAValues(item.controls?.createdBy?.value),
+        //createdDate: this.handleNAValues(item.controls.createdDate?.value),
+        entrySource: this.handleNAValues(item.controls?.entrySourcePair?.value),
         expanded: false,
-        fuel: this.handleNAValues(item.controls.fuel?.value),
-        manual: this.handleNAValues(item.controls.manual?.value),
-        message: this.handleNAValues(item.controls.message?.value),
-        planned: this.handleNAValues(item.controls.planned?.value),
-        quantity: this.handleNAValues(item.controls.quantity?.value),
-        rateAmount: this.handleNAValues(item.controls.rate?.value),
-        rateResponse: this.handleNAValues(item.controls.rateResponse?.value),
-        rateSource: this.handleNAValues(item.controls.rateSourcePair?.value),
-        rateType: this.handleNAValues(item.controls.type?.value),
-        requestStatus: this.handleNAValues(item.controls.requestStatus?.value),
-        responseComment: this.handleNAValues(item.controls.responseComment?.value),
-        lineItemType: this.handleNAValues(item.controls.lineItemType?.value),
+        fuel: this.handleNAValues(item.controls?.fuel?.value),
+        manual: this.handleNAValues(item.controls?.manual?.value),
+        message: this.handleNAValues(item.controls?.message?.value),
+        planned: this.handleNAValues(item.controls?.planned?.value),
+        quantity: this.handleNAValues(item.controls?.quantity?.value),
+        rateAmount: this.handleNAValues(item.controls?.rate?.value),
+        rateResponse: this.handleNAValues(item.controls?.rateResponse?.value),
+        rateSource: this.handleNAValues(item.controls?.rateSourcePair?.value),
+        rateType: this.handleNAValues(item.controls?.type?.value),
+        requestStatus: this.handleNAValues(item.controls?.requestStatus?.value),
+        responseComment: this.handleNAValues(item.controls?.responseComment?.value),
+        lineItemType: this.handleNAValues(item.controls?.lineItemType?.value),
         variables: item.controls.variables?.value
       });
     }
     return results;
   }
 
-  private handleNAValues(value: any): any {
-    return value === 'N/A' ? null : value;
+  private handleNAValues(value: any, defaultValue?: any): any {
+    return value === 'N/A' ? defaultValue : value;
   }
 
   private createRequest(accessorialCode: string): RateEngineRequest {
@@ -417,9 +420,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
       this.rateService.rateInvoice(this.invoice).subscribe(
-        ratedInvoiced => {
-          return this.loadInvoice(ratedInvoiced);
-        }
+        ratedInvoiced => this.loadInvoice(ratedInvoiced)
       );
     }
   }
