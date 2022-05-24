@@ -96,6 +96,7 @@ export class InvoiceDataModel {
   distance: string;
   costLineItems: Array<CostLineItem>;
   pendingChargeLineItems: Array<CostLineItem>;
+  deniedChargeLineItems: Array<CostLineItem>;
   disputeLineItems: Array<DisputeLineItem>;
   totalGlAmount: string;
   glLineItems: Array<GlLineItem>;
@@ -190,6 +191,7 @@ export class InvoiceDataModel {
     this.distance = json?.distance ?? '';
     this.costLineItems = json?.costLineItems ?? [];
     this.pendingChargeLineItems = json?.pendingChargeLineItems ?? [];
+    this.deniedChargeLineItems = json?.deniedChargeLineItems ?? [];
     this.disputeLineItems = json?.disputeLineItems ?? [];
     this.totalGlAmount = currency(json?.totalGlAmount);
     this.glLineItems = json?.glLineItems ?? [];
@@ -265,6 +267,13 @@ export class InvoiceUtils {
     return {
       label: `${carrier.name} (${carrier.scac})`,
       value: carrier.scac
+    };
+  }
+
+  static toShippingPointCode(carrierShippingPoints: any): SelectOption<string> {
+    return {
+      label: `${carrierShippingPoints.shippingPointCode}`,
+      value: carrierShippingPoints.shippingPointCode
     };
   }
 }

@@ -24,7 +24,7 @@ import {AbstractControl, FormControl} from '@angular/forms';
           </div>
           <div class="col-1 accessorial-detail">
             <span class="label-text">Created Date</span>
-            <span class="value-text">{{lineItem.value.createdDate | date: dateFormat}}</span>
+            <span class="value-text">{{lineItem.value.createdDate !== 'N/A' ? (lineItem.value.createdDate | date: dateFormat) : 'N/A'}}</span>
           </div>
           <div class="col-9 accessorial-detail">
             <span class="label-text">Carrier Comment</span>
@@ -42,7 +42,7 @@ import {AbstractControl, FormControl} from '@angular/forms';
           </div>
           <div class="col-1 accessorial-detail">
             <span class="label-text">Closed Date</span>
-            <span class="value-text">{{lineItem.value.closedDate | date: dateFormat}}</span>
+            <span class="value-text">{{lineItem.value.closedDate !== 'N/A' ? (lineItem.value.closedDate | date: dateFormat) : 'N/A'}}</span>
           </div>
           <div class="col-9 accessorial-detail">
             <span class="label-text">Response Comment</span>

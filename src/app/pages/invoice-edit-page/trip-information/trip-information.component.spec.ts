@@ -12,6 +12,7 @@ import {FormGroup} from '@angular/forms';
 import {FreightPaymentTerms, TripInformation} from '../../../models/invoice/trip-information-model';
 import {asSpy} from '../../../testing/test-utils.spec';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
+import {CarrierDetailModel} from "../../../models/master-data-models/carrier-detail-model";
 
 describe('TripInformationComponent', () => {
 
@@ -27,10 +28,7 @@ describe('TripInformationComponent', () => {
 
     // Mock MasterDataService
     masterDataService = TestBed.inject(MasterDataService);
-    spyOn(masterDataService, 'getCarrierSCACs').and.returnValue(of([]));
-    spyOn(masterDataService, 'getCarriers').and.returnValue(of([]));
-    spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([]));
-    spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([]));
+
 
     // Create Component
     fixture = TestBed.createComponent(TripInformationComponent);
@@ -39,6 +37,14 @@ describe('TripInformationComponent', () => {
   });
 
   describe('after component creation', () => {
+
+    beforeEach(() => {
+      spyOn(masterDataService, 'getCarrierSCACs').and.returnValue(of([]));
+      spyOn(masterDataService, 'getCarriers').and.returnValue(of([]));
+      spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([]));
+      spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([]));
+    })
+
     it('should have component', () => {
       fixture.detectChanges();
       expect(component).toBeTruthy();
@@ -65,42 +71,43 @@ describe('TripInformationComponent', () => {
     });
     it('should have controls in formGroup', () => {
       fixture.detectChanges();
-      expect(Object.keys(component.formGroup.controls).length).toBe(14);
+      expect(Object.keys(component.formGroup.controls).length).toBe(15);
     });
   });
 
-  describe('#carrierSCACs', () => {
-    describe('given a carrier scac', () => {
-      const CARRIER_SCAC: CarrierSCAC = {
-        scac: 'TCS',
-        mode: 'LTL',
-        serviceLevel: 't1'
-      };
-      beforeEach(() => {
-        asSpy(masterDataService.getCarrierSCACs).and.returnValue(of([CARRIER_SCAC]));
-        component.ngOnInit();
-      });
-      it('should have carrier option', () => {
-        fixture.detectChanges();
-        expect(component.carrierSCACs).toEqual([{
-          scac: 'TCS',
-          mode: 'LTL',
-          serviceLevel: 't1'
-        }]);
-      });
-    });
-  });
 
-  describe('#carrierOptions', () => {
-    describe('given a carrier', () => {
+  describe('#forkJoin', () => {
       const CARRIER: Carrier = {
         name: 'Test Carrier',
         scac: 'TCS',
         tenderAutoAccept: YesNo.NO,
         tenderMethod: TenderMethod.NONE
       };
+      const CARRIER_DETAIL: CarrierDetailModel = {
+        carrierSCAC: 'ABCD',
+        vendorNumber: '1234321',
+      };
+      const CARRIER_SCAC: CarrierSCAC = {
+        scac: 'TCS',
+        mode: 'LTL',
+        serviceLevel: 't1'
+      };
+      const CARRIER_MODE: CarrierModeCode = {
+        mode: 'LTL',
+        reportKeyMode: 'TLTL',
+        reportModeDescription: 'Test Mode Description',
+        tripType: TripType.NONE
+      };
+      const SERVICE_LEVEL: ServiceLevel = {
+        level: 't1',
+        name: 'Test Service Level'
+      };
       beforeEach(() => {
-        asSpy(masterDataService.getCarriers).and.returnValue(of([CARRIER]));
+        spyOn(masterDataService, 'getCarriers').and.returnValue(of([CARRIER]));
+        spyOn(masterDataService, 'getCarrierDetails').and.returnValue(of([CARRIER_DETAIL]));
+        spyOn(masterDataService, 'getCarrierSCACs').and.returnValue(of([CARRIER_SCAC]));
+        spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([CARRIER_MODE]));
+        spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([SERVICE_LEVEL]));
         component.ngOnInit();
       });
       it('should have carrier option', () => {
@@ -110,20 +117,20 @@ describe('TripInformationComponent', () => {
           value: CARRIER
         }]);
       });
-    });
-  });
-
-  describe('#carrierModeOptions', () => {
-    describe('given a carrier mode code', () => {
-      const CARRIER_MODE: CarrierModeCode = {
-        mode: 'LTL',
-        reportKeyMode: 'TLTL',
-        reportModeDescription: 'Test Mode Description',
-        tripType: TripType.NONE
-      };
-      beforeEach(() => {
-        asSpy(masterDataService.getCarrierModeCodes).and.returnValue(of([CARRIER_MODE]));
-        component.ngOnInit();
+      it('should have carrier details', () => {
+        fixture.detectChanges();
+        expect(component.carrierDetails).toEqual([{
+          carrierSCAC: 'ABCD',
+          vendorNumber: '1234321'
+        }]);
+      });
+      it('should have carrier option', () => {
+        fixture.detectChanges();
+        expect(component.carrierSCACs).toEqual([{
+          scac: 'TCS',
+          mode: 'LTL',
+          serviceLevel: 't1'
+        }]);
       });
       it('should have carrier mode option', () => {
         fixture.detectChanges();
@@ -132,27 +139,13 @@ describe('TripInformationComponent', () => {
           value: CARRIER_MODE
         }]);
       });
-    });
-  });
-
-  describe('#serviceLevelOptions', () => {
-    describe('given a service level', () => {
-      const SERVICE_LEVEL: ServiceLevel = {
-        level: 't1',
-        name: 'Test Service Level'
-      };
-      beforeEach(() => {
-        asSpy(masterDataService.getServiceLevels).and.returnValue(of([SERVICE_LEVEL]));
-        component.ngOnInit();
-      });
-      it('should have carrier mode option', () => {
+      it('should have service level option', () => {
         fixture.detectChanges();
         expect(component.serviceLevelOptions).toEqual([{
           label: 't1 (Test Service Level)',
           value: SERVICE_LEVEL
         }]);
       });
-    });
   });
 
   describe('selection compare', () => {
@@ -239,6 +232,33 @@ describe('TripInformationComponent', () => {
     });
   });
 
+  describe('when populateVendorNumberByScac is invoked', () => {
+
+    beforeEach(() => {
+      component.carrierDetails = [
+        {
+          carrierSCAC: 'ABCD',
+          vendorNumber: '1234321',
+        }
+      ]
+    })
+
+    it('should set vendorNumber when carrier details found', () => {
+      component.populateVendorNumberByScac({scac: 'ABCD', name: 'Vandalay Industries'});
+
+      expect(component.carrierDetailFound).toBeTrue();
+      expect(component.vendorNumberControl.value).toEqual(component.carrierDetails[0].vendorNumber);
+    });
+
+
+    it('should not set vendorNumber when carrier details not found', () => {
+      component.populateVendorNumberByScac({scac: 'EFGH', name: 'Kramerica'});
+
+      expect(component.carrierDetailFound).toBeFalse();
+      expect(component.vendorNumberControl.value).toBeNull();
+    });
+  });
+
   describe('when edit mode is updated', () => {
     let isEditMode$: Subject<boolean>;
     beforeEach(() => {
@@ -305,11 +325,13 @@ describe('TripInformationComponent', () => {
         name: 'TestLevel'
       },
       tripId: 'TestTripId',
-      freightOrders: []
+      freightOrders: [],
+      vendorNumber: '1234321'
     };
     const tripInformation$ = new Subject<TripInformation>();
     component.loadTripInformation$ = tripInformation$.asObservable();
     tripInformation$.next(tripInformation);
+    component.filteredCarrierModeOptionsPopulatedSubject.next(1);
     fixture.detectChanges();
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
     expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
@@ -321,6 +343,7 @@ describe('TripInformationComponent', () => {
     expect(component.carrierControl.value).toEqual(tripInformation.carrier);
     expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
     expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+    expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
   });
 
   it('should load trip information and use overriddenDeliveryDateTime when overriddenDeliveryDateTime given', () => {
@@ -348,11 +371,13 @@ describe('TripInformationComponent', () => {
       },
       tripId: 'TestTripId',
       freightOrders: [],
-      overriddenDeliveryDateTime
+      overriddenDeliveryDateTime,
+      vendorNumber: '1234321'
     };
     const tripInformation$ = new Subject<TripInformation>();
     component.loadTripInformation$ = tripInformation$.asObservable();
     tripInformation$.next(tripInformation);
+    component.filteredCarrierModeOptionsPopulatedSubject.next(1);
     fixture.detectChanges();
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
     expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
@@ -364,6 +389,7 @@ describe('TripInformationComponent', () => {
     expect(component.carrierControl.value).toEqual(tripInformation.carrier);
     expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
     expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+    expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
   });
 
   it('should load trip information and use assumedDeliveryDateTime when assumedDeliveryDateTime given', () => {
@@ -391,11 +417,13 @@ describe('TripInformationComponent', () => {
       },
       tripId: 'TestTripId',
       freightOrders: [],
-      assumedDeliveryDateTime
+      assumedDeliveryDateTime,
+      vendorNumber: '1234321'
     };
     const tripInformation$ = new Subject<TripInformation>();
     component.loadTripInformation$ = tripInformation$.asObservable();
     tripInformation$.next(tripInformation);
+    component.filteredCarrierModeOptionsPopulatedSubject.next(1);
     fixture.detectChanges();
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
     expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
@@ -407,6 +435,7 @@ describe('TripInformationComponent', () => {
     expect(component.carrierControl.value).toEqual(tripInformation.carrier);
     expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
     expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+    expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
   });
 
   it('should load trip information and use overriddenDeliveryDateTime ' +
@@ -437,11 +466,13 @@ describe('TripInformationComponent', () => {
       tripId: 'TestTripId',
       freightOrders: [],
       overriddenDeliveryDateTime,
-      assumedDeliveryDateTime
+      assumedDeliveryDateTime,
+      vendorNumber: '1234321'
     };
     const tripInformation$ = new Subject<TripInformation>();
     component.loadTripInformation$ = tripInformation$.asObservable();
     tripInformation$.next(tripInformation);
+    component.filteredCarrierModeOptionsPopulatedSubject.next(1);
     fixture.detectChanges();
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
     expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
@@ -453,6 +484,7 @@ describe('TripInformationComponent', () => {
     expect(component.carrierControl.value).toEqual(tripInformation.carrier);
     expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
     expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+    expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
   });
 
   describe('should toggle freight orders section', () => {
@@ -518,6 +550,7 @@ describe('TripInformationComponent', () => {
   describe('should refresh carrier data', () => {
     it('should call filter methods', () => {
       fixture.detectChanges();
+      spyOn(component, 'populateVendorNumberByScac');
       spyOn(component, 'filterServiceLevels').and.callThrough();
       spyOn(component, 'filterCarrierModes').and.callThrough();
       component.carrierControl.setValue({ scac: 'TestScac' });

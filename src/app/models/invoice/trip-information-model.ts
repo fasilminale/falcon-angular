@@ -7,6 +7,7 @@ import { FreightOrder } from '../freight-order/freight-order-model';
 
 export interface TripInformation {
   tripId: string;
+  vendorNumber: string;
   invoiceDate: Date;
   pickUpDate?: Date;
   deliveryDate?: Date;

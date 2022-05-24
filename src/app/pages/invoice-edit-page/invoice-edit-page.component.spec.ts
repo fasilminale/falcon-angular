@@ -13,6 +13,7 @@ import {asSpy} from '../../testing/test-utils.spec';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
+import {TripInformationComponent} from './trip-information/trip-information.component';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Location} from '../../models/location/location-model';
 
@@ -54,7 +55,7 @@ describe('InvoiceEditPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
-      declarations: [InvoiceEditPageComponent]
+      declarations: [InvoiceEditPageComponent, TripInformationComponent]
     }).compileComponents();
     // Mock Router
     router = TestBed.inject(Router);
@@ -541,32 +542,42 @@ describe('InvoiceEditPageComponent', () => {
     };
 
     it('should call performPostUpdateActions when update succeeds', () => {
-
       component.falconInvoiceNumber = 'F0000001234';
       const invoiceDataModel = new InvoiceDataModel();
       setUpControls();
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
-
       component.clickSaveButton();
-
-      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`);
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
-
+      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(
+        `Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`
+      );
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
     });
 
     it('should not call performPostUpdateActions when update fails', () => {
+      component.falconInvoiceNumber = 'F0000001234';
+      setUpControls();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
+      component.clickSaveButton();
+      expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
+    });
 
+    it('should not call update or performPostUpdateActions when trip componenet carrierDetailsFound is false', () => {
+      component.tripInformationComponent.carrierDetailFound = false;
       component.falconInvoiceNumber = 'F0000001234';
       const invoiceDataModel = new InvoiceDataModel();
       setUpControls();
       spyOn(component, 'performPostUpdateActions');
-      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
-
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       component.clickSaveButton();
-
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
     });
   });
 
@@ -590,7 +601,6 @@ describe('InvoiceEditPageComponent', () => {
     };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
-
       component.falconInvoiceNumber = 'F0000001234';
       const invoiceDataModel = new InvoiceDataModel();
       invoiceDataModel.falconInvoiceNumber = 'F0000005678';
@@ -598,13 +608,14 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
-
       component.clickSubmitForApprovalButton();
-
-      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated and submitted for approval.`);
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(
+        `Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated and submitted for approval.`
+      );
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
       expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
-
     });
 
     it('should not call performPostUpdateActions or submitForApproval when update fails', () => {
@@ -613,17 +624,15 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
-
       component.clickSubmitForApprovalButton();
-
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
       expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
-
     });
 
     it('should not call performPostUpdateActions when update succeeds and submit for approval fails', () => {
-
       component.falconInvoiceNumber = 'F0000001234';
       const invoiceDataModel = new InvoiceDataModel();
       invoiceDataModel.falconInvoiceNumber = 'F0000005678';
@@ -631,14 +640,29 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(throwError(new Error('Bad')));
-
       component.clickSubmitForApprovalButton();
-
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
       expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
-
     });
+
+    it('should not invoke update, submit for approval or performPostUpdateActions when trip information carrierDetailsFound is false',
+      () => {
+        component.tripInformationComponent.carrierDetailFound = false;
+        component.falconInvoiceNumber = 'F0000001234';
+        const invoiceDataModel = new InvoiceDataModel();
+        invoiceDataModel.falconInvoiceNumber = 'F0000005678';
+        setUpControls();
+        spyOn(component, 'performPostUpdateActions');
+        spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
+        spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
+        component.clickSubmitForApprovalButton();
+        expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+        expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
+        expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
+      });
 
   });
 

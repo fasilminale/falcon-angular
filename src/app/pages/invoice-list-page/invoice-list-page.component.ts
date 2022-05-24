@@ -18,6 +18,7 @@ import {saveAs} from 'file-saver';
 import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
 import { InvoiceService } from 'src/app/services/invoice-service';
 import {Subscription} from "rxjs";
+import {SearchComponent} from "../../components/search/search.component";
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -49,12 +50,14 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   invoiceCountLabel = 'Invoices';
   subscription: Subscription = new Subscription();
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
+  @ViewChild(SearchComponent) searchComponent!: SearchComponent;
 
   invoiceFilter!: MatDialogRef<any>;
   invoiceStatuses: Array<StatusModel> = [];
   public originCities: Array<SelectOption<string>> = [];
   public destinationCities: Array<SelectOption<string>> = [];
   public masterDataScacs: Array<SelectOption<string>> = [];
+  public masterDataShippingPoints: Array<SelectOption<string>> = [];
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
@@ -96,6 +99,13 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       opts => {
         if(opts && opts.length > 0) {
           this.masterDataScacs = opts.map(InvoiceUtils.toScacOption);
+        }
+      }
+    ));
+    this.subscription.add(this.invoiceService.getMasterDataShippingPoints().subscribe(
+      opts => {
+        if(opts && opts.length > 0) {
+          this.masterDataShippingPoints = opts.map(InvoiceUtils.toShippingPointCode);
         }
       }
     ));
@@ -161,9 +171,10 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   }
 
   searchInvoices(searchValue: any): void {
-    // this.totalSearchResult = -1; // this is for test
+    // Clear filters
+    this.filterService.invoiceFilterModel.resetForm();
+
     this.searchValue = searchValue;
-    console.log(this.searchValue);
     this.paginationModel.sortField = '';
     this.resetTable(true);
   }
@@ -185,7 +196,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       data: {
         originCities: this.originCities,
         destinationCities: this.destinationCities,
-        masterDataScacs: this.masterDataScacs
+        masterDataScacs: this.masterDataScacs,
+        masterDataShippingPoints: this.masterDataShippingPoints
       },
       minWidth: '525px',
       width: '33vw',
@@ -197,6 +209,10 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     this.invoiceFilter.componentInstance.invoiceStatuses = this.invoiceStatuses;
     this.invoiceFilter.afterClosed().subscribe(response => {
       if (response) {
+        // Clear the search control
+        this.searchValue = '';
+        this.searchComponent.clear();
+
         this.resetTable();
       }
     });
