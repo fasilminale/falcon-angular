@@ -5,7 +5,6 @@ import {
   FormControl,
   FormGroup
 } from '@angular/forms';
-import {StatusModel} from '../invoice/status-model';
 
 export class FiltersModel {
   fb = new FormBuilder();
