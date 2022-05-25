@@ -6,7 +6,7 @@ import {AbstractControl, FormArray, FormControl} from '@angular/forms';
 
 let testingFiltersModel: FiltersModel;
 
-fdescribe('Models: Filter |', () => {
+describe('Models: Filter |', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [AppModule],
