@@ -63,6 +63,10 @@ export class InvoiceService {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/carriers`);
   }
 
+  public getMasterDataModes(): Observable<Array<any>> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/carrierModeCodes`);
+  }
+
   public getMasterDataShippingPoints(): Observable<Array<any>> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/carrierShippingPoints`);
   }

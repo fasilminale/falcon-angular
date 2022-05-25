@@ -5,7 +5,6 @@ import {
   FormControl,
   FormGroup
 } from '@angular/forms';
-import {StatusModel} from '../invoice/status-model';
 
 export class FiltersModel {
   fb = new FormBuilder();
@@ -15,7 +14,8 @@ export class FiltersModel {
     destinationCity: new FormControl(),
     invoiceStatuses: new FormArray([]),
     scac: new FormControl(),
-    shippingPoints: new FormControl()
+    shippingPoints: new FormControl(),
+    mode: new FormControl()
   });
 
   constructor() {
@@ -28,7 +28,8 @@ export class FiltersModel {
       originCity: null,
       destinationCity: null,
       scac: null,
-      shippingPoints: null
+      shippingPoints: null,
+      mode: null
     });
     (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }
@@ -101,7 +102,8 @@ export class FiltersModel {
       originCity: this.form.get('originCity')?.value,
       destinationCity: this.form.get('destinationCity')?.value,
       carrierSCAC: this.form.get('scac')?.value ? [this.form.get('scac')?.value] : [],
-      shippingPoints: this.form.get('shippingPoints')?.value ? [this.form.get('shippingPoints')?.value] : []
+      shippingPoints: this.form.get('shippingPoints')?.value ? [this.form.get('shippingPoints')?.value] : [],
+      carrierMode: this.form.get('mode')?.value ? [this.form.get('mode')?.value] : [],
     };
   }
 
