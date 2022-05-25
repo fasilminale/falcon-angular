@@ -58,6 +58,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   public destinationCities: Array<SelectOption<string>> = [];
   public masterDataScacs: Array<SelectOption<string>> = [];
   public masterDataShippingPoints: Array<SelectOption<string>> = [];
+  public masterDataModes: Array<SelectOption<string>> = [];
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
@@ -106,6 +107,13 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       opts => {
         if(opts && opts.length > 0) {
           this.masterDataShippingPoints = opts.map(InvoiceUtils.toShippingPointCode);
+        }
+      }
+    ));
+    this.subscription.add(this.invoiceService.getMasterDataModes().subscribe(
+      opts => {
+        if(opts && opts.length > 0) {
+          this.masterDataModes = opts.map(InvoiceUtils.toModeOption);
         }
       }
     ));
@@ -197,7 +205,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         originCities: this.originCities,
         destinationCities: this.destinationCities,
         masterDataScacs: this.masterDataScacs,
-        masterDataShippingPoints: this.masterDataShippingPoints
+        masterDataShippingPoints: this.masterDataShippingPoints,
+        masterDataModes: this.masterDataModes,
       },
       minWidth: '525px',
       width: '33vw',

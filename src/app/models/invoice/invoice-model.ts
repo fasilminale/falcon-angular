@@ -276,5 +276,12 @@ export class InvoiceUtils {
       value: carrierShippingPoints.shippingPointCode
     };
   }
+
+  static toModeOption(carrierModeCode: any): SelectOption<string> {
+    return {
+      label: `${carrierModeCode.mode} (${carrierModeCode.mode})`,
+      value: carrierModeCode.mode
+    };
+  }
 }
 
