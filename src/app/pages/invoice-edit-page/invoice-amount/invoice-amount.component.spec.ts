@@ -8,8 +8,9 @@ import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-det
 import {InvoiceAmountComponent} from './invoice-amount.component';
 import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
-import {UtilService} from '../../../services/util-service';
+import {CommentModalData, CommentModel, UtilService} from '../../../services/util-service';
 import {NewChargeModalInput, NewChargeModalOutput} from '../../../components/fal-new-charge-modal/fal-new-charge-modal.component';
+import {ConfirmationModalData} from '@elm/elm-styleguide-ui';
 import {FalEditChargeModalComponent} from '../../../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 
 describe('InvoiceAmountComponent', () => {
@@ -39,6 +40,14 @@ describe('InvoiceAmountComponent', () => {
   };
   const OTHER_CALC_DETAIL_OPTION = CostBreakDownUtils.toOption(OTHER_CALC_DETAIL);
 
+  const TEST_MODAL_DATA: ConfirmationModalData = {
+    title: 'title',
+    innerHtmlMessage: '',
+    confirmButtonText: 'Confirm',
+    confirmButtonStyle: 'primary',
+    cancelButtonText: 'Cancel'
+  };
+
   let component: InvoiceAmountComponent;
   let fixture: ComponentFixture<InvoiceAmountComponent>;
   let utilService: UtilService;
@@ -51,7 +60,10 @@ describe('InvoiceAmountComponent', () => {
           openNewChargeModal: (data: NewChargeModalInput): Observable<NewChargeModalOutput> => {
             throw new Error('Spy On this function instead!');
           },
-          openEditChargeModal: FalEditChargeModalComponent
+          openEditChargeModal: FalEditChargeModalComponent,
+          openCommentModal: (data: CommentModalData): Observable<CommentModel> => {
+            return of({comment: ''});
+          }
         }
       }],
       declarations: [InvoiceAmountComponent],
@@ -185,7 +197,6 @@ describe('InvoiceAmountComponent', () => {
   describe('when invoice amount detail is loaded', () => {
     let loadInvoiceAmountDetail$: Subject<InvoiceAmountDetail>;
     let loadInvoiceOverviewDetail$: Subject<InvoiceOverviewDetail>;
-    let rateEngineCallResult$: Subject<RatesResponse>;
     beforeEach(() => {
       loadInvoiceAmountDetail$ = new Subject();
       component.formGroup = new FormGroup({});
@@ -194,10 +205,6 @@ describe('InvoiceAmountComponent', () => {
     beforeEach(() => {
       loadInvoiceOverviewDetail$ = new Subject();
       component.loadInvoiceOverviewDetail$ = loadInvoiceOverviewDetail$.asObservable();
-    });
-    beforeEach(() => {
-      rateEngineCallResult$ = new Subject();
-      // component.rateEngineCallResult$ = rateEngineCallResult$.asObservable();
     });
 
     it('should populate form with invoice amount details', done => {
@@ -235,11 +242,18 @@ describe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
-            attachmentLink: 'test.jpg',
             variables: [{
               variable: TEST_VARIABLE_NAME,
               quantity: 1
             }],
+            attachment: {
+              fileName: 'test.jpg',
+              url: 'signedurl/test.jpg',
+              type: 'Documentation',
+              deleted: false,
+              uploaded: true
+            },
+            step: '1',
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
@@ -250,7 +264,45 @@ describe('InvoiceAmountComponent', () => {
             expanded: false
           }
         ],
-        pendingChargeLineItems: [],
+        pendingChargeLineItems: [{
+          chargeCode: 'TestCharge',
+          rateSource: {key: 'CONTRACT', label: 'Contract'},
+          entrySource: {key: 'AUTO', label: 'AUTO'},
+          chargeLineTotal: 100,
+          rateAmount: 100,
+          rateType: 'FLAT',
+          quantity: 1,
+          costName: 'TestCostName',
+          requestStatus: {
+            key: 'OPEN',
+            label: 'Open'
+          },
+          createdBy: 'test@test.com',
+          createdDate: '2022-04-25T00:05:00.000Z',
+          carrierComment: 'test comment',
+          rateResponse: 'Successful',
+          closedBy: 'test@test.com',
+          closedDate: '2022-04-26T00:05:00.000Z',
+          responseComment: 'test',
+          attachment: {
+            fileName: 'test.jpg',
+            url: 'signedurl/test.jpg',
+            type: 'Documentation',
+            deleted: false,
+            uploaded: true
+          },
+          step: '1',
+          accessorial: true,
+          autoApproved: false,
+          attachmentRequired: false,
+          planned: false,
+          fuel: false,
+          message: '',
+          manual: false,
+          expanded: false,
+          variables: []
+        }],
+        deniedChargeLineItems: [],
         disputeLineItems: [
           {
             comment: 'test comment',
@@ -315,6 +367,7 @@ describe('InvoiceAmountComponent', () => {
         {
           costBreakdownItems: new FormArray([]),
           pendingChargeLineItems: new FormArray([]),
+          deniedChargeLineItems: new FormArray([]),
           disputeLineItems: new FormArray([])
         }
       );
@@ -322,6 +375,7 @@ describe('InvoiceAmountComponent', () => {
         expect(component._formGroup.value).toEqual({
           costBreakdownItems: [],
           pendingChargeLineItems: [],
+          deniedChargeLineItems: [],
           disputeLineItems: []
         });
         done();
@@ -378,7 +432,14 @@ describe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
-            attachmentLink: 'test.jpg',
+            attachment: {
+              fileName: 'test.jpg',
+              url: 'signedurl/test.jpg',
+              type: 'Documentation',
+              deleted: false,
+              uploaded: true
+            },
+            step: '1',
             variables: [{
               variable: TEST_VARIABLE_NAME,
               quantity: 1
@@ -394,6 +455,7 @@ describe('InvoiceAmountComponent', () => {
           }
         ],
         pendingChargeLineItems: [],
+        deniedChargeLineItems: [],
         disputeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
         mileage: '100'
@@ -402,6 +464,64 @@ describe('InvoiceAmountComponent', () => {
       component.isPaymentOverrideSelected.at(0).setValue(null);
       expect(component.overridePaymentTermsFormGroup.controls.paymentTerms.value).toBeNull();
       done();
+    });
+
+    it('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
+      component.pendingChargeLineItems.push(new FormGroup({
+        charge: new FormControl('Charge'),
+        requestStatus: new FormControl('Successful'),
+        responseComment: new FormControl('N/A'),
+        closedDate: new FormControl('N/A'),
+        closedBy: new FormControl('N/A')
+      }));
+      component.costBreakdownItems.push(new FormGroup({
+        charge: new FormControl('Other Charge')
+      }));
+
+      const modalResponse$ = new Subject<any>();
+      spyOn(component, 'displayPendingChargeModal').and.returnValue(modalResponse$.asObservable());
+      component.acceptCharge(component.pendingChargeLineItems.controls[0].value);
+
+      modalResponse$.subscribe(() => {
+        expect(component.pendingChargeLineItems.length).toEqual(0);
+        expect(component.deniedChargeLineItems.length).toEqual(0);
+        expect(component.costBreakdownItems.length).toEqual(2);
+        done();
+      });
+
+      modalResponse$.next({comment: ''});
+    });
+
+    it('should call denyCharge and add the line item to denied charges', async (done) => {
+      component.pendingChargeLineItems.push(new FormGroup({
+        charge: new FormControl('Pending Charge'),
+        requestStatus: new FormControl('Successful'),
+        responseComment: new FormControl('N/A'),
+        closedDate: new FormControl('N/A'),
+        closedBy: new FormControl('N/A')
+      }));
+      component.costBreakdownItems.push(new FormGroup({
+        charge: new FormControl('Other Charge')
+      }));
+
+      const modalResponse$ = new Subject<any>();
+      spyOn(component, 'displayPendingChargeModal').and.returnValue(modalResponse$.asObservable());
+      component.denyCharge(component.pendingChargeLineItems.controls[0].value);
+
+      modalResponse$.subscribe(() => {
+        expect(component.pendingChargeLineItems.length).toEqual(0);
+        expect(component.deniedChargeLineItems.length).toEqual(1);
+        expect(component.costBreakdownItems.length).toEqual(1);
+        done();
+      });
+
+      modalResponse$.next({comment: 'deny reason'});
+    });
+
+    it('should call openCommentModal and return result', async () => {
+      spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: ''}));
+      component.displayPendingChargeModal(TEST_MODAL_DATA);
+      expect(utilService.openCommentModal).toHaveBeenCalled();
     });
 
     describe('when an empty line item is added', () => {
@@ -417,81 +537,6 @@ describe('InvoiceAmountComponent', () => {
       });
       it('should now have 1 line item', () => {
         expect(component.costBreakdownItems.length).toEqual(1);
-      });
-
-      // FIXME in FAL-547 - this feature is temporarily unsupported
-      xit('should populate cost breakdown line item', done => {
-        const control = component.costBreakdownItems.controls[0];
-        control.patchValue({charge: component.costBreakdownOptions$.value[0].value});
-        component.pendingAccessorialCode = 'TST';
-        // rateEngineCallResult$.next({
-        //   mode: 'LTL',
-        //   carrierRateSummaries: [{
-        //     totalCost: '0',
-        //     scac: 'ODFL',
-        //     legs: [
-        //       {
-        //         carrierRate: {
-        //           accessorialList: [],
-        //           lineItems: [
-        //             {
-        //               description: 'TST - TestChargeCode',
-        //               rate: '100',
-        //               rateType: 'FLAT',
-        //               lineItemTotal: '100',
-        //               lineItemType: 'ACCESSORIAL',
-        //               runningTotal: '100',
-        //               step: '1',
-        //               costName: 'TestCostName',
-        //               quantity: 0,
-        //               message: '',
-        //               accessorial: true
-        //             }
-        //           ]
-        //         }
-        //       }
-        //     ]
-        //   }]
-        // });
-        expect(component.filteredCostBreakdownOptions.length).toEqual(1);
-        done();
-      });
-
-
-      // FIXME in FAL-547 - this feature is temporarily unsupported
-      xit('should populate cost breakdown line item', done => {
-        component.pendingAccessorialCode = 'OTH';
-        // rateEngineCallResult$.next({
-        //   mode: 'LTL',
-        //   carrierRateSummaries: [{
-        //     totalCost: '0',
-        //     scac: 'ODFL',
-        //     legs: [
-        //       {
-        //         carrierRate: {
-        //           accessorialList: [],
-        //           lineItems: [
-        //             {
-        //               description: 'OTH - OtherChargeCode',
-        //               rate: '100',
-        //               rateType: 'FLAT',
-        //               lineItemTotal: '100',
-        //               lineItemType: 'ACCESSORIAL',
-        //               runningTotal: '100',
-        //               step: '1',
-        //               costName: 'TestCostName',
-        //               quantity: 0,
-        //               message: '',
-        //               accessorial: true
-        //             }
-        //           ]
-        //         }
-        //       }
-        //     ]
-        //   }]
-        // });
-        expect(component.filteredCostBreakdownOptions.length).toEqual(2);
-        done();
       });
     });
 
@@ -530,28 +575,9 @@ describe('InvoiceAmountComponent', () => {
       component.costBreakdownItems.push(lineItem);
     });
 
-    // it('should call rate engine', () => {
-    //   const selectedCharge = {accessorialCode: 'TST', name: 'TestChargeCode'};
-    //   // component.onSelectRate(selectedCharge, lineItem);
-    //   //expect(component.rateEngineCall.emit).toHaveBeenCalledWith(selectedCharge.accessorialCode);
-    // });
-
     it('should not call rate engine', () => {
-      // component.onSelectRate(OTHER_CALC_DETAIL, lineItem);
       expect(component.rateEngineCall.emit).not.toHaveBeenCalled();
     });
-
-    // it('should recalculate total cost', done => {
-    //   const totalCost = component.amountOfInvoiceControl.value;
-    //   // component.onSelectRate(OTHER_CALC_DETAIL, lineItem);
-    //   const lineItemTotalAmountControl = lineItem.get('totalAmount');
-    //   expect(lineItemTotalAmountControl).not.toBeFalsy();
-    //   lineItem.valueChanges.subscribe(() => {
-    //     //expect(component.amountOfInvoiceControl.value).toEqual(totalCost + 40);
-    //     done();
-    //   });
-    //   lineItemTotalAmountControl?.setValue(40.00);
-    // });
 
   });
 
@@ -662,6 +688,12 @@ describe('InvoiceAmountComponent', () => {
     expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
     expect(component.rateEngineCall.emit).toHaveBeenCalledTimes(1);
     expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
+  });
+
+  it('should download attachment', () => {
+    spyOn(component, 'downloadAttachment').and.callThrough();
+    component.downloadAttachment('url');
+    expect(component.downloadAttachment).toHaveBeenCalled();
   });
 
   it('should call onEditCostLineItem and emit to rate engine', async () => {

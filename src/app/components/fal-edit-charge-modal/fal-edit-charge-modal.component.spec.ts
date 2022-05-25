@@ -72,6 +72,7 @@ describe('FalEditChargeModalComponent', () => {
 
   it('should close the dialog with a response when a charge type is selected', () => {
     component.chargeControl.setValue(TEST_CALC_DETAIL);
+    component.variableControls.addControl('Test Variable', TEST_VARIABLE);
     spyOn(MOCK_DIALOG, 'close');
     component.confirm();
     expect(MOCK_DIALOG.close).toHaveBeenCalledTimes(1);

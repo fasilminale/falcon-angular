@@ -36,14 +36,6 @@ describe('SearchComponent', () => {
     expect(component.getErrorMessage()).toEqual(component.requiredMessage);
     });
 
-    it( 'Should get the correct error message when field too short', () => {
-      component.controlGroup.controls.control.setValue('949');
-      document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
-      fixture.detectChanges();
-      expect(component.controlGroup.controls.control.hasError('minlength')).toBeTrue();
-      expect(component.getErrorMessage()).toEqual(component.minLengthMessage);
-    });
-
     describe('when type invoiceID,', () => {
       it( 'Should error when field contains values other than alpha numeric', () => {
         component.controlGroup.controls.control.setValue('D-560000001');
@@ -86,7 +78,7 @@ describe('SearchComponent', () => {
         component.controlGroup.markAsDirty();
         fixture.detectChanges();
         component.submit();
-        expect(emit).toHaveBeenCalledWith('F0000000001');
+        expect(emit).toHaveBeenCalledWith('F0000000001' as any);
       });
     })
 
@@ -98,10 +90,26 @@ describe('SearchComponent', () => {
     });
 
     it( 'Should not show when there is an error', () => {
-      component.controlGroup.controls.control.setValue('949');
-      document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
-      fixture.detectChanges();
+      component.controlGroup.controls.control.setValue(null);
+      component.submitted = true;
+      component.showHelperText();
       expect(component.showHelperText()).toBeFalse();
+    });
+  });
+
+  describe('clear method', () => {
+
+    it( 'should set submitted to false and clear control', () => {
+      component.controlGroup.controls.control.setValue('qwerty');
+      component.submitted = true;
+      expect(component.submitted).toBeTrue()
+      expect(component.controlGroup.controls.control.value).toEqual('qwerty');
+
+      component.clear();
+
+      expect(component.submitted).toBeFalse();
+      expect(component.controlGroup.controls.control.value).toEqual('');
+
     });
   });
 

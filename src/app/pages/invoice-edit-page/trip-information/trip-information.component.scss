@@ -84,3 +84,7 @@
   position: relative;
   color: rgba(0, 0, 0, 0.87);
 }
+
+.field-invalid ::ng-deep input{
+  border: 1pt solid #db0000 !important;
+}

@@ -18,6 +18,7 @@ import {saveAs} from 'file-saver';
 import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
 import { InvoiceService } from 'src/app/services/invoice-service';
 import {Subscription} from "rxjs";
+import {SearchComponent} from "../../components/search/search.component";
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -49,6 +50,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   invoiceCountLabel = 'Invoices';
   subscription: Subscription = new Subscription();
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
+  @ViewChild(SearchComponent) searchComponent!: SearchComponent;
 
   invoiceFilter!: MatDialogRef<any>;
   invoiceStatuses: Array<StatusModel> = [];
@@ -169,9 +171,10 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   }
 
   searchInvoices(searchValue: any): void {
-    // this.totalSearchResult = -1; // this is for test
+    // Clear filters
+    this.filterService.invoiceFilterModel.resetForm();
+
     this.searchValue = searchValue;
-    console.log(this.searchValue);
     this.paginationModel.sortField = '';
     this.resetTable(true);
   }
@@ -206,6 +209,10 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     this.invoiceFilter.componentInstance.invoiceStatuses = this.invoiceStatuses;
     this.invoiceFilter.afterClosed().subscribe(response => {
       if (response) {
+        // Clear the search control
+        this.searchValue = '';
+        this.searchComponent.clear();
+
         this.resetTable();
       }
     });

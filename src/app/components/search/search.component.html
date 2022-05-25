@@ -6,8 +6,7 @@
              type="text"
              formControlName="control"
              class="form-control"
-             minlength="11"
-             [maxLength]="11"
+             [maxLength]="16"
              autocomplete="off">
       <button type="submit"
               class="input-group-button">
@@ -16,6 +15,6 @@
     </div>
     <span *ngIf="showHelperText()" class="fieldHelperText">{{label}}</span>
     <span class="invalid-feedback elm-field-sub1">{{getErrorMessage()}}</span>
-  
+
   </form>
 </div>

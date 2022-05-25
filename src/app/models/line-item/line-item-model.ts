@@ -1,5 +1,7 @@
 import {Measurement, UnitOfMeasure} from '../measurement/measurement-model';
+import {Attachment} from '../attachment/attachment-model';
 import {KeyedLabel} from '../generic/keyed-label';
+import {CalcDetailVariable} from '../rate-engine/rate-engine-request';
 
 export interface ManualLineItem {
   lineItemNumber: string;
@@ -29,8 +31,7 @@ export interface CostLineItem {
   carrierComment: string;
   responseComment: string;
   rateResponse: string;
-  variables: Array<any>;
-  attachmentLink: string;
+  attachment: Attachment;
   autoApproved: boolean;
   attachmentRequired: boolean;
   planned: boolean;
@@ -41,14 +42,7 @@ export interface CostLineItem {
   step?: string;
   runningTotal?: number;
   lineItemType?: string;
-
-  //private List<Accessorial.AccessorialVariable> variables = new ArrayList<>();
-
-}
-
-export interface Variable {
-  variable: string;
-  quantity: string;
+  variables: Array<CalcDetailVariable>;
 }
 
 export interface DisputeLineItem {

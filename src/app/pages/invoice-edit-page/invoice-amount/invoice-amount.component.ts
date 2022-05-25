@@ -9,8 +9,10 @@ import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from 
 import {first, map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
-import {ElmFormHelper, SubjectValue, ToastService} from '@elm/elm-styleguide-ui';
-import {UtilService} from '../../../services/util-service';
+import {ConfirmationModalData, ElmFormHelper, SubjectValue, ToastService} from '@elm/elm-styleguide-ui';
+import {CommentModel, UtilService} from '../../../services/util-service';
+import {UserService} from '../../../services/user-service';
+import {UserInfoModel} from '../../../models/user-info/user-info-model';
 
 @Component({
   selector: 'app-invoice-amount',
@@ -56,8 +58,10 @@ export class InvoiceAmountComponent implements OnInit {
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
   pendingChargeLineItems = new FormArray([]);
+  deniedChargeLineItems = new FormArray([]);
   disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
+  @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
 
   @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
   @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
@@ -69,8 +73,8 @@ export class InvoiceAmountComponent implements OnInit {
   loadInvoiceOverviewDetailSubscription: Subscription = new Subscription();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-              private toastService: ToastService,
-              private utilService: UtilService) {
+              private utilService: UtilService,
+              private toastService: ToastService) {
   }
 
   ngOnInit(): void {
@@ -144,47 +148,12 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems);
     this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls);
     givenFormGroup.setControl('pendingChargeLineItems', this.pendingChargeLineItems);
+    this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls);
+    givenFormGroup.setControl('deniedChargeLineItems', this.deniedChargeLineItems);
     this.insertDisputeLineItems();
     givenFormGroup.setControl('disputeLineItems', this.disputeLineItems);
     this._formGroup = givenFormGroup;
   }
-
-  // /**
-  //  *  Applies the response from rate engine to the pending accessorial that is expecting
-  //  *  the response from rate engine.
-  //  */
-  // @Input() set rateEngineCallResult$(observable: Observable<RatesResponse>) {
-  //   this.rateEngineCallResponse.unsubscribe();
-  //   this.rateEngineCallResponse = observable.subscribe(rateEngineResult => {
-  //     console.log('RECEIVED RATE ENGINE RESPONSE', rateEngineResult);
-  //     const carrierSummary = rateEngineResult.carrierRateSummaries[0];
-  //     const leg = carrierSummary.legs[0];
-  //     // Check if accessorial code is contained in the description of the response
-  //     const accessorial = leg.carrierRate.lineItems.find(item => item.accessorial
-  //       && item.description.substr(0, 3) === this.pendingAccessorialCode);
-  //
-  //     // If a match is found, update the pending line item with information from the response
-  //     if (accessorial) {
-  //       console.log('found accessorial');
-  //       console.log('controls: ', this.costBreakdownItems.controls.map(c => c.get('charge')?.value));
-  //       for (const control of this.costBreakdownItems.controls) {
-  //         const chargeValue = control.get('charge')?.value;
-  //         if (chargeValue.accessorialCode === this.pendingAccessorialCode) {
-  //           console.log('found control');
-  //           control.patchValue({
-  //             rate: accessorial.rate,
-  //             type: accessorial.rateType,
-  //             totalAmount: accessorial.lineItemTotal,
-  //             message: accessorial.message
-  //           });
-  //         }
-  //       }
-  //       // Update invoice total and available accessorial options
-  //       this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-  //     }
-  //     console.log('END RATE ENGINE RESPONSE');
-  //   });
-  // }
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ?? '');
@@ -201,6 +170,7 @@ export class InvoiceAmountComponent implements OnInit {
     (givenFormGroup.get('disputeLineItems') as FormArray).clear();
     this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls, invoiceAmountDetail?.costLineItems);
     this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls, invoiceAmountDetail?.pendingChargeLineItems);
+    this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls, invoiceAmountDetail?.deniedChargeLineItems);
     this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
   }
 
@@ -214,6 +184,7 @@ export class InvoiceAmountComponent implements OnInit {
           });
         }
         const group = new FormGroup({
+          attachment: new FormControl(lineItem.attachment ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
           accessorialCode: new FormControl(lineItem.accessorialCode),
           charge: new FormControl(lineItem.chargeCode),
@@ -226,6 +197,7 @@ export class InvoiceAmountComponent implements OnInit {
           quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
           totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
           requestStatus: new FormControl(lineItem.requestStatus ?? 'N/A'),
+          requestStatusPair: new FormControl(lineItem.requestStatus),
           message: new FormControl(lineItem.message ?? 'N/A'),
           createdBy: new FormControl(lineItem.createdBy ?? 'N/A'),
           createdDate: new FormControl(lineItem.createdDate ?? 'N/A'),
@@ -234,19 +206,22 @@ export class InvoiceAmountComponent implements OnInit {
           carrierComment: new FormControl(lineItem.carrierComment ?? 'N/A'),
           responseComment: new FormControl(lineItem.responseComment ?? 'N/A'),
           rateResponse: new FormControl(lineItem.rateResponse ?? 'N/A'),
-          variables,
           autoApproved: new FormControl(lineItem.autoApproved ?? true),
           attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
           planned: new FormControl(lineItem.planned ?? false),
           fuel: new FormControl(lineItem.fuel ?? false),
           manual: new FormControl(false),
-          lineItemType: new FormControl(lineItem.lineItemType ?? null)
+          lineItemType: new FormControl(lineItem.lineItemType ?? null),
+          variables
         });
         group.get('rateSourcePair')?.valueChanges?.subscribe(
           value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
         );
         group.get('entrySourcePair')?.valueChanges?.subscribe(
           value => group.get('entrySource')?.setValue(value?.label ?? 'N/A')
+        );
+        group.get('requestStatusPair')?.valueChanges?.subscribe(
+          value => group.get('requestStatus')?.setValue(value?.label ?? 'N/A')
         );
         controls.push(group);
       });
@@ -278,6 +253,12 @@ export class InvoiceAmountComponent implements OnInit {
   get pendingChargeLineItemControls(): AbstractControl[] {
     return this._formGroup.get('pendingChargeLineItems')
       ? (this._formGroup.get('pendingChargeLineItems') as FormArray).controls
+      : new FormArray([]).controls;
+  }
+
+  get deniedChargeLineItemControls(): AbstractControl[] {
+    return this._formGroup.get('deniedChargeLineItems')
+      ? (this._formGroup.get('deniedChargeLineItems') as FormArray).controls
       : new FormArray([]).controls;
   }
 
@@ -343,7 +324,6 @@ export class InvoiceAmountComponent implements OnInit {
       costBreakdownOptions: filteredCostBreakdownOptions
     }).pipe(first()).toPromise();
     if (modalResponse) {
-      // TODO still need to save the comment from newChargeDetails on the invoice somewhere...
       const newLineItemGroup = this.createEmptyLineItemGroup();
       this.costBreakdownItemsControls.push(newLineItemGroup);
       newLineItemGroup.get('charge')?.setValue(modalResponse.selected.name);
@@ -354,12 +334,13 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('type')?.setValue('N/A');
         newLineItemGroup.get('quantity')?.setValue('N/A');
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
+        newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
         this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
       } else {
-        // FIXME in FAL-547
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
         newLineItemGroup.get('lineItemType')?.setValue('ACCESSORIAL');
+        newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
       }
@@ -387,11 +368,14 @@ export class InvoiceAmountComponent implements OnInit {
     const lineItemType = new FormControl(null);
     const accessorialCode = new FormControl(null);
     const autoApproved = new FormControl(true);
+    const responseComment = new FormControl(null);
+    const variables = new FormControl([]);
     const group = new FormGroup({
       charge, rateSource, rateSourcePair,
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
-      accessorialCode, autoApproved
+      accessorialCode, autoApproved,
+      variables, responseComment
     });
     group.get('rateSourcePair')?.valueChanges?.subscribe(
       value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
@@ -406,6 +390,74 @@ export class InvoiceAmountComponent implements OnInit {
     costLineItem.expanded = !costLineItem.expanded;
   }
 
+  acceptCharge(costLineItem: any): void {
+    const modalData: ConfirmationModalData = {
+      title: 'Accept Charge',
+      innerHtmlMessage: `Are you sure you want to accept this charge?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+      confirmButtonText: 'Accept Charge',
+      confirmButtonStyle: 'primary',
+      cancelButtonText: 'Cancel'
+    };
+    const modalResult = this.displayPendingChargeModal(modalData);
+    this.handlePendingChargeResult(modalResult, costLineItem, 'Accepted');
+  }
+
+  denyCharge(costLineItem: any): void {
+    const modalData: ConfirmationModalData = {
+      title: 'Deny Charge',
+      innerHtmlMessage: `Are you sure you want to deny this charge?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+      confirmButtonText: 'Deny Charge',
+      confirmButtonStyle: 'destructive',
+      cancelButtonText: 'Cancel'
+    };
+    const modalResult = this.displayPendingChargeModal(modalData);
+    this.handlePendingChargeResult(modalResult, costLineItem, 'Denied');
+  }
+
+  handlePendingChargeResult(modalResult: Observable<boolean | CommentModel>, costLineItem: any, action: string): void {
+    modalResult.subscribe(result => {
+      if (result) {
+        const index = this.pendingChargeLineItemControls.findIndex(lineItem => lineItem.value.charge === costLineItem.charge);
+        const pendingLineItem: AbstractControl | null = this.pendingChargeLineItems.get(index.toString());
+
+        if (pendingLineItem !== null) {
+          this.pendingChargeLineItems.removeAt(index);
+          this.setPendingChargeResponse(action, pendingLineItem, result);
+          if (action === 'Accepted') {
+            this.costBreakdownItemsControls.push(pendingLineItem);
+            this.costBreakdownItemsControls.sort((a, b) => {
+              return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
+            });
+          } else {
+            this.deniedChargeLineItemControls.push(pendingLineItem);
+          }
+          this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+          this.toastService.openSuccessToast(`Success. Charge was ${action.toLowerCase()}.`);
+        }
+      }
+    });
+  }
+
+  setPendingChargeResponse(responseStatus: string, pendingLineItem: AbstractControl, result: CommentModel | boolean): void {
+    pendingLineItem.get('requestStatus')?.setValue(responseStatus);
+    if (typeof result !== 'boolean') {
+      pendingLineItem.get('responseComment')?.setValue(result.comment);
+    }
+    pendingLineItem.get('closedDate')?.setValue(Date.now());
+    pendingLineItem.get('closedBy')?.setValue(this.userInfo?.email);
+  }
+
+  displayPendingChargeModal(modalData: ConfirmationModalData): Observable<CommentModel | boolean> {
+    const dialogResult: Observable<CommentModel | boolean> =
+      this.utilService.openCommentModal({
+        ...modalData,
+        commentSectionFieldName: 'Response Comment',
+        requireField: modalData.title === 'Deny Charge'
+      });
+    return dialogResult;
+  }
   async onEditCostLineItem(costLineItem: AbstractControl): Promise<void> {
     const editChargeDetails = await this.utilService.openEditChargeModal({
       costLineItem
@@ -422,30 +474,6 @@ export class InvoiceAmountComponent implements OnInit {
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
       }
-    }
-  }
-
-  /**
-   * TODO remove this deprecated method once it is safe to do so.
-   * @deprecated
-   *  Calls rate engine for rate information to an accessorial.
-   *  Rate Management is not called if 'OTHER' is selected.
-   */
-  onSelectRate(value: any, lineItem: AbstractControl): void {
-    lineItem.patchValue({rate: null, type: null, quantity: 0, totalAmount: 0});
-    this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
-    const lineItemFormGroup = (lineItem as FormGroup);
-    if (value.accessorialCode === 'OTHER') {
-      lineItemFormGroup.get('rateSource')?.setValue('Manual');
-      lineItemFormGroup.get('rate')?.setValue('N/A');
-      lineItemFormGroup.get('type')?.setValue('N/A');
-      lineItemFormGroup.get('quantity')?.setValue('N/A');
-      lineItemFormGroup.get('totalAmount')?.valueChanges
-        .subscribe(() => this.amountOfInvoiceControl.setValue(this.costBreakdownTotal));
-    } else {
-      lineItemFormGroup.get('rateSource')?.setValue('Contract');
-      this.pendingAccessorialCode = value.accessorialCode;
-      this.rateEngineCall.emit(value.accessorialCode);
     }
   }
 
@@ -479,4 +507,11 @@ export class InvoiceAmountComponent implements OnInit {
   resolveDispute(action: string): void {
     this.resolveDisputeCall.emit(action);
   }
+
+  public downloadAttachment(url: string): void {
+    if (url) {
+      window.open(url);
+    }
+  }
+
 }

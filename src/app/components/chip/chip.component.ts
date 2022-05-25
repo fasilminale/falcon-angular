@@ -65,7 +65,7 @@ export class ChipComponent implements OnChanges {
     
     if(shippingPointCode?.value?.length > 0) {
       this.chips.push(
-        this.formatChip('Shipping:&nbsp', shippingPointCode as FormGroup, 'shippingPointCode')
+        this.formatChip('Shipping point:&nbsp', shippingPointCode as FormGroup, 'shippingPoints')
       );
     }
   }

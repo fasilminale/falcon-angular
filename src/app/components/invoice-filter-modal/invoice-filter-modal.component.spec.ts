@@ -22,7 +22,7 @@ describe('LoadsFilterModalComponent', () => {
   const dialogDataMock = {
     originCities: ['New York'],
     destinationCities: ['Chicago'],
-    masterDataShippingPoints: ['D1', 'D2']
+    masterDataShippingPoints: [{label: 'D1', value: 'D1'}, {label: 'D2', value: 'D2'}, {label: 'D34', value: 'D34'}, {label: 'D23', value: 'D23'}]
   };
 
   beforeEach(async () => {
@@ -165,3 +165,4 @@ describe('LoadsFilterModalComponent', () => {
     });
   });
 });
+

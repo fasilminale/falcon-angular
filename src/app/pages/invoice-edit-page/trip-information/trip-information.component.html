@@ -11,6 +11,21 @@
                       [errorSpacing]="false">
       </elm-text-input>
     </div>
+    <div class="col-4">
+      <label for="vendorNumberInput"
+             class="fal-label">
+        Vendor Number
+      </label>
+      <elm-text-input id="vendorNumberInput"
+                      formControlName="vendorNumber"
+                      [errorSpacing]="true"
+                      [ngClass]="{'field-invalid': !vendorNumberControl.value}">>
+      </elm-text-input>
+      <elm-input-subtext *ngIf="!vendorNumberControl.value"
+                         [isError]="true">
+        Vendor Number is missing
+      </elm-input-subtext>
+    </div>
   </div>
   <div class="row">
     <div class="col-4">
@@ -35,9 +50,10 @@
       </label>
       <elm-date-picker id="pickUpDateInput"
                        labelPosition="top"
-                       formControlName="pickUpDate">
+                       formControlName="pickUpDate"
+                       [ngClass]="{'field-invalid': !pickUpDateControl.value}">
       </elm-date-picker>
-      <elm-input-subtext *ngIf="pickUpDateControl.invalid && !pickUpDateControl.hasError('dateBefore')"
+      <elm-input-subtext *ngIf="(!pickUpDateControl.value || pickUpDateControl.invalid) && !pickUpDateControl.hasError('dateBefore')"
                          [isError]="true">
         Pick up Date is missing
       </elm-input-subtext>
@@ -117,12 +133,17 @@
                  placeholder="Select One..."
                  (change)="refreshCarrierData()"
                  [compareWith]="compareCarrierWith"
-                 [ngClass]="{'error': !carrierControl.value }">
+                 [ngClass]="{'error': !carrierControl.value || !carrierDetailFound}">
       </ng-select>
       <elm-input-subtext *ngIf="!carrierControl.value"
                          class="input-error"
                          [isError]="true">
         Carrier is missing
+      </elm-input-subtext>
+      <elm-input-subtext *ngIf="!carrierDetailFound"
+                         class="input-error"
+                         [isError]="true">
+        SCAC needs to be updated in Carrier Detail
       </elm-input-subtext>
     </div>
     <div class="col-4">
