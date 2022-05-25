@@ -8,7 +8,7 @@ import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {environment} from '../../../environments/environment';
 
-fdescribe('ChipComponent', () => {
+describe('ChipComponent', () => {
   let component: ChipComponent;
   let fixture: ComponentFixture<ChipComponent>;
   let http: HttpTestingController;
