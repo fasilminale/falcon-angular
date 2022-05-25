@@ -796,4 +796,46 @@ describe('InvoiceEditPageComponent', () => {
     });
   });
 
+  it('should load bad data', () => {
+    const badInvoice = new InvoiceDataModel();
+    badInvoice.vendorNumber = null as any;
+    badInvoice.pickupDateTime = TEST_DATE;
+    badInvoice.deliveryDateTime = TEST_DATE;
+    badInvoice.proNumber = 'PRONUMBER';
+    badInvoice.billOfLadingNumber = 'BILLOFLADINGNUMBER';
+    badInvoice.overriddenDeliveryDateTime = '';
+    badInvoice.assumedDeliveryDateTime = '';
+    badInvoice.carrier = null as any;
+    badInvoice.mode = null as any;
+    component.loadInvoice(badInvoice);
+    // no error means we pass
+  });
+
+  it('should extract bad location data', () => {
+    const location = component.extractLocation(null as any);
+    expect(location).toEqual({
+      name: undefined as any,
+      city: undefined as any,
+      country: undefined as any,
+      zipCode: undefined as any,
+      state: undefined as any,
+      address: undefined as any,
+      address2: undefined as any
+    });
+  });
+
+  it('should get bad cost line item data', () => {
+    const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
+    costBreakdownItems.clear();
+    costBreakdownItems.push(new FormControl());
+    const results = component.getCostLineItems();
+    expect(results.length).toBe(1);
+  });
+
+  it('should get empty list on missing control', () => {
+    component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormControl('');
+    const results = component.getCostLineItems();
+    expect(results.length).toBe(0);
+  });
+
 });
