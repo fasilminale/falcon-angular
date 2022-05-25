@@ -6,15 +6,18 @@ import {CostLineItem} from 'src/app/models/line-item/line-item-model';
 import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {InvoiceAmountComponent} from './invoice-amount.component';
-import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
+import {
+  CalcDetail,
+  CalcDetailVariable,
+  CostBreakDownUtils,
+  Location,
+  RateDetailResponse,
+  RatesResponse
+} from '../../../models/rate-engine/rate-engine-request';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {CommentModalData, CommentModel, UtilService} from '../../../services/util-service';
 import {NewChargeModalInput, NewChargeModalOutput} from '../../../components/fal-new-charge-modal/fal-new-charge-modal.component';
-import {asSpy} from '../../../testing/test-utils.spec';
-import {InvoiceDataModel} from '../../../models/invoice/invoice-model';
 import {ConfirmationModalData} from '@elm/elm-styleguide-ui';
-import {FalCommentModalComponent} from '../../../components/fal-comment-modal/fal-comment-modal.component';
-import {mergeMap} from 'rxjs/operators';
 
 describe('InvoiceAmountComponent', () => {
 
@@ -534,6 +537,11 @@ describe('InvoiceAmountComponent', () => {
       expect(component._formGroup.controls.currency.disabled).toBeFalse();
     });
 
+    it('should skip enable/disable if control is missing', () => {
+      component._formGroup.removeControl('currency');
+      component.enableDisableCurrency(true);
+      // if this doesn't throw an error we pass
+    });
   });
 
   describe('select rate charge', () => {
@@ -668,5 +676,39 @@ describe('InvoiceAmountComponent', () => {
     spyOn(component, 'downloadAttachment').and.callThrough();
     component.downloadAttachment('url');
     expect(component.downloadAttachment).toHaveBeenCalled();
+  });
+
+  it('should load charge line options', done => {
+    const subject = new Subject<RateDetailResponse>();
+    component.chargeLineItemOptions$ = subject.asObservable();
+    subject.subscribe(() => {
+      expect(component.costBreakdownOptions$.value.length).toBe(1);
+      done();
+    });
+    subject.next({
+      mode: 'TEST MODE',
+      scac: 'TEST SCAC',
+      shipDate: '2022-03-03',
+      origin: {
+        streetAddress: 'address1',
+        locCode: 'code1',
+        city: 'city1',
+        state: 'state1',
+        zip: 'zip1',
+        country: 'USA',
+      },
+      destination: {
+        streetAddress: 'address2',
+        locCode: 'code2',
+        city: 'city2',
+        state: 'state2',
+        zip: 'zip2',
+        country: 'USA',
+      },
+      calcDetails: [{
+        name: 'string',
+        accessorialCode: 'string'
+      }]
+    });
   });
 });

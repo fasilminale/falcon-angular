@@ -3,8 +3,7 @@ import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../models/rate-engine/rate-engine-request';
-import {Invoice, InvoiceDataModel} from '../models/invoice/invoice-model';
-import {RateableInvoiceModel} from '../models/invoice/rateable-invoice-model';
+import {InvoiceDataModel} from '../models/invoice/invoice-model';
 
 @Injectable()
 export class RateService {

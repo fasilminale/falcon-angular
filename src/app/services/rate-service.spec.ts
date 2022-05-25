@@ -1,11 +1,11 @@
 import {TestBed} from '@angular/core/testing';
 import {WebServices} from './web-services';
 import {of} from 'rxjs';
-import {InvoiceService} from './invoice-service';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 import {RateService} from './rate-service';
 import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../models/rate-engine/rate-engine-request';
 import {InvoiceDataModel} from '../models/invoice/invoice-model';
+import {InvoiceAmountDetail} from '../models/invoice/invoice-amount-detail-model';
 
 describe('RateService', () => {
 
@@ -120,6 +120,13 @@ describe('RateService', () => {
     const response = await rateService.getRates(request).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
     expect(response.mode).toEqual('LTL');
+  });
+
+  it('rateInvoice should call web service', async () => {
+    spyOn(web, 'httpPost').and.returnValue(of(new InvoiceDataModel()));
+    const response = await rateService.rateInvoice(new InvoiceDataModel());
+    expect(web.httpPost).toHaveBeenCalled();
+    expect(response).toBeTruthy();
   });
 
 });

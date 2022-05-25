@@ -23,7 +23,6 @@ export class FiltersModel {
   }
 
   resetForm(): void {
-
     this.form.patchValue({
       originCity: null,
       destinationCity: null,
@@ -97,13 +96,17 @@ export class FiltersModel {
   }
 
   formatForSearch(): object {
+    const invoiceStatuses = this.form.get('invoiceStatuses')?.value;
+    const originCity = this.form.get('originCity')?.value;
+    const destinationCity = this.form.get('destinationCity')?.value;
+    const carrierSCAC = this.form.get('scac')?.value;
+    const shippingPoints = this.form.get('shippingPoints')?.value;
+    const carrierMode = this.form.get('mode')?.value;
     return {
-      invoiceStatuses: this.form.get('invoiceStatuses')?.value,
-      originCity: this.form.get('originCity')?.value,
-      destinationCity: this.form.get('destinationCity')?.value,
-      carrierSCAC: this.form.get('scac')?.value ? [this.form.get('scac')?.value] : [],
-      shippingPoints: this.form.get('shippingPoints')?.value ? [this.form.get('shippingPoints')?.value] : [],
-      carrierMode: this.form.get('mode')?.value ? [this.form.get('mode')?.value] : [],
+      invoiceStatuses, originCity, destinationCity,
+      carrierSCAC: carrierSCAC ? [carrierSCAC] : [],
+      shippingPoints: shippingPoints ? [shippingPoints] : [],
+      carrierMode: carrierMode ? [carrierMode] : [],
     };
   }
 
@@ -111,7 +114,7 @@ export class FiltersModel {
     if (control instanceof FormArray) {
       control.clear();
     }
-    if(control instanceof FormControl) {
+    if (control instanceof FormControl) {
       control.reset();
     }
   }
