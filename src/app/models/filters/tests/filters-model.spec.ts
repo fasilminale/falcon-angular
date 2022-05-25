@@ -2,7 +2,7 @@ import {TestBed} from '@angular/core/testing';
 import {AppModule} from '../../../app.module';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FiltersModel} from '../filters-model';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl} from '@angular/forms';
 
 let testingFiltersModel: FiltersModel;
 
@@ -32,6 +32,41 @@ describe('Models: Filter |', () => {
       shippingPoints: [],
       mode: [],
     });
+  });
+
+  it('should format arrays for search', () => {
+    testingFiltersModel.form.removeControl('invoiceStatuses');
+    testingFiltersModel.form.removeControl('originCity');
+    testingFiltersModel.form.removeControl('destinationCity');
+    testingFiltersModel.form.get('scac')?.setValue('ODFL');
+    testingFiltersModel.form.get('shippingPoints')?.setValue('D46');
+    testingFiltersModel.form.get('mode')?.setValue('LTL');
+    const result = testingFiltersModel.formatForSearch();
+    expect(result).toEqual({
+      invoiceStatuses: undefined,
+      originCity: undefined,
+      destinationCity: undefined,
+      carrierSCAC: ['ODFL'],
+      shippingPoints: ['D46'],
+      mode: ['LTL'],
+    });
+  });
+
+  it('non-control should throw error', () => {
+    let error = null;
+    try {
+      testingFiltersModel.cloneAbstractControl({} as AbstractControl);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeTruthy();
+  });
+
+  it('should disable clone', () => {
+    const control = new FormControl('');
+    control.disable();
+    const clone = testingFiltersModel.cloneAbstractControl(control);
+    expect(clone.disabled).toBeTrue();
   });
 
   describe('onCheckChanged', () => {
@@ -68,5 +103,11 @@ describe('Models: Filter |', () => {
       invoiceStatuses.push(new FormControl('test a'));
       expect(testingFiltersModel.isChecked('testArray', 'test a')).toBeFalse();
     });
+  });
+
+  it('should be able to clear with missing status control', () => {
+    testingFiltersModel.form.removeControl('invoiceStatuses');
+    testingFiltersModel.resetForm();
+    expect(testingFiltersModel.form.get('invoiceStatuses')?.value).toBeFalsy();
   });
 });

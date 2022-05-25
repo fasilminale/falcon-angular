@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ChipComponent, FilterChip} from './chip.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
-import {FormArray, FormControl} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl} from '@angular/forms';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
@@ -20,11 +20,11 @@ describe('ChipComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChipComponent ],
-      imports: [ HttpClientTestingModule, FalconTestingModule ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+      declarations: [ChipComponent],
+      imports: [HttpClientTestingModule, FalconTestingModule],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
     fixture = TestBed.createComponent(ChipComponent);
     http = TestBed.inject(HttpTestingController);
     component = fixture.componentInstance;
@@ -40,9 +40,9 @@ describe('ChipComponent', () => {
   function addFilter(value?: string): void {
     const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as FormArray;
     loadStatusArray.push(new FormControl(value ? value : 'CREATED'));
-    component.filtersModel.form.get('originCity')?.setValue('TestOriginCity')
-    component.filtersModel.form.get('destinationCity')?.setValue('TestDestinationCity')
-    component.filtersModel.form.get('scac')?.setValue('ABCD')
+    component.filtersModel.form.get('originCity')?.setValue('TestOriginCity');
+    component.filtersModel.form.get('destinationCity')?.setValue('TestDestinationCity');
+    component.filtersModel.form.get('scac')?.setValue('ABCD');
     component.filtersModel.form.get('shippingPoints')?.setValue('D36');
     component.filtersModel.form.get('mode')?.setValue(['D36']);
   }
@@ -60,13 +60,34 @@ describe('ChipComponent', () => {
 
   describe('updateChipFilters', () => {
     it('should update the chips', () => {
-
       expect(component.chips.length).toBe(0);
       addFilter();
       addFilter('SUBMITTED');
       component.updateChipFilters();
       fixture.detectChanges();
       expect(component.chips.length).toBe(6);
+    });
+
+    it('should ignore empty chip lists', () => {
+      component.filtersModel.form.get('invoiceStatuses')?.setValue([]);
+      component.filtersModel.form.get('originCity')?.setValue([]);
+      component.filtersModel.form.get('destinationCity')?.setValue([]);
+      component.filtersModel.form.get('shippingPoints')?.setValue([]);
+      component.filtersModel.form.get('mode')?.setValue([]);
+      component.filtersModel.form.get('scac')?.setValue([]);
+      component.updateChipFilters();
+      expect(component.chips.length).toBe(0);
+    });
+
+    it('should ignore missing controls', () => {
+      component.filtersModel.form.removeControl('invoiceStatuses');
+      component.filtersModel.form.removeControl('originCity');
+      component.filtersModel.form.removeControl('destinationCity');
+      component.filtersModel.form.removeControl('shippingPoints');
+      component.filtersModel.form.removeControl('mode');
+      component.filtersModel.form.removeControl('scac');
+      component.updateChipFilters();
+      expect(component.chips.length).toBe(0);
     });
   });
 
@@ -79,7 +100,7 @@ describe('ChipComponent', () => {
         );
       expect(statusChip).toEqual(
         {type: 'Status:&nbsp', label: 'Created', group: 'invoiceStatuses'}
-        );
+      );
     });
 
   });
