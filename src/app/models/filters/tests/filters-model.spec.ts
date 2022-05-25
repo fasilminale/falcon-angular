@@ -30,7 +30,7 @@ describe('Models: Filter |', () => {
       destinationCity: undefined,
       carrierSCAC: [],
       shippingPoints: [],
-      carrierMode: [],
+      mode: [],
     });
   });
 

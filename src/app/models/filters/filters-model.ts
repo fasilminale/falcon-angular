@@ -103,7 +103,7 @@ export class FiltersModel {
       destinationCity: this.form.get('destinationCity')?.value,
       carrierSCAC: this.form.get('scac')?.value ? [this.form.get('scac')?.value] : [],
       shippingPoints: this.form.get('shippingPoints')?.value ? [this.form.get('shippingPoints')?.value] : [],
-      carrierMode: this.form.get('mode')?.value ? [this.form.get('mode')?.value] : [],
+      mode: this.form.get('mode')?.value ? this.form.get('mode')?.value : [],
     };
   }
 
@@ -116,3 +116,4 @@ export class FiltersModel {
     }
   }
 }
+
