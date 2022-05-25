@@ -16,6 +16,24 @@ describe('Models: Filter |', () => {
     testingFiltersModel = new FiltersModel();
   });
 
+  it('should format empty for search', () => {
+    testingFiltersModel.form.removeControl('invoiceStatuses');
+    testingFiltersModel.form.removeControl('originCity');
+    testingFiltersModel.form.removeControl('destinationCity');
+    testingFiltersModel.form.removeControl('scac');
+    testingFiltersModel.form.removeControl('shippingPoints');
+    testingFiltersModel.form.removeControl('mode');
+    const result = testingFiltersModel.formatForSearch();
+    expect(result).toEqual({
+      invoiceStatuses: undefined,
+      originCity: undefined,
+      destinationCity: undefined,
+      carrierSCAC: [],
+      shippingPoints: [],
+      carrierMode: [],
+    });
+  });
+
   describe('onCheckChanged', () => {
     it('should add value to array when checked', () => {
       testingFiltersModel.onCheckChange('invoiceStatuses', {target: {checked: true, value: 'test'}});
