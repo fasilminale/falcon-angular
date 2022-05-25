@@ -68,9 +68,11 @@
       <ng-select id="masterDataModes"
         [items]="sortedMasterDataModes"
         bindLabel="label"
+        [multiple]="true"
         bindValue="value"
         placeholder="Select One..."
         formControlName="mode"
+        [closeOnSelect]="false"
         >
       </ng-select>
     </div>
@@ -131,3 +133,4 @@
     </elm-button>
   </div>
 </div>
+
