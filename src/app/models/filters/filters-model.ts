@@ -106,7 +106,7 @@ export class FiltersModel {
       invoiceStatuses, originCity, destinationCity,
       carrierSCAC: carrierSCAC ? [carrierSCAC] : [],
       shippingPoints: shippingPoints ? [shippingPoints] : [],
-      mode: carrierMode ? [carrierMode] : [],
+      mode: carrierMode ? carrierMode : [],
     };
   }
 

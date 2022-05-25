@@ -48,7 +48,7 @@ describe('Models: Filter |', () => {
       destinationCity: undefined,
       carrierSCAC: ['ODFL'],
       shippingPoints: ['D46'],
-      mode: ['LTL'],
+      mode: 'LTL'
     });
   });
 
