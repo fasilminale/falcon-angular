@@ -6,7 +6,7 @@ import {AbstractControl, FormArray, FormControl} from '@angular/forms';
 
 let testingFiltersModel: FiltersModel;
 
-describe('Models: Filter |', () => {
+fdescribe('Models: Filter |', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [AppModule],
@@ -48,7 +48,7 @@ describe('Models: Filter |', () => {
       destinationCity: undefined,
       carrierSCAC: ['ODFL'],
       shippingPoints: ['D46'],
-      mode: ['LTL'],
+      mode: 'LTL'
     });
   });
 
