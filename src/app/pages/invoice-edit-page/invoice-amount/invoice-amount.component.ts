@@ -177,12 +177,6 @@ export class InvoiceAmountComponent implements OnInit {
   insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
     if (lineItems && lineItems.length > 0) {
       lineItems.forEach((lineItem) => {
-        const variables: FormArray = new FormArray([]);
-        if (lineItem.variables.length > 0) {
-          lineItem.variables.forEach((variable: any) => {
-            variables.push(new FormControl(variable));
-          });
-        }
         const group = new FormGroup({
           attachment: new FormControl(lineItem.attachment ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
@@ -212,7 +206,7 @@ export class InvoiceAmountComponent implements OnInit {
           fuel: new FormControl(lineItem.fuel ?? false),
           manual: new FormControl(false),
           lineItemType: new FormControl(lineItem.lineItemType ?? null),
-          variables
+          variables: new FormControl(lineItem.variables ?? [])
         });
         group.get('rateSourcePair')?.valueChanges?.subscribe(
           value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
