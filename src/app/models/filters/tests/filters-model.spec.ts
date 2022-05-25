@@ -30,7 +30,7 @@ describe('Models: Filter |', () => {
       destinationCity: undefined,
       carrierSCAC: [],
       shippingPoints: [],
-      carrierMode: [],
+      mode: [],
     });
   });
 
@@ -48,7 +48,7 @@ describe('Models: Filter |', () => {
       destinationCity: undefined,
       carrierSCAC: ['ODFL'],
       shippingPoints: ['D46'],
-      carrierMode: ['LTL'],
+      mode: ['LTL'],
     });
   });
 

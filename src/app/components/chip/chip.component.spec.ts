@@ -43,8 +43,8 @@ describe('ChipComponent', () => {
     component.filtersModel.form.get('originCity')?.setValue('TestOriginCity');
     component.filtersModel.form.get('destinationCity')?.setValue('TestDestinationCity');
     component.filtersModel.form.get('scac')?.setValue('ABCD');
-    component.filtersModel.form.get('mode')?.setValue('LTL');
     component.filtersModel.form.get('shippingPoints')?.setValue('D36');
+    component.filtersModel.form.get('mode')?.setValue(['D36']);
   }
 
   it('should create', () => {

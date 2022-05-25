@@ -72,8 +72,9 @@ export class ChipComponent implements OnChanges {
     }
 
     if (mode?.value?.length > 0) {
+      const arrObjMode = mode?.value.map((m: any) => ({'key': m, 'label': m}));
       this.chips.push(
-        this.formatChip('Mode:&nbsp', mode as FormGroup, 'mode')
+        this.formatArrayChip('Mode:&nbsp', mode as FormArray, arrObjMode, 'mode')
       );
     }
   }
@@ -108,6 +109,8 @@ export class ChipComponent implements OnChanges {
 
   getTooltips(formArray: FormArray, options: Array<StatusModel>): string {
     const tooltips: string[] = [];
+    console.log(formArray);
+    console.log(options);
     for (const value of formArray.value) {
       tooltips.push(this.getLabel(value, options));
     }

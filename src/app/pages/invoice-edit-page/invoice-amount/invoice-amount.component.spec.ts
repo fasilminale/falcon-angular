@@ -8,11 +8,8 @@ import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-det
 import {InvoiceAmountComponent} from './invoice-amount.component';
 import {
   CalcDetail,
-  CalcDetailVariable,
   CostBreakDownUtils,
-  Location,
   RateDetailResponse,
-  RatesResponse
 } from '../../../models/rate-engine/rate-engine-request';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {CommentModalData, CommentModel, UtilService} from '../../../services/util-service';
