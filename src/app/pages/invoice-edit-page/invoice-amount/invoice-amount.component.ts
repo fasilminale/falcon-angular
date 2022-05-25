@@ -254,11 +254,13 @@ export class InvoiceAmountComponent implements OnInit {
 
   get costBreakdownTotal(): number {
     let totalAmount = 0;
-    this.costBreakdownItemsControls.forEach(c => {
-      if (c?.get('totalAmount')?.value) {
-        totalAmount += parseFloat(c?.get('totalAmount')?.value);
-      }
-    });
+    this.costBreakdownItemsControls
+      .filter(c => !!c)
+      .forEach(c => {
+        if (c.get('totalAmount')?.value) {
+          totalAmount += parseFloat(c.get('totalAmount')?.value);
+        }
+      });
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
     this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);

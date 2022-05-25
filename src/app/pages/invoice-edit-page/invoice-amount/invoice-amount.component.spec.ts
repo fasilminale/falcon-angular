@@ -708,4 +708,20 @@ describe('InvoiceAmountComponent', () => {
       }]
     });
   });
+
+  it('should be able to get cost breakdown total while missing invoice amount control', () => {
+    component._formGroup.removeControl('amountOfInvoice');
+    const result = component.costBreakdownTotal;
+    expect(result).toBe(0);
+    // no error means we pass
+  });
+
+  it('should be able to get cost breakdown total while missing line total', () => {
+    component.amountOfInvoiceControl.setValue(123.45);
+    component.costBreakdownItems.clear();
+    component.costBreakdownItems.push(new FormGroup({}));
+    const result = component.costBreakdownTotal;
+    expect(result).toBe(0);
+  });
+
 });
