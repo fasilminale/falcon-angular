@@ -13,10 +13,32 @@ import {asSpy} from '../../testing/test-utils.spec';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
-import {FormControl} from "@angular/forms";
-import {TripInformationComponent} from "./trip-information/trip-information.component";
+import {TripInformationComponent} from './trip-information/trip-information.component';
+import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {Location} from '../../models/location/location-model';
 
 describe('InvoiceEditPageComponent', () => {
+
+  const TEST_MODE = {
+    mode: 'TEST',
+    reportKeyMode: 'TST',
+    reportModeDescription: 'Test'
+  };
+  const TEST_CARRIER = {
+    name: 'TEST',
+    scac: 'TST'
+  };
+  const TEST_DATE = '2022-05-12T15:35:32Z';
+  const TEST_LOCATION: Location = {
+    address: '123 Fake Street',
+    address2: undefined,
+    city: 'test',
+    country: 'USA',
+    name: 'test',
+    state: 'TS',
+    zipCode: '12345'
+  };
+
 
   let component: InvoiceEditPageComponent;
   let fixture: ComponentFixture<InvoiceEditPageComponent>;
@@ -60,7 +82,7 @@ describe('InvoiceEditPageComponent', () => {
     utilService = TestBed.inject(UtilService);
     spyOn(utilService, 'openErrorModal').and.returnValue(of());
     spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
-    spyOn(utilService, 'openCommentModal').and.returnValue(of({ comment: 'deleteReason' }));
+    spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: 'deleteReason'}));
 
     // Mock Toast Service
     toastService = TestBed.inject(ToastService);
@@ -157,6 +179,8 @@ describe('InvoiceEditPageComponent', () => {
           overriddenDeliveryDateTime: new Date().toISOString(),
           assumedDeliveryDateTime: new Date().toISOString()
         };
+        spyOn(component, 'updateInvoiceFromForms').and.stub();
+        spyOn(rateService, 'rateInvoice').and.returnValue(of(testInvoice));
         asSpy(invoiceService.getInvoice).and.returnValue(of(testInvoice));
       });
       it('getAccessorialList should call rate engine', () => {
@@ -171,14 +195,26 @@ describe('InvoiceEditPageComponent', () => {
       });
       it('getRates should call rate engine', () => {
         component.invoice = new InvoiceDataModel();
+        component.invoice.mode = {mode: 'TEST', reportKeyMode: 'TST', reportModeDescription: 'Test'};
+        component.invoice.carrier = {name: 'TEST', scac: 'TST'};
+        component.invoice.pickupDateTime = '2022-05-12T15:35:32Z';
+        component.invoice.origin = {address: '123 Fake Street', city: 'test', country: 'USA', name: 'test', state: 'TS', zipCode: '12345'};
+        component.invoice.destination = {
+          address: '123 Fake Street',
+          city: 'test',
+          country: 'USA',
+          name: 'test',
+          state: 'TS',
+          zipCode: '12345'
+        };
         component.getRates('testAccessorialCode');
-        expect(rateService.getRates).toHaveBeenCalled();
+        expect(rateService.rateInvoice).toHaveBeenCalled();
       });
       it('getRates should not call rate engine', () => {
         testInvoice.carrier = null;
         component.invoice = testInvoice;
         component.getRates('testAccessorialCode');
-        expect(rateService.getRates).not.toHaveBeenCalled();
+        expect(rateService.rateInvoice).not.toHaveBeenCalled();
       });
 
       it('handle getAccessorialDetails response', done => {
@@ -207,7 +243,7 @@ describe('InvoiceEditPageComponent', () => {
 
         // Assertions
         ratesResponse$.subscribe(() => {
-          expect(rateService.getRates).toHaveBeenCalled();
+          expect(rateService.rateInvoice).toHaveBeenCalled();
           done();
         });
 
@@ -385,7 +421,7 @@ describe('InvoiceEditPageComponent', () => {
     });
 
     // Run Test
-    resolveDisputeModal$.next({ comment: 'comments' });
+    resolveDisputeModal$.next({comment: 'comments'});
   });
 
   it('resolve dispute accept with no comments', done => {
@@ -408,7 +444,7 @@ describe('InvoiceEditPageComponent', () => {
     });
 
     // Run Test
-    resolveDisputeModal$.next({ comment: '' });
+    resolveDisputeModal$.next({comment: ''});
   });
 
   it('resolve dispute deny action', done => {
@@ -431,7 +467,7 @@ describe('InvoiceEditPageComponent', () => {
     });
 
     // Run Test
-    resolveDisputeModal$.next({ comment: '' });
+    resolveDisputeModal$.next({comment: ''});
   });
 
   it('resolve dispute failure', done => {
@@ -459,7 +495,7 @@ describe('InvoiceEditPageComponent', () => {
     );
 
     // Run Test
-    resolveDisputeModal$.next({ comment: 'comments' });
+    resolveDisputeModal$.next({comment: 'comments'});
   });
 
   describe('Not Implemented Button:', () => {
@@ -493,7 +529,7 @@ describe('InvoiceEditPageComponent', () => {
         mode: 'TL',
         reportKeyMode: 'TL',
         reportModeDescription: 'TRUCKLOAD'
-      }))
+      }));
       component.tripInformationFormGroup.addControl('carrier', new FormControl({
         scac: 'ABCD',
         name: 'The ABCD Group',
@@ -502,36 +538,34 @@ describe('InvoiceEditPageComponent', () => {
         level: 'GRD',
         name: 'GROUND',
       }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'))
-    }
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+    };
 
     it('should call performPostUpdateActions when update succeeds', () => {
-
       component.falconInvoiceNumber = 'F0000001234';
       const invoiceDataModel = new InvoiceDataModel();
       setUpControls();
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
-
       component.clickSaveButton();
-
-      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`);
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
-
+      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(
+        `Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`
+      );
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
     });
 
     it('should not call performPostUpdateActions when update fails', () => {
-
       component.falconInvoiceNumber = 'F0000001234';
-      const invoiceDataModel = new InvoiceDataModel();
       setUpControls();
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
-
       component.clickSaveButton();
-
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
     });
 
     it('should not call update or performPostUpdateActions when trip componenet carrierDetailsFound is false', () => {
@@ -541,12 +575,9 @@ describe('InvoiceEditPageComponent', () => {
       setUpControls();
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
-
       component.clickSaveButton();
-
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
-
     });
   });
 
@@ -557,7 +588,7 @@ describe('InvoiceEditPageComponent', () => {
         mode: 'TL',
         reportKeyMode: 'TL',
         reportModeDescription: 'TRUCKLOAD'
-      }))
+      }));
       component.tripInformationFormGroup.addControl('carrier', new FormControl({
         scac: 'ABCD',
         name: 'The ABCD Group',
@@ -566,25 +597,25 @@ describe('InvoiceEditPageComponent', () => {
         level: 'GRD',
         name: 'GROUND',
       }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'))
-    }
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+    };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
-
       component.falconInvoiceNumber = 'F0000001234';
       const invoiceDataModel = new InvoiceDataModel();
-      invoiceDataModel.falconInvoiceNumber = 'F0000005678'
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678';
       setUpControls();
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
-
       component.clickSubmitForApprovalButton();
-
-      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(`Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated and submitted for approval.`);
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(
+        `Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated and submitted for approval.`
+      );
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
       expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
-
     });
 
     it('should not call performPostUpdateActions or submitForApproval when update fails', () => {
@@ -593,49 +624,45 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
-
       component.clickSubmitForApprovalButton();
-
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
       expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
-
     });
 
     it('should not call performPostUpdateActions when update succeeds and submit for approval fails', () => {
-
       component.falconInvoiceNumber = 'F0000001234';
       const invoiceDataModel = new InvoiceDataModel();
-      invoiceDataModel.falconInvoiceNumber = 'F0000005678'
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678';
       setUpControls();
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(throwError(new Error('Bad')));
-
       component.clickSubmitForApprovalButton();
-
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
-      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber);
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
       expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
-
     });
 
-    it('should not invoke update, submit for approval or performPostUpdateActions when trip information carrierDetailsFound is false', () => {
-      component.tripInformationComponent.carrierDetailFound = false;
-      component.falconInvoiceNumber = 'F0000001234';
-      const invoiceDataModel = new InvoiceDataModel();
-      invoiceDataModel.falconInvoiceNumber = 'F0000005678'
-      setUpControls();
-      spyOn(component, 'performPostUpdateActions');
-      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
-      spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
-
-      component.clickSubmitForApprovalButton();
-
-      expect(component.performPostUpdateActions).not.toHaveBeenCalled();
-      expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
-      expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
-    });
+    it('should not invoke update, submit for approval or performPostUpdateActions when trip information carrierDetailsFound is false',
+      () => {
+        component.tripInformationComponent.carrierDetailFound = false;
+        component.falconInvoiceNumber = 'F0000001234';
+        const invoiceDataModel = new InvoiceDataModel();
+        invoiceDataModel.falconInvoiceNumber = 'F0000005678';
+        setUpControls();
+        spyOn(component, 'performPostUpdateActions');
+        spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
+        spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
+        component.clickSubmitForApprovalButton();
+        expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+        expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
+        expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
+      });
 
   });
 
@@ -661,7 +688,7 @@ describe('InvoiceEditPageComponent', () => {
         mode: 'TL',
         reportKeyMode: 'TL',
         reportModeDescription: 'TRUCKLOAD'
-      }))
+      }));
       component.tripInformationFormGroup.addControl('carrier', new FormControl({
         scac: 'ABCD',
         name: 'The ABCD Group',
@@ -670,8 +697,8 @@ describe('InvoiceEditPageComponent', () => {
         level: 'GRD',
         name: 'GROUND',
       }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'))
-    }
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+    };
 
     it('should return EditAutoInvoiceModel object', () => {
 
@@ -693,7 +720,79 @@ describe('InvoiceEditPageComponent', () => {
           name: component.tripInformationFormGroup.controls.serviceLevel.value.name,
         },
         pickupDateTime: component.tripInformationFormGroup.controls.pickUpDate.value
-      })
+      });
+    });
+  });
+
+  describe('with populated sub forms', () => {
+    beforeEach(() => {
+      component.tripInformationFormGroup.controls.carrierMode = new FormControl(TEST_MODE);
+      component.tripInformationFormGroup.controls.carrier = new FormControl(TEST_CARRIER);
+      component.tripInformationFormGroup.controls.originAddress = new FormGroup({
+        streetAddress: new FormControl('123 Fake Street'),
+        streetAddress2: new FormControl('N/A'),
+        city: new FormControl('test'),
+        country: new FormControl('USA'),
+        name: new FormControl('test'),
+        state: new FormControl('TS'),
+        zipCode: new FormControl('12345'),
+        shippingPoint: new FormControl('N/A')
+      });
+      component.tripInformationFormGroup.controls.destinationAddress = new FormGroup({
+        streetAddress: new FormControl('123 Fake Street'),
+        streetAddress2: new FormControl('N/A'),
+        city: new FormControl('test'),
+        country: new FormControl('USA'),
+        name: new FormControl('test'),
+        state: new FormControl('TS'),
+        zipCode: new FormControl('12345'),
+        shippingPoint: new FormControl('N/A')
+      });
+      const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
+      costBreakdownItems.push(new FormGroup({
+        accessorial: new FormControl(false),
+        accessorialCode: new FormControl('Test Accessorial Code'),
+        charge: new FormControl('Test Charge Code'),
+        rateSource: new FormControl('Test Rate Source Label'),
+        rateSourcePair: new FormControl({key: 'Test Rate Source Key', label: 'Test Rate Source Label'}),
+        entrySource: new FormControl('Test Entry Source Label'),
+        entrySourcePair: new FormControl({key: 'Test Entry Source Key', label: 'Test Entry Source Label'}),
+        rate: new FormControl(123.45),
+        type: new FormControl('Test Type'),
+        quantity: new FormControl(1),
+        totalAmount: new FormControl(123.45),
+        requestStatus: new FormControl('Test Request Status Label'),
+        message: new FormControl('Test Message'),
+        createdBy: new FormControl('Test Created By'),
+        createdDate: new FormControl(TEST_DATE),
+        closedBy: new FormControl('Test Close By'),
+        closedDate: new FormControl(TEST_DATE),
+        carrierComment: new FormControl('Test Carrier Comment'),
+        responseComment: new FormControl('Test Response Comment'),
+        rateResponse: new FormControl('Test Rate Response'),
+        autoApproved: new FormControl(true),
+        attachmentRequired: new FormControl(true),
+        planned: new FormControl(true),
+        fuel: new FormControl(true),
+        manual: new FormControl(true),
+        lineItemType: new FormControl('Test Line Item Type')
+      }));
+      component.updateInvoiceFromForms();
+    });
+    it('should have mode', () => {
+      expect(component.invoice.mode).toEqual(TEST_MODE);
+    });
+    it('should have carrier ', () => {
+      expect(component.invoice.carrier).toEqual(TEST_CARRIER);
+    });
+    it('should have origin', () => {
+      expect(component.invoice.origin).toEqual(TEST_LOCATION);
+    });
+    it('should have destination', () => {
+      expect(component.invoice.destination).toEqual(TEST_LOCATION);
+    });
+    it('should have costLineItems', () => {
+      expect(component.invoice.costLineItems.length).toEqual(1);
     });
   });
 

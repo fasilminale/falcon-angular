@@ -30,6 +30,7 @@ export class FalNewChargeModalComponent {
       variables: this.variableControls,
       comment: this.commentControl
     });
+    this.commentControl.disable();
   }
 
   getVariableControlNames(): Array<string> {
@@ -43,6 +44,13 @@ export class FalNewChargeModalComponent {
   }
 
   onChargeSelect(charge: CalcDetail): void {
+    this.commentControl.disable();
+    this.commentControl.setValidators([]);
+    if (charge.name === 'OTHER') {
+      this.commentControl.setValidators([Validators.required]);
+      this.commentControl.enable();
+    }
+    this.commentControl.setValue('');
     const variables = charge?.variables ?? [];
     this.clearAllVariableControls();
     variables.forEach(variable => {
@@ -75,7 +83,7 @@ export class FalNewChargeModalComponent {
         });
       result = {
         selected,
-        comment: this.commentControl.value
+        comment: this.commentControl.enabled ? this.commentControl.value : undefined
       };
     }
     this.dialogRef.close(result);
@@ -100,5 +108,5 @@ export type NewChargeModalInput = {
  */
 export type NewChargeModalOutput = undefined | {
   selected: CalcDetail,
-  comment: string
+  comment?: string
 };

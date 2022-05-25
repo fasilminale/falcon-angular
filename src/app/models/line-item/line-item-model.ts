@@ -1,6 +1,7 @@
 import {Measurement, UnitOfMeasure} from '../measurement/measurement-model';
 import {Attachment} from '../attachment/attachment-model';
 import {KeyedLabel} from '../generic/keyed-label';
+import {CalcDetailVariable} from '../rate-engine/rate-engine-request';
 
 export interface ManualLineItem {
   lineItemNumber: string;
@@ -12,7 +13,8 @@ export interface ManualLineItem {
 }
 
 export interface CostLineItem {
-  accessorial: boolean;
+  accessorial?: boolean;
+  accessorialCode?: string;
   chargeCode: string;
   rateSource: KeyedLabel;
   entrySource: KeyedLabel;
@@ -23,14 +25,13 @@ export interface CostLineItem {
   chargeLineTotal: number;
   requestStatus: KeyedLabel;
   createdBy: string;
-  createdDate: string;
+  createdDate?: string;
   closedBy: string;
-  closedDate: string;
+  closedDate?: string;
   carrierComment: string;
   responseComment: string;
   rateResponse: string;
   attachment: Attachment;
-  step: string;
   autoApproved: boolean;
   attachmentRequired: boolean;
   planned: boolean;
@@ -38,6 +39,10 @@ export interface CostLineItem {
   message: string;
   manual: boolean;
   expanded: boolean;
+  step?: string;
+  runningTotal?: number;
+  lineItemType?: string;
+  variables: Array<CalcDetailVariable>;
 }
 
 export interface DisputeLineItem {

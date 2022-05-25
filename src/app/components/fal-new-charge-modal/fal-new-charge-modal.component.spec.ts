@@ -67,23 +67,31 @@ describe('FalCommentModalComponent', () => {
     expect(controlNames).toEqual([TEST_VARIABLE_NAME]);
   });
 
-  it('should clear all variable controls', () => {
-    spyOn(component.variableControls, 'removeControl').and.callThrough();
-    component.chargeControl.setValue(TEST_CALC_DETAIL);
-    component.clearAllVariableControls();
-    expect(component.variableControls.removeControl).toHaveBeenCalledOnceWith(TEST_VARIABLE_NAME);
-  });
+  describe('SOMETHING DIFFERNT', () => {
 
-  it('should close the dialog WITHOUT a response when a charge type is NOT selected', () => {
-    spyOn(MOCK_DIALOG, 'close');
-    component.confirm();
-    expect(MOCK_DIALOG.close).toHaveBeenCalledOnceWith(undefined);
-  });
+    beforeEach(() => {
+      // setup some extra stuff
+    });
 
-  it('should close the dialog with a response when a charge type is selected', () => {
-    component.chargeControl.setValue(TEST_CALC_DETAIL);
-    spyOn(MOCK_DIALOG, 'close');
-    component.confirm();
-    expect(MOCK_DIALOG.close).toHaveBeenCalledTimes(1);
+    it('should clear all variable controls', () => {
+      spyOn(component.variableControls, 'removeControl').and.callThrough();
+      component.chargeControl.setValue(TEST_CALC_DETAIL);
+      component.clearAllVariableControls();
+      expect(component.variableControls.removeControl).toHaveBeenCalledOnceWith(TEST_VARIABLE_NAME);
+    });
+
+    it('should close the dialog WITHOUT a response when a charge type is NOT selected', () => {
+      spyOn(MOCK_DIALOG, 'close');
+      component.confirm();
+      expect(MOCK_DIALOG.close).toHaveBeenCalledOnceWith(undefined);
+    });
+
+    it('should close the dialog with a response when a charge type is selected', () => {
+      component.chargeControl.setValue(TEST_CALC_DETAIL);
+      spyOn(MOCK_DIALOG, 'close');
+      component.confirm();
+      expect(MOCK_DIALOG.close).toHaveBeenCalledTimes(1);
+    });
+
   });
 });

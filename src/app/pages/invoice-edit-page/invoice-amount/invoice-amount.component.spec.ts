@@ -199,7 +199,6 @@ describe('InvoiceAmountComponent', () => {
   describe('when invoice amount detail is loaded', () => {
     let loadInvoiceAmountDetail$: Subject<InvoiceAmountDetail>;
     let loadInvoiceOverviewDetail$: Subject<InvoiceOverviewDetail>;
-    let rateEngineCallResult$: Subject<RatesResponse>;
     beforeEach(() => {
       loadInvoiceAmountDetail$ = new Subject();
       component.formGroup = new FormGroup({});
@@ -208,10 +207,6 @@ describe('InvoiceAmountComponent', () => {
     beforeEach(() => {
       loadInvoiceOverviewDetail$ = new Subject();
       component.loadInvoiceOverviewDetail$ = loadInvoiceOverviewDetail$.asObservable();
-    });
-    beforeEach(() => {
-      rateEngineCallResult$ = new Subject();
-      component.rateEngineCallResult$ = rateEngineCallResult$.asObservable();
     });
 
     it('should populate form with invoice amount details', done => {
@@ -263,7 +258,8 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false
+            expanded: false,
+            variables: []
           }
         ],
         pendingChargeLineItems: [{
@@ -301,7 +297,8 @@ describe('InvoiceAmountComponent', () => {
           fuel: false,
           message: '',
           manual: false,
-          expanded: false
+          expanded: false,
+          variables: []
         }],
         deniedChargeLineItems: [],
         disputeLineItems: [
@@ -427,7 +424,8 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false
+            expanded: false,
+            variables: []
           }
         ],
         pendingChargeLineItems: [],
@@ -514,81 +512,6 @@ describe('InvoiceAmountComponent', () => {
       it('should now have 1 line item', () => {
         expect(component.costBreakdownItems.length).toEqual(1);
       });
-
-      // FIXME in FAL-547 - this feature is temporarily unsupported
-      xit('should populate cost breakdown line item', done => {
-        const control = component.costBreakdownItems.controls[0];
-        control.patchValue({charge: component.costBreakdownOptions$.value[0].value});
-        component.pendingAccessorialCode = 'TST';
-        rateEngineCallResult$.next({
-          mode: 'LTL',
-          carrierRateSummaries: [{
-            totalCost: '0',
-            scac: 'ODFL',
-            legs: [
-              {
-                carrierRate: {
-                  accessorialList: [],
-                  lineItems: [
-                    {
-                      description: 'TST - TestChargeCode',
-                      rate: '100',
-                      rateType: 'FLAT',
-                      lineItemTotal: '100',
-                      lineItemType: 'ACCESSORIAL',
-                      runningTotal: '100',
-                      step: '1',
-                      costName: 'TestCostName',
-                      quantity: 0,
-                      message: '',
-                      accessorial: true
-                    }
-                  ]
-                }
-              }
-            ]
-          }]
-        });
-        expect(component.filteredCostBreakdownOptions.length).toEqual(1);
-        done();
-      });
-
-
-      // FIXME in FAL-547 - this feature is temporarily unsupported
-      xit('should populate cost breakdown line item', done => {
-        component.pendingAccessorialCode = 'OTH';
-        rateEngineCallResult$.next({
-          mode: 'LTL',
-          carrierRateSummaries: [{
-            totalCost: '0',
-            scac: 'ODFL',
-            legs: [
-              {
-                carrierRate: {
-                  accessorialList: [],
-                  lineItems: [
-                    {
-                      description: 'OTH - OtherChargeCode',
-                      rate: '100',
-                      rateType: 'FLAT',
-                      lineItemTotal: '100',
-                      lineItemType: 'ACCESSORIAL',
-                      runningTotal: '100',
-                      step: '1',
-                      costName: 'TestCostName',
-                      quantity: 0,
-                      message: '',
-                      accessorial: true
-                    }
-                  ]
-                }
-              }
-            ]
-          }]
-        });
-        expect(component.filteredCostBreakdownOptions.length).toEqual(2);
-        done();
-      });
     });
 
     it('should disable overrideStandardPaymentTerms checkbox when enableDisableOverrideStandardPaymentTerms invoked with true', () => {
@@ -626,27 +549,8 @@ describe('InvoiceAmountComponent', () => {
       component.costBreakdownItems.push(lineItem);
     });
 
-    it('should call rate engine', () => {
-      const selectedCharge = {accessorialCode: 'TST', name: 'TestChargeCode'};
-      component.onSelectRate(selectedCharge, lineItem);
-      expect(component.rateEngineCall.emit).toHaveBeenCalledWith(selectedCharge.accessorialCode);
-    });
-
     it('should not call rate engine', () => {
-      component.onSelectRate(OTHER_CALC_DETAIL, lineItem);
       expect(component.rateEngineCall.emit).not.toHaveBeenCalled();
-    });
-
-    it('should recalculate total cost', done => {
-      const totalCost = component.amountOfInvoiceControl.value;
-      component.onSelectRate(OTHER_CALC_DETAIL, lineItem);
-      const lineItemTotalAmountControl = lineItem.get('totalAmount');
-      expect(lineItemTotalAmountControl).not.toBeFalsy();
-      lineItem.valueChanges.subscribe(() => {
-        expect(component.amountOfInvoiceControl.value).toEqual(totalCost + 40);
-        done();
-      });
-      lineItemTotalAmountControl?.setValue(40.00);
     });
 
   });
