@@ -420,6 +420,7 @@ export class InvoiceAmountComponent implements OnInit {
           this.pendingChargeLineItems.removeAt(index);
           this.setPendingChargeResponse(action, pendingLineItem, result);
           if (action === 'Accepted') {
+            console.log(pendingLineItem);
             this.costBreakdownItemsControls.push(pendingLineItem);
             this.costBreakdownItemsControls.sort((a, b) => {
               return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
@@ -439,7 +440,7 @@ export class InvoiceAmountComponent implements OnInit {
     if (typeof result !== 'boolean') {
       pendingLineItem.get('responseComment')?.setValue(result.comment);
     }
-    pendingLineItem.get('closedDate')?.setValue(Date.now());
+    pendingLineItem.get('closedDate')?.setValue(new Date().toISOString());
     pendingLineItem.get('closedBy')?.setValue(this.userInfo?.email);
   }
 
@@ -452,12 +453,11 @@ export class InvoiceAmountComponent implements OnInit {
       });
     return dialogResult;
   }
-  async onEditCostLineItem(costLineItem: AbstractControl): Promise<void> {
+  async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
     const editChargeDetails = await this.utilService.openEditChargeModal({
       costLineItem
     }).pipe(first()).toPromise();
     if (editChargeDetails) {
-      const costLineItems = this.pendingChargeLineItemControls;
       const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.charge === lineItem.value?.charge);
       if (existingCostLineItem) {
         this.toastService.openSuccessToast(`Success. Variables have been updated for the line item.`);
@@ -469,6 +469,31 @@ export class InvoiceAmountComponent implements OnInit {
         this.rateEngineCall.emit(this.pendingAccessorialCode);
       }
     }
+  }
+
+  onDeleteCostLineItem(costLineItem: AbstractControl): void {
+    const dialogResult: Observable<CommentModel | boolean> = this.utilService.openCommentModal({
+      title: 'Delete Charge',
+      innerHtmlMessage: `Are you sure you want to delete this charge?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+      confirmButtonText: 'Delete Charge',
+      confirmButtonStyle: 'destructive',
+      cancelButtonText: 'Cancel',
+      commentSectionFieldName: 'Reason for Deletion',
+      requireField: false
+    });
+    dialogResult.subscribe((result: CommentModel | boolean) => {
+      if (result) {
+        const costLineItems = this.costBreakdownItemsControls;
+        const existingCostLineItem = costLineItems.find(lineItem => costLineItem.value?.charge === lineItem.value?.charge);
+        if (existingCostLineItem) {
+          this.toastService.openSuccessToast(`Success. Variables have been updated for the line item.`);
+          existingCostLineItem.patchValue({
+            requestStatus: 'Deleted'
+          });
+        }
+      }
+    });
   }
 
   /**

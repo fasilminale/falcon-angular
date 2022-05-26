@@ -427,6 +427,7 @@ export class InvoiceEditPageComponent implements OnInit {
   getRates(accessorialCode: string): void {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
+      console.log(this.invoice);
       this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => this.loadInvoice(ratedInvoiced)
       );

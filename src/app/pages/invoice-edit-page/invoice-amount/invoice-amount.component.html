@@ -78,14 +78,15 @@
   <!--new change starts--> <!--cost breakdown div starts-->
   <div class="cost-breakdown-div my-3" formArrayName="costBreakdownItems">
     <div class="col-12">Cost breakdown</div>
-    <div class="row my-3 mx-0 cost-breakdown-item-header">
+    <div class="row my-3 mx-0 pending-line-item-header">
       <div class="col-3">Charge</div>
       <div class="col-1">Attachment</div>
-      <div class="col-2">Rate Source</div>
+      <div class="col-1">Rate Source</div>
       <div class="col-1">Rate</div>
-      <div class="col-2">Type</div>
+      <div class="col-1">Type</div>
       <div class="col-1">Quantity</div>
-      <div class="total-column-header">Total</div>
+      <div class="pending-total-column-header">Total</div>
+      <div class="col-2 pending-action-label">Actions</div>
     </div>
     <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && isPrepaid">
       <div *ngFor="let _ of costBreakdownItemsControls; index as i"
@@ -93,7 +94,9 @@
            [ngClass]="{ 'cost-breakdown-item-row' : _.get('message')?.value !== 'NOT FOUND' }"
            [formGroupName]="i">
 
+
         <!-- Cost breakdown item- Charge -->
+        <ng-container *ngIf="_.value.requestStatus !== 'Deleted'">
         <div class="col-3" *ngIf="!_.get('manual')?.value">
           <input id="cost-line-item-charge"
                  type="text"
@@ -117,19 +120,14 @@
 
         <!-- Cost Line Item - Attachments -->
         <div class="col-1">
-          <elm-button id="link-button_cost"
-                      buttonType="button"
-                      buttonStyle="text"
-                      class="flex-shrink-1"
-                      *ngIf="_.get('attachment')?.value?.url"
-                      (click)="downloadAttachment(_.get('attachment')?.value?.url)">
-            <div class="material-icons download-icon"
-                 (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
-            Download
-          </elm-button>
+          <div *ngIf="_.get('attachment')" class="material-icons download-icon">file_download</div>
+          <span *ngIf="_.get('attachment')" [matTooltipPosition]="'below'"
+                [matTooltip]="'Download Attachment'"
+                [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
+                matTooltipClass="newLine">Download</span>
         </div>
 
-        <div class="col-2">
+        <div class="col-1">
           <input id="cost-line-item-rate-source"
                  type="text"
                  class="form-control"
@@ -149,7 +147,7 @@
         </div>
 
         <!-- Cost breakdown item - Type -->
-        <div class="col-2">
+        <div class="col-1">
           <input id="cost-line-item-type"
                  type="text"
                  class="form-control"
@@ -184,7 +182,14 @@
             Base Rate Amount is required
           </small>
         </div>
-        <div class="expand-button" *ngIf="_.value.entrySource === 'CP'">
+<!--*ngIf="_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')-->
+        <div class="col-2">
+          <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon" (click)="onEditCostLineItem(_, costBreakdownItemsControls)">edit</div>
+          <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
+          <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_)">delete</div>
+        </div>
+
+        <div class="expand-button" *ngIf="_.value.entrySource !== 'AUTO'">
           <span *ngIf="!_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
             expand_more
           </span>
@@ -193,6 +198,7 @@
           </span>
         </div>
         <app-fal-accessorial-detail [lineItem]="_"></app-fal-accessorial-detail>
+        </ng-container>
       </div>
     </ng-container>
     <div class="no-results" *ngIf="costBreakdownItems && costBreakdownItems.length == 0">
@@ -249,13 +255,13 @@
          [ngClass]="{ 'cost-breakdown-item-row' : _.get('message')?.value !== 'NOT FOUND' }"
          [formGroupName]="j">
 
-      <!-- Pending Line Item- Charge -->
-      <div class="col-3">
-        <input id="pending-line-item-charge"
-               type="text"
-               class="form-control"
-               formControlName="charge"
-               [attr.disabled]="readOnlyForm ? '': null"
+        <!-- Pending Line Item- Charge -->
+        <div class="col-3">
+          <input id="pending-line-item-charge"
+                 type="text"
+                 class="form-control"
+                 formControlName="charge"
+                 [attr.disabled]="readOnlyForm ? '': null"
                [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
         />
         <small class="error-text"
@@ -264,9 +270,9 @@
         </small>
       </div>
 
-      <!-- Pending Line Item - Attachments -->
-      <div class="col-1">
-        <elm-button id="link-button-pending"
+        <!-- Pending Line Item - Attachments -->
+        <div class="col-1">
+          <elm-button id="link-button-pending"
                     buttonType="button"
                     buttonStyle="text"
                     class="flex-shrink-1"
@@ -276,73 +282,73 @@
                (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
           Download
         </elm-button>
-      </div>
+        </div>
 
-      <div class="col-1">
-        <input id="pending-line-item-rate-source"
-               type="text"
-               class="form-control"
-               formControlName="rateSource"
-               [attr.disabled]="readOnlyForm ? '': null"
-        />
-      </div>
+        <div class="col-1">
+          <input id="pending-line-item-rate-source"
+                 type="text"
+                 class="form-control"
+                 formControlName="rateSource"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
 
-      <!-- Pending breakdown item - Rate -->
-      <div class="col-1">
-        <input id="pending-line-item-rate"
-               type="text"
-               class="form-control text-right"
-               formControlName="rate"
-               [attr.disabled]="readOnlyForm ? '': null"
-        />
-      </div>
+        <!-- Pending breakdown item - Rate -->
+        <div class="col-1">
+          <input id="pending-line-item-rate"
+                 type="text"
+                 class="form-control text-right"
+                 formControlName="rate"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
 
-      <!-- Pending breakdown item - Type -->
-      <div class="col-1">
-        <input id="pending-line-item-type"
-               type="text"
-               class="form-control"
-               formControlName="type"
-               [attr.disabled]="readOnlyForm ? '' : null"
-        />
-      </div>
+        <!-- Pending breakdown item - Type -->
+        <div class="col-1">
+          <input id="pending-line-item-type"
+                 type="text"
+                 class="form-control"
+                 formControlName="type"
+                 [attr.disabled]="readOnlyForm ? '' : null"
+          />
+        </div>
 
-      <!-- Pending breakdown item - Quantity -->
-      <div class="col-1">
-        <input id="pending-line-item-quantity"
-               type="text"
-               class="form-control"
-               formControlName="quantity"
-               maxlength="10"
-               [attr.disabled]="readOnlyForm ? '': null"
-        />
-      </div>
+        <!-- Pending breakdown item - Quantity -->
+        <div class="col-1">
+          <input id="pending-line-item-quantity"
+                 type="text"
+                 class="form-control"
+                 formControlName="quantity"
+                 maxlength="10"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
 
-      <!-- Pending breakdown item - totalAmount -->
-      <div class="total-column">
-        <app-fal-currency-input
-          id="pending-line-item-total"
-          [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
-          formControlName="totalAmount"
-          [isDisabled]="readOnlyForm"
-        >
+        <!-- Pending breakdown item - totalAmount -->
+        <div class="total-column">
+          <app-fal-currency-input
+            id="pending-line-item-total"
+            [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
+            formControlName="totalAmount"
+            [isDisabled]="readOnlyForm"
+          >
 
-        </app-fal-currency-input>
+          </app-fal-currency-input>
 
-        <small class="error-text"
-               *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
-          Base Rate Amount is required
-        </small>
-      </div>
+          <small class="error-text"
+                 *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
+            Base Rate Amount is required
+          </small>
+        </div>
 
-      <div class="col-2" *ngIf="_.value.requestStatus.label === 'Open'">
-        <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon" (click)="onEditCostLineItem(_)">edit</div>
-        <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
-        <elm-button buttonType="button"
-                    buttonStyle="text"
-                    [padding]="'10px'"
-                    id="pending-accept-button"
-                    [isDisabled]="readOnlyForm || _.dirty"
+        <div class="col-2" *ngIf="_.value.requestStatus.label === 'Open'">
+          <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon" (click)="onEditCostLineItem(_, pendingChargeLineItemControls)">edit</div>
+          <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
+          <elm-button buttonType="button"
+                      buttonStyle="text"
+                      [padding]="'10px'"
+                      id="pending-accept-button"
+                      [isDisabled]="readOnlyForm || _.dirty"
                     (buttonClick)="acceptCharge(_.value)"
         >
           <span>Accept</span>
@@ -358,29 +364,28 @@
         </elm-button>
       </div>
 
-      <div class="col-2" *ngIf="_.value.requestStatus.label === 'Error'">
-          <elm-button buttonType="button"
-                      buttonStyle="text"
-                      [margin]="'0 0 0 120px'"
-                      [padding]="'10px'"
-                      id="pending-deny-button"
-                      [isDisabled]="readOnlyForm">
-            <span>Deny</span>
-          </elm-button>
+        <div class="col-2" *ngIf="_.value.requestStatus.label === 'Error'">
+            <elm-button buttonType="button"
+                        buttonStyle="text"
+                        [margin]="'0 0 0 120px'"
+                        [padding]="'10px'"
+                        id="pending-deny-button"
+                        [isDisabled]="readOnlyForm">
+              <span>Deny</span>
+            </elm-button>
+        </div>
+
+        <div class="expand-button" *ngIf="_.value.entrySource !== 'AUTO'">
+            <span *ngIf="!_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
+              expand_more
+            </span>
+          <span *ngIf="_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
+              expand_less
+            </span>
+        </div>
+
+        <app-fal-accessorial-detail [lineItem]="_"></app-fal-accessorial-detail>
       </div>
-
-      <div class="expand-button" *ngIf="_.value.entrySource === 'CP'">
-          <span *ngIf="!_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
-            expand_more
-          </span>
-        <span *ngIf="_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
-            expand_less
-          </span>
-      </div>
-
-      <app-fal-accessorial-detail [lineItem]="_"></app-fal-accessorial-detail>
-
-    </div>
   </ng-container>
     <div class="no-results" *ngIf="pendingChargeLineItems && pendingChargeLineItems.length == 0">
       No Pending Charges
