@@ -5,13 +5,12 @@ import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
 import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
-import {CalcDetail, CostBreakDownUtils, RateDetailResponse, RatesResponse} from '../../../models/rate-engine/rate-engine-request';
+import {CalcDetail, CostBreakDownUtils, RateDetailResponse} from '../../../models/rate-engine/rate-engine-request';
 import {first, map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
 import {ConfirmationModalData, ElmFormHelper, SubjectValue, ToastService} from '@elm/elm-styleguide-ui';
 import {CommentModel, UtilService} from '../../../services/util-service';
-import {UserService} from '../../../services/user-service';
 import {UserInfoModel} from '../../../models/user-info/user-info-model';
 
 @Component({
@@ -37,12 +36,6 @@ export class InvoiceAmountComponent implements OnInit {
     {label: 'USD', value: 'USD', disabled: false},
     {label: 'CAD', value: 'CAD', disabled: false}
   ];
-  public costBreakdownTypes = [
-    {display: 'Per hour', value: 'PERHOUR'},
-    {display: 'Flat', value: 'Flat'},
-    {display: 'Per mile', value: 'PERMILE'},
-    {display: 'Percent', value: 'Percentage'},
-    {display: 'N/A', value: ''}];
   public overridePaymentTermsOptions = [
     {label: 'Override Standard Payment Terms', value: 'override', disabled: false}
   ];
@@ -53,7 +46,6 @@ export class InvoiceAmountComponent implements OnInit {
   });
 
   public costBreakdownOptions$: SubjectValue<Array<SelectOption<CalcDetail>>> = new SubjectValue<Array<SelectOption<CalcDetail>>>([]);
-  public filteredCostBreakdownOptions: Array<SelectOption<CalcDetail>> = [];
 
   readOnlyForm = true;
   costBreakdownItems = new FormArray([]);
@@ -67,7 +59,6 @@ export class InvoiceAmountComponent implements OnInit {
   @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
   @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
 
-  rateEngineCallResponse: Subscription = new Subscription();
   chargeLineItemOptionsSubscription: Subscription = new Subscription();
   updateIsEditModeSubscription: Subscription = new Subscription();
   loadInvoiceOverviewDetailSubscription: Subscription = new Subscription();
@@ -163,7 +154,6 @@ export class InvoiceAmountComponent implements OnInit {
         this.overridePaymentTermsOptions[0], true);
     }
     this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ?? '');
-
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     (givenFormGroup.get('pendingChargeLineItems') as FormArray).clear();
@@ -264,11 +254,13 @@ export class InvoiceAmountComponent implements OnInit {
 
   get costBreakdownTotal(): number {
     let totalAmount = 0;
-    this.costBreakdownItemsControls.forEach(c => {
-      if (c?.get('totalAmount')?.value) {
-        totalAmount += parseFloat(c?.get('totalAmount')?.value);
-      }
-    });
+    this.costBreakdownItemsControls
+      .filter(c => !!c)
+      .forEach(c => {
+        if (c.get('totalAmount')?.value) {
+          totalAmount += parseFloat(c.get('totalAmount')?.value);
+        }
+      });
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
     this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
@@ -444,13 +436,11 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   displayPendingChargeModal(modalData: ConfirmationModalData): Observable<CommentModel | boolean> {
-    const dialogResult: Observable<CommentModel | boolean> =
-      this.utilService.openCommentModal({
-        ...modalData,
-        commentSectionFieldName: 'Response Comment',
-        requireField: modalData.title === 'Deny Charge'
-      });
-    return dialogResult;
+    return this.utilService.openCommentModal({
+      ...modalData,
+      commentSectionFieldName: 'Response Comment',
+      requireField: modalData.title === 'Deny Charge'
+    });
   }
   async onEditCostLineItem(costLineItem: AbstractControl): Promise<void> {
     const editChargeDetails = await this.utilService.openEditChargeModal({

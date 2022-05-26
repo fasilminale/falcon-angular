@@ -22,7 +22,11 @@ describe('LoadsFilterModalComponent', () => {
   const dialogDataMock = {
     originCities: ['New York'],
     destinationCities: ['Chicago'],
-    masterDataShippingPoints: [{label: 'D1', value: 'D1'}, {label: 'D2', value: 'D2'}, {label: 'D34', value: 'D34'}, {label: 'D23', value: 'D23'}]
+    masterDataShippingPoints: [{label: 'D1', value: 'D1'}, {label: 'D2', value: 'D2'}, {label: 'D34', value: 'D34'}, {
+      label: 'D23',
+      value: 'D23'
+    }],
+    masterDataModes: [{label: 'LNHL', value: 'LNHL'}]
   };
 
   beforeEach(async () => {
@@ -31,7 +35,7 @@ describe('LoadsFilterModalComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [FilterService,
         {provide: MatDialogRef, useValue: dialogMock},
-        { provide: MAT_DIALOG_DATA, useValue: dialogDataMock}
+        {provide: MAT_DIALOG_DATA, useValue: dialogDataMock}
       ]
     })
       .compileComponents();
@@ -138,8 +142,11 @@ describe('LoadsFilterModalComponent', () => {
           value: 'IJKL',
           label: 'The Human Fund (IJKL)'
         },
-
-      ]
+        {
+          value: 'IJKL',
+          label: 'The Human Fund (IJKL)'
+        }
+      ];
 
       fixture.detectChanges();
 
@@ -157,10 +164,14 @@ describe('LoadsFilterModalComponent', () => {
           label: 'The Human Fund (IJKL)'
         },
         {
+          value: 'IJKL',
+          label: 'The Human Fund (IJKL)'
+        },
+        {
           value: 'ABCD',
           label: 'Vandalay Industries (ABCD)'
         }
-      ])
+      ]);
 
     });
   });

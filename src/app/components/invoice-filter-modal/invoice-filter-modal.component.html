@@ -64,6 +64,20 @@
     </div>
 
     <div class="row mt-4 px-3">
+      <h6 class="px-0">Mode</h6>
+      <ng-select id="masterDataModes"
+        [items]="sortedMasterDataModes"
+        bindLabel="label"
+        [multiple]="true"
+        bindValue="value"
+        placeholder="Select One..."
+        formControlName="mode"
+        [closeOnSelect]="false"
+        >
+      </ng-select>
+    </div>
+
+    <div class="row mt-4 px-3">
       <h6 class="px-0">Origin</h6>
       <label class="elm-field-label1" for="originCity">
         Origin City
@@ -119,3 +133,4 @@
     </elm-button>
   </div>
 </div>
+

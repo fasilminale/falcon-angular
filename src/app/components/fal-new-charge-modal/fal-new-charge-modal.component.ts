@@ -51,7 +51,7 @@ export class FalNewChargeModalComponent {
       this.commentControl.enable();
     }
     this.commentControl.setValue('');
-    const variables = charge?.variables ?? [];
+    const variables = charge.variables ?? [];
     this.clearAllVariableControls();
     variables.forEach(variable => {
       this.variableControls.addControl(variable.variable,

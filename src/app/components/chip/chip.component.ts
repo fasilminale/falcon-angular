@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
 import {FormArray, FormGroup} from '@angular/forms';
-import { StatusModel } from 'src/app/models/invoice/status-model';
+import {StatusModel} from 'src/app/models/invoice/status-model';
 import {FilterService} from '../../services/filter-service';
 
 export interface FilterChip {
@@ -25,7 +25,8 @@ export class ChipComponent implements OnChanges {
   selectable = true;
   removable = true;
 
-  constructor(private filterService: FilterService) { }
+  constructor(private filterService: FilterService) {
+  }
 
   ngOnChanges(): void {
     this.updateChipFilters();
@@ -37,6 +38,7 @@ export class ChipComponent implements OnChanges {
     const originCity = this.filtersModel.form.get('originCity');
     const destinationCity = this.filtersModel.form.get('destinationCity');
     const shippingPointCode = this.filtersModel.form.get('shippingPoints');
+    const mode = this.filtersModel.form.get('mode');
     const scac = this.filtersModel.form.get('scac');
 
     if (statusForm?.value.length > 0) {
@@ -45,33 +47,40 @@ export class ChipComponent implements OnChanges {
           'Status:&nbsp', statusForm as FormArray, this.filterService.invoiceStatuses, 'invoiceStatuses'
         ));
     }
-    if(originCity?.value?.length > 0) {
+    if (originCity?.value?.length > 0) {
       this.chips.push(
         this.formatChip('Origin:&nbsp', originCity as FormGroup, 'originCity')
       );
     }
 
-    if(destinationCity?.value?.length > 0) {
+    if (destinationCity?.value?.length > 0) {
       this.chips.push(
         this.formatChip('Dest:&nbsp', destinationCity as FormGroup, 'destinationCity')
       );
     }
 
-    if(scac?.value?.length > 0) {
+    if (scac?.value?.length > 0) {
       this.chips.push(
         this.formatChip('SCAC:&nbsp', scac as FormGroup, 'scac')
       );
     }
-    
-    if(shippingPointCode?.value?.length > 0) {
+
+    if (shippingPointCode?.value?.length > 0) {
       this.chips.push(
         this.formatChip('Shipping point:&nbsp', shippingPointCode as FormGroup, 'shippingPoints')
+      );
+    }
+
+    if (mode?.value?.length > 0) {
+      const arrObjMode = mode?.value.map((m: any) => ({'key': m, 'label': m}));
+      this.chips.push(
+        this.formatArrayChip('Mode:&nbsp', mode as FormArray, arrObjMode, 'mode')
       );
     }
   }
 
   formatArrayChip(type: string, formArray: FormArray, arrayOptions: Array<StatusModel>, group: string): FilterChip {
-    if (formArray?.value.length === 1) {
+    if (formArray.value.length === 1) {
       return {
         type,
         label: this.getLabel(formArray.value[0], arrayOptions),
@@ -80,13 +89,13 @@ export class ChipComponent implements OnChanges {
     }
     return {
       type,
-      label: formArray?.value.length + ' Selected',
+      label: formArray.value.length + ' Selected',
       group,
       tooltips: this.getTooltips(formArray, arrayOptions)
     };
   }
 
-  formatChip(type: string, formGroup: FormGroup, group:string) {
+  formatChip(type: string, formGroup: FormGroup, group: string): { label: any; type: string; group: string } {
     return {
       type,
       label: formGroup.value,
@@ -95,11 +104,13 @@ export class ChipComponent implements OnChanges {
   }
 
   getLabel(value: string, options: Array<StatusModel>): string {
-    return options.filter( option => option.key === value)[0].label;
+    return options.filter(option => option.key === value)[0].label;
   }
 
   getTooltips(formArray: FormArray, options: Array<StatusModel>): string {
     const tooltips: string[] = [];
+    console.log(formArray);
+    console.log(options);
     for (const value of formArray.value) {
       tooltips.push(this.getLabel(value, options));
     }

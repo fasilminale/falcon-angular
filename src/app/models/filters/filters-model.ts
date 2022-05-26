@@ -5,7 +5,6 @@ import {
   FormControl,
   FormGroup
 } from '@angular/forms';
-import {StatusModel} from '../invoice/status-model';
 
 export class FiltersModel {
   fb = new FormBuilder();
@@ -15,7 +14,8 @@ export class FiltersModel {
     destinationCity: new FormControl(),
     invoiceStatuses: new FormArray([]),
     scac: new FormControl(),
-    shippingPoints: new FormControl()
+    shippingPoints: new FormControl(),
+    mode: new FormControl()
   });
 
   constructor() {
@@ -23,12 +23,12 @@ export class FiltersModel {
   }
 
   resetForm(): void {
-
     this.form.patchValue({
       originCity: null,
       destinationCity: null,
       scac: null,
-      shippingPoints: null
+      shippingPoints: null,
+      mode: null
     });
     (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }
@@ -96,12 +96,17 @@ export class FiltersModel {
   }
 
   formatForSearch(): object {
+    const invoiceStatuses = this.form.get('invoiceStatuses')?.value;
+    const originCity = this.form.get('originCity')?.value;
+    const destinationCity = this.form.get('destinationCity')?.value;
+    const carrierSCAC = this.form.get('scac')?.value;
+    const shippingPoints = this.form.get('shippingPoints')?.value;
+    const carrierMode = this.form.get('mode')?.value;
     return {
-      invoiceStatuses: this.form.get('invoiceStatuses')?.value,
-      originCity: this.form.get('originCity')?.value,
-      destinationCity: this.form.get('destinationCity')?.value,
-      carrierSCAC: this.form.get('scac')?.value ? [this.form.get('scac')?.value] : [],
-      shippingPoints: this.form.get('shippingPoints')?.value ? [this.form.get('shippingPoints')?.value] : []
+      invoiceStatuses, originCity, destinationCity,
+      carrierSCAC: carrierSCAC ? [carrierSCAC] : [],
+      shippingPoints: shippingPoints ? [shippingPoints] : [],
+      mode: carrierMode ? carrierMode : [],
     };
   }
 
@@ -109,7 +114,7 @@ export class FiltersModel {
     if (control instanceof FormArray) {
       control.clear();
     }
-    if(control instanceof FormControl) {
+    if (control instanceof FormControl) {
       control.reset();
     }
   }
