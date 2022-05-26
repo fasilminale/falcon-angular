@@ -180,7 +180,7 @@ export class InvoiceAmountComponent implements OnInit {
           type: new FormControl(lineItem.rateType ? lineItem.rateType : ''),
           quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
           totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
-          requestStatus: new FormControl(lineItem.requestStatus?.label ?? 'N/A'),
+          requestStatus: new FormControl(lineItem.requestStatus ?? 'N/A'),
           requestStatusPair: new FormControl(lineItem.requestStatus),
           message: new FormControl(lineItem.message ?? 'N/A'),
           createdBy: new FormControl(lineItem.createdBy ?? 'N/A'),
@@ -441,6 +441,24 @@ export class InvoiceAmountComponent implements OnInit {
       commentSectionFieldName: 'Response Comment',
       requireField: modalData.title === 'Deny Charge'
     });
+  }
+  async onEditCostLineItem(costLineItem: AbstractControl): Promise<void> {
+    const editChargeDetails = await this.utilService.openEditChargeModal({
+      costLineItem
+    }).pipe(first()).toPromise();
+    if (editChargeDetails) {
+      const costLineItems = this.pendingChargeLineItemControls;
+      const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.charge === lineItem.value?.charge);
+      if (existingCostLineItem) {
+        this.toastService.openSuccessToast(`Success. Variables have been updated for the line item.`);
+        existingCostLineItem.patchValue({
+          variables: editChargeDetails.variables
+        });
+        existingCostLineItem.markAsDirty();
+        this.pendingAccessorialCode = costLineItem.value.accessorialCode;
+        this.rateEngineCall.emit(this.pendingAccessorialCode);
+      }
+    }
   }
 
   /**

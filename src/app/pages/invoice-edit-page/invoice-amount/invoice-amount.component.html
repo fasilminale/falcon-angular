@@ -335,13 +335,14 @@
         </small>
       </div>
 
-      <div class="col-2" *ngIf="_.value.requestStatus === 'Open'">
-        <div class="material-icons edit-icon">edit</div>
+      <div class="col-2" *ngIf="_.value.requestStatus.label === 'Open'">
+        <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon" (click)="onEditCostLineItem(_)">edit</div>
+        <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
         <elm-button buttonType="button"
                     buttonStyle="text"
                     [padding]="'10px'"
                     id="pending-accept-button"
-                    [isDisabled]="readOnlyForm"
+                    [isDisabled]="readOnlyForm || _.dirty"
                     (buttonClick)="acceptCharge(_.value)"
         >
           <span>Accept</span>
@@ -350,14 +351,14 @@
                     buttonStyle="text"
                     [padding]="'10px'"
                     id="pending-delete-button"
-                    [isDisabled]="readOnlyForm"
+                    [isDisabled]="readOnlyForm || _.dirty"
                     (buttonClick)="denyCharge(_.value)"
         >
           <span>Deny</span>
         </elm-button>
       </div>
 
-      <div class="col-2" *ngIf="_.value.requestStatus === 'Error'">
+      <div class="col-2" *ngIf="_.value.requestStatus.label === 'Error'">
           <elm-button buttonType="button"
                       buttonStyle="text"
                       [margin]="'0 0 0 120px'"

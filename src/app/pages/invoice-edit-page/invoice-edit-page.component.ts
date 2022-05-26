@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {FormArray, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
@@ -318,7 +318,8 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoice.origin = this.extractLocation(originAddressFormGroup);
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
     this.invoice.destination = this.extractLocation(destinationAddressFormGroup);
-    this.invoice.costLineItems = this.getCostLineItems();
+    this.invoice.costLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems);
+    this.invoice.pendingChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems);
   }
 
   extractLocation(locationFormGroup: FormGroup): Location {
@@ -333,13 +334,13 @@ export class InvoiceEditPageComponent implements OnInit {
     };
   }
 
-  getCostLineItems(): Array<CostLineItem> {
+  getLineItems(items: AbstractControl): Array<CostLineItem> {
     const results: Array<CostLineItem> = [];
-    const costBreakdownItems = this.invoiceAmountFormGroup.controls?.costBreakdownItems as FormArray;
-    if (!costBreakdownItems?.controls) {
+    const lineItems = items as FormArray;
+    if (!lineItems?.controls) {
       return [];
     }
-    for (const control of costBreakdownItems.controls) {
+    for (const control of lineItems.controls) {
       const item = control as FormGroup;
       results.push({
         accessorialCode: this.handleNAValues(item.controls?.accessorialCode?.value),

@@ -828,13 +828,13 @@ describe('InvoiceEditPageComponent', () => {
     const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
     costBreakdownItems.clear();
     costBreakdownItems.push(new FormControl());
-    const results = component.getCostLineItems();
+    const results = component.getLineItems(costBreakdownItems);
     expect(results.length).toBe(1);
   });
 
   it('should get empty list on missing control', () => {
     component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormControl('');
-    const results = component.getCostLineItems();
+    const results = component.getLineItems(component.invoiceAmountFormGroup.controls.costBreakdownItems);
     expect(results.length).toBe(0);
   });
 

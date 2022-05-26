@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Observable, of, Subject} from 'rxjs';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
-import {CostLineItem} from 'src/app/models/line-item/line-item-model';
+import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
 import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {InvoiceAmountComponent} from './invoice-amount.component';
@@ -15,6 +15,7 @@ import {SelectOption} from '../../../models/select-option-model/select-option-mo
 import {CommentModalData, CommentModel, UtilService} from '../../../services/util-service';
 import {NewChargeModalInput, NewChargeModalOutput} from '../../../components/fal-new-charge-modal/fal-new-charge-modal.component';
 import {ConfirmationModalData} from '@elm/elm-styleguide-ui';
+import {FalEditChargeModalComponent} from '../../../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 
 describe('InvoiceAmountComponent', () => {
 
@@ -63,6 +64,7 @@ describe('InvoiceAmountComponent', () => {
           openNewChargeModal: (data: NewChargeModalInput): Observable<NewChargeModalOutput> => {
             throw new Error('Spy On this function instead!');
           },
+          openEditChargeModal: FalEditChargeModalComponent,
           openCommentModal: (data: CommentModalData): Observable<CommentModel> => {
             return of({comment: ''});
           }
@@ -224,6 +226,7 @@ describe('InvoiceAmountComponent', () => {
         amountOfInvoice: '1000',
         costLineItems: [
           {
+            accessorialCode: 'TST',
             chargeCode: 'TestChargeCode',
             rateSource: {key: 'CONTRACT', label: 'Contract'},
             entrySource: {key: 'AUTO', label: 'AUTO'},
@@ -243,6 +246,10 @@ describe('InvoiceAmountComponent', () => {
             closedBy: 'test@test.com',
             closedDate: '2022-04-26T00:05:00.000Z',
             responseComment: 'test',
+            variables: [{
+              variable: TEST_VARIABLE_NAME,
+              quantity: 1
+            }],
             attachment: {
               fileName: 'test.jpg',
               url: 'signedurl/test.jpg',
@@ -258,8 +265,7 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false,
-            variables: []
+            expanded: false
           }
         ],
         pendingChargeLineItems: [{
@@ -331,7 +337,17 @@ describe('InvoiceAmountComponent', () => {
         expect(formGroupValue.mileage).toBe('');
         done();
       });
-      loadInvoiceAmountDetail$.next({costLineItems: [{} as CostLineItem]} as InvoiceAmountDetail);
+      loadInvoiceAmountDetail$.next({
+        costLineItems: [{
+          variables: []
+        } as any],
+        pendingChargeLineItems: [{
+          variables: []
+        } as any],
+        disputeLineItems: [{
+          variables: []
+        } as any],
+      } as InvoiceAmountDetail);
     });
 
     it('should set isPrepaid to True', done => {
@@ -368,7 +384,17 @@ describe('InvoiceAmountComponent', () => {
         });
         done();
       });
-      loadInvoiceAmountDetail$.next({costLineItems: [{} as CostLineItem]} as InvoiceAmountDetail);
+      loadInvoiceAmountDetail$.next({
+        costLineItems: [{
+          variables: []
+        } as any],
+        pendingChargeLineItems: [{
+          variables: []
+        } as any],
+        disputeLineItems: [{
+          variables: []
+        } as any],
+      } as InvoiceAmountDetail);
     });
 
     it('should not populate form when no invoice amount details', done => {
@@ -390,6 +416,7 @@ describe('InvoiceAmountComponent', () => {
         amountOfInvoice: '1000',
         costLineItems: [
           {
+            accessorialCode: 'TST',
             chargeCode: 'TestChargeCode',
             rateSource: {key: 'CONTRACT', label: 'Contract'},
             entrySource: {key: 'AUTO', label: 'AUTO'},
@@ -417,6 +444,10 @@ describe('InvoiceAmountComponent', () => {
               uploaded: true
             },
             step: '1',
+            variables: [{
+              variable: TEST_VARIABLE_NAME,
+              quantity: 1
+            }],
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
@@ -424,8 +455,7 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false,
-            variables: []
+            expanded: false
           }
         ],
         pendingChargeLineItems: [],
@@ -724,4 +754,25 @@ describe('InvoiceAmountComponent', () => {
     expect(result).toBe(0);
   });
 
+
+  it('should call onEditCostLineItem and emit to rate engine', async () => {
+    component._formGroup = new FormGroup({
+      pendingChargeLineItems: new FormArray([
+        new FormGroup({
+          charge: new FormControl('test')
+        })
+      ])
+    });
+    const costLineItem = component.pendingChargeLineItemControls[0];
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      charge: 'test',
+      variables: []
+    }));
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    const promise = component.onEditCostLineItem(costLineItem);
+    await promise;
+    expect(utilService.openEditChargeModal).toHaveBeenCalledTimes(1);
+    expect(component.rateEngineCall.emit).toHaveBeenCalled();
+  });
 });
