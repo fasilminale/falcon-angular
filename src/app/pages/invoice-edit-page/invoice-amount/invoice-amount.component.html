@@ -182,8 +182,8 @@
             Base Rate Amount is required
           </small>
         </div>
-<!--*ngIf="_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')-->
-        <div class="col-2">
+
+        <div class="col-2" *ngIf="_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')">
           <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon" (click)="onEditCostLineItem(_, costBreakdownItemsControls)">edit</div>
           <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
           <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_)">delete</div>

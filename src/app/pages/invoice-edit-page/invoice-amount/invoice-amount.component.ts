@@ -419,8 +419,8 @@ export class InvoiceAmountComponent implements OnInit {
         if (pendingLineItem !== null) {
           this.pendingChargeLineItems.removeAt(index);
           this.setPendingChargeResponse(action, pendingLineItem, result);
+          console.log(pendingLineItem);
           if (action === 'Accepted') {
-            console.log(pendingLineItem);
             this.costBreakdownItemsControls.push(pendingLineItem);
             this.costBreakdownItemsControls.sort((a, b) => {
               return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
@@ -436,7 +436,10 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   setPendingChargeResponse(responseStatus: string, pendingLineItem: AbstractControl, result: CommentModel | boolean): void {
-    pendingLineItem.get('requestStatus')?.setValue(responseStatus);
+    pendingLineItem.patchValue({
+      requestStatus: responseStatus,
+      requestStatusPair: { key: responseStatus.toUpperCase(), label: responseStatus}}
+    );
     if (typeof result !== 'boolean') {
       pendingLineItem.get('responseComment')?.setValue(result.comment);
     }
@@ -489,7 +492,8 @@ export class InvoiceAmountComponent implements OnInit {
         if (existingCostLineItem) {
           this.toastService.openSuccessToast(`Success. Variables have been updated for the line item.`);
           existingCostLineItem.patchValue({
-            requestStatus: 'Deleted'
+            requestStatus: 'Deleted',
+            requestStatusPair: { key: 'DELETED', label: 'Deleted'}
           });
         }
       }
