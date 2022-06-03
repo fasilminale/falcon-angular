@@ -13,9 +13,15 @@ export class ServiceLevelUtils {
 
   static toOption(serviceLevel: ServiceLevel): SelectOption<ServiceLevel> {
     return {
-      label: `${serviceLevel.level} (${serviceLevel.name})`,
+      label: ServiceLevelUtils.toDisplayLabel(serviceLevel),
       value: serviceLevel
     };
+  }
+
+  static toDisplayLabel(serviceLevel: ServiceLevel): string {
+    return serviceLevel
+      ? `${serviceLevel.level} (${serviceLevel.name})`
+      : '';
   }
 
 }

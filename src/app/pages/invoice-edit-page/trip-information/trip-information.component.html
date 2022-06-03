@@ -53,8 +53,9 @@
                        formControlName="pickUpDate"
                        [ngClass]="{'field-invalid': !pickUpDateControl.value}">
       </elm-date-picker>
-      <elm-input-subtext *ngIf="(!pickUpDateControl.value || pickUpDateControl.invalid) && !pickUpDateControl.hasError('dateBefore')"
-                         [isError]="true">
+      <elm-input-subtext
+        *ngIf="(!pickUpDateControl.value || pickUpDateControl.invalid) && !pickUpDateControl.hasError('dateBefore')"
+        [isError]="true">
         Pick up Date is missing
       </elm-input-subtext>
       <elm-input-subtext *ngIf="pickUpDateControl.hasError('dateBefore')"
@@ -66,7 +67,8 @@
       <label id="delivery-date-label" for="deliveryDateInput"
              class="fal-label">
         Delivery Date
-        <span id="override-assume-delivery-date-container" *ngIf="overriddenDeliveryDateTime || assumedDeliveryDateTime">
+        <span id="override-assume-delivery-date-container"
+              *ngIf="overriddenDeliveryDateTime || assumedDeliveryDateTime">
           &nbsp;
           <mat-icon class="delivery-date-icon">label_important</mat-icon>
           <span class="delivery-date-icon-message">{{ overriddenDeliveryDateTime ? 'OVERRIDDEN' : 'ASSUMED' }}</span>
@@ -133,17 +135,22 @@
                  placeholder="Select One..."
                  (change)="refreshCarrierData()"
                  [compareWith]="compareCarrierWith"
-                 [ngClass]="{'error': !carrierControl.value || !carrierDetailFound}">
+                 [ngClass]="{'error': isValid(carrierControl) || !carrierDetailFound}">
       </ng-select>
       <elm-input-subtext *ngIf="!carrierControl.value"
                          class="input-error"
                          [isError]="true">
         Carrier is missing
       </elm-input-subtext>
-      <elm-input-subtext *ngIf="!carrierDetailFound"
+      <elm-input-subtext *ngIf="carrierControl.value && !carrierDetailFound"
                          class="input-error"
                          [isError]="true">
         SCAC needs to be updated in Carrier Detail
+      </elm-input-subtext>
+      <elm-input-subtext *ngIf="carrierControl.value && !!validateIsOption(carrierOptions)(carrierControl)"
+                         class="input-error"
+                         [isError]="true">
+        Carrier "{{carrierUtilsToDisplayLabel(carrierControl.value)}}" missing in master data
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -158,12 +165,18 @@
                  formControlName="carrierMode"
                  placeholder="Select One..."
                  [compareWith]="compareCarrierModeWith"
-                 [ngClass]="{'error': !carrierModeControl.value}">
+                 [ngClass]="{'error': isValid(carrierModeControl)}">
       </ng-select>
       <elm-input-subtext *ngIf="!carrierModeControl.value"
                          class="input-error"
                          [isError]="true">
         Carrier Mode is missing
+      </elm-input-subtext>
+      <elm-input-subtext *ngIf="carrierModeControl.value && !!validateIsOption(carrierModeOptions)(carrierModeControl)"
+                         class="input-error"
+                         [isError]="true">
+        Carrier Mode "{{carrierModeCodeUtilsToDisplayLabel(carrierModeControl.value)}}" missing in master data for
+        selected carrier
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -178,7 +191,7 @@
                  formControlName="serviceLevel"
                  placeholder="Select One..."
                  [compareWith]="compareServiceLevelWith"
-                 [ngClass]="{'error': !serviceLevelControl.value}">
+                 [ngClass]="{'error': isValid(serviceLevelControl)}">
       </ng-select>
       <elm-input-subtext *ngIf="!serviceLevelControl.value"
                          class="input-error"
@@ -187,6 +200,7 @@
       </elm-input-subtext>
     </div>
   </div>
+  <br/>
   <div class="row">
     <div class="col">
       <label for="originAddressCard"
@@ -195,10 +209,10 @@
       </label>
       <elm-card id="originAddressCard">
         <app-fal-address
-         [formGroup]="originAddressFormGroup"
-         [addressType]="'origin'"
-         [loadAddress$]="loadOriginAddress$.asObservable()"
-         >
+          [formGroup]="originAddressFormGroup"
+          [addressType]="'origin'"
+          [loadAddress$]="loadOriginAddress$.asObservable()"
+        >
 
         </app-fal-address>
       </elm-card>
@@ -210,11 +224,11 @@
       </label>
       <elm-card id="destinationAddressCard">
         <app-fal-address
-         [formGroup]="destinationAddressFormGroup"
-         [addressType]="'destination'"
-         [loadAddress$]="loadDestinationAddress$.asObservable()"
-         >
-         </app-fal-address>
+          [formGroup]="destinationAddressFormGroup"
+          [addressType]="'destination'"
+          [loadAddress$]="loadDestinationAddress$.asObservable()"
+        >
+        </app-fal-address>
       </elm-card>
     </div>
     <div class="col">
@@ -224,33 +238,33 @@
       </label>
       <elm-card id="billToAddressCard">
         <app-fal-address
-        [loadAddress$]="loadBillToAddress$.asObservable()"
-        [formGroup]="billToAddressFormGroup"
-        [showShippingItemField]="false"
-        [validateField]="false"
+          [loadAddress$]="loadBillToAddress$.asObservable()"
+          [formGroup]="billToAddressFormGroup"
+          [showShippingItemField]="false"
+          [validateField]="false"
         >
-      </app-fal-address>
+        </app-fal-address>
       </elm-card>
     </div>
   </div>
 
   <!--Freight orders section starts here-->
   <div class="row mt-3">
-      <div class="col-md-12" (click)="toggleFreightOrderDetailsSection()">
+    <div class="col-md-12" (click)="toggleFreightOrderDetailsSection()">
         <span class="accordion-header" *ngIf="!showFreightOrderSection">
           <span class="material-icons">keyboard_arrow_down</span>
           <span class="accordian-link-text">Show Freight Order Details</span>
         </span>
-        <span class="accordion-header" *ngIf="showFreightOrderSection">
+      <span class="accordion-header" *ngIf="showFreightOrderSection">
           <span class="material-icons">keyboard_arrow_up</span>
           <span class="accordian-link-text">Hide Freight Order Details</span>
         </span>
-      </div>
+    </div>
 
-      <div id="freightOrderSectionDiv" [hidden]="!showFreightOrderSection" class="col-md-12 mt-3">
-          <app-freight-order-details
-           [loadFreightOrders$]="loadFreightOrders$.asObservable()">
-          </app-freight-order-details>
-      </div>
+    <div id="freightOrderSectionDiv" [hidden]="!showFreightOrderSection" class="col-md-12 mt-3">
+      <app-freight-order-details
+        [loadFreightOrders$]="loadFreightOrders$.asObservable()">
+      </app-freight-order-details>
+    </div>
   </div>
 </div>
