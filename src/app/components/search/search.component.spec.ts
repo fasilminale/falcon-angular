@@ -3,7 +3,7 @@ import {SearchComponent} from './search.component';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
-fdescribe('SearchComponent', () => {
+describe('SearchComponent', () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
