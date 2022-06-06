@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {combineLatest, forkJoin, Observable, Subject} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
@@ -12,12 +12,12 @@ import {
   CarrierModeCodeUtils
 } from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
-import { ShippingPointLocation } from 'src/app/models/location/location-model';
-import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
+import {ShippingPointLocation} from 'src/app/models/location/location-model';
+import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
 import {DateParserFormatter} from '../../../utils/date-parser-formatter';
-import {CarrierDetailModel} from "../../../models/master-data-models/carrier-detail-model";
+import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
 
 const {required} = Validators;
 
@@ -90,6 +90,10 @@ export class TripInformationComponent implements OnInit {
   loadFreightOrders$ = new Subject<FreightOrder[]>();
   filteredCarrierModeOptionsPopulatedSubject: Subject<number> = new Subject<number>();
 
+  // allow access static display utils in template
+  carrierModeCodeUtilsToDisplayLabel = CarrierModeCodeUtils.toDisplayLabel;
+  carrierUtilsToDisplayLabel = CarrierUtils.toDisplayLabel;
+
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private masterData: MasterDataService, private changeDetection: ChangeDetectorRef) {
   }
@@ -98,29 +102,48 @@ export class TripInformationComponent implements OnInit {
     this.formGroup = this._formGroup;
     this.formGroup.disable();
     this.subscriptionManager.manage(
-
       forkJoin([this.masterData.getCarrierSCACs(),
         this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions)),
         this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions)),
         this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions)),
         this.masterData.getCarrierDetails()]).subscribe(
-
         ([carrierSCACs,
-               carrierModeCodes,
-               carrierReferences,
-               serviceLevels,
-               carrierDetails]) => {
+           carrierModeCodes,
+           carrierReferences,
+           serviceLevels,
+           carrierDetails]) => {
           this.carrierSCACs = carrierSCACs;
           this.carrierModeOptions = carrierModeCodes;
+          this.carrierModeControl.setValidators([required, this.validateIsOption(carrierModeCodes)]);
           this.carrierOptions = carrierReferences;
+          this.carrierControl.setValidators([required, this.validateIsOption(carrierReferences)]);
           this.serviceLevelOptions = serviceLevels;
           this.carrierDetails = carrierDetails;
           this.carrierModeControl.setValue(this.tripInformation.carrierMode);
-          this.carrierModeControl.updateValueAndValidity();
           this.filteredCarrierModeOptionsPopulatedSubject.next(0);
         }
       ),
     );
+  }
+
+  isValid(control: AbstractControl): boolean {
+    return !!this.runValidator(control);
+  }
+
+  runValidator(control: AbstractControl): ValidationErrors | null {
+    return control.validator ? control.validator(control) : null;
+  }
+
+  validateIsOption<T>(options: Array<SelectOption<T>>, comparator?: (a: T, b: T) => boolean): ValidatorFn {
+    const actualComparator = comparator ? comparator : (a: T, b: T) => {
+      return JSON.stringify(a) === JSON.stringify(b);
+    };
+    return (control: AbstractControl): ValidationErrors | null => {
+      return !options.map(op => op.value)
+        .some(opv => actualComparator(opv, control.value))
+        ? {invalidSelectOption: true}
+        : null;
+    };
   }
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
@@ -178,8 +201,7 @@ export class TripInformationComponent implements OnInit {
     if (foundCarrierDetails) {
       this.vendorNumberControl.setValue(foundCarrierDetails.vendorNumber);
       this.carrierDetailFound = true;
-    }
-    else {
+    } else {
       this.vendorNumberControl.setValue(null);
       this.carrierDetailFound = false;
     }
@@ -195,7 +217,10 @@ export class TripInformationComponent implements OnInit {
   }
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
-    this.subscriptionManager.manage(combineLatest([this.filteredCarrierModeOptionsPopulatedSubject.asObservable(), observable]).subscribe(([populated, tripInfo]) => {
+    this.subscriptionManager.manage(combineLatest([
+      this.filteredCarrierModeOptionsPopulatedSubject.asObservable(),
+      observable
+    ]).subscribe(([populated, tripInfo]) => {
       this.tripInformation = tripInfo;
       this.formGroup.enable();
       this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
@@ -224,16 +249,14 @@ export class TripInformationComponent implements OnInit {
   }
 
   deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
-    let dateToReturn: Date | undefined = undefined;
+    let dateToReturn: Date | undefined;
     this.overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
     this.assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
     if (!this.overriddenDeliveryDateTime && !this.assumedDeliveryDateTime) {
       dateToReturn = tripInfo.deliveryDate ?? undefined;
-    }
-    else if (this.overriddenDeliveryDateTime) {
+    } else if (this.overriddenDeliveryDateTime) {
       dateToReturn = this.overriddenDeliveryDateTime ?? undefined;
-    }
-    else if (this.assumedDeliveryDateTime) {
+    } else if (this.assumedDeliveryDateTime) {
       dateToReturn = this.assumedDeliveryDateTime ?? undefined;
     }
     return dateToReturn;
@@ -251,11 +274,11 @@ export class TripInformationComponent implements OnInit {
     return item.value.level === (value.level || value);
   }
 
-  compareCarrierWith(item: any, value: any) {
+  compareCarrierWith(item: any, value: any): boolean {
     return item.value.scac === value.scac;
   }
 
-  compareCarrierModeWith(item: any, value: any) {
+  compareCarrierModeWith(item: any, value: any): boolean {
     return item.value.reportKeyMode === value.reportKeyMode ?
       item.value.reportModeDescription === value.reportModeDescription : false;
   }
