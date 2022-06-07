@@ -81,6 +81,7 @@ export class TripInformationComponent implements OnInit {
   private tripInformation: TripInformation = {} as TripInformation;
   public assumedDeliveryDateTime: Date | undefined;
   public overriddenDeliveryDateTime: Date | undefined;
+  public isPickupDateTimeTendered: boolean = false;
 
   public showFreightOrderSection = false;
   carrierDetailFound = true;
@@ -227,7 +228,7 @@ export class TripInformationComponent implements OnInit {
       this.vendorNumberControl.setValue(tripInfo.vendorNumber);
       this.vendorNumberControl.markAsDirty();
       this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
-      this.pickUpDateControl.setValue(tripInfo.pickUpDate ?? undefined);
+      this.pickUpDateControl.setValue(this.derivePickupDate(tripInfo));
       this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
       this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
       this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
@@ -246,6 +247,13 @@ export class TripInformationComponent implements OnInit {
       this.formGroup.updateValueAndValidity();
       this.formGroup.disable();
     }));
+  }
+
+  derivePickupDate(tripInfo?: TripInformation): Date | undefined {
+    if (tripInfo?.pickUpDate && tripInfo?.tripTenderTime && tripInfo?.deliveryDate?.getTime() == tripInfo?.tripTenderTime?.getTime()) {
+      this.isPickupDateTimeTendered = true;
+    }
+    return tripInfo?.pickUpDate ?? undefined;
   }
 
   deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {

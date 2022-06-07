@@ -23,6 +23,7 @@ export interface TripInformation {
   freightOrders: FreightOrder[]
   overriddenDeliveryDateTime?: Date;
   assumedDeliveryDateTime?: Date;
+  tripTenderTime?: Date;
 }
 
 export interface InvoiceAllocationDetail {

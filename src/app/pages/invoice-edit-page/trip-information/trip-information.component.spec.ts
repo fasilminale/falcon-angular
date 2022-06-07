@@ -259,6 +259,188 @@ describe('TripInformationComponent', () => {
     });
   });
 
+  describe('when pickup date time is not tendered', () => {
+    it('pickup date cannot be derived', () => {
+
+      var customDeliveryDate = new Date(2020, 10, 30);
+      const tripInformation: TripInformation = {
+        bolNumber: 'TestBolNumber',
+        carrier: {
+          scac: 'TestScac',
+          name: 'TestCarrierName'
+  
+        },
+        carrierMode: {
+          mode: 'CarrierMode',
+          reportModeDescription: 'ReportModeDescription',
+          reportKeyMode: 'ReportKeyMode'
+        },
+        deliveryDate: customDeliveryDate,
+        freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+        invoiceDate: new Date(),
+        pickUpDate: new Date(),
+        proTrackingNumber: 'TestProTrackingNumber',
+        serviceLevel: {
+          level: 'TL1',
+          name: 'TestLevel'
+        },
+        tripId: 'TestTripId',
+        freightOrders: [],
+        vendorNumber: '1234321'
+      };
+
+      component.derivePickupDate(tripInformation);
+
+      expect(component.isPickupDateTimeTendered).toBeFalse();
+    });
+
+    it('pickup date can be derived and tendered', () => {
+
+      var customDeliveryDate = new Date(2020, 10, 30);
+      const tripInformation: TripInformation = {
+        bolNumber: 'TestBolNumber',
+        carrier: {
+          scac: 'TestScac',
+          name: 'TestCarrierName'
+  
+        },
+        carrierMode: {
+          mode: 'CarrierMode',
+          reportModeDescription: 'ReportModeDescription',
+          reportKeyMode: 'ReportKeyMode'
+        },
+        deliveryDate: customDeliveryDate,
+        freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+        invoiceDate: new Date(),
+        pickUpDate: new Date(),
+        tripTenderTime: customDeliveryDate,
+        proTrackingNumber: 'TestProTrackingNumber',
+        serviceLevel: {
+          level: 'TL1',
+          name: 'TestLevel'
+        },
+        tripId: 'TestTripId',
+        freightOrders: [],
+        vendorNumber: '1234321'
+      };
+
+      component.derivePickupDate(tripInformation);
+
+      expect(component.isPickupDateTimeTendered).toBeTrue();
+    });
+
+    it('pickup date is null', () => {
+
+      var customDeliveryDate = new Date(2020, 10, 30);
+      const tripInformation: TripInformation = {
+        bolNumber: 'TestBolNumber',
+        carrier: {
+          scac: 'TestScac',
+          name: 'TestCarrierName'
+  
+        },
+        carrierMode: {
+          mode: 'CarrierMode',
+          reportModeDescription: 'ReportModeDescription',
+          reportKeyMode: 'ReportKeyMode'
+        },
+        deliveryDate: customDeliveryDate,
+        freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+        invoiceDate: new Date(),
+        pickUpDate: undefined,
+        tripTenderTime: customDeliveryDate,
+        proTrackingNumber: 'TestProTrackingNumber',
+        serviceLevel: {
+          level: 'TL1',
+          name: 'TestLevel'
+        },
+        tripId: 'TestTripId',
+        freightOrders: [],
+        vendorNumber: '1234321'
+      };
+
+      component.derivePickupDate(tripInformation);
+
+      expect(component.isPickupDateTimeTendered).toBeFalsy();
+    });
+
+    it('tripTenderTime is null', () => {
+
+      var customDeliveryDate = new Date(2020, 10, 30);
+      const tripInformation: TripInformation = {
+        bolNumber: 'TestBolNumber',
+        carrier: {
+          scac: 'TestScac',
+          name: 'TestCarrierName'
+  
+        },
+        carrierMode: {
+          mode: 'CarrierMode',
+          reportModeDescription: 'ReportModeDescription',
+          reportKeyMode: 'ReportKeyMode'
+        },
+        deliveryDate: customDeliveryDate,
+        freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+        invoiceDate: new Date(),
+        pickUpDate: new Date(),
+        tripTenderTime: undefined,
+        proTrackingNumber: 'TestProTrackingNumber',
+        serviceLevel: {
+          level: 'TL1',
+          name: 'TestLevel'
+        },
+        tripId: 'TestTripId',
+        freightOrders: [],
+        vendorNumber: '1234321'
+      };
+
+      component.derivePickupDate(tripInformation);
+
+      expect(component.isPickupDateTimeTendered).toBeFalsy();
+    });
+
+    it('deliverDate  is null', () => {
+
+      var customDeliveryDate = new Date(2020, 10, 30);
+      const tripInformation: TripInformation = {
+        bolNumber: 'TestBolNumber',
+        carrier: {
+          scac: 'TestScac',
+          name: 'TestCarrierName'
+  
+        },
+        carrierMode: {
+          mode: 'CarrierMode',
+          reportModeDescription: 'ReportModeDescription',
+          reportKeyMode: 'ReportKeyMode'
+        },
+        deliveryDate: undefined,
+        freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+        invoiceDate: new Date(),
+        pickUpDate: new Date(),
+        tripTenderTime: customDeliveryDate,
+        proTrackingNumber: 'TestProTrackingNumber',
+        serviceLevel: {
+          level: 'TL1',
+          name: 'TestLevel'
+        },
+        tripId: 'TestTripId',
+        freightOrders: [],
+        vendorNumber: '1234321'
+      };
+
+      component.derivePickupDate(tripInformation);
+
+      expect(component.isPickupDateTimeTendered).toBeFalsy();
+    });
+
+
+    it('deliverDate  is null', () => {
+      expect(component.derivePickupDate(undefined)).toBeUndefined();
+      expect(component.isPickupDateTimeTendered).toBeFalsy();
+    });
+  });
+
   describe('when edit mode is updated', () => {
     let isEditMode$: Subject<boolean>;
     beforeEach(() => {
