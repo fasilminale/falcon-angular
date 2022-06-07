@@ -113,10 +113,19 @@ export class TripInformationComponent implements OnInit {
            serviceLevels,
            carrierDetails]) => {
           this.carrierSCACs = carrierSCACs;
-          this.carrierModeOptions = carrierModeCodes;
-          this.carrierModeControl.setValidators([required, this.validateIsOption(carrierModeCodes)]);
           this.carrierOptions = carrierReferences;
-          this.carrierControl.setValidators([required, this.validateIsOption(carrierReferences)]);
+          this.carrierControl.setValidators([
+            required,
+            this.validateIsOption(this.carrierOptions, this.compareCarrierWith)
+          ]);
+          this.carrierControl.updateValueAndValidity();
+          this.carrierModeOptions = carrierModeCodes;
+          this.filteredCarrierModeOptions = this.filterCarrierModes();
+          this.carrierModeControl.setValidators([
+            required,
+            this.validateIsOption(this.filteredCarrierModeOptions, this.compareCarrierModeWith)
+          ]);
+          this.carrierModeControl.updateValueAndValidity();
           this.serviceLevelOptions = serviceLevels;
           this.carrierDetails = carrierDetails;
           this.carrierModeControl.setValue(this.tripInformation.carrierMode);
@@ -126,7 +135,7 @@ export class TripInformationComponent implements OnInit {
     );
   }
 
-  isValid(control: AbstractControl): boolean {
+  isInvalid(control: AbstractControl): boolean {
     return !!this.runValidator(control);
   }
 
@@ -134,13 +143,10 @@ export class TripInformationComponent implements OnInit {
     return control.validator ? control.validator(control) : null;
   }
 
-  validateIsOption<T>(options: Array<SelectOption<T>>, comparator?: (a: T, b: T) => boolean): ValidatorFn {
-    const actualComparator = comparator ? comparator : (a: T, b: T) => {
-      return JSON.stringify(a) === JSON.stringify(b);
-    };
+  validateIsOption<T>(options: Array<SelectOption<T>>, comparator: (a: T, b: T) => boolean): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      return !options.map(op => op.value)
-        .some(opv => actualComparator(opv, control.value))
+      return (!options.map(op => op.value)
+        .some(opv => comparator(opv, control.value)))
         ? {invalidSelectOption: true}
         : null;
     };
@@ -232,9 +238,16 @@ export class TripInformationComponent implements OnInit {
       this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
       this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
       this.freightPaymentTermsControl.setValue(tripInfo.freightPaymentTerms ?? undefined);
+      this.carrierControl.valueChanges.subscribe(() => {
+        this.filteredCarrierModeOptions = this.filterCarrierModes();
+        this.carrierModeControl.setValidators([
+          required,
+          this.validateIsOption(this.filteredCarrierModeOptions, this.compareCarrierModeWith)
+        ]);
+        this.filteredServiceLevels = this.filterServiceLevels();
+        this.carrierModeControl.updateValueAndValidity();
+      });
       this.carrierControl.setValue(tripInfo.carrier ?? undefined);
-      this.filteredCarrierModeOptions = this.filterCarrierModes();
-      this.filteredServiceLevels = this.filterServiceLevels();
       this.changeDetection.detectChanges();
       this.carrierModeControl.setValue(tripInfo.carrierMode ?? undefined);
       this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
@@ -274,13 +287,19 @@ export class TripInformationComponent implements OnInit {
     return item.value.level === (value.level || value);
   }
 
-  compareCarrierWith(item: any, value: any): boolean {
-    return item.value.scac === value.scac;
+  compareCarrierWith(a: any, b: any): boolean {
+    const aScac = a?.scac ?? a?.value?.scac;
+    const bScac = b?.scac ?? b?.value?.scac;
+    return aScac === bScac;
   }
 
-  compareCarrierModeWith(item: any, value: any): boolean {
-    return item.value.reportKeyMode === value.reportKeyMode ?
-      item.value.reportModeDescription === value.reportModeDescription : false;
+  compareCarrierModeWith(a: any, b: any): boolean {
+    const aReportKeyMode = a?.reportKeyMode ?? a?.value?.reportKeyMode;
+    const bReportKeyMode = b?.reportKeyMode ?? b?.value?.reportKeyMode;
+    const aReportModeDescription = a?.reportModeDescription ?? a?.value?.reportModeDescription;
+    const bReportModeDescription = b?.reportModeDescription ?? b?.value?.reportModeDescription;
+    return aReportKeyMode === bReportKeyMode
+      && aReportModeDescription === bReportModeDescription;
   }
 
   refreshCarrierData(): void {
