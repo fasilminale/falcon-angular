@@ -8,11 +8,11 @@ import {Carrier, TenderMethod} from '../../../models/master-data-models/carrier-
 import {YesNo} from '../../../models/master-data-models/yes-no-model';
 import {CarrierModeCode, TripType} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel} from '../../../models/master-data-models/service-level-model';
-import {FormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {FreightPaymentTerms, TripInformation} from '../../../models/invoice/trip-information-model';
-import {asSpy} from '../../../testing/test-utils.spec';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
-import {CarrierDetailModel} from "../../../models/master-data-models/carrier-detail-model";
+import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
+import {SelectOption} from '../../../models/select-option-model/select-option-model';
 
 describe('TripInformationComponent', () => {
 
@@ -43,7 +43,7 @@ describe('TripInformationComponent', () => {
       spyOn(masterDataService, 'getCarriers').and.returnValue(of([]));
       spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([]));
       spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([]));
-    })
+    });
 
     it('should have component', () => {
       fixture.detectChanges();
@@ -77,75 +77,75 @@ describe('TripInformationComponent', () => {
 
 
   describe('#forkJoin', () => {
-      const CARRIER: Carrier = {
-        name: 'Test Carrier',
-        scac: 'TCS',
-        tenderAutoAccept: YesNo.NO,
-        tenderMethod: TenderMethod.NONE
-      };
-      const CARRIER_DETAIL: CarrierDetailModel = {
+    const CARRIER: Carrier = {
+      name: 'Test Carrier',
+      scac: 'TCS',
+      tenderAutoAccept: YesNo.NO,
+      tenderMethod: TenderMethod.NONE
+    };
+    const CARRIER_DETAIL: CarrierDetailModel = {
+      carrierSCAC: 'ABCD',
+      vendorNumber: '1234321',
+    };
+    const CARRIER_SCAC: CarrierSCAC = {
+      scac: 'TCS',
+      mode: 'LTL',
+      serviceLevel: 't1'
+    };
+    const CARRIER_MODE: CarrierModeCode = {
+      mode: 'LTL',
+      reportKeyMode: 'TLTL',
+      reportModeDescription: 'Test Mode Description',
+      tripType: TripType.NONE
+    };
+    const SERVICE_LEVEL: ServiceLevel = {
+      level: 't1',
+      name: 'Test Service Level'
+    };
+    beforeEach(() => {
+      spyOn(masterDataService, 'getCarriers').and.returnValue(of([CARRIER]));
+      spyOn(masterDataService, 'getCarrierDetails').and.returnValue(of([CARRIER_DETAIL]));
+      spyOn(masterDataService, 'getCarrierSCACs').and.returnValue(of([CARRIER_SCAC]));
+      spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([CARRIER_MODE]));
+      spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([SERVICE_LEVEL]));
+      component.ngOnInit();
+    });
+    it('should have carrier option', () => {
+      fixture.detectChanges();
+      expect(component.carrierOptions).toEqual([{
+        label: 'TCS (Test Carrier)',
+        value: CARRIER
+      }]);
+    });
+    it('should have carrier details', () => {
+      fixture.detectChanges();
+      expect(component.carrierDetails).toEqual([{
         carrierSCAC: 'ABCD',
-        vendorNumber: '1234321',
-      };
-      const CARRIER_SCAC: CarrierSCAC = {
+        vendorNumber: '1234321'
+      }]);
+    });
+    it('should have carrier option', () => {
+      fixture.detectChanges();
+      expect(component.carrierSCACs).toEqual([{
         scac: 'TCS',
         mode: 'LTL',
         serviceLevel: 't1'
-      };
-      const CARRIER_MODE: CarrierModeCode = {
-        mode: 'LTL',
-        reportKeyMode: 'TLTL',
-        reportModeDescription: 'Test Mode Description',
-        tripType: TripType.NONE
-      };
-      const SERVICE_LEVEL: ServiceLevel = {
-        level: 't1',
-        name: 'Test Service Level'
-      };
-      beforeEach(() => {
-        spyOn(masterDataService, 'getCarriers').and.returnValue(of([CARRIER]));
-        spyOn(masterDataService, 'getCarrierDetails').and.returnValue(of([CARRIER_DETAIL]));
-        spyOn(masterDataService, 'getCarrierSCACs').and.returnValue(of([CARRIER_SCAC]));
-        spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([CARRIER_MODE]));
-        spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([SERVICE_LEVEL]));
-        component.ngOnInit();
-      });
-      it('should have carrier option', () => {
-        fixture.detectChanges();
-        expect(component.carrierOptions).toEqual([{
-          label: 'TCS (Test Carrier)',
-          value: CARRIER
-        }]);
-      });
-      it('should have carrier details', () => {
-        fixture.detectChanges();
-        expect(component.carrierDetails).toEqual([{
-          carrierSCAC: 'ABCD',
-          vendorNumber: '1234321'
-        }]);
-      });
-      it('should have carrier option', () => {
-        fixture.detectChanges();
-        expect(component.carrierSCACs).toEqual([{
-          scac: 'TCS',
-          mode: 'LTL',
-          serviceLevel: 't1'
-        }]);
-      });
-      it('should have carrier mode option', () => {
-        fixture.detectChanges();
-        expect(component.carrierModeOptions).toEqual([{
-          label: 'TLTL (Test Mode Description)',
-          value: CARRIER_MODE
-        }]);
-      });
-      it('should have service level option', () => {
-        fixture.detectChanges();
-        expect(component.serviceLevelOptions).toEqual([{
-          label: 't1 (Test Service Level)',
-          value: SERVICE_LEVEL
-        }]);
-      });
+      }]);
+    });
+    it('should have carrier mode option', () => {
+      fixture.detectChanges();
+      expect(component.carrierModeOptions).toEqual([{
+        label: 'TLTL (Test Mode Description)',
+        value: CARRIER_MODE
+      }]);
+    });
+    it('should have service level option', () => {
+      fixture.detectChanges();
+      expect(component.serviceLevelOptions).toEqual([{
+        label: 't1 (Test Service Level)',
+        value: SERVICE_LEVEL
+      }]);
+    });
   });
 
   describe('selection compare', () => {
@@ -240,8 +240,8 @@ describe('TripInformationComponent', () => {
           carrierSCAC: 'ABCD',
           vendorNumber: '1234321',
         }
-      ]
-    })
+      ];
+    });
 
     it('should set vendorNumber when carrier details found', () => {
       component.populateVendorNumberByScac({scac: 'ABCD', name: 'Vandalay Industries'});
@@ -488,8 +488,8 @@ describe('TripInformationComponent', () => {
     const tripInformation: TripInformation = {
       bolNumber: 'TestBolNumber',
       carrier: {
-       scac: 'TestScac',
-       name: 'TestCarrierName'
+        scac: 'TestScac',
+        name: 'TestCarrierName'
 
       },
       carrierMode: {
@@ -682,7 +682,7 @@ describe('TripInformationComponent', () => {
   describe('should compare with carrier scac', () => {
     it('should return true', () => {
       fixture.detectChanges();
-      expect(component.compareCarrierWith({value: {scac:'TL'}}, {scac: 'TL'})).toBeTrue();
+      expect(component.compareCarrierWith({value: {scac: 'TL'}}, {scac: 'TL'})).toBeTrue();
     });
 
     it('should return false', () => {
@@ -719,7 +719,7 @@ describe('TripInformationComponent', () => {
   describe('should compare with service level', () => {
     it('should return true', () => {
       fixture.detectChanges();
-      expect(component.compareServiceLevelWith({value: {level:'t1'}}, {level: 't1'})).toBeTrue();
+      expect(component.compareServiceLevelWith({value: {level: 't1'}}, {level: 't1'})).toBeTrue();
     });
 
     it('should return false', () => {
@@ -735,7 +735,7 @@ describe('TripInformationComponent', () => {
       spyOn(component, 'populateVendorNumberByScac');
       spyOn(component, 'filterServiceLevels').and.callThrough();
       spyOn(component, 'filterCarrierModes').and.callThrough();
-      component.carrierControl.setValue({ scac: 'TestScac' });
+      component.carrierControl.setValue({scac: 'TestScac'});
       component.carrierSCACs = [
         {
           scac: 'TestScac',
@@ -747,27 +747,151 @@ describe('TripInformationComponent', () => {
       component.carrierModeOptions = [
         {
           label: 'TLTL (Test Mode Description)',
-          value: { mode: 'LTL', reportKeyMode: 'LTL', reportModeDescription: 'LTL.' }
+          value: {mode: 'LTL', reportKeyMode: 'LTL', reportModeDescription: 'LTL.'}
         },
         {
           label: 'TL (Test TL Mode Description)',
-          value: { mode: 'TL', reportKeyMode: 'TL', reportModeDescription: 'TL.' }
+          value: {mode: 'TL', reportKeyMode: 'TL', reportModeDescription: 'TL.'}
         }
       ];
 
       component.serviceLevelOptions = [
         {
           label: 't1',
-          value: { level: 't1', name: 'T1' }
+          value: {level: 't1', name: 'T1'}
         },
         {
           label: 't2',
-          value: { level: 't2', name: 'T2' }
+          value: {level: 't2', name: 'T2'}
         }
       ];
       component.refreshCarrierData();
       expect(component.filterCarrierModes).toHaveBeenCalled();
       expect(component.filterServiceLevels).toHaveBeenCalled();
+    });
+  });
+
+  describe('#validateIsOption', () => {
+    const options = [
+      {label: 'A', value: {id: 'A'}},
+      {label: 'B', value: {id: 'B'}}
+    ];
+
+    function comparator(a: any, b: any): boolean {
+      return a?.id === b?.id;
+    }
+
+    it('should return null when match is found', () => {
+      const control = new FormControl({id: 'A'});
+      const result = component.validateIsOption(options, comparator)(control);
+      expect(result).toBeNull();
+    });
+    it('should return error when match is NOT found', () => {
+      const control = new FormControl({id: 'C'});
+      const result = component.validateIsOption(options, comparator)(control);
+      expect(result).toEqual({invalidSelectOption: true});
+    });
+    it('should return null for carriers when comparator is provided', () => {
+      const control = new FormControl({scac: 'SOME'});
+      const scacOptions: Array<SelectOption<unknown>> = [{value: {scac: 'SOME', name: 'Some Carrier'}}] as any;
+      const result = component.validateIsOption(scacOptions, component.compareCarrierWith)(control);
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('#compareCarrierWith', () => {
+    it('should mark empty objects as equal', () => {
+      const a = {};
+      const b = {};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark null objects as equal', () => {
+      const a = null;
+      const b = null;
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark equal SelectOptions objects as equal', () => {
+      const a = {label: 'Some Carrier', value: {scac: 'SOME'}};
+      const b = {label: 'Some Carrier', value: {scac: 'SOME'}};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark equal Carrier objects as equal', () => {
+      const a = {scac: 'SOME'};
+      const b = {scac: 'SOME'};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark Carriers with same scac as equal', () => {
+      const a = {scac: 'SOME'};
+      const b = {scac: 'SOME', name: 'this field should not effect equality'};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark equal SelectOption/Carrier objects as equal', () => {
+      const a = {label: 'Some Carrier', value: {scac: 'SOME'}};
+      const b = {scac: 'SOME'};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark equal Carrier/SelectOption objects as equal', () => {
+      const a = {scac: 'SOME'};
+      const b = {label: 'Some Carrier', value: {scac: 'SOME'}};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark unequal SelectOptions objects as unequal', () => {
+      const a = {label: 'Some Carrier', value: {scac: 'SOME'}};
+      const b = {label: 'Some Other Carrier', value: {scac: 'OTHER'}};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeFalse();
+    });
+    it('should mark unequal Carrier objects as unequal', () => {
+      const a = {scac: 'SOME'};
+      const b = {scac: 'OTHER'};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeFalse();
+    });
+    it('should mark unequal SelectOption/Carrier objects as unequal', () => {
+      const a = {label: 'Some Carrier', value: {scac: 'SOME'}};
+      const b = {scac: 'OTHER'};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeFalse();
+    });
+    it('should mark unequal Carrier/SelectOption objects as unequal', () => {
+      const a = {scac: 'SOME'};
+      const b = {label: 'Some Other Carrier', value: {scac: 'OTHER'}};
+      const result = component.compareCarrierWith(a, b);
+      expect(result).toBeFalse();
+    });
+  });
+
+  describe('#compareCarrierModeWith', () => {
+    it('should mark empty objects as equal', () => {
+      const a = {};
+      const b = {};
+      const result = component.compareCarrierModeWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark null objects as equal', () => {
+      const a = null;
+      const b = null;
+      const result = component.compareCarrierModeWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark equal SelectOptions objects as equal', () => {
+      const a = {label: 'Some Mode', value: {reportKeyMode: 'SOME', reportModeDescription: 'SOME DESC'}};
+      const b = {label: 'Some Mode', value: {reportKeyMode: 'SOME', reportModeDescription: 'SOME DESC'}};
+      const result = component.compareCarrierModeWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark equal Mode objects as equal', () => {
+      const a = {reportKeyMode: 'SOME', reportModeDescription: 'SOME DESC'};
+      const b = {reportKeyMode: 'SOME', reportModeDescription: 'SOME DESC'};
+      const result = component.compareCarrierModeWith(a, b);
+      expect(result).toBeTrue();
     });
   });
 

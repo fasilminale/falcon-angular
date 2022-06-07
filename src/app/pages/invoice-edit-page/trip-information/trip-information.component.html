@@ -140,22 +140,23 @@
                  placeholder="Select One..."
                  (change)="refreshCarrierData()"
                  [compareWith]="compareCarrierWith"
-                 [ngClass]="{'error': isValid(carrierControl) || !carrierDetailFound}">
+                 [ngClass]="{'error': isInvalid(carrierControl) || !carrierDetailFound}">
       </ng-select>
       <elm-input-subtext *ngIf="!carrierControl.value"
                          class="input-error"
                          [isError]="true">
-        Carrier is missing
+        Carrier is missing<br/>
       </elm-input-subtext>
       <elm-input-subtext *ngIf="carrierControl.value && !carrierDetailFound"
                          class="input-error"
                          [isError]="true">
-        SCAC needs to be updated in Carrier Detail
+        SCAC needs to be updated in Carrier Detail<br/>
       </elm-input-subtext>
-      <elm-input-subtext *ngIf="carrierControl.value && !!validateIsOption(carrierOptions)(carrierControl)"
-                         class="input-error"
-                         [isError]="true">
-        Carrier "{{carrierUtilsToDisplayLabel(carrierControl.value)}}" missing in master data
+      <elm-input-subtext
+        *ngIf="carrierControl.value && !!(validateIsOption(carrierOptions, compareCarrierWith)(carrierControl))"
+        class="input-error"
+        [isError]="true">
+        Carrier "{{carrierUtilsToDisplayLabel(carrierControl.value)}}" missing in master data<br/>
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -170,18 +171,19 @@
                  formControlName="carrierMode"
                  placeholder="Select One..."
                  [compareWith]="compareCarrierModeWith"
-                 [ngClass]="{'error': isValid(carrierModeControl)}">
+                 [ngClass]="{'error': isInvalid(carrierModeControl)}">
       </ng-select>
       <elm-input-subtext *ngIf="!carrierModeControl.value"
                          class="input-error"
                          [isError]="true">
-        Carrier Mode is missing
+        Carrier Mode is missing<br/>
       </elm-input-subtext>
-      <elm-input-subtext *ngIf="carrierModeControl.value && !!validateIsOption(carrierModeOptions)(carrierModeControl)"
-                         class="input-error"
-                         [isError]="true">
+      <elm-input-subtext
+        *ngIf="carrierModeControl.value && !!validateIsOption(filteredCarrierModeOptions, compareCarrierModeWith)(carrierModeControl)"
+        class="input-error"
+        [isError]="true">
         Carrier Mode "{{carrierModeCodeUtilsToDisplayLabel(carrierModeControl.value)}}" missing in master data for
-        selected carrier
+        selected carrier<br/>
       </elm-input-subtext>
     </div>
     <div class="col-4">
@@ -196,12 +198,12 @@
                  formControlName="serviceLevel"
                  placeholder="Select One..."
                  [compareWith]="compareServiceLevelWith"
-                 [ngClass]="{'error': isValid(serviceLevelControl)}">
+                 [ngClass]="{'error': isInvalid(serviceLevelControl)}">
       </ng-select>
       <elm-input-subtext *ngIf="!serviceLevelControl.value"
                          class="input-error"
                          [isError]="true">
-        Service Level is missing
+        Service Level is missing<br/>
       </elm-input-subtext>
     </div>
   </div>
