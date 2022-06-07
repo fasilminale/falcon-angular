@@ -37,8 +37,8 @@ describe('SearchComponent', () => {
     });
 
     describe('when type invoiceID,', () => {
-      it( 'Should error when field contains values other than alpha numeric', () => {
-        component.controlGroup.controls.control.setValue('D-560000001');
+      it( 'Should error when field contains values other than alpha numeric and - and  _', () => {
+        component.controlGroup.controls.control.setValue('D@560000001');
         document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
         fixture.detectChanges();
         expect(component.controlGroup.controls.control.hasError('pattern')).toBeTrue();
@@ -47,6 +47,20 @@ describe('SearchComponent', () => {
 
       it( 'Should not error when field contains only alpha numeric values', () => {
         component.controlGroup.controls.control.setValue('D560000001');
+        document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
+        fixture.detectChanges();
+        expect(component.controlGroup.controls.control.hasError('pattern')).toBeFalse();
+      });
+
+      it( 'Should not error when field contains only alpha numeric values and -', () => {
+        component.controlGroup.controls.control.setValue('D-560000001');
+        document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
+        fixture.detectChanges();
+        expect(component.controlGroup.controls.control.hasError('pattern')).toBeFalse();
+      });
+
+      it( 'Should not error when field contains only alpha numeric values and _', () => {
+        component.controlGroup.controls.control.setValue('D_560000001');
         document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
         fixture.detectChanges();
         expect(component.controlGroup.controls.control.hasError('pattern')).toBeFalse();
