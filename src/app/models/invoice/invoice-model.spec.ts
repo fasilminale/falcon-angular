@@ -24,7 +24,8 @@ describe('Invoice Model Tests', () => {
     lineItems: [],
     milestones: [],
     overriddenDeliveryDateTime: '',
-    assumedDeliveryDateTime: ''
+    assumedDeliveryDateTime: '',
+    tripTenderTime: ''
   };
 
   const invoice = {
@@ -48,7 +49,8 @@ describe('Invoice Model Tests', () => {
     lineItems: [],
     milestones: [],
     overriddenDeliveryDateTime: '12/09/1990',
-    assumedDeliveryDateTime: '02/11/1971'
+    assumedDeliveryDateTime: '02/11/1971',
+    tripTenderTime: '02/11/1971'
   };
 
   const expectedInvoice = {
@@ -72,7 +74,8 @@ describe('Invoice Model Tests', () => {
     lineItems: [],
     milestones: [],
     overriddenDeliveryDateTime: '12/09/1990',
-    assumedDeliveryDateTime: '02/11/1971'
+    assumedDeliveryDateTime: '02/11/1971',
+    tripTenderTime: '02/11/1971'
   };
 
   let prototypeEmptyInvoice: InvoiceDataModel;
@@ -102,6 +105,7 @@ describe('Invoice Model Tests', () => {
     expect(data1.standardPaymentTermsOverride).toEqual(data2.standardPaymentTermsOverride);
     expect(data1.overriddenDeliveryDateTime).toEqual(data2.overriddenDeliveryDateTime);
     expect(data1.assumedDeliveryDateTime).toEqual(data2.assumedDeliveryDateTime);
+    expect(data1.tripTenderTime).toEqual(data2.tripTenderTime);
   }
 
   it('empty Invoice should equal test model', () => {

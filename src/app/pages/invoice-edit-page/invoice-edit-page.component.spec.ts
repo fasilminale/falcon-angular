@@ -177,7 +177,8 @@ describe('InvoiceEditPageComponent', () => {
             user: 'Test User'
           }],
           overriddenDeliveryDateTime: new Date().toISOString(),
-          assumedDeliveryDateTime: new Date().toISOString()
+          assumedDeliveryDateTime: new Date().toISOString(),
+          tripTenderTime: new Date().toISOString()
         };
         spyOn(component, 'updateInvoiceFromForms').and.stub();
         spyOn(rateService, 'rateInvoice').and.returnValue(of(testInvoice));
