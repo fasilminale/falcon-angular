@@ -4,6 +4,7 @@ export interface InvoiceAmountDetail {
     costLineItems: CostLineItem[];
     pendingChargeLineItems: CostLineItem[];
     deniedChargeLineItems: CostLineItem[];
+    deletedChargeLineItems: CostLineItem[];
     disputeLineItems: DisputeLineItem[];
     amountOfInvoice: string;
     currency: string;

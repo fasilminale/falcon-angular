@@ -322,6 +322,7 @@ describe('InvoiceAmountComponent', () => {
             }
           }
         ],
+        deletedChargeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
         mileage: '100'
       });
@@ -461,6 +462,7 @@ describe('InvoiceAmountComponent', () => {
         pendingChargeLineItems: [],
         deniedChargeLineItems: [],
         disputeLineItems: [],
+        deletedChargeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
         mileage: '100'
       });
@@ -770,9 +772,25 @@ describe('InvoiceAmountComponent', () => {
       variables: []
     }));
     spyOn(component.rateEngineCall, 'emit').and.stub();
-    const promise = component.onEditCostLineItem(costLineItem);
+    const promise = component.onEditCostLineItem(costLineItem, component.pendingChargeLineItemControls);
     await promise;
     expect(utilService.openEditChargeModal).toHaveBeenCalledTimes(1);
+    expect(component.rateEngineCall.emit).toHaveBeenCalled();
+  });
+
+  it('should call onDeleteCostLineItem and remove the line item', async () => {
+    component.costBreakdownItems.push(new FormGroup({
+      accessorialCode: new FormControl('TST')
+    }));
+
+    const costLineItem = component.costBreakdownItemsControls[0];
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openCommentModal').and.returnValue(of({
+      comment: ''
+    }));
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    await component.onDeleteCostLineItem(costLineItem);
+    expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
     expect(component.rateEngineCall.emit).toHaveBeenCalled();
   });
 });

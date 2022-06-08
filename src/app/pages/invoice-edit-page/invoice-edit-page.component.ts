@@ -139,6 +139,7 @@ export class InvoiceEditPageComponent implements OnInit {
       costLineItems: invoice.costLineItems,
       pendingChargeLineItems: invoice.pendingChargeLineItems,
       deniedChargeLineItems: invoice.deniedChargeLineItems,
+      deletedChargeLineItems: invoice.deletedChargeLineItems,
       disputeLineItems: invoice.disputeLineItems,
       amountOfInvoice: invoice.amountOfInvoice,
       mileage: invoice.distance,
@@ -222,6 +223,7 @@ export class InvoiceEditPageComponent implements OnInit {
               pendingChargeLineItems: invoice.pendingChargeLineItems,
               deniedChargeLineItems: invoice.deniedChargeLineItems,
               disputeLineItems: invoice.disputeLineItems,
+              deletedChargeLineItems: invoice.deletedChargeLineItems,
               amountOfInvoice: invoice.amountOfInvoice,
               mileage: invoice.distance,
               currency: invoice.currency,
@@ -427,7 +429,6 @@ export class InvoiceEditPageComponent implements OnInit {
   getRates(accessorialCode: string): void {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
-      console.log(this.invoice);
       this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => this.loadInvoice(ratedInvoiced)
       );

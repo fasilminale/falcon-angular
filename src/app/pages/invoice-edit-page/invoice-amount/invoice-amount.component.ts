@@ -51,6 +51,7 @@ export class InvoiceAmountComponent implements OnInit {
   costBreakdownItems = new FormArray([]);
   pendingChargeLineItems = new FormArray([]);
   deniedChargeLineItems = new FormArray([]);
+  deletedChargeLineItems = new FormArray([]);
   disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
   @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
@@ -141,6 +142,8 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.setControl('pendingChargeLineItems', this.pendingChargeLineItems);
     this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls);
     givenFormGroup.setControl('deniedChargeLineItems', this.deniedChargeLineItems);
+    this.insertLineItems(this.deletedChargeLineItems, this.deletedChargeLineItemControls);
+    givenFormGroup.setControl('deletedChargeLineItems', this.deletedChargeLineItems);
     this.insertDisputeLineItems();
     givenFormGroup.setControl('disputeLineItems', this.disputeLineItems);
     this._formGroup = givenFormGroup;
@@ -161,6 +164,7 @@ export class InvoiceAmountComponent implements OnInit {
     this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls, invoiceAmountDetail?.costLineItems);
     this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls, invoiceAmountDetail?.pendingChargeLineItems);
     this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls, invoiceAmountDetail?.deniedChargeLineItems);
+    this.insertLineItems(this.deletedChargeLineItems, this.deletedChargeLineItemControls, invoiceAmountDetail?.deletedChargeLineItems);
     this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
   }
 
@@ -180,7 +184,7 @@ export class InvoiceAmountComponent implements OnInit {
           type: new FormControl(lineItem.rateType ? lineItem.rateType : ''),
           quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
           totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
-          requestStatus: new FormControl(lineItem.requestStatus ?? 'N/A'),
+          requestStatus: new FormControl(lineItem.requestStatus?.label ?? 'N/A'),
           requestStatusPair: new FormControl(lineItem.requestStatus),
           message: new FormControl(lineItem.message ?? 'N/A'),
           createdBy: new FormControl(lineItem.createdBy ?? 'N/A'),
@@ -252,6 +256,12 @@ export class InvoiceAmountComponent implements OnInit {
       : new FormArray([]).controls;
   }
 
+  get deletedChargeLineItemControls(): AbstractControl[] {
+    return this._formGroup.get('deletedChargeLineItems')
+      ? (this._formGroup.get('deletedChargeLineItems') as FormArray).controls
+      : new FormArray([]).controls;
+  }
+
   get costBreakdownTotal(): number {
     let totalAmount = 0;
     this.costBreakdownItemsControls
@@ -313,6 +323,9 @@ export class InvoiceAmountComponent implements OnInit {
       const newLineItemGroup = this.createEmptyLineItemGroup();
       this.costBreakdownItemsControls.push(newLineItemGroup);
       newLineItemGroup.get('charge')?.setValue(modalResponse.selected.name);
+      newLineItemGroup.get('entrySourcePair')?.setValue({key: 'FREIGHT_PAY', label: 'FAL'});
+      newLineItemGroup.get('requestStatusPair')?.setValue({key: 'ACCEPTED', label: 'Accepted'});
+      newLineItemGroup.get('createdBy')?.setValue(this.userInfo?.email);
       if ('OTHER' === modalResponse.selected.name) {
         const variables = modalResponse.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
@@ -344,6 +357,12 @@ export class InvoiceAmountComponent implements OnInit {
     const charge = new FormControl(null);
     const rateSource = new FormControl('');
     const rateSourcePair = new FormControl(null);
+    const entrySource = new FormControl('');
+    const entrySourcePair = new FormControl(null);
+    const requestStatus = new FormControl('')
+    const requestStatusPair = new FormControl(null);
+    const createdDate = new FormControl(new Date().toISOString());
+    const createdBy = new FormControl(null);
     const rate = new FormControl('N/A');
     const type = new FormControl('N/A');
     const quantity = new FormControl('N/A');
@@ -358,6 +377,9 @@ export class InvoiceAmountComponent implements OnInit {
     const variables = new FormControl([]);
     const group = new FormGroup({
       charge, rateSource, rateSourcePair,
+      entrySource, entrySourcePair,
+      requestStatus, requestStatusPair,
+      createdDate, createdBy,
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
       accessorialCode, autoApproved,
@@ -411,7 +433,6 @@ export class InvoiceAmountComponent implements OnInit {
         if (pendingLineItem !== null) {
           this.pendingChargeLineItems.removeAt(index);
           this.setPendingChargeResponse(action, pendingLineItem, result);
-          console.log(pendingLineItem);
           if (action === 'Accepted') {
             this.costBreakdownItemsControls.push(pendingLineItem);
             this.costBreakdownItemsControls.sort((a, b) => {
@@ -464,8 +485,8 @@ export class InvoiceAmountComponent implements OnInit {
     }
   }
 
-  onDeleteCostLineItem(costLineItem: AbstractControl): void {
-    const dialogResult: Observable<CommentModel | boolean> = this.utilService.openCommentModal({
+  async onDeleteCostLineItem(costLineItem: any): Promise<void> {
+    const dialogResult = await this.utilService.openCommentModal({
       title: 'Delete Charge',
       innerHtmlMessage: `Are you sure you want to delete this charge?
                <br/><br/><strong>This action cannot be undone.</strong>`,
@@ -473,21 +494,26 @@ export class InvoiceAmountComponent implements OnInit {
       confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel',
       commentSectionFieldName: 'Reason for Deletion',
-      requireField: false
-    });
-    dialogResult.subscribe((result: CommentModel | boolean) => {
-      if (result) {
-        const costLineItems = this.costBreakdownItemsControls;
-        const existingCostLineItem = costLineItems.find(lineItem => costLineItem.value?.charge === lineItem.value?.charge);
-        if (existingCostLineItem) {
-          this.toastService.openSuccessToast(`Success. Variables have been updated for the line item.`);
-          existingCostLineItem.patchValue({
-            requestStatus: 'Deleted',
-            requestStatusPair: { key: 'DELETED', label: 'Deleted'}
-          });
-        }
+      requireField: true
+    }).pipe(first()).toPromise();
+    if (dialogResult) {
+      const index = this.costBreakdownItemsControls.findIndex(lineItem => lineItem.value.accessorialCode === costLineItem.value.accessorialCode);
+      const existingCostLineItem: AbstractControl | null = this.costBreakdownItems.get(index.toString());
+
+      if (existingCostLineItem) {
+        this.costBreakdownItems.removeAt(index);
+        this.deletedChargeLineItemControls.push(existingCostLineItem);
+
+        this.toastService.openSuccessToast(`Success. Line item has been deleted.`);
+        existingCostLineItem.patchValue({
+          responseComment: dialogResult.comment,
+          requestStatus: 'Deleted',
+          requestStatusPair: { key: 'DELETED', label: 'Deleted'}
+        });
+        this.pendingAccessorialCode = costLineItem.value.accessorialCode;
+        this.rateEngineCall.emit(this.pendingAccessorialCode);
       }
-    });
+    }
   }
 
   /**

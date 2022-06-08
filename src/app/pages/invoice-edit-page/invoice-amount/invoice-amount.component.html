@@ -120,11 +120,16 @@
 
         <!-- Cost Line Item - Attachments -->
         <div class="col-1">
-          <div *ngIf="_.get('attachment')" class="material-icons download-icon">file_download</div>
-          <span *ngIf="_.get('attachment')" [matTooltipPosition]="'below'"
-                [matTooltip]="'Download Attachment'"
-                [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
-                matTooltipClass="newLine">Download</span>
+          <elm-button id="link-button-cost-breakdown"
+                      buttonType="button"
+                      buttonStyle="text"
+                      class="flex-shrink-1"
+                      *ngIf="_.get('attachment')?.value?.url"
+                      (click)="downloadAttachment(_.get('attachment')?.value?.url)">
+            <div class="material-icons download-icon"
+                 (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
+            Download
+          </elm-button>
         </div>
 
         <div class="col-1">
@@ -188,8 +193,10 @@
           <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
           <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_)">delete</div>
         </div>
+        <div class="col-2" *ngIf="!(_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract'))">
+        </div>
 
-        <div class="expand-button" *ngIf="_.value.entrySource !== 'AUTO'">
+        <div class="expand-button" *ngIf="_.value.entrySource === 'FAL' || _.value.entrySource === 'CP'">
           <span *ngIf="!_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
             expand_more
           </span>
@@ -341,7 +348,7 @@
           </small>
         </div>
 
-        <div class="col-2" *ngIf="_.value.requestStatus.label === 'Open'">
+        <div class="col-2" *ngIf="_.value.requestStatus === 'Open'">
           <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon" (click)="onEditCostLineItem(_, pendingChargeLineItemControls)">edit</div>
           <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
           <elm-button buttonType="button"
