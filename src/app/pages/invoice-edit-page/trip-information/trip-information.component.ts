@@ -263,7 +263,8 @@ export class TripInformationComponent implements OnInit {
   }
 
   derivePickupDate(tripInfo?: TripInformation): Date | undefined {
-    if (tripInfo?.pickUpDate && tripInfo?.tripTenderTime && tripInfo?.deliveryDate?.getTime() == tripInfo?.tripTenderTime?.getTime()) {
+   let deliveryDate =tripInfo?.deliveryDate?.getTime();
+    if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
       this.isPickupDateTimeTendered = true;
     }
     return tripInfo?.pickUpDate ?? undefined;
