@@ -296,6 +296,8 @@ export class InvoiceEditPageComponent implements OnInit {
 
   mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
+      costLineItems: this.tripInformationFormGroup.controls.costLineItems.value,
+      pendingChargeLineItems: this.tripInformationFormGroup.controls.pendingChargeLineItems.value,
       mode: {
         mode: this.tripInformationFormGroup.controls.carrierMode.value.mode,
         reportKeyMode: this.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
