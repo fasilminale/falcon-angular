@@ -1,6 +1,19 @@
 <div [formGroup]="_formGroup">
-  <!--Invoice amount div starts-->
-  <span class="headline2">Invoice amount</span>
+  <div class="row px-1 justify-content-between">
+    <!--Invoice amount div starts-->
+    <div class="col-2 headline2">Invoice amount</div>
+    <!-- Re-rate Invoice -->
+    <div class="col-2 d-flex justify-content-end re-rate-button">
+      <elm-button id="re-rate-button"
+                  buttonType="button"
+                  buttonStyle="primary"
+                  class="flex-shrink-1"
+                  [isDisabled]="readOnlyForm"
+                  (click)="rateEngineCall.emit('')">
+        Re-Rate
+      </elm-button>
+    </div>
+  </div>
   <div class="invoice-amount-div row px-1">
     <!-- INVOICE AMOUNT -->
     <div class="col-2">

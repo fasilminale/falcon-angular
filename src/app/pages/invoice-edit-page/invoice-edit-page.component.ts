@@ -431,7 +431,10 @@ export class InvoiceEditPageComponent implements OnInit {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
       this.rateService.rateInvoice(this.invoice).subscribe(
-        ratedInvoiced => this.loadInvoice(ratedInvoiced)
+        ratedInvoiced => {
+          this.toastService.openSuccessToast(`Success. Invoice charges have been re-rated`);
+          this.loadInvoice(ratedInvoiced);
+        }
       );
     }
   }
