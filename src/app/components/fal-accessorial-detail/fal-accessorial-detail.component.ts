@@ -15,7 +15,7 @@ import {AbstractControl, FormControl} from '@angular/forms';
         <div class="row accessorial-details-row">
           <div class="col-1 accessorial-detail ">
             <span class="label-text">Request Status</span>
-            <span class="value-text">{{lineItem.value.requestStatus.label}}</span>
+            <span class="value-text">{{lineItem.value.requestStatus}}</span>
           </div>
 
           <div class="col-1 accessorial-detail ">
@@ -26,7 +26,7 @@ import {AbstractControl, FormControl} from '@angular/forms';
             <span class="label-text">Created Date</span>
             <span class="value-text">{{lineItem.value.createdDate !== 'N/A' ? (lineItem.value.createdDate | date: dateFormat) : 'N/A'}}</span>
           </div>
-          <div class="col-9 accessorial-detail">
+          <div *ngIf="lineItem.value.entrySource === 'CP'" class="col-9 accessorial-detail">
             <span class="label-text">Carrier Comment</span>
             <span class="value-text">{{lineItem.value.carrierComment}}</span>
           </div>
