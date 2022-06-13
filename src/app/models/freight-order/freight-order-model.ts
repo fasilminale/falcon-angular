@@ -11,6 +11,7 @@ export interface FreightOrder {
   sapDeliveryInstructions: Array<string>;
   deliveryInstructions: Array<string>;
   deliveryQty: Measurement;
+  deliverydatetime: string;
   sapDeliveryType: string;
   destination: Location;
   erpDeliveryNumber: string;
