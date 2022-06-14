@@ -438,6 +438,7 @@ export class InvoiceAmountComponent implements OnInit {
             this.costBreakdownItemsControls.sort((a, b) => {
               return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
             });
+            this.rateEngineCall.emit(this.pendingAccessorialCode);
           } else {
             this.deniedChargeLineItemControls.push(pendingLineItem);
           }

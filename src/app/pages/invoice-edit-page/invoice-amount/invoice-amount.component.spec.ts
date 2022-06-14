@@ -472,7 +472,7 @@ describe('InvoiceAmountComponent', () => {
       done();
     });
 
-    it('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
+    fit('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
       component.pendingChargeLineItems.push(new FormGroup({
         charge: new FormControl('Charge'),
         requestStatus: new FormControl('Successful'),
@@ -486,12 +486,14 @@ describe('InvoiceAmountComponent', () => {
 
       const modalResponse$ = new Subject<any>();
       spyOn(component, 'displayPendingChargeModal').and.returnValue(modalResponse$.asObservable());
+      spyOn(component.rateEngineCall, 'emit');
       component.acceptCharge(component.pendingChargeLineItems.controls[0].value);
 
       modalResponse$.subscribe(() => {
         expect(component.pendingChargeLineItems.length).toEqual(0);
         expect(component.deniedChargeLineItems.length).toEqual(0);
         expect(component.costBreakdownItems.length).toEqual(2);
+        expect(component.rateEngineCall.emit).toHaveBeenCalledTimes(1);
         done();
       });
 
