@@ -10,6 +10,7 @@ export interface TripInformation {
   vendorNumber: string;
   invoiceDate: Date;
   pickUpDate?: Date;
+  createdDate?: Date;
   deliveryDate?: Date;
   proTrackingNumber: string;
   bolNumber: string;

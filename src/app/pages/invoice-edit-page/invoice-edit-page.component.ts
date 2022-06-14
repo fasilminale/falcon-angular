@@ -109,6 +109,7 @@ export class InvoiceEditPageComponent implements OnInit {
       vendorNumber: invoice.vendorNumber ?? undefined,
       invoiceDate: new Date(invoice.invoiceDate),
       pickUpDate: invoice.pickupDateTime ? new Date(invoice.pickupDateTime) : undefined,
+      createdDate: invoice.createdDate ? new Date(invoice.createdDate) : undefined,
       deliveryDate: invoice.deliveryDateTime ? new Date(invoice.deliveryDateTime) : undefined,
       proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
       bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A',

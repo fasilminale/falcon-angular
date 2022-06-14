@@ -73,10 +73,10 @@
              class="fal-label">
         Delivery Date
         <span id="override-assume-delivery-date-container"
-              *ngIf="overriddenDeliveryDateTime || assumedDeliveryDateTime">
+              *ngIf="showArrowForDeliveryDateTime">
           &nbsp;
           <mat-icon class="delivery-date-icon">label_important</mat-icon>
-          <span class="delivery-date-icon-message">{{ overriddenDeliveryDateTime ? 'OVERRIDDEN' : 'ASSUMED' }}</span>
+          <span class="delivery-date-icon-message">{{ arrowLabelForDeliveryDateTime }}</span>
         </span>
       </label>
       <elm-date-picker id="deliveryDateInput"

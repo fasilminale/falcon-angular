@@ -82,6 +82,8 @@ export class TripInformationComponent implements OnInit {
   public assumedDeliveryDateTime: Date | undefined;
   public overriddenDeliveryDateTime: Date | undefined;
   public isPickupDateTimeTendered: boolean = false;
+  public arrowLabelForDeliveryDateTime: string = "";
+  public showArrowForDeliveryDateTime: boolean = false;
 
   public showFreightOrderSection = false;
   carrierDetailFound = true;
@@ -272,17 +274,28 @@ export class TripInformationComponent implements OnInit {
 
   deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
     let dateToReturn: Date | undefined;
-    this.overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
-    this.assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
-    if (!this.overriddenDeliveryDateTime && !this.assumedDeliveryDateTime) {
-      dateToReturn = tripInfo.deliveryDate ?? undefined;
-    } else if (this.overriddenDeliveryDateTime) {
-      dateToReturn = this.overriddenDeliveryDateTime ?? undefined;
-    } else if (this.assumedDeliveryDateTime) {
-      dateToReturn = this.assumedDeliveryDateTime ?? undefined;
+    let foDeliveryDateTime = tripInfo.freightOrders[0]?.deliverydatetime;
+    let overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
+    let assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
+    if (foDeliveryDateTime) {
+      dateToReturn = new Date(foDeliveryDateTime);
+      this.showArrowForDeliveryDateTime = false;
+    } else if (overriddenDeliveryDateTime) {
+      dateToReturn = overriddenDeliveryDateTime;
+      this.showArrowForDeliveryDateTime = true;
+      this.arrowLabelForDeliveryDateTime = 'OVERRIDDEN';
+    } else if (assumedDeliveryDateTime) {
+      dateToReturn = assumedDeliveryDateTime;
+      this.showArrowForDeliveryDateTime = true;
+      this.arrowLabelForDeliveryDateTime = 'ASSUMED';
+    } else {
+      dateToReturn = tripInfo.createdDate;
+      this.showArrowForDeliveryDateTime = true;
+      this.arrowLabelForDeliveryDateTime = 'CREATED';
     }
     return dateToReturn;
   }
+
 
   toggleFreightOrderDetailsSection(): void {
     this.showFreightOrderSection = !this.showFreightOrderSection;
