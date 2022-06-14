@@ -268,7 +268,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -302,7 +302,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -337,7 +337,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -372,7 +372,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -407,7 +407,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -484,7 +484,7 @@ describe('TripInformationComponent', () => {
     });
   });
 
-  it('should load trip information', () => {
+  describe('trip information', () => {
     const tripInformation: TripInformation = {
       bolNumber: 'TestBolNumber',
       carrier: {
@@ -510,22 +510,40 @@ describe('TripInformationComponent', () => {
       freightOrders: [],
       vendorNumber: '1234321'
     };
-    const tripInformation$ = new Subject<TripInformation>();
-    component.loadTripInformation$ = tripInformation$.asObservable();
-    tripInformation$.next(tripInformation);
-    component.filteredCarrierModeOptionsPopulatedSubject.next(1);
-    fixture.detectChanges();
-    expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
-    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
-    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
-    expect(component.deliveryDateControl.value).toEqual(tripInformation.deliveryDate);
-    expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
-    expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
-    expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
-    expect(component.carrierControl.value).toEqual(tripInformation.carrier);
-    expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
-    expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
-    expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
+
+    it('should load trip information', () => {
+      const tripInformation$ = new Subject<TripInformation>();
+      component.loadTripInformation$ = tripInformation$.asObservable();
+      tripInformation$.next(tripInformation);
+      component.filteredCarrierModeOptionsPopulatedSubject.next(1);
+      fixture.detectChanges();
+      expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
+      expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
+      expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
+      expect(component.deliveryDateControl.value).toEqual(tripInformation.deliveryDate);
+      expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
+      expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
+      expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
+      expect(component.carrierControl.value).toEqual(tripInformation.carrier);
+      expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
+      expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+      expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
+    });
+
+    it('should load trip information with form enabled', () => {
+      const tripInformation$ = new Subject<TripInformation>();
+      const updateIsEditMode$ = new Subject<boolean>();
+      spyOn(component.formGroup, 'enable').and.stub();
+      spyOn(component.formGroup, 'disable').and.stub();
+      component.loadTripInformation$ = tripInformation$.asObservable();
+      component.updateIsEditMode$ = updateIsEditMode$.asObservable();
+      updateIsEditMode$.next(false);
+      tripInformation$.next(tripInformation);
+      component.filteredCarrierModeOptionsPopulatedSubject.next(1);
+      fixture.detectChanges();
+      expect(component.formGroup.enable).toHaveBeenCalled();
+      expect(component.formGroup.disable).toHaveBeenCalled();
+    });
   });
 
   it('should load trip information and use overriddenDeliveryDateTime when overriddenDeliveryDateTime given', () => {
