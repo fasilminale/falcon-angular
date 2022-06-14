@@ -229,7 +229,9 @@ export class TripInformationComponent implements OnInit {
       observable
     ]).subscribe(([populated, tripInfo]) => {
       this.tripInformation = tripInfo;
-      this.formGroup.enable();
+      if (this._editableFormArray.disabled) {
+        this.formGroup.enable();
+      }
       this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
       this.vendorNumberControl.setValue(tripInfo.vendorNumber);
       this.vendorNumberControl.markAsDirty();
@@ -258,7 +260,9 @@ export class TripInformationComponent implements OnInit {
       this.loadBillToAddress$.next(tripInfo.billToAddress);
       this.loadFreightOrders$.next(tripInfo.freightOrders);
       this.formGroup.updateValueAndValidity();
-      this.formGroup.disable();
+      if (this._editableFormArray.disabled) {
+        this.formGroup.disable();
+      }
     }));
   }
 

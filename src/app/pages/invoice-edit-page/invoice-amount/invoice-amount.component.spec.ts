@@ -472,7 +472,7 @@ describe('InvoiceAmountComponent', () => {
       done();
     });
 
-    fit('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
+    it('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
       component.pendingChargeLineItems.push(new FormGroup({
         charge: new FormControl('Charge'),
         requestStatus: new FormControl('Successful'),
