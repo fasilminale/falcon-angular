@@ -49,17 +49,16 @@ export class InvoiceAllocationComponent implements OnInit {
 
   @Input() set loadAllocationDetails(observable: Observable<InvoiceAllocationDetail>) {
     this.subscriptionManager.manage(observable.subscribe(t => {
-      const array = new FormArray([]);
-      const updatedForm = new FormGroup({});
+      this.invoiceAllocations.clear();
       this.totalGlAmount.setValue(t.totalGlAmount ?? 0);
       this.invoiceNetAmount.setValue(t.invoiceNetAmount ?? 0);
-      updatedForm.setControl('totalGlAmount', this.totalGlAmount);
-      updatedForm.setControl('invoiceNetAmount', this.invoiceNetAmount);
+      this._formGroup.setControl('totalGlAmount', this.totalGlAmount);
+      this._formGroup.setControl('invoiceNetAmount', this.invoiceNetAmount);
       for (const glLineItem of t.glLineItems) {
         const glCostCenter = glLineItem.glCostCenter ? glLineItem.glCostCenter : glLineItem.glProfitCenter ? 'N/A' : undefined;
         const glProfitCenter = glLineItem.glProfitCenter ? glLineItem.glProfitCenter : glLineItem.glCostCenter ? 'N/A' : undefined;
 
-        array.push(new FormGroup({
+        this.invoiceAllocations.push(new FormGroup({
           allocationPercent: new FormControl(glLineItem.allocationPercent ?? undefined),
           customerCategory: new FormControl(glLineItem.customerCategory ?? undefined),
           glProfitCenter: new FormControl(glProfitCenter),
@@ -69,8 +68,6 @@ export class InvoiceAllocationComponent implements OnInit {
           allocationAmount: new FormControl(glLineItem.glAmount ?? 0)
         }));
       }
-      updatedForm.setControl('invoiceAllocations', array);
-      this._formGroup = updatedForm;
       this.updateTotalAllocationAmount();
       this.validateInvoiceAmount();
     }));
