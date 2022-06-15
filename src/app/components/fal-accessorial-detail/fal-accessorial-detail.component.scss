@@ -6,17 +6,17 @@
   padding: 24px 24px 40px 24px;
 }
 
-.accessorial-details-row{
+.accessorial-details-row {
   margin-bottom: 1rem;
 }
 
-.accessorial-details-row-end{
+.accessorial-details-row-end {
   margin-bottom: 1rem;
   padding-bottom: 1rem;
 }
 
 .accessorial-detail {
-  display:flex;
+  display: flex;
   flex-direction: column;
 }
 
@@ -28,4 +28,9 @@
 .value-text {
   font-size: 14px;
   color: #333333
+}
+
+.wrap-words {
+  word-wrap: break-word;
+  word-break: break-all
 }

@@ -295,9 +295,11 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
+    // console.log('------------' + this.invoiceAmountFormGroup.controls.costBreakdownItems.get('0')?.rateType);
+    console.log('------------' + this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems));
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
-      costLineItems: this.tripInformationFormGroup.controls.costLineItems.value,
-      pendingChargeLineItems: this.tripInformationFormGroup.controls.pendingChargeLineItems.value,
+       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
+      // pendingChargeLineItems: this.invoiceAmountFormGroup.controls.pendingBreakdownItems.value,
       mode: {
         mode: this.tripInformationFormGroup.controls.carrierMode.value.mode,
         reportKeyMode: this.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
