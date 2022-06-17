@@ -19,6 +19,7 @@ import { SelectOption } from 'src/app/models/select-option-model/select-option-m
 import { InvoiceService } from 'src/app/services/invoice-service';
 import {Subscription} from "rxjs";
 import {SearchComponent} from "../../components/search/search.component";
+import {UtilService} from '../../services/util-service';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -71,6 +72,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public filterService: FilterService,
     public userService: UserService,
+    private utilService: UtilService,
     private toastService: ToastService,
     private invoiceService: InvoiceService
   ) {
@@ -279,6 +281,12 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         const filename = 'Falcon.Invoice.List.csv';
         this.saveCSVFile(data, filename);
         this.toastService.openSuccessToast('<strong>File Generated:</strong> Invoice list has been successfully downloaded.', 5 * 1000);
+      }, (err: any) => {
+        const error = JSON.parse(err.error);
+        this.utilService.openErrorModal({
+          title: 'Error', innerHtmlMessage:
+            `An error has occurred.  Please add filters and retry.`
+        }).subscribe();
       }
     );
   }
