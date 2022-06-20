@@ -44,6 +44,9 @@
             <small class="error-text col-2" *ngIf="!invoiceAllocation.get('glCostCenter')?.value && !invoiceAllocation.get('glProfitCenter')?.value" [ngClass]="{ 'mt-3' : true }" >
               GL Cost Center is missing
             </small>
+            <small class="error-text col-2" *ngIf="invoiceAllocationErrors?.[i]?.glCostCenter" [ngClass]="{ 'mt-3' : true }" >
+              {{ invoiceAllocationErrors?.[i]?.glCostCenter}}
+            </small>
         </div>
 
         <!-- Invoice allocation - glProfitCenter -->
@@ -53,6 +56,9 @@
                  [attr.disabled]="isEditMode? '': null" />
           <small class="error-text col-2" *ngIf="!invoiceAllocation.get('glProfitCenter')?.value && !invoiceAllocation.get('glCostCenter')?.value" [ngClass]="{ 'mt-3' : true }" >
             GL Profit Center is missing
+          </small>
+          <small class="error-text col-2" *ngIf="invoiceAllocationErrors?.[i]?.glProfitCenter" [ngClass]="{ 'mt-3' : true }" >
+            {{ invoiceAllocationErrors?.[i]?.glProfitCenter}}
           </small>
         </div>
 
@@ -64,6 +70,9 @@
             <small class="error-text col-2" *ngIf="!invoiceAllocation.get('glAccount')?.value" [ngClass]="{ 'mt-3' : true }" >
               GL Account is missing
             </small>
+            <small class="error-text col-2" *ngIf="invoiceAllocationErrors?.[i]?.glAccount" [ngClass]="{ 'mt-3' : true }" >
+              {{ invoiceAllocationErrors?.[i]?.glAccount}}
+            </small>
         </div>
 
         <!-- Invoice allocation - glCompanyCode -->
@@ -73,6 +82,9 @@
             [attr.disabled]="isEditMode? '': null" />
             <small class="error-text col-2" *ngIf="!invoiceAllocation.get('glCompanyCode')?.value" [ngClass]="{ 'mt-3' : true }" >
               GL Company Code is missing
+            </small>
+            <small class="error-text col-2" *ngIf="invoiceAllocationErrors?.[i]?.glCompanyCode" [ngClass]="{ 'mt-3' : true }" >
+              {{ invoiceAllocationErrors?.[i]?.glCompanyCode}}
             </small>
         </div>
 
@@ -91,7 +103,6 @@
             Allocation Amount is required
           </small>
         </div>
-
       </div>
     </ng-container>
 

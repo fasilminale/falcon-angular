@@ -6,7 +6,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
-import {Observable, Subject} from 'rxjs';
+import {Observable, Observer, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
@@ -152,7 +152,9 @@ export class InvoiceEditPageComponent implements OnInit {
     this.loadAllocationDetails$.next({
       totalGlAmount: invoice.totalGlAmount,
       invoiceNetAmount: invoice.amountOfInvoice,
-      glLineItems: invoice.glLineItems
+      glLineItems: invoice.glLineItems,
+      glLineItemsErrors: this.invoice.glLineItemsErrors,
+      glLineItemsInvalid: this.invoice.glLineItemsInvalid
     });
   }
 
@@ -256,10 +258,22 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
       this.subscriptions.manage(
         this.updateInvoice().subscribe(
-          () => {
-            this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated.`);
+          (value) => {
+            if (!value.glLineItemsInvalid) {
+              this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated.`);
+            } else {
+              this.toastService.openErrorToast('The Invoice Allocations line items have values which do not match with master data.');
+              this.clickToggleEditMode();
+              this.subscriptions.manage(
+                new Observable((observer: Observer<object>) => {
+                  observer.next({});
+                }).subscribe(i => this.loadInvoice(value))
+              );
+            }
           },
-          (error) => console.error(error)
+          (error) => { 
+            console.error(error);
+          }
         )
       );
     }
@@ -310,7 +324,8 @@ export class InvoiceEditPageComponent implements OnInit {
         level: this.tripInformationFormGroup.controls.serviceLevel.value.level,
         name: this.tripInformationFormGroup.controls.serviceLevel.value.name,
       },
-      pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value
+      pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value,
+      glLineItemList: this.invoiceAllocationFormGroup.controls.invoiceAllocations.value
     };
     return editAutoInvoiceModel;
   }

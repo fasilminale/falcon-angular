@@ -2,7 +2,7 @@ import {CarrierReference} from '../master-data-models/carrier-model';
 import {CarrierModeCodeReference} from '../master-data-models/carrier-mode-code-model';
 import {ServiceLevel} from '../master-data-models/service-level-model';
 import { ShippingPointLocation } from '../location/location-model';
-import {GlLineItem} from '../line-item/line-item-model';
+import {GlLineItem, GlLineItemError} from '../line-item/line-item-model';
 import { FreightOrder } from '../freight-order/freight-order-model';
 
 export interface TripInformation {
@@ -31,6 +31,8 @@ export interface InvoiceAllocationDetail {
   invoiceNetAmount: string;
   totalGlAmount: string;
   glLineItems: Array<GlLineItem>;
+  glLineItemsErrors?: Array<GlLineItemError>;
+  glLineItemsInvalid?: boolean;
 }
 
 export enum FreightPaymentTerms {

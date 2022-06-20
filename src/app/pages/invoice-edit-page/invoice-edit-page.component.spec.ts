@@ -39,6 +39,28 @@ describe('InvoiceEditPageComponent', () => {
     zipCode: '12345'
   };
 
+  const glLineItemFormArray = new FormArray([]);
+  glLineItemFormArray.push(new FormGroup({
+    allocationPercent: new FormControl(100),
+    customerCategory: new FormControl('CAH'),
+    glProfitCenter: new FormControl('2586931'),
+    glCostCenter: new FormControl('2586931'),
+    glAccount: new FormControl('7153200'),
+    glCompanyCode: new FormControl('2140'),
+    allocationAmount: new FormControl(183.58)
+  }));
+  const invalidGlLineItemFormArray = new FormArray([]);
+  invalidGlLineItemFormArray.push(new FormGroup({
+    allocationPercent: new FormControl(100),
+    customerCategory: new FormControl('CAH'),
+    glProfitCenter: new FormControl('2586931'),
+    glCostCenter: new FormControl('2586931'),
+    glAccount: new FormControl('7153200'),
+    glCompanyCode: new FormControl('2140'),
+    allocationAmount: new FormControl(183.58),
+    errorText: new FormControl('Values do not match with master data')
+  }));
+
 
   let component: InvoiceEditPageComponent;
   let fixture: ComponentFixture<InvoiceEditPageComponent>;
@@ -541,6 +563,25 @@ describe('InvoiceEditPageComponent', () => {
         name: 'GROUND',
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+    };
+
+    const setUpControlsForInvalidGlLineItems = () => {
+      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+        mode: 'TL',
+        reportKeyMode: 'TL',
+        reportModeDescription: 'TRUCKLOAD'
+      }));
+      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+        scac: 'ABCD',
+        name: 'The ABCD Group',
+      }));
+      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+        level: 'GRD',
+        name: 'GROUND',
+      }));
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.invoiceAllocationFormGroup.addControl('invoiceAllocations', invalidGlLineItemFormArray);
     };
 
     it('should call performPostUpdateActions when update succeeds', () => {
@@ -553,6 +594,20 @@ describe('InvoiceEditPageComponent', () => {
       expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(
         `Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`
       );
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
+        component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
+      );
+    });
+
+    it('should not call performPostUpdateActions when update fails with invoice allocations invalid', () => {
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      invoiceDataModel.glLineItemsInvalid = true;
+      setUpControlsForInvalidGlLineItems();
+      spyOn(component, 'performPostUpdateActions');
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
+      component.clickSaveButton();
+      expect(component.performPostUpdateActions).not.toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
       );
@@ -600,6 +655,7 @@ describe('InvoiceEditPageComponent', () => {
         name: 'GROUND',
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
     };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
@@ -700,6 +756,7 @@ describe('InvoiceEditPageComponent', () => {
         name: 'GROUND',
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
     };
 
     it('should return EditAutoInvoiceModel object', () => {
@@ -721,7 +778,8 @@ describe('InvoiceEditPageComponent', () => {
           level: component.tripInformationFormGroup.controls.serviceLevel.value.level,
           name: component.tripInformationFormGroup.controls.serviceLevel.value.name,
         },
-        pickupDateTime: component.tripInformationFormGroup.controls.pickUpDate.value
+        pickupDateTime: component.tripInformationFormGroup.controls.pickUpDate.value,
+        glLineItemList: component.invoiceAllocationFormGroup.controls.invoiceAllocations.value
       });
     });
   });

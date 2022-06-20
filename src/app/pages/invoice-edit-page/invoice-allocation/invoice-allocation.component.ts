@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
 import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
+import { GlLineItemError } from 'src/app/models/line-item/line-item-model';
 
 @Component({
   selector: 'app-invoice-allocation',
@@ -21,6 +22,7 @@ export class InvoiceAllocationComponent implements OnInit {
   public totalGlAmount = new FormControl({});
   public invoiceNetAmount = new FormControl({});
   public invoiceAllocations = new FormArray([]);
+  public invoiceAllocationErrors?: Array<GlLineItemError>;
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
   }
@@ -49,6 +51,7 @@ export class InvoiceAllocationComponent implements OnInit {
 
   @Input() set loadAllocationDetails(observable: Observable<InvoiceAllocationDetail>) {
     this.subscriptionManager.manage(observable.subscribe(t => {
+      this.invoiceAllocationErrors = t.glLineItemsInvalid ? t.glLineItemsErrors : undefined;
       const array = new FormArray([]);
       this.totalGlAmount.setValue(t.totalGlAmount ?? 0);
       this.invoiceNetAmount.setValue(t.invoiceNetAmount ?? 0);
@@ -65,7 +68,7 @@ export class InvoiceAllocationComponent implements OnInit {
           glCostCenter: new FormControl(glCostCenter),
           glAccount: new FormControl(glLineItem.glAccount ?? undefined),
           glCompanyCode: new FormControl(glLineItem.glCompanyCode ?? undefined),
-          allocationAmount: new FormControl(glLineItem.glAmount ?? 0)
+          allocationAmount: new FormControl(glLineItem.glAmount ?? 0),
         }));
       }
       this._formGroup.setControl('invoiceAllocations', array);
