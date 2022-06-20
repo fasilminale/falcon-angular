@@ -32,6 +32,18 @@ describe('InvoiceAmountComponent', () => {
   };
   const TEST_CALC_DETAIL_OPTION = CostBreakDownUtils.toOption(TEST_CALC_DETAIL);
 
+  const TEST_CALC_DETAIL_TWO: CalcDetail = {
+    accessorialCode: 'TWO',
+    name: 'Test Calc Detail Two',
+    variables: [
+      {
+        variable: TEST_VARIABLE_NAME,
+        quantity: 0
+      }
+    ]
+  };
+  const TEST_CALC_DETAIL_OPTION_TWO = CostBreakDownUtils.toOption(TEST_CALC_DETAIL_TWO);
+
   const OTHER_CALC_DETAIL = {
     name: 'OTHER',
     accessorialCode: 'OTHER',
@@ -650,6 +662,18 @@ describe('InvoiceAmountComponent', () => {
       TEST_CALC_DETAIL_OPTION,
       OTHER_CALC_DETAIL_OPTION
     ]);
+  });
+
+  it('should filter options that are already present in pending charges and cost breakdown', () => {
+    const input: Array<SelectOption<CalcDetail>> = [TEST_CALC_DETAIL_OPTION_TWO];
+    const controlOne = component.createEmptyLineItemGroup();
+    const controlTwo = component.createEmptyLineItemGroup();
+    controlOne.get('charge')?.setValue(TEST_CALC_DETAIL);
+    component.costBreakdownItems.push(controlOne);
+    controlTwo.get('charge')?.setValue(TEST_CALC_DETAIL_TWO);
+    component.pendingChargeLineItems.push(controlTwo);
+    const output = component.filterCostBreakdownOptions(input);
+    expect(output).toEqual([OTHER_CALC_DETAIL_OPTION]);
   });
 
   it('should call onAddChargeButtonClick and cancel adding charge', async () => {
