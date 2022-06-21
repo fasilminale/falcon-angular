@@ -840,9 +840,23 @@ describe('InvoiceEditPageComponent', () => {
     expect(results.length).toBe(1);
   });
 
+  it('should get bad dispute line item data', () => {
+    const disputeBreakdownItems = component.invoiceAmountFormGroup.controls.disputeLineItems = new FormArray([]);
+    disputeBreakdownItems.clear();
+    disputeBreakdownItems.push(new FormControl());
+    const results = component.getDisputeLineItems(disputeBreakdownItems);
+    expect(results.length).toBe(1);
+  });
+
   it('should get empty list on missing control', () => {
     component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormControl('');
     const results = component.getLineItems(component.invoiceAmountFormGroup.controls.costBreakdownItems);
+    expect(results.length).toBe(0);
+  });
+
+  it('should get empty list on missing control for dispute', () => {
+    component.invoiceAmountFormGroup.controls.disputeLineItems = new FormControl('');
+    const results = component.getDisputeLineItems(component.invoiceAmountFormGroup.controls.costDisputeItems);
     expect(results.length).toBe(0);
   });
 
