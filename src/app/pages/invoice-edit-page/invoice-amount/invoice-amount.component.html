@@ -98,7 +98,7 @@
       <div class="col-1">Rate</div>
       <div class="col-1">Type</div>
       <div class="col-1">Quantity</div>
-      <div class="pending-total-column-header">Total</div>
+      <div class="total-column-header">Total</div>
       <div class="col-2 pending-action-label">Actions</div>
     </div>
     <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && isPrepaid">
@@ -265,7 +265,7 @@
       <div class="col-1">Rate</div>
       <div class="col-1">Type</div>
       <div class="col-1">Quantity</div>
-      <div class="pending-total-column-header">Total</div>
+      <div class="total-column-header">Total</div>
       <div class="col-2 pending-action-label">Actions</div>
     </div>
 
@@ -409,6 +409,127 @@
   </ng-container>
     <div class="no-results" *ngIf="pendingChargeLineItems && pendingChargeLineItems.length == 0">
       No Pending Charges
+    </div>
+  </div>
+
+  <div class="cost-breakdown-div my-3" formArrayName="deniedChargeLineItems">
+    <div class="col-12">Denied Charges</div>
+    <div class="row my-3 mx-0 pending-line-item-header">
+      <div class="col-3">Charge</div>
+      <div class="col-1">Attachment</div>
+      <div class="col-1">Rate Source</div>
+      <div class="col-2">Rate</div>
+      <div class="col-2">Type</div>
+      <div class="col-1">Quantity</div>
+      <div class="col-1 total-column-header">Total</div>
+    </div>
+
+    <ng-container *ngIf="deniedChargeLineItemControls && deniedChargeLineItemControls.length > 0 && isPrepaid">
+      <div *ngFor="let _ of deniedChargeLineItemControls; index as k"
+           class="row"
+           [ngClass]="{ 'cost-breakdown-item-row' : _.get('message')?.value !== 'NOT FOUND' }"
+           [formGroupName]="k">
+
+        <!-- Denied Line Item- Charge -->
+        <div class="col-3">
+          <input id="denied-line-item-charge"
+                 type="text"
+                 class="form-control"
+                 formControlName="charge"
+                 [attr.disabled]="readOnlyForm ? '': null"
+                 [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
+          />
+          <small class="error-text"
+                 *ngIf="_.get('message')?.value === 'NOT FOUND'">
+            Charge not found
+          </small>
+        </div>
+
+        <!-- Denied Line Item - Attachments -->
+        <div class="col-1">
+          <elm-button id="link-button-denied"
+                      buttonType="button"
+                      buttonStyle="text"
+                      class="flex-shrink-1"
+                      *ngIf="_.get('attachment')?.value?.url"
+                      (click)="downloadAttachment(_.get('attachment')?.value?.url)">
+            <div class="material-icons download-icon"
+                 (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download</div>
+            Download
+          </elm-button>
+        </div>
+
+        <div class="col-1">
+          <input id="denied-line-item-rate-source"
+                 type="text"
+                 class="form-control"
+                 formControlName="rateSource"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
+
+        <!-- Denied breakdown item - Rate -->
+        <div class="col-2">
+          <input id="denied-line-item-rate"
+                 type="text"
+                 class="form-control text-right"
+                 formControlName="rate"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
+
+        <!-- Denied breakdown item - Type -->
+        <div class="col-2">
+          <input id="denied-line-item-type"
+                 type="text"
+                 class="form-control"
+                 formControlName="type"
+                 [attr.disabled]="readOnlyForm ? '' : null"
+          />
+        </div>
+
+        <!-- Denied breakdown item - Quantity -->
+        <div class="col-1">
+          <input id="denied-line-item-quantity"
+                 type="text"
+                 class="form-control"
+                 formControlName="quantity"
+                 maxlength="10"
+                 [attr.disabled]="readOnlyForm ? '': null"
+          />
+        </div>
+
+        <!-- Denied breakdown item - totalAmount -->
+        <div class="total-column">
+          <app-fal-currency-input
+            id="denied-line-item-total"
+            [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
+            formControlName="totalAmount"
+            [isDisabled]="readOnlyForm"
+          >
+
+          </app-fal-currency-input>
+
+          <small class="error-text"
+                 *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
+            Base Rate Amount is required
+          </small>
+        </div>
+
+        <div class="expand-button" *ngIf="_.value.entrySource !== 'AUTO'">
+            <span *ngIf="!_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
+              expand_more
+            </span>
+          <span *ngIf="_.value.expanded" role="button" class="material-icons" (click)="onExpandCostLineItem(_.value)">
+              expand_less
+            </span>
+        </div>
+
+        <app-fal-accessorial-detail [lineItem]="_"></app-fal-accessorial-detail>
+      </div>
+    </ng-container>
+    <div class="no-results" *ngIf="deniedChargeLineItems && deniedChargeLineItems.length == 0">
+      No Denied Charges
     </div>
   </div>
 
