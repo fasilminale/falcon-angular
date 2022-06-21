@@ -13,6 +13,7 @@ import {FreightPaymentTerms, TripInformation} from '../../../models/invoice/trip
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
+import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 
 describe('TripInformationComponent', () => {
 
@@ -268,7 +269,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -302,7 +303,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -337,7 +338,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -372,7 +373,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -407,7 +408,7 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-  
+
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -484,7 +485,122 @@ describe('TripInformationComponent', () => {
     });
   });
 
-  it('should load trip information', () => {
+  describe('trip information', () => {
+    const tripInformation: TripInformation = {
+      bolNumber: 'TestBolNumber',
+      carrier: {
+        scac: 'TestScac',
+        name: 'TestCarrierName'
+
+      },
+      carrierMode: {
+        mode: 'CarrierMode',
+        reportModeDescription: 'ReportModeDescription',
+        reportKeyMode: 'ReportKeyMode'
+      },
+      deliveryDate: new Date(),
+      createdDate: new Date(),
+      freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+      invoiceDate: new Date(),
+      pickUpDate: new Date(),
+      proTrackingNumber: 'TestProTrackingNumber',
+      serviceLevel: {
+        level: 'TL1',
+        name: 'TestLevel'
+      },
+      tripId: 'TestTripId',
+      freightOrders: [],
+      vendorNumber: '1234321'
+    };
+
+    it('should load trip information', () => {
+      const tripInformation$ = new Subject<TripInformation>();
+      component.loadTripInformation$ = tripInformation$.asObservable();
+      tripInformation$.next(tripInformation);
+      component.filteredCarrierModeOptionsPopulatedSubject.next(1);
+      fixture.detectChanges();
+      expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
+      expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
+      expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
+      expect(component.deliveryDateControl.value).toEqual(tripInformation.deliveryDate);
+      expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
+      expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
+      expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
+      expect(component.carrierControl.value).toEqual(tripInformation.carrier);
+      expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
+      expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+      expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
+    });
+
+    it('should load trip information with form enabled', () => {
+      const tripInformation$ = new Subject<TripInformation>();
+      const updateIsEditMode$ = new Subject<boolean>();
+      spyOn(component.formGroup, 'enable').and.stub();
+      spyOn(component.formGroup, 'disable').and.stub();
+      component.loadTripInformation$ = tripInformation$.asObservable();
+      component.updateIsEditMode$ = updateIsEditMode$.asObservable();
+      updateIsEditMode$.next(false);
+      tripInformation$.next(tripInformation);
+      component.filteredCarrierModeOptionsPopulatedSubject.next(1);
+      fixture.detectChanges();
+      expect(component.formGroup.enable).toHaveBeenCalled();
+      expect(component.formGroup.disable).toHaveBeenCalled();
+    });
+  });
+
+  it('should load trip information and use First FO Delivery date when First FO Delivery date is given', () => {
+    const firstFODeliveryDateTime = "2001-06-07T20:16:11Z";
+    const freightOrder: FreightOrder = {
+      deliverydatetime: firstFODeliveryDateTime,
+      accountGroup: '',
+      billOfLadingNumber:'',
+      carrierModeCode: '',
+      createDateTime: '',
+      customerPurchaseOrders: null as any,
+      customerSalesOrders: null as any,
+      sapDeliveryInstructions: null as any,
+      deliveryInstructions: null as any,
+      deliveryQty: null as any,
+      sapDeliveryType: '',
+      destination: null as any,
+      erpDeliveryNumber: '',
+      freightOrderId: '',
+      freightOrderStatus: '',
+      sapFreightPaymentTerms: '',
+      freightPaymentTerms: '',
+      incoTerms1: '',
+      incoTerms2: '',
+      lineItems: null as any,
+      volumeGross: null as any,
+      volumeNet: null as any,
+      weightGross: null as any,
+      weightNet: null as any,
+      caseCount: 0,
+      meansOfTransportId: '',
+      origin: null as any,
+      originalDeliveryReference: '',
+      proofOfDeliveryDate: '',
+      routeSchedule: '',
+      routePlan: null as any,
+      scac: '',
+      shipDate: '',
+      shippingConditions: '',
+      shippingPoint: '',
+      shippingPointTimeZone: '',
+      shippingUnitPlanned: null as any,
+      shippingUnitActual: null as any,
+      shipToPartyNumber: '',
+      shipVia: '',
+      shipViaAir: '',
+      soCreateDateTime: '',
+      soldToNumber: '',
+      storageCodes: '',
+      stopId: '',
+      threePLSalesOrder: '',
+      tmsLoadId: '',
+      trackingNumbers: '',
+      palletCount: 0
+    }
     const tripInformation: TripInformation = {
       bolNumber: 'TestBolNumber',
       carrier: {
@@ -507,7 +623,7 @@ describe('TripInformationComponent', () => {
         name: 'TestLevel'
       },
       tripId: 'TestTripId',
-      freightOrders: [],
+      freightOrders: [freightOrder],
       vendorNumber: '1234321'
     };
     const tripInformation$ = new Subject<TripInformation>();
@@ -518,7 +634,7 @@ describe('TripInformationComponent', () => {
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
     expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
     expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
-    expect(component.deliveryDateControl.value).toEqual(tripInformation.deliveryDate);
+    expect(component.deliveryDateControl.value).toEqual(new Date(tripInformation.freightOrders[0].deliverydatetime));
     expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
     expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
     expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);

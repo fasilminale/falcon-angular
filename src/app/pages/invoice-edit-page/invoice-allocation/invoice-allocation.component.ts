@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { Observable } from 'rxjs';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
@@ -49,7 +49,7 @@ export class InvoiceAllocationComponent implements OnInit {
 
   @Input() set loadAllocationDetails(observable: Observable<InvoiceAllocationDetail>) {
     this.subscriptionManager.manage(observable.subscribe(t => {
-      const array = new FormArray([]);
+      this.invoiceAllocations.clear();
       this.totalGlAmount.setValue(t.totalGlAmount ?? 0);
       this.invoiceNetAmount.setValue(t.invoiceNetAmount ?? 0);
       this._formGroup.setControl('totalGlAmount', this.totalGlAmount);
@@ -58,17 +58,16 @@ export class InvoiceAllocationComponent implements OnInit {
         const glCostCenter = glLineItem.glCostCenter ? glLineItem.glCostCenter : glLineItem.glProfitCenter ? 'N/A' : undefined;
         const glProfitCenter = glLineItem.glProfitCenter ? glLineItem.glProfitCenter : glLineItem.glCostCenter ? 'N/A' : undefined;
 
-        array.push(new FormGroup({
+        this.invoiceAllocations.push(new FormGroup({
           allocationPercent: new FormControl(glLineItem.allocationPercent ?? undefined),
           customerCategory: new FormControl(glLineItem.customerCategory ?? undefined),
           glProfitCenter: new FormControl(glProfitCenter),
           glCostCenter: new FormControl(glCostCenter),
-          glAccount: new FormControl(glLineItem.glAccount ?? undefined),
+          glAccount: new FormControl(glLineItem.glAccount ?? undefined, [Validators.required]),
           glCompanyCode: new FormControl(glLineItem.glCompanyCode ?? undefined),
           allocationAmount: new FormControl(glLineItem.glAmount ?? 0)
         }));
       }
-      this._formGroup.setControl('invoiceAllocations', array);
       this.updateTotalAllocationAmount();
       this.validateInvoiceAmount();
     }));

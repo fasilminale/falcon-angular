@@ -440,6 +440,7 @@ export class InvoiceAmountComponent implements OnInit {
             this.costBreakdownItemsControls.sort((a, b) => {
               return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
             });
+            this.rateEngineCall.emit(this.pendingAccessorialCode);
           } else {
             this.deniedChargeLineItemControls.push(pendingLineItem);
           }
@@ -525,6 +526,8 @@ export class InvoiceAmountComponent implements OnInit {
   filterCostBreakdownOptions(originalList: Array<SelectOption<CalcDetail>>): Array<SelectOption<CalcDetail>> {
     const filteredList = originalList.filter(
       opt => this.costBreakdownItemsControls.every(
+        control => !this.costBreakdownOptionMatchesControl(opt, control)
+      ) && this.pendingChargeLineItemControls.every(
         control => !this.costBreakdownOptionMatchesControl(opt, control)
       )
     );

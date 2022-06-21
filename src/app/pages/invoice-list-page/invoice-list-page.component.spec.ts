@@ -9,7 +9,7 @@ import {LoadingService} from '../../services/loading-service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {of} from 'rxjs';
+import {of, Subject, throwError} from 'rxjs';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MatDialog} from '@angular/material/dialog';
@@ -19,7 +19,9 @@ import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
 import * as saveAsFunctions from 'file-saver';
 import {FormArray, FormBuilder, FormControl} from '@angular/forms';
-import {SearchComponent} from "../../components/search/search.component";
+import {SearchComponent} from '../../components/search/search.component';
+import {UtilService} from '../../services/util-service';
+import {asSpy} from '../../testing/test-utils.spec';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -48,6 +50,7 @@ describe('InvoiceListPageComponent', () => {
   let dialog: MatDialog;
   let filterService: FilterService;
   let userService: UserService;
+  let utilService: UtilService;
 
   const userInfo = {
     firstName: 'test',
@@ -111,6 +114,7 @@ describe('InvoiceListPageComponent', () => {
     dialog = TestBed.inject(MatDialog);
     userService = TestBed.inject(UserService);
     filterService = TestBed.inject(FilterService);
+    utilService = TestBed.inject(UtilService);
   });
 
   beforeEach(() => {
@@ -397,6 +401,16 @@ describe('InvoiceListPageComponent', () => {
     component.downloadCsv();
     expect(component.saveCSVFile).toHaveBeenCalled();
   }));
+
+  it('should display an error if callCSVApi fails', () => {
+    spyOn(webservice, 'httpPost').and.callFake(() => {
+      return throwError({error: JSON.stringify({error: { error: 'Test Exception', message: 'Test Exception'}})});
+    });
+    spyOn(utilService, 'openErrorModal').and.returnValue(of());
+    component.callCSVApi({});
+    fixture.detectChanges();
+    expect(utilService.openErrorModal).toHaveBeenCalled();
+  });
 
   describe('saveCSVFile', () => {
     it('should call saveAs', () => {

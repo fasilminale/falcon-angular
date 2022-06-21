@@ -132,6 +132,7 @@ describe('InvoiceEditPageComponent', () => {
           comments: 'Test Comment',
           companyCode: 'TestCompanyCode',
           createdBy: 'Test User',
+          createdDate: new Date().toISOString(),
           currency: 'USD',
           destination: {
             address: 'testAddress',
@@ -806,6 +807,7 @@ describe('InvoiceEditPageComponent', () => {
     const badInvoice = new InvoiceDataModel();
     badInvoice.vendorNumber = null as any;
     badInvoice.pickupDateTime = TEST_DATE;
+    badInvoice.createdDate = null as any;
     badInvoice.deliveryDateTime = TEST_DATE;
     badInvoice.proNumber = 'PRONUMBER';
     badInvoice.billOfLadingNumber = 'BILLOFLADINGNUMBER';
