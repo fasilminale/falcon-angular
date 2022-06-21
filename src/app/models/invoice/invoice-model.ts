@@ -1,6 +1,6 @@
 import {StatusModel} from './status-model';
 import * as moment from 'moment';
-import {CostLineItem, DisputeLineItem, GlLineItem, ManualLineItem} from '../line-item/line-item-model';
+import {CostLineItem, DisputeLineItem, GlLineItem, GlLineItemError, ManualLineItem} from '../line-item/line-item-model';
 import {formatCurrency} from '@angular/common';
 import {Milestone} from '../milestone/milestone-model';
 import {Attachment} from '../attachment/attachment-model';
@@ -102,6 +102,8 @@ export class InvoiceDataModel {
   disputeLineItems: Array<DisputeLineItem>;
   totalGlAmount: string;
   glLineItems: Array<GlLineItem>;
+  glLineItemsErrors?: Array<GlLineItemError>;
+  glLineItemsInvalid: boolean;
   freightOrders: Array<FreightOrder>;
 
   constructor(json?: any) {
@@ -199,6 +201,8 @@ export class InvoiceDataModel {
     this.disputeLineItems = json?.disputeLineItems ?? [];
     this.totalGlAmount = currency(json?.totalGlAmount);
     this.glLineItems = json?.glLineItems ?? [];
+    this.glLineItemsErrors = json?.glLineItemsErrors ?? [];
+    this.glLineItemsInvalid = json?.glLineItemsInvalid ?? false;
     this.freightOrders = json?.freightOrders ?? [];
   }
 

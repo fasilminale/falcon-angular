@@ -68,6 +68,13 @@ export interface GlLineItem {
   debitCreditFlag: string;
 }
 
+export interface GlLineItemError {
+  glCompanyCode: string;
+  glCostCenter: string;
+  glProfitCenter: string;
+  glAccount: string;
+}
+
 export interface FreightOrderLineItem {
   customerMaterialNumber: string;
   materialNumber: string;
