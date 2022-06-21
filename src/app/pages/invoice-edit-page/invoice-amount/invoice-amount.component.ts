@@ -525,6 +525,8 @@ export class InvoiceAmountComponent implements OnInit {
     const filteredList = originalList.filter(
       opt => this.costBreakdownItemsControls.every(
         control => !this.costBreakdownOptionMatchesControl(opt, control)
+      ) && this.pendingChargeLineItemControls.every(
+        control => !this.costBreakdownOptionMatchesControl(opt, control)
       )
     );
     filteredList.push(CostBreakDownUtils.toOption({
