@@ -22,7 +22,8 @@ import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model
 import {switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {Location} from '../../models/location/location-model';
-import {CostLineItem} from '../../models/line-item/line-item-model';
+import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
+import {KeyedLabel} from '../../models/generic/keyed-label';
 
 
 @Component({
@@ -311,6 +312,11 @@ export class InvoiceEditPageComponent implements OnInit {
 
   mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
+      costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
+      pendingChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems),
+      disputeLineItems: this.getDisputeLineItems(this.invoiceAmountFormGroup.controls.disputeLineItems),
+      deniedChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.deniedChargeLineItems),
+      deletedChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.deletedChargeLineItems),
       mode: {
         mode: this.tripInformationFormGroup.controls.carrierMode.value.mode,
         reportKeyMode: this.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
@@ -351,6 +357,33 @@ export class InvoiceEditPageComponent implements OnInit {
       address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
       address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value)
     };
+  }
+
+  getDisputeLineItems(items: AbstractControl): Array<DisputeLineItem> {
+    const results: Array<DisputeLineItem> = [];
+    const lineItems = items as FormArray;
+    if (!lineItems?.controls) {
+      return [];
+    }
+    for (const control of lineItems.controls) {
+      const item = control as FormGroup;
+      results.push({
+
+        comment: this.handleNAValues(item.controls?.comment?.value),
+        attachment: this.handleNAValues(item.controls?.attachment?.value),
+        createdDate: this.handleNAValues(item.controls?.createdDate?.value),
+        createdBy: this.handleNAValues(item.controls?.createdBy?.value),
+        disputeStatus: {
+          key: this.handleNAValues(item.controls?.disputeStatus?.value?.key),
+          label: this.handleNAValues(item.controls?.disputeStatus?.value?.label)
+        },
+        responseComment: this.handleNAValues(item.controls?.responseComment?.value),
+        closedDate: this.handleNAValues(item.controls?.closedDate?.value),
+        closedBy: this.handleNAValues(item.controls?.closedBy?.value)
+
+      });
+    }
+    return results;
   }
 
   getLineItems(items: AbstractControl): Array<CostLineItem> {

@@ -150,7 +150,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
-    givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ?? '');
+    givenFormGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal ?? '');
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
     if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
       ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
@@ -438,6 +438,7 @@ export class InvoiceAmountComponent implements OnInit {
             this.costBreakdownItemsControls.sort((a, b) => {
               return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
             });
+            this.rateEngineCall.emit(this.pendingAccessorialCode);
           } else {
             this.deniedChargeLineItemControls.push(pendingLineItem);
           }
@@ -523,6 +524,8 @@ export class InvoiceAmountComponent implements OnInit {
   filterCostBreakdownOptions(originalList: Array<SelectOption<CalcDetail>>): Array<SelectOption<CalcDetail>> {
     const filteredList = originalList.filter(
       opt => this.costBreakdownItemsControls.every(
+        control => !this.costBreakdownOptionMatchesControl(opt, control)
+      ) && this.pendingChargeLineItemControls.every(
         control => !this.costBreakdownOptionMatchesControl(opt, control)
       )
     );

@@ -2,7 +2,6 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Observable, of, Subject} from 'rxjs';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
-import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
 import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {InvoiceAmountComponent} from './invoice-amount.component';
@@ -31,6 +30,18 @@ describe('InvoiceAmountComponent', () => {
     ]
   };
   const TEST_CALC_DETAIL_OPTION = CostBreakDownUtils.toOption(TEST_CALC_DETAIL);
+
+  const TEST_CALC_DETAIL_TWO: CalcDetail = {
+    accessorialCode: 'TWO',
+    name: 'Test Calc Detail Two',
+    variables: [
+      {
+        variable: TEST_VARIABLE_NAME,
+        quantity: 0
+      }
+    ]
+  };
+  const TEST_CALC_DETAIL_OPTION_TWO = CostBreakDownUtils.toOption(TEST_CALC_DETAIL_TWO);
 
   const OTHER_CALC_DETAIL = {
     name: 'OTHER',
@@ -212,10 +223,17 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should populate form with invoice amount details', done => {
+
+      const control = component.createEmptyLineItemGroup();
+      control.get('charge')?.setValue(TEST_CALC_DETAIL);
+      control.get('totalAmount')?.setValue('78');
+
+      component.costBreakdownItemsControls.push(control);
+
       loadInvoiceAmountDetail$.subscribe(() => {
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('USD');
-        expect(formGroupValue.amountOfInvoice).toBe('1000');
+        expect(formGroupValue.amountOfInvoice).toBe(78);
         expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual(['override']);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('TestTerms');
         expect(formGroupValue.mileage).toBe('100');
@@ -332,7 +350,7 @@ describe('InvoiceAmountComponent', () => {
       loadInvoiceAmountDetail$.subscribe(() => {
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('');
-        expect(formGroupValue.amountOfInvoice).toBe('');
+        expect(formGroupValue.amountOfInvoice).toBe(0);
         expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual([]);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('');
         expect(formGroupValue.mileage).toBe('');
@@ -402,7 +420,7 @@ describe('InvoiceAmountComponent', () => {
       loadInvoiceAmountDetail$.subscribe(() => {
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('');
-        expect(formGroupValue.amountOfInvoice).toBe('');
+        expect(formGroupValue.amountOfInvoice).toBe(0);
         expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual([]);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('');
         expect(formGroupValue.mileage).toBe('');
@@ -486,12 +504,14 @@ describe('InvoiceAmountComponent', () => {
 
       const modalResponse$ = new Subject<any>();
       spyOn(component, 'displayPendingChargeModal').and.returnValue(modalResponse$.asObservable());
+      spyOn(component.rateEngineCall, 'emit');
       component.acceptCharge(component.pendingChargeLineItems.controls[0].value);
 
       modalResponse$.subscribe(() => {
         expect(component.pendingChargeLineItems.length).toEqual(0);
         expect(component.deniedChargeLineItems.length).toEqual(0);
         expect(component.costBreakdownItems.length).toEqual(2);
+        expect(component.rateEngineCall.emit).toHaveBeenCalledTimes(1);
         done();
       });
 
@@ -648,6 +668,18 @@ describe('InvoiceAmountComponent', () => {
       TEST_CALC_DETAIL_OPTION,
       OTHER_CALC_DETAIL_OPTION
     ]);
+  });
+
+  it('should filter options that are already present in pending charges and cost breakdown', () => {
+    const input: Array<SelectOption<CalcDetail>> = [TEST_CALC_DETAIL_OPTION_TWO];
+    const controlOne = component.createEmptyLineItemGroup();
+    const controlTwo = component.createEmptyLineItemGroup();
+    controlOne.get('charge')?.setValue(TEST_CALC_DETAIL);
+    component.costBreakdownItems.push(controlOne);
+    controlTwo.get('charge')?.setValue(TEST_CALC_DETAIL_TWO);
+    component.pendingChargeLineItems.push(controlTwo);
+    const output = component.filterCostBreakdownOptions(input);
+    expect(output).toEqual([OTHER_CALC_DETAIL_OPTION]);
   });
 
   it('should call onAddChargeButtonClick and cancel adding charge', async () => {
