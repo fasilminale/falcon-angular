@@ -150,7 +150,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
-    givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ?? '');
+    givenFormGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal ?? '');
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
     if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
       ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
