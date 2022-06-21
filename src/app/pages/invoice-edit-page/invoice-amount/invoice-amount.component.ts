@@ -150,7 +150,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
-    givenFormGroup.get('amountOfInvoice')?.setValue(invoiceAmountDetail?.amountOfInvoice ?? '');
+    givenFormGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal ?? '');
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
     if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
       ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
@@ -263,12 +263,14 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   get costBreakdownTotal(): number {
+    console.log('---------------------');
     let totalAmount = 0;
     this.costBreakdownItemsControls
       .filter(c => !!c)
       .forEach(c => {
         if (c.get('totalAmount')?.value) {
           totalAmount += parseFloat(c.get('totalAmount')?.value);
+          console.log('---------------------2');
         }
       });
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;

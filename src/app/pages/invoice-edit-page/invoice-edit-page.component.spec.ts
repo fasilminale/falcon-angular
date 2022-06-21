@@ -720,7 +720,12 @@ describe('InvoiceEditPageComponent', () => {
           level: component.tripInformationFormGroup.controls.serviceLevel.value.level,
           name: component.tripInformationFormGroup.controls.serviceLevel.value.name,
         },
-        pickupDateTime: component.tripInformationFormGroup.controls.pickUpDate.value
+        pickupDateTime: component.tripInformationFormGroup.controls.pickUpDate.value,
+        costLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.costBreakdownItems),
+        pendingChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.pendingChargeLineItems),
+        disputeLineItems: component.getDisputeLineItems(component.invoiceAmountFormGroup.controls.disputeLineItems),
+        deniedChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.deniedChargeLineItems),
+        deletedChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.deletedChargeLineItems),
       });
     });
   });

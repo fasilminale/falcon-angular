@@ -9,9 +9,9 @@ export interface EditAutoInvoiceModel {
   mode?: CarrierModeCodeReference;
   serviceLevel?: ServiceLevel;
   pickupDateTime?: string;
-  costLineItems: Array<CostLineItem>;
-  pendingChargeLineItems: Array<CostLineItem>;
-  disputeLineItems: Array<DisputeLineItem>;
-  deniedChargeLineItems: Array<CostLineItem>;
-  deletedChargeLineItems: Array<CostLineItem>;
+  costLineItems?: Array<CostLineItem>;
+  pendingChargeLineItems?: Array<CostLineItem>;
+  disputeLineItems?: Array<DisputeLineItem>;
+  deniedChargeLineItems?: Array<CostLineItem>;
+  deletedChargeLineItems?: Array<CostLineItem>;
 }
