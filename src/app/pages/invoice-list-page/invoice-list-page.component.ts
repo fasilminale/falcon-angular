@@ -281,8 +281,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         const filename = 'Falcon.Invoice.List.csv';
         this.saveCSVFile(data, filename);
         this.toastService.openSuccessToast('<strong>File Generated:</strong> Invoice list has been successfully downloaded.', 5 * 1000);
-      }, (err: any) => {
-        const error = JSON.parse(err.error);
+      }, () => {
         this.utilService.openErrorModal({
           title: 'Error', innerHtmlMessage:
             `An error has occurred.  Please add filters and retry.`
