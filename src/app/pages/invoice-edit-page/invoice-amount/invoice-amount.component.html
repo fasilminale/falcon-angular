@@ -92,25 +92,31 @@
   <div class="cost-breakdown-div my-3" formArrayName="costBreakdownItems">
     <div class="col-12">Cost Breakdown</div>
     <div class="row my-3 mx-0 pending-line-item-header">
-      <div class="col">Charge</div>
+      <div class="col-3">Charge</div>
       <div class="col-1">Attachment</div>
       <div class="col-1">Rate Source</div>
       <div class="col-1">Rate</div>
-      <div class="col-1">Type</div>
+      <div [ngClass]="{'col-2': readOnlyForm,
+                       'col-1': !readOnlyForm}">
+        Type
+      </div>
       <div class="col-1">Quantity</div>
-      <div class="col total-column-header">Total</div>
-      <div *ngIf="!readOnlyForm" class="col pending-action-label">Actions</div>
+      <div [ngClass]="{'col-3': readOnlyForm,
+                       'col-2': !readOnlyForm}">
+        Total
+      </div>
+      <div *ngIf="!readOnlyForm" class="col-2">Actions</div>
     </div>
     <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && isPrepaid">
       <div *ngFor="let _ of costBreakdownItemsControls; index as i"
-           class="row"
+           class="row my-3 mx-0"
            [ngClass]="{ 'cost-breakdown-item-row' : _.get('message')?.value !== 'NOT FOUND' }"
            [formGroupName]="i">
 
 
         <!-- Cost breakdown item- Charge -->
         <ng-container *ngIf="_.value.requestStatus !== 'Deleted'">
-          <div class="col" *ngIf="!_.get('manual')?.value">
+          <div class="col-3" *ngIf="!_.get('manual')?.value">
             <input id="cost-line-item-charge"
                    type="text"
                    class="form-control"
@@ -166,7 +172,8 @@
           </div>
 
           <!-- Cost breakdown item - Type -->
-          <div class="col-1">
+          <div [ngClass]="{'col-2': readOnlyForm,
+                           'col-1': !readOnlyForm}">
             <input id="cost-line-item-type"
                    type="text"
                    class="form-control"
@@ -187,30 +194,30 @@
           </div>
 
           <!-- Cost breakdown item - totalAmount -->
-          <div class="col total-column">
+          <div [ngClass]="{'col-3': readOnlyForm,
+                           'col-2': !readOnlyForm}">
             <app-fal-currency-input
               [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
               formControlName="totalAmount"
-              [isDisabled]="readOnlyForm"
-            >
-
+              [isDisabled]="readOnlyForm">
             </app-fal-currency-input>
-
             <small class="error-text"
                    *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
               Base Rate Amount is required
             </small>
           </div>
 
-          <div class="col" *ngIf="!readOnlyForm">
-            <div *ngIf="_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')">
+          <div class="col-2" *ngIf="!readOnlyForm">
+            <div
+              *ngIf="_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')">
               <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon"
                    (click)="onEditCostLineItem(_, costBreakdownItemsControls)">edit
               </div>
               <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
               <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_)">delete</div>
             </div>
-            <div *ngIf="!(_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract'))">
+            <div
+              *ngIf="!(_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract'))">
             </div>
           </div>
 
@@ -268,10 +275,16 @@
       <div class="col-1">Attachment</div>
       <div class="col-1">Rate Source</div>
       <div class="col-1">Rate</div>
-      <div class="col-1">Type</div>
+      <div [ngClass]="{'col-2': readOnlyForm,
+                       'col-1': !readOnlyForm}">
+        Type
+      </div>
       <div class="col-1">Quantity</div>
-      <div class="total-column-header">Total</div>
-      <div *ngIf="!readOnlyForm" class="col-2 pending-action-label">Actions</div>
+      <div [ngClass]="{'col-3': readOnlyForm,
+                       'col-2': !readOnlyForm}">
+        Total
+      </div>
+      <div *ngIf="!readOnlyForm" class="col-2">Actions</div>
     </div>
 
     <ng-container *ngIf="pendingChargeLineItemControls && pendingChargeLineItemControls.length > 0 && isPrepaid">
@@ -330,7 +343,8 @@
         </div>
 
         <!-- Pending breakdown item - Type -->
-        <div class="col-1">
+        <div [ngClass]="{'col-2': readOnlyForm,
+                         'col-1': !readOnlyForm}">
           <input id="pending-line-item-type"
                  type="text"
                  class="form-control"
@@ -351,7 +365,8 @@
         </div>
 
         <!-- Pending breakdown item - totalAmount -->
-        <div class="total-column">
+        <div [ngClass]="{'col-3': readOnlyForm,
+                          'col-2': !readOnlyForm}">
           <app-fal-currency-input
             id="pending-line-item-total"
             [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
@@ -425,10 +440,16 @@
       <div class="col-3">Charge</div>
       <div class="col-1">Attachment</div>
       <div class="col-1">Rate Source</div>
-      <div class="col-2">Rate</div>
-      <div class="col-2">Type</div>
+      <div class="col-1">Rate</div>
+      <div [ngClass]="{'col-2': readOnlyForm,
+                       'col-1': !readOnlyForm}">
+        Type
+      </div>
       <div class="col-1">Quantity</div>
-      <div class="col-1 total-column-header">Total</div>
+      <div [ngClass]="{'col-3': readOnlyForm,
+                        'col-2': !readOnlyForm}">
+        Total
+      </div>
     </div>
 
     <ng-container *ngIf="deniedChargeLineItemControls && deniedChargeLineItemControls.length > 0 && isPrepaid">
@@ -477,7 +498,7 @@
         </div>
 
         <!-- Denied breakdown item - Rate -->
-        <div class="col-2">
+        <div class="col-1">
           <input id="denied-line-item-rate"
                  type="text"
                  class="form-control text-right"
@@ -487,7 +508,8 @@
         </div>
 
         <!-- Denied breakdown item - Type -->
-        <div class="col-2">
+        <div [ngClass]="{'col-2': readOnlyForm,
+                         'col-1': !readOnlyForm}">
           <input id="denied-line-item-type"
                  type="text"
                  class="form-control"
@@ -508,7 +530,8 @@
         </div>
 
         <!-- Denied breakdown item - totalAmount -->
-        <div class="total-column">
+        <div [ngClass]="{'col-3': readOnlyForm,
+                         'col-2': !readOnlyForm}">
           <app-fal-currency-input
             id="denied-line-item-total"
             [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
@@ -553,7 +576,7 @@
       <div class="col-2">Response Comments</div>
       <div class="col-1">Closed Date</div>
       <div class="col-1">Closed By</div>
-      <div *ngIf="!readOnlyForm" class="col-2 dispute-action-label">Actions</div>
+      <div *ngIf="!readOnlyForm" class="col-2">Actions</div>
     </div>
     <ng-container *ngIf="disputeLineItemControls && disputeLineItemControls.length > 0 && isPrepaid">
       <div *ngFor="let _ of disputeLineItemControls; index as i"
