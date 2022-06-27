@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpHandler, HttpInterceptor, HttpRequest, HttpEvent, HTTP_INTERCEPTORS} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
+import {EMPTY, Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {ErrorService} from './error-service';
 import {LoadingService} from './loading-service';
@@ -24,7 +24,7 @@ export class FalHttpInterceptor implements HttpInterceptor {
     return next.handle(modifiedReq).pipe(
       catchError(errResponse => {
         // tslint:disable-next-line:triple-equals
-        if (errResponse.status != 422) {
+        if (errResponse.status != 422 && errResponse.status != 502) {
           console.log(errResponse);
           const status = errResponse.status;
           const message = this.extractMessage(errResponse);
