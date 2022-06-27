@@ -418,7 +418,8 @@
                             [margin]="'0 0 0 120px'"
                             [padding]="'10px'"
                             id="pending-deny-button"
-                            [isDisabled]="readOnlyForm">
+                            [isDisabled]="readOnlyForm"
+                            (buttonClick)="denyCharge(_.value)">
                   <span>Deny</span>
                 </elm-button>
               </ng-template>
