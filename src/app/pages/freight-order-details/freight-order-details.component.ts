@@ -69,7 +69,7 @@ export class FreightOrderDetailsComponent implements OnInit {
 
   }
 
-  editFreightOrder(freightOrder: any) {
+  editFreightOrder(freightOrder: any): void {
     freightOrder.isEdit = false;
   }
 
