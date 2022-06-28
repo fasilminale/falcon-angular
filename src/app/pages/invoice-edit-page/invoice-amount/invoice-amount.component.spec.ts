@@ -710,7 +710,6 @@ describe('InvoiceAmountComponent', () => {
     await promise;
     expect(component.getAccessorialDetails.emit).toHaveBeenCalledTimes(1);
     expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
-    expect(component.rateEngineCall.emit).not.toHaveBeenCalled();
     expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
   });
 

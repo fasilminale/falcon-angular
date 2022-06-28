@@ -338,6 +338,7 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
         newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
         this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+        this.rateEngineCall.emit(this.pendingAccessorialCode);
       } else {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
