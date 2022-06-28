@@ -243,7 +243,7 @@ export class InvoiceAmountComponent implements OnInit {
     this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls, invoiceAmountDetail?.deniedChargeLineItems);
     this.insertLineItems(this.deletedChargeLineItems, this.deletedChargeLineItemControls, invoiceAmountDetail?.deletedChargeLineItems);
     this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
-    givenFormGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal ?? '');
+    givenFormGroup.get('amountOfInvoice')?.setValue(parseFloat(invoiceAmountDetail?.amountOfInvoice ?? '0'));
   }
 
   insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
