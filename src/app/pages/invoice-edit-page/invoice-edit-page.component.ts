@@ -272,7 +272,7 @@ export class InvoiceEditPageComponent implements OnInit {
               );
             }
           },
-          (error) => { 
+          (error) => {
             console.error(error);
           }
         )
@@ -312,6 +312,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
   mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
+      amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
       pendingChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems),
       disputeLineItems: this.getDisputeLineItems(this.invoiceAmountFormGroup.controls.disputeLineItems),
