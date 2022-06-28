@@ -19,7 +19,7 @@
           <input type="text" class="form-control" formControlName="allocationPercent"
           [ngClass]="{ 'error-div' : !invoiceAllocation.get('allocationPercent')?.value }"
             [value]="invoiceAllocation.get('allocationPercent')?.value | percent"
-            [attr.disabled]="isEditMode? '': null" />
+            [attr.disabled]="true" />
             <small class="error-text col-2" *ngIf="!invoiceAllocation.get('allocationPercent')?.value" [ngClass]="{ 'mt-3' : true }" >
               Allocation % is missing
             </small>
@@ -30,7 +30,7 @@
 
           <input type="text" class="form-control" formControlName="customerCategory"
           [ngClass]="{ 'error-div' : !invoiceAllocation.get('customerCategory')?.value }"
-            [attr.disabled]="isEditMode? '': null" />
+            [attr.disabled]="true" />
             <small class="error-text col-2" *ngIf="!invoiceAllocation.get('customerCategory')?.value" [ngClass]="{ 'mt-3' : true }" >
               Customer Category is missing
             </small>
@@ -93,7 +93,7 @@
           <app-fal-currency-input
             [isError]="invoiceAllocation.get('allocationAmount')?.value === 0"
             formControlName="allocationAmount"
-            [isDisabled]="isEditMode"
+            [isDisabled]="true"
           >
 
           </app-fal-currency-input>
