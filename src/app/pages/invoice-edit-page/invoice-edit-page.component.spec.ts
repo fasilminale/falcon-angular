@@ -578,6 +578,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     const setUpControlsForInvalidGlLineItems = () => {
@@ -596,6 +597,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', invalidGlLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should call performPostUpdateActions when update succeeds', () => {
@@ -670,6 +672,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
@@ -771,6 +774,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should return EditAutoInvoiceModel object', () => {
@@ -779,6 +783,7 @@ describe('InvoiceEditPageComponent', () => {
       const result = component.mapTripInformationToEditAutoInvoiceModel();
 
       expect(result).toEqual({
+        amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
         mode: {
           mode: component.tripInformationFormGroup.controls.carrierMode.value.mode,
           reportKeyMode: component.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
