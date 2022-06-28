@@ -7,7 +7,7 @@ import {of, Subject, throwError} from 'rxjs';
 import {InvoiceService} from '../../services/invoice-service';
 import {MockParamMap} from '../../testing/test-utils';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ToastService, UserInfo} from '@elm/elm-styleguide-ui';
+import {ElmButtonComponent, ToastService, UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
 import {CommentModel, UtilService} from '../../services/util-service';
@@ -16,6 +16,8 @@ import {RateService} from '../../services/rate-service';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Location} from '../../models/location/location-model';
+import {By} from '@angular/platform-browser';
+import {environment} from '../../../environments/environment';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -373,6 +375,18 @@ describe('InvoiceEditPageComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
   });
 
+  it('#clickCancelButton should ask the user to confirm canceling changes', async (done) => {
+    component.isEditMode$.value = true;
+    component.invoiceFormGroup.markAsDirty();
+    spyOn(component, 'askForCancelConfirmation').and.callThrough();
+    component.clickCancelButton();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.askForCancelConfirmation).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
+    done();
+  });
+
   it('#clickDeleteButton', done => {
     // Setup
     const deleteInvoice$ = new Subject<any>();
@@ -564,6 +578,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     const setUpControlsForInvalidGlLineItems = () => {
@@ -582,6 +597,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', invalidGlLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should call performPostUpdateActions when update succeeds', () => {
@@ -656,6 +672,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
@@ -757,6 +774,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should return EditAutoInvoiceModel object', () => {
@@ -765,6 +783,7 @@ describe('InvoiceEditPageComponent', () => {
       const result = component.mapTripInformationToEditAutoInvoiceModel();
 
       expect(result).toEqual({
+        amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
         mode: {
           mode: component.tripInformationFormGroup.controls.carrierMode.value.mode,
           reportKeyMode: component.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,

@@ -17,13 +17,16 @@
     </div>
     <div class="row mb-3">
       <div class="col">
-        <input type="text=" [value]="totalGrossWeight" [disabled]="true" class="form-control col-1" matInput [(ngModel)]="totalGrossWeight" >
+        <input type="text=" [value]="totalGrossWeight" [disabled]="true" class="form-control col-1" matInput
+               [(ngModel)]="totalGrossWeight">
       </div>
       <div class="col">
-        <input type="text=" [value]="totalVolume" [disabled]="true" class="form-control col-1" matInput [(ngModel)]="totalVolume" >
+        <input type="text=" [value]="totalVolume" [disabled]="true" class="form-control col-1" matInput
+               [(ngModel)]="totalVolume">
       </div>
       <div class="col">
-        <input type="text=" [value]="totalPalletCount" [disabled]="true" class="form-control col-1" matInput [(ngModel)]="totalPalletCount" >
+        <input type="text=" [value]="totalPalletCount" [disabled]="true" class="form-control col-1" matInput
+               [(ngModel)]="totalPalletCount">
       </div>
     </div>
   </div>
@@ -32,21 +35,21 @@
   </elm-section-header>
 
   <table #templateTable summary="freightOrders" mat-table [dataSource]="freightOrders"
-    class="col-md-12" [ngClass]="freightOrders && freightOrders.length > 0 ? '' : 'hide'">
+         class="col-md-12" [ngClass]="freightOrders && freightOrders.length > 0 ? '' : 'hide'">
 
     <ng-container matColumnDef="freightOrderNumber">
-      <th id="freightOrderNumber" mat-header-cell *matHeaderCellDef> Freight Order </th>
+      <th id="freightOrderNumber" mat-header-cell *matHeaderCellDef> Freight Order</th>
       <td mat-cell class="width-140" [ngClass]="{ 'missing-error' : !freightOrder.freightOrderId }"
           *matCellDef="let freightOrder"> {{freightOrder.freightOrderId || 'Missing'}}</td>
     </ng-container>
 
     <ng-container matColumnDef="tmsLoadId">
-      <th id="tmsLoadId" mat-header-cell *matHeaderCellDef> TMS Load ID </th>
+      <th id="tmsLoadId" mat-header-cell *matHeaderCellDef> TMS Load ID</th>
       <td mat-cell class="width-110" *matCellDef="let freightOrder"> {{freightOrder.tmsLoadID}}</td>
     </ng-container>
 
     <ng-container matColumnDef="shippingPoint">
-      <th id="shippingPoint" mat-header-cell *matHeaderCellDef> Ship Pt </th>
+      <th id="shippingPoint" mat-header-cell *matHeaderCellDef> Ship Pt</th>
       <td mat-cell class="width-80" [ngClass]="{ 'missing-error' : !freightOrder.shippingPoint }"
           *matCellDef="let freightOrder"> {{freightOrder.shippingPoint || 'Missing'}}</td>
     </ng-container>
@@ -58,7 +61,7 @@
     </ng-container>
 
     <ng-container matColumnDef="customerCategory">
-      <th id="customerCategory" mat-header-cell *matHeaderCellDef> Cust Catg </th>
+      <th id="customerCategory" mat-header-cell *matHeaderCellDef> Cust Catg</th>
       <td mat-cell class="width-100" [ngClass]="{ 'missing-error' : !freightOrder.customerCategory }"
           *matCellDef="let freightOrder"> {{freightOrder.customerCategory || 'Missing'}}</td>
     </ng-container>
@@ -82,7 +85,7 @@
 
     <ng-container matColumnDef="destination">
       <th id="destination" class="width-150" mat-header-cell *matHeaderCellDef> Destination</th>
-      <td  style="padding-right: 5px;" mat-cell  *matCellDef="let freightOrder">
+      <td style="padding-right: 5px;" mat-cell *matCellDef="let freightOrder">
         {{freightOrder.destination.address}}
         {{freightOrder.destination.address2}}
         {{freightOrder.destination.city}},
@@ -92,12 +95,12 @@
     </ng-container>
 
     <ng-container matColumnDef="grossWeight">
-      <th id="grossWeight"  class="width-90" mat-header-cell *matHeaderCellDef>Gross Weight</th>
-      <td  class="padding-right-5" mat-cell *matCellDef="let freightOrder">
+      <th id="grossWeight" class="width-90" mat-header-cell *matHeaderCellDef>Gross Weight</th>
+      <td class="padding-right-5" mat-cell *matCellDef="let freightOrder">
         <input type="text" [value]="freightOrder.weightGross.value"
-               [ngClass]="{ 'error' : !freightOrder.weightGross.value }"
-               [disabled]="freightOrder.isEdit" class="form-control col-11" matInput >
-        <elm-input-subtext *ngIf="!freightOrder.weightGross.value"
+               [ngClass]="{ 'error' : freightOrder.weightGross.value != 0 && !freightOrder.weightGross.value }"
+               [disabled]="freightOrder.isEdit" class="form-control col-11" matInput>
+        <elm-input-subtext *ngIf="freightOrder.weightGross.value != 0 && !freightOrder.weightGross.value"
                            class="input-error"
                            [isError]="true">
           Gross weight is missing
@@ -107,22 +110,25 @@
 
     <ng-container matColumnDef="volume">
       <th id="volume" class="width-90" mat-header-cell *matHeaderCellDef>Volume</th>
-      <td class="padding-right-5"  mat-cell *matCellDef="let freightOrder">
-        <input type="text=" [value]="freightOrder.volumeGross.value" [disabled]="freightOrder.isEdit" class="form-control col-11" matInput [(ngModel)]="freightOrder.volumeGross.value" >
+      <td class="padding-right-5" mat-cell *matCellDef="let freightOrder">
+        <input type="text=" [value]="freightOrder.volumeGross.value" [disabled]="freightOrder.isEdit"
+               class="form-control col-11" matInput [(ngModel)]="freightOrder.volumeGross.value">
       </td>
     </ng-container>
 
     <ng-container matColumnDef="pallets">
       <th id="pallets" class="width-90" mat-header-cell *matHeaderCellDef>Pallets</th>
       <td class="padding-right-5" mat-cell *matCellDef="let freightOrder">
-        <input type="text=" [value]="freightOrder.palletCount" [disabled]="freightOrder.isEdit" class="form-control col-11" matInput>
+        <input type="text=" [value]="freightOrder.palletCount" [disabled]="freightOrder.isEdit"
+               class="form-control col-11" matInput>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
-      <th id="actions" class="width-90" mat-header-cell *matHeaderCellDef> Action </th>
+      <th id="actions" class="width-90" mat-header-cell *matHeaderCellDef> Action</th>
       <td class="padding-left-5" mat-cell *matCellDef="let freightOrder">
-        <span *ngIf="freightOrder.isEdit ; else submit" role="button" class="disabled material-icons material-icons-outlined">
+        <span *ngIf="freightOrder.isEdit ; else submit" role="button"
+              class="disabled material-icons material-icons-outlined">
           edit
         </span>
         <span *ngIf="freightOrder.isEdit" role="button" class="disabled material-icons material-icons-outlined">
@@ -140,7 +146,7 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
   <p class="text-center" *ngIf="freightOrders.length === 0">You have no freight orders available</p>

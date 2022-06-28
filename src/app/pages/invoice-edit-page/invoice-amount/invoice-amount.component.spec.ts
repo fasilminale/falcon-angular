@@ -223,7 +223,6 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should populate form with invoice amount details', done => {
-
       const control = component.createEmptyLineItemGroup();
       control.get('charge')?.setValue(TEST_CALC_DETAIL);
       control.get('totalAmount')?.setValue('78');
@@ -233,7 +232,7 @@ describe('InvoiceAmountComponent', () => {
       loadInvoiceAmountDetail$.subscribe(() => {
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('USD');
-        expect(formGroupValue.amountOfInvoice).toBe(78);
+        expect(formGroupValue.amountOfInvoice).toBe(1000);
         expect(formGroupValue.overridePaymentTerms.isPaymentOverrideSelected).toEqual(['override']);
         expect(formGroupValue.overridePaymentTerms.paymentTerms).toBe('TestTerms');
         expect(formGroupValue.mileage).toBe('100');
@@ -711,7 +710,6 @@ describe('InvoiceAmountComponent', () => {
     await promise;
     expect(component.getAccessorialDetails.emit).toHaveBeenCalledTimes(1);
     expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
-    expect(component.rateEngineCall.emit).not.toHaveBeenCalled();
     expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
   });
 
