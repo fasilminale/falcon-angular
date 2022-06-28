@@ -14,6 +14,7 @@ import {InvoiceEditPageComponent} from './pages/invoice-edit-page/invoice-edit-p
 import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-logout-page.component';
 import {DirtyInvoiceEditFormGuard} from './services/dirty-edit-invoice-form-deactivate.guard';
 import {DirtyInvoiceCreateFormGuard} from './services/dirty-create-invoice-form-deactivate.guard';
+import {DirtyAutoInvoiceEditFormGuard} from './services/dirty-edit-auto-invoice-form-deactivate.guard';
 
 const routes: Routes = [
   {path: 'master-data', component:  MasterDataPageComponent, canActivate: [OktaAuthGuard]},
@@ -22,7 +23,7 @@ const routes: Routes = [
   {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard, RoleGuard], canDeactivate: [DirtyInvoiceCreateFormGuard], data: {
     permissions: ['falAllowAllAccess', 'falAllowInvoiceWrite']
   }},
-  {path: 'invoice/:falconInvoiceNumber/:entryType', component: InvoiceEditPageComponent, canActivate: [OktaAuthGuard]},
+  {path: 'invoice/:falconInvoiceNumber/:entryType', component: InvoiceEditPageComponent, canDeactivate: [DirtyAutoInvoiceEditFormGuard], canActivate: [OktaAuthGuard]},
   {path: 'invoice/:falconInvoiceNumber', component: InvoiceDetailPageComponent, canDeactivate: [DirtyInvoiceEditFormGuard], canActivate: [OktaAuthGuard]},
   {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {permissions: ['falAllowAllAccess', 'falAllowInvoiceWrite']
   }},

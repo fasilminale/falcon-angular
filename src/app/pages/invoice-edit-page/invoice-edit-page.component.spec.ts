@@ -7,7 +7,7 @@ import {of, Subject, throwError} from 'rxjs';
 import {InvoiceService} from '../../services/invoice-service';
 import {MockParamMap} from '../../testing/test-utils';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ToastService, UserInfo} from '@elm/elm-styleguide-ui';
+import {ElmButtonComponent, ToastService, UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
 import {CommentModel, UtilService} from '../../services/util-service';
@@ -16,6 +16,8 @@ import {RateService} from '../../services/rate-service';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Location} from '../../models/location/location-model';
+import {By} from '@angular/platform-browser';
+import {environment} from '../../../environments/environment';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -371,6 +373,18 @@ describe('InvoiceEditPageComponent', () => {
   it('#clickCancelButton should call router to navigate to invoice list', () => {
     component.clickCancelButton();
     expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
+  });
+
+  it('#clickCancelButton should ask the user to confirm canceling changes', async (done) => {
+    component.isEditMode$.value = true;
+    component.invoiceFormGroup.markAsDirty();
+    spyOn(component, 'askForCancelConfirmation').and.callThrough();
+    component.clickCancelButton();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.askForCancelConfirmation).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
+    done();
   });
 
   it('#clickDeleteButton', done => {
