@@ -245,14 +245,36 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickToggleEditMode(): void {
     this.isEditMode$.value = !this.isEditMode$.value;
+    this.invoiceFormGroup.markAsPristine();
   }
 
   clickToggleMilestoneTab(): void {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
+  public askForCancelConfirmation(): Observable<boolean> {
+    return this.util.openConfirmationModal({
+      title: 'Cancel',
+      innerHtmlMessage: `All changes to this invoice will be lost if you cancel now.
+                   <br/><br/><strong>
+                   Are you sure you want to cancel?
+                   </strong>`,
+      confirmButtonText: 'Yes, cancel',
+      confirmButtonStyle: 'destructive',
+      cancelButtonText: 'No, go back'
+    });
+  }
+
   clickCancelButton(): void {
-    this.router.navigate(['/invoices']);
+    if (this.isEditMode$.value && this.invoiceFormGroup.dirty) {
+      this.askForCancelConfirmation().subscribe(result => {
+        if (result) {
+          this.router.navigate(['/invoices']);
+        }
+      });
+    } else {
+      this.router.navigate(['/invoices']);
+    }
   }
 
   clickSaveButton(): void {
@@ -272,7 +294,7 @@ export class InvoiceEditPageComponent implements OnInit {
               );
             }
           },
-          (error) => { 
+          (error) => {
             console.error(error);
           }
         )
