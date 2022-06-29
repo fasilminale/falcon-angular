@@ -310,7 +310,7 @@ export class TripInformationComponent implements OnInit {
   }
 
   compareServiceLevelWith(item: any, value: any): boolean {
-    return item.value.level === (value.level || value);
+    return item?.level === (value?.level || value);
   }
 
   compareCarrierWith(a: any, b: any): boolean {
