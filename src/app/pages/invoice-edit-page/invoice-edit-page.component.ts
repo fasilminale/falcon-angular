@@ -177,20 +177,13 @@ export class InvoiceEditPageComponent implements OnInit {
       confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
-    const dialogResult: Observable<CommentModel | boolean> =
-      this.requireDeleteReason()
-        ? this.util.openCommentModal({
-          ...modalData,
-          commentSectionFieldName: 'Reason for Deletion',
-          requireField: true
-        })
-        : this.util.openConfirmationModal(modalData);
-    dialogResult.subscribe((result: CommentModel | boolean) => {
+    this.util.openCommentModal({
+      ...modalData,
+      commentSectionFieldName: 'Reason for Deletion',
+      requireField: true
+    }).subscribe((result: CommentModel) => {
       if (result) {
-        const request = this.requireDeleteReason()
-          ? this.deleteInvoiceWithReason({deletedReason: result})
-          : this.deleteInvoice();
-        request.subscribe(
+        this.deleteInvoiceWithReason({deletedReason: result.comment}).subscribe(
           () => this.router.navigate(
             [`/invoices`],
             {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}}
@@ -534,16 +527,8 @@ export class InvoiceEditPageComponent implements OnInit {
     }).subscribe());
   }
 
-  private deleteInvoice(): Observable<any> {
-    return this.invoiceService.deleteInvoice(this.falconInvoiceNumber);
-  }
-
   private deleteInvoiceWithReason(deletedReasonParameters: any): Observable<any> {
     return this.invoiceService.deleteInvoiceWithReason(this.falconInvoiceNumber, deletedReasonParameters);
-  }
-
-  private requireDeleteReason(): boolean {
-    return this.isAutoInvoice && this.isApprovedInvoice;
   }
 
   private resolveDispute(disputeParameters: any): Observable<any> {
