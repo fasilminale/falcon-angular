@@ -205,6 +205,12 @@
                          [isError]="true">
         Service Level is missing<br/>
       </elm-input-subtext>
+      <elm-input-subtext
+        *ngIf="serviceLevelControl.value && !!validateIsOption(filteredServiceLevels, compareServiceLevelWith)(serviceLevelControl)"
+        class="input-error"
+        [isError]="true">
+        Service Level "{{serviceLevelControl.value}}" missing from master data<br/>
+      </elm-input-subtext>
     </div>
   </div>
   <br/>

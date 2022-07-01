@@ -15,7 +15,7 @@ import {CarrierDetailModel} from '../../../models/master-data-models/carrier-det
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 
-describe('TripInformationComponent', () => {
+fdescribe('TripInformationComponent', () => {
 
   let component: TripInformationComponent;
   let fixture: ComponentFixture<TripInformationComponent>;
@@ -835,12 +835,12 @@ describe('TripInformationComponent', () => {
   describe('should compare with service level', () => {
     it('should return true', () => {
       fixture.detectChanges();
-      expect(component.compareServiceLevelWith({value: {level: 't1'}}, {level: 't1'})).toBeTrue();
+      expect(component.compareServiceLevelWith({level: 't1'}, {level: 't1'})).toBeTrue();
     });
 
     it('should return false', () => {
       fixture.detectChanges();
-      expect(component.compareServiceLevelWith({value: {level: 't1'}}, {level: 't2'})).toBeFalse();
+      expect(component.compareServiceLevelWith({level: 't1'}, {level: 't2'})).toBeFalse();
     });
 
   });
