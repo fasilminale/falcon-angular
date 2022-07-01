@@ -58,11 +58,7 @@ export class InvoiceAmountComponent implements OnInit {
 
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
-    this.amountOfInvoiceControl.valueChanges.subscribe(() => {
-        debugger;
-        this.requestGlAllocation.emit(true);
-      }
-    );
+    this.amountOfInvoiceControl.valueChanges.subscribe(() => this.requestGlAllocation.emit(true));
     givenFormGroup.setControl('amountOfInvoice', this.amountOfInvoiceControl);
     givenFormGroup.setControl('currency', new FormControl(''));
     givenFormGroup.setControl('overridePaymentTerms', this.overridePaymentTermsFormGroup);
