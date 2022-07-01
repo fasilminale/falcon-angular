@@ -277,6 +277,24 @@ describe('InvoiceEditPageComponent', () => {
         ratesResponse$.next(true);
       });
 
+      it('handle getRates response with rate engine error', done => {
+        // Setup
+        const ratesResponse$ = new Subject<any>();
+        asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
+        component.invoice = new InvoiceDataModel();
+        component.invoice.hasRateEngineError = true;
+        component.getRates('testAccessorialCode');
+
+        // Assertions
+        ratesResponse$.subscribe(() => {
+          expect(rateService.rateInvoice).toHaveBeenCalled();
+          done();
+        });
+
+        // Run Test
+        ratesResponse$.next(true);
+      });
+
       it('should load milestones', done => {
         // Assertions
         routeParamMap$.subscribe(() => {
