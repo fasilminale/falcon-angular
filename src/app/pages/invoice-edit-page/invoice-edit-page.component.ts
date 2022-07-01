@@ -23,7 +23,6 @@ import {switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {Location} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
-import {KeyedLabel} from '../../models/generic/keyed-label';
 
 
 @Component({
@@ -55,7 +54,6 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
   public chargeLineItemOptions$ = new Subject<RateDetailResponse>();
-  public rateEngineCallResult$ = new Subject<RatesResponse>();
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public invoice: InvoiceDataModel = new InvoiceDataModel();
@@ -368,6 +366,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoice.destination = this.extractLocation(destinationAddressFormGroup);
     this.invoice.costLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems);
     this.invoice.pendingChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems);
+    this.invoice.amountOfInvoice = this.invoiceAmountFormGroup.controls.amountOfInvoice?.value;
   }
 
   extractLocation(locationFormGroup: FormGroup): Location {
@@ -504,11 +503,24 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.checkAccessorialData(this.invoice)) {
       this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => {
-          this.toastService.openSuccessToast(`Success. Invoice charges have been re-rated`);
+          this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
           this.loadInvoice(ratedInvoiced);
         }
       );
     }
+  }
+
+  onGlAllocationRequestEvent(request: boolean): void {
+    if (!request) {
+      return;
+    }
+    this.updateInvoiceFromForms();
+    this.rateService.glAllocateInvoice(this.invoice).subscribe(
+      glAllocatedInvoice => {
+        this.toastService.openSuccessToast('Success. Invoice GL Lines have been re-allocated.');
+        this.loadInvoice(glAllocatedInvoice);
+      }
+    );
   }
 
   /**

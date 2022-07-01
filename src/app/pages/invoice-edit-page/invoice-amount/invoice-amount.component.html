@@ -24,8 +24,7 @@
                               formControlName="amountOfInvoice"
                               [isDisabled]="readOnlyForm"
                               [isError]="!_formGroup.get('amountOfInvoice')?.value"
-                              *ngIf="isPrepaid"
-      >
+                              *ngIf="isPrepaid">
       </app-fal-currency-input>
       <input class="form-control input_na" disabled type="text" value="N/A" *ngIf="!isPrepaid">
 
