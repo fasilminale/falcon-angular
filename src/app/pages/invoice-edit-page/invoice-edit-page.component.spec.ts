@@ -387,34 +387,6 @@ describe('InvoiceEditPageComponent', () => {
     done();
   });
 
-  it('#clickDeleteButton', done => {
-    // Setup
-    const deleteInvoice$ = new Subject<any>();
-    asSpy(invoiceService.deleteInvoice).and.returnValue(deleteInvoice$.asObservable());
-    const confirmationModal$ = new Subject<boolean>();
-    asSpy(utilService.openConfirmationModal).and.returnValue(confirmationModal$.asObservable());
-    component.clickDeleteButton();
-    const TEST_DELETE_FAILURE = new Error('TEST DELETE FAILURE');
-
-    // Assertions
-    confirmationModal$.subscribe(() => {
-      expect(utilService.openConfirmationModal).toHaveBeenCalled();
-      deleteInvoice$.error(TEST_DELETE_FAILURE);
-    });
-    deleteInvoice$.subscribe(response => {
-        fail('Expected to receive error response, but was ' + response);
-        done();
-      },
-      error => {
-        expect(error).toBe(TEST_DELETE_FAILURE);
-        done();
-      }
-    );
-
-    // Run Test
-    confirmationModal$.next(true);
-  });
-
   it('#clickDeleteButton with deleted reason', done => {
     // Setup
     component.isAutoInvoice = true;
