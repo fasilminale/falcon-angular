@@ -15,7 +15,7 @@ import {CarrierDetailModel} from '../../../models/master-data-models/carrier-det
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 
-fdescribe('TripInformationComponent', () => {
+describe('TripInformationComponent', () => {
 
   let component: TripInformationComponent;
   let fixture: ComponentFixture<TripInformationComponent>;
