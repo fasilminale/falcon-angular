@@ -289,7 +289,7 @@ export class InvoiceUtils {
 
   static toModeOption(carrierModeCode: any): SelectOption<string> {
     return {
-      label: `${carrierModeCode.mode} (${carrierModeCode.mode})`,
+      label: `${carrierModeCode.reportKeyMode} (${carrierModeCode.reportModeDescription})`,
       value: carrierModeCode.mode
     };
   }
