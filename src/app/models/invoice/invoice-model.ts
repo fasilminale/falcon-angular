@@ -85,6 +85,7 @@ export class InvoiceDataModel {
   overriddenDeliveryDateTime: string;
   assumedDeliveryDateTime: string;
   tripTenderTime: string;
+  hasRateEngineError: boolean;
 
   /* --- AUTOMATED INVOICE: COST BREAKDOWN FIELDS --- */
   deliveryInstructions: Array<string>;
@@ -184,6 +185,7 @@ export class InvoiceDataModel {
     this.overriddenDeliveryDateTime = date(json?.overriddenDeliveryDateTime);
     this.assumedDeliveryDateTime = date(json?.assumedDeliveryDateTime);
     this.tripTenderTime = date(json?.tripTenderTime);
+    this.hasRateEngineError = json?.hasRateEngineError ?? false;
 
     // AUTOMATED INVOICE: COST BREAKDOWN
     this.deliveryInstructions = json?.deliveryInstructions ?? [];
