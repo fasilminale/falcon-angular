@@ -56,8 +56,10 @@ export class InvoiceAmountComponent implements OnInit {
     );
   }
 
+
   @Input() set formGroup(givenFormGroup: FormGroup) {
-    givenFormGroup.setControl('amountOfInvoice', new FormControl('', [Validators.required]));
+    this.amountOfInvoiceControl.valueChanges.subscribe(() => this.requestGlAllocation.emit(true));
+    givenFormGroup.setControl('amountOfInvoice', this.amountOfInvoiceControl);
     givenFormGroup.setControl('currency', new FormControl(''));
     givenFormGroup.setControl('overridePaymentTerms', this.overridePaymentTermsFormGroup);
     givenFormGroup.setControl('paymentTerms', new FormControl(''));
@@ -155,7 +157,7 @@ export class InvoiceAmountComponent implements OnInit {
   public readonly ellipsisPipeLimit = 10;
 
   _formGroup = new FormGroup({});
-  amountOfInvoiceControl = new FormControl();
+  amountOfInvoiceControl = new FormControl('', [Validators.required]);
   isValidCostBreakdownAmount = true;
   isPrepaid?: boolean;
 
@@ -187,9 +189,10 @@ export class InvoiceAmountComponent implements OnInit {
   pendingAccessorialCode = '';
   @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
 
-  @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
-  @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
-  @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rateEngineCall = new EventEmitter<string>();
+  @Output() getAccessorialDetails = new EventEmitter<any>();
+  @Output() resolveDisputeCall = new EventEmitter<any>();
+  @Output() requestGlAllocation = new EventEmitter<boolean>();
 
   chargeLineItemOptionsSubscription: Subscription = new Subscription();
   updateIsEditModeSubscription: Subscription = new Subscription();
@@ -246,7 +249,10 @@ export class InvoiceAmountComponent implements OnInit {
     this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls, invoiceAmountDetail?.deniedChargeLineItems);
     this.insertLineItems(this.deletedChargeLineItems, this.deletedChargeLineItemControls, invoiceAmountDetail?.deletedChargeLineItems);
     this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
-    givenFormGroup.get('amountOfInvoice')?.setValue(parseFloat(invoiceAmountDetail?.amountOfInvoice ?? '0'));
+    this.amountOfInvoiceControl.setValue(
+      parseFloat(invoiceAmountDetail?.amountOfInvoice ?? '0'),
+      {emitEvent: false}
+    );
   }
 
   insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
@@ -340,7 +346,6 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('quantity')?.setValue('N/A');
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
         newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
-        this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
         this.rateEngineCall.emit(this.pendingAccessorialCode);
       } else {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
@@ -449,7 +454,7 @@ export class InvoiceAmountComponent implements OnInit {
           } else {
             this.deniedChargeLineItemControls.push(pendingLineItem);
           }
-          this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+          this.amountOfInvoiceControl.setValue(this.costBreakdownTotal, {emitEvent: false});
           this.toastService.openSuccessToast(`Success. Charge was ${action.toLowerCase()}.`);
         }
       }
@@ -507,7 +512,9 @@ export class InvoiceAmountComponent implements OnInit {
       requireField: true
     }).pipe(first()).toPromise();
     if (dialogResult) {
-      const index = this.costBreakdownItemsControls.findIndex(lineItem => lineItem.value.accessorialCode === costLineItem.value.accessorialCode);
+      const index = this.costBreakdownItemsControls.findIndex(
+        lineItem => lineItem.value.accessorialCode === costLineItem.value.accessorialCode
+      );
       const existingCostLineItem: AbstractControl | null = this.costBreakdownItems.get(index.toString());
 
       if (existingCostLineItem) {

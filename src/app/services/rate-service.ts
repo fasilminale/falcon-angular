@@ -23,4 +23,8 @@ export class RateService {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/rates/invoice`, invoice);
   }
 
+  public glAllocateInvoice(invoice: InvoiceDataModel): Observable<InvoiceDataModel> {
+    return this.web.httpPost(`${environment.baseServiceUrl}/v1/glallocation/invoice`, invoice);
+  }
+
 }

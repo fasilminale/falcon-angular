@@ -79,6 +79,7 @@
          [chargeLineItemOptions$]="chargeLineItemOptions$.asObservable()"
          (getAccessorialDetails)="getAccessorialList()"
          (rateEngineCall)="getRates($event)"
+         (requestGlAllocation)="onGlAllocationRequestEvent($event)"
          (resolveDisputeCall)="disputeAction($event)"
          >
         </app-invoice-amount>

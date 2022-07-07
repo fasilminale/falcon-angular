@@ -7,7 +7,7 @@ import {of, Subject, throwError} from 'rxjs';
 import {InvoiceService} from '../../services/invoice-service';
 import {MockParamMap} from '../../testing/test-utils';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ElmButtonComponent, ToastService, UserInfo} from '@elm/elm-styleguide-ui';
+import {ToastService, UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
 import {CommentModel, UtilService} from '../../services/util-service';
@@ -16,8 +16,6 @@ import {RateService} from '../../services/rate-service';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {Location} from '../../models/location/location-model';
-import {By} from '@angular/platform-browser';
-import {environment} from '../../../environments/environment';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -111,11 +109,13 @@ describe('InvoiceEditPageComponent', () => {
     // Mock Toast Service
     toastService = TestBed.inject(ToastService);
     spyOn(toastService, 'openErrorToast').and.stub();
+    spyOn(toastService, 'openSuccessToast').and.stub();
 
     // Mock Web Service
     rateService = TestBed.inject(RateService);
     spyOn(rateService, 'getAccessorialDetails').and.returnValue(of());
     spyOn(rateService, 'getRates').and.returnValue(of());
+    spyOn(rateService, 'glAllocateInvoice').and.returnValue(of());
 
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
@@ -265,6 +265,24 @@ describe('InvoiceEditPageComponent', () => {
         const ratesResponse$ = new Subject<any>();
         asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
         component.invoice = new InvoiceDataModel();
+        component.getRates('testAccessorialCode');
+
+        // Assertions
+        ratesResponse$.subscribe(() => {
+          expect(rateService.rateInvoice).toHaveBeenCalled();
+          done();
+        });
+
+        // Run Test
+        ratesResponse$.next(true);
+      });
+
+      it('handle getRates response with rate engine error', done => {
+        // Setup
+        const ratesResponse$ = new Subject<any>();
+        asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
+        component.invoice = new InvoiceDataModel();
+        component.invoice.hasRateEngineError = true;
         component.getRates('testAccessorialCode');
 
         // Assertions
@@ -718,7 +736,6 @@ describe('InvoiceEditPageComponent', () => {
     it('should call ngOnInit and openSuccessToast when invoked', () => {
       const successMessage = 'I am a success message';
       spyOn(component, 'ngOnInit');
-      spyOn(toastService, 'openSuccessToast');
 
       component.performPostUpdateActions(successMessage);
 
@@ -907,6 +924,20 @@ describe('InvoiceEditPageComponent', () => {
     component.invoiceAmountFormGroup.controls.disputeLineItems = new FormControl('');
     const results = component.getDisputeLineItems(component.invoiceAmountFormGroup.controls.costDisputeItems);
     expect(results.length).toBe(0);
+  });
+
+  it('onGlAllocationRequestEvent should call backend api', done => {
+    const mockGlAllocateRequest$ = new Subject();
+    spyOn(component, 'updateInvoiceFromForms').and.stub();
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(rateService.glAllocateInvoice).and.returnValue(mockGlAllocateRequest$.asObservable());
+    component.onGlAllocationRequestEvent(true);
+    mockGlAllocateRequest$.subscribe(() => {
+      expect(component.updateInvoiceFromForms).toHaveBeenCalled();
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockGlAllocateRequest$.next({});
   });
 
 });
