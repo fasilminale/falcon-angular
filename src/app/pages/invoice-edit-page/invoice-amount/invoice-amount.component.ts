@@ -240,7 +240,10 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     (givenFormGroup.get('pendingChargeLineItems') as FormArray).clear();
-    (givenFormGroup.get('disputeLineItems') as FormArray).clear();
+    (givenFormGroup.get('disputeLineItems') as FormArray)?.clear();
+    (givenFormGroup.get('deletedChargeLineItems') as FormArray)?.clear();
+    (givenFormGroup.get('deniedChargeLineItems') as FormArray)?.clear();
+
     this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls, invoiceAmountDetail?.costLineItems);
     this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls, invoiceAmountDetail?.pendingChargeLineItems);
     this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls, invoiceAmountDetail?.deniedChargeLineItems);
