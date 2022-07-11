@@ -1,7 +1,10 @@
 <div [formGroup]="_formGroup">
   <div class="row px-1 justify-content-between">
     <!--Invoice amount div starts-->
-    <div class="col-2 headline2">Invoice Amount</div>
+    <div class="col-3 headline2">
+      Invoice Amount
+      <span *ngIf="!readOnlyForm"> (Edit Mode)</span>
+    </div>
     <!-- Re-rate Invoice -->
     <div class="col-2 d-flex justify-content-end re-rate-button">
       <elm-button id="re-rate-button"
@@ -22,7 +25,7 @@
       </label>
       <app-fal-currency-input id="invoice-amount-input"
                               formControlName="amountOfInvoice"
-                              [isDisabled]="readOnlyForm"
+                              [isDisabled]="true"
                               [isError]="!_formGroup.get('amountOfInvoice')?.value"
                               *ngIf="isPrepaid">
       </app-fal-currency-input>
@@ -43,7 +46,7 @@
                        orientation="horizontal"
                        formControlName="currency"
                        [options]="currencyOptions"
-                       [ngClass]="{'radio-dev-disabled': readOnlyForm}"
+                       [ngClass]="{'radio-dev-disabled': true}"
                        [errorSpacing]="true">
       </elm-radio-input>
     </div>
@@ -55,7 +58,7 @@
       <input id="mileage"
              class="form-control"
              formControlName="mileage"
-             [attr.disabled]="readOnlyForm? '': null"
+             [attr.disabled]="true"
       />
 
     </div>
@@ -68,7 +71,7 @@
                           checkboxStyle="checkbox"
                           [errorSpacing]="false"
                           [options]="overridePaymentTermsOptions"
-                          [attr.disabled]="readOnlyForm ? true : null"></elm-checkbox-input>
+                          [attr.disabled]="true"></elm-checkbox-input>
       <div class="payment-terms-div">
         <label class="fal-label">Payment Terms</label>
         <ng-select id="paymentTerms"
@@ -114,12 +117,12 @@
 
         <!-- Cost breakdown item- Charge -->
         <ng-container *ngIf="_.value.requestStatus !== 'Deleted'">
-          <div class="col-3" *ngIf="!_.get('manual')?.value">
+          <div class="col-3">
             <input id="cost-line-item-charge"
                    type="text"
                    class="form-control"
                    formControlName="charge"
-                   [attr.disabled]="readOnlyForm ? '': null"
+                   [attr.disabled]="true"
                    [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
             />
             <small class="error-text"
@@ -128,12 +131,12 @@
             </small>
           </div>
 
-          <div class="col-3" *ngIf="_.get('manual')?.value">
-            <elm-text-input id="cost-line-item-charge-select"
-                            formControlName="charge"
-                            [errorSpacing]="false">
-            </elm-text-input>
-          </div>
+<!--          <div class="col-3" *ngIf="_.get('manual')?.value">-->
+<!--            <elm-text-input id="cost-line-item-charge-select"-->
+<!--                            formControlName="charge"-->
+<!--                            [errorSpacing]="false">-->
+<!--            </elm-text-input>-->
+<!--          </div>-->
 
           <!-- Cost Line Item - Attachments -->
           <div class="col-1">
@@ -155,7 +158,7 @@
                    type="text"
                    class="form-control"
                    formControlName="rateSource"
-                   [attr.disabled]="readOnlyForm ? '': null"
+                   [attr.disabled]="true"
             />
           </div>
 
@@ -165,7 +168,7 @@
                    type="text"
                    class="form-control text-right"
                    formControlName="rate"
-                   [attr.disabled]="readOnlyForm ? '': null"
+                   [attr.disabled]="true"
             />
           </div>
 
@@ -175,7 +178,7 @@
                    type="text"
                    class="form-control"
                    formControlName="type"
-                   [attr.disabled]="readOnlyForm ? '' : null"
+                   [attr.disabled]="true"
             />
           </div>
 
@@ -186,7 +189,8 @@
                    class="form-control"
                    formControlName="quantity"
                    maxlength="10"
-                   [attr.disabled]="readOnlyForm ? '': null"
+                   [ngClass]="{ 'background_color_quantity': _.value.variables.length > 0 && editableField(_.value) }"
+                   [attr.disabled]="false"
             />
           </div>
 
@@ -197,7 +201,8 @@
               <app-fal-currency-input
                 [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
                 formControlName="totalAmount"
-                [isDisabled]="readOnlyForm">
+                [ngClass]="{ 'background_color_currency': _.value.variables.length === 0 && editableField(_.value) }"
+                [isDisabled]="readOnlyForm || _.value.variables.length > 0 || _.value.entrySource === 'AUTO'">
               </app-fal-currency-input>
               <small class="error-text"
                      *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
@@ -306,7 +311,7 @@
                  type="text"
                  class="form-control"
                  formControlName="charge"
-                 [attr.disabled]="readOnlyForm ? '': null"
+                 [attr.disabled]="true"
                  [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
           />
           <small class="error-text"
@@ -335,7 +340,7 @@
                  type="text"
                  class="form-control"
                  formControlName="rateSource"
-                 [attr.disabled]="readOnlyForm ? '': null"
+                 [attr.disabled]="(readOnlyForm || _.get('message')?.value !== 'NOT FOUND') ? true : null"
           />
         </div>
 
@@ -345,7 +350,7 @@
                  type="text"
                  class="form-control text-right"
                  formControlName="rate"
-                 [attr.disabled]="readOnlyForm ? '': null"
+                 [attr.disabled]="true"
           />
         </div>
 
@@ -355,7 +360,7 @@
                  type="text"
                  class="form-control"
                  formControlName="type"
-                 [attr.disabled]="readOnlyForm ? '' : null"
+                 [attr.disabled]="true"
           />
         </div>
 
@@ -366,7 +371,7 @@
                  class="form-control"
                  formControlName="quantity"
                  maxlength="10"
-                 [attr.disabled]="readOnlyForm ? '': null"
+                 [attr.disabled]="true"
           />
         </div>
 
@@ -378,7 +383,7 @@
               id="pending-line-item-total"
               [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
               formControlName="totalAmount"
-              [isDisabled]="readOnlyForm">
+              [isDisabled]="true">
             </app-fal-currency-input>
 
             <small class="error-text"
@@ -474,7 +479,7 @@
                  type="text"
                  class="form-control"
                  formControlName="charge"
-                 [attr.disabled]="readOnlyForm ? '': null"
+                 [attr.disabled]="true"
                  [ngClass]="{ 'error-div' : _.get('message')?.value === 'NOT FOUND' }"
           />
           <small class="error-text"
@@ -503,7 +508,7 @@
                  type="text"
                  class="form-control"
                  formControlName="rateSource"
-                 [attr.disabled]="readOnlyForm ? '': null"
+                 [attr.disabled]="true"
           />
         </div>
 
@@ -513,7 +518,7 @@
                  type="text"
                  class="form-control text-right"
                  formControlName="rate"
-                 [attr.disabled]="readOnlyForm ? '': null"
+                 [attr.disabled]="true"
           />
         </div>
 
@@ -523,7 +528,7 @@
                  type="text"
                  class="form-control"
                  formControlName="type"
-                 [attr.disabled]="readOnlyForm ? '' : null"
+                 [attr.disabled]="true"
           />
         </div>
 
@@ -534,7 +539,7 @@
                  class="form-control"
                  formControlName="quantity"
                  maxlength="10"
-                 [attr.disabled]="readOnlyForm ? '': null"
+                 [attr.disabled]="true"
           />
         </div>
 
@@ -544,15 +549,9 @@
                          'col-5': !readOnlyForm}">
             <app-fal-currency-input
               id="denied-line-item-total"
-              [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
               formControlName="totalAmount"
-              [isDisabled]="readOnlyForm">
+              [isDisabled]="true">
             </app-fal-currency-input>
-
-            <small class="error-text"
-                   *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
-              Base Rate Amount is required
-            </small>
           </div>
 
           <div class="col-6" *ngIf="!readOnlyForm">

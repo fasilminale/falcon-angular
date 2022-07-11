@@ -12,6 +12,14 @@
   border-radius: 5px;
 }
 
+.background_color_quantity ::ng-deep{
+  background-color: #ffffff !important;
+}
+
+.background_color_currency ::ng-deep #currency-input {
+  background-color: #ffffff !important;
+}
+
 .ng-select.ng-select-disabled ::ng-deep .ng-select-container,
 app-fal-radio-input ::ng-deep .background-disabled,
 ::ng-deep .form-control:disabled,
