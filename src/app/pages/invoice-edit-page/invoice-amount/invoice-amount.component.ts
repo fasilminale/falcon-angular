@@ -468,7 +468,7 @@ export class InvoiceAmountComponent implements OnInit {
       }
     );
     if (typeof result !== 'boolean') {
-      pendingLineItem.get('responseComment')?.setValue(result.comment);
+      pendingLineItem.get('responseComment')?.setValue(result.comment || 'N/A');
     }
     pendingLineItem.get('closedDate')?.setValue(new Date().toISOString());
     pendingLineItem.get('closedBy')?.setValue(this.userInfo?.email);
@@ -570,6 +570,11 @@ export class InvoiceAmountComponent implements OnInit {
     if (url) {
       window.open(url);
     }
+  }
+
+  public editableField(lineItem: any): boolean {
+    return lineItem.quantity !== 'N/A'
+      && lineItem.entrySource !== 'AUTO';
   }
 
 }
