@@ -88,7 +88,7 @@ describe('TripInformationComponent', () => {
     });
     it('should have controls in formGroup', () => {
       fixture.detectChanges();
-      expect(Object.keys(component.formGroup.controls).length).toBe(15);
+      expect(Object.keys(component.formGroup.controls).length).toBe(18);
     });
   });
 
@@ -1245,6 +1245,20 @@ describe('TripInformationComponent', () => {
       const b = {reportKeyMode: 'SOME', reportModeDescription: 'SOME DESC'};
       const result = component.compareCarrierModeWith(a, b);
       expect(result).toBeTrue();
+    });
+  });
+
+  describe('update total values', () => {
+    it('update the weight, volume, and pallet values', () => {
+      const totals = {
+        totalGrossWeight: 1,
+        totalVolume: 2,
+        totalPalletCount: 3,
+      };
+      component.updateFreightOrderTotals(totals);
+      expect(component.totalGrossWeight.value).toEqual(1);
+      expect(component.totalVolume.value).toEqual(2);
+      expect(component.totalPalletCount.value).toEqual(3);
     });
   });
 

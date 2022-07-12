@@ -283,6 +283,38 @@
 
   <!--Freight orders section starts here-->
   <div class="row mt-3">
+    <div class="col-lg-6">
+
+      <div class="row">
+        <div class="col">
+          <label>Total Gross Weight (lb)</label>
+
+        </div>
+        <div class="col">
+          <label>Total Volume (ft<sup>3</sup>)</label>
+
+        </div>
+        <div class="col">
+          <label>Total Pallet Ct (plt)</label>
+
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <input type="text=" [value]="totalGrossWeight" [attr.disabled]="true" class="form-control col-1" matInput
+                 formControlName="totalGrossWeight">
+        </div>
+        <div class="col">
+          <input type="text=" [value]="totalVolume" [attr.disabled]="true" class="form-control col-1" matInput
+                 formControlName="totalVolume">
+        </div>
+        <div class="col">
+          <input type="text=" [value]="totalPalletCount" [attr.disabled]="true" class="form-control col-1" matInput
+                 formControlName="totalPalletCount">
+        </div>
+      </div>
+    </div>
+
     <div class="col-md-12" (click)="toggleFreightOrderDetailsSection()">
         <span class="accordion-header" *ngIf="!showFreightOrderSection">
           <span class="material-icons">keyboard_arrow_down</span>
@@ -296,7 +328,8 @@
 
     <div id="freightOrderSectionDiv" [hidden]="!showFreightOrderSection" class="col-md-12 mt-3">
       <app-freight-order-details
-        [loadFreightOrders$]="loadFreightOrders$.asObservable()">
+        [loadFreightOrders$]="loadFreightOrders$.asObservable()"
+        (totalEmitter)="updateFreightOrderTotals($event)">
       </app-freight-order-details>
     </div>
 
