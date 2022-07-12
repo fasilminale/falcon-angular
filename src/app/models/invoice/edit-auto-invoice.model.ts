@@ -3,6 +3,7 @@ import {CarrierModeCodeReference} from '../master-data-models/carrier-mode-code-
 import {ServiceLevel} from '../master-data-models/service-level-model';
 import {GlLineItem} from '../line-item/line-item-model';
 import {CostLineItem, DisputeLineItem} from '../line-item/line-item-model';
+import { BillToLocation, Location } from "../location/location-model";
 
 export interface EditAutoInvoiceModel {
   amountOfInvoice: number;
@@ -16,4 +17,8 @@ export interface EditAutoInvoiceModel {
   disputeLineItems?: Array<DisputeLineItem>;
   deniedChargeLineItems?: Array<CostLineItem>;
   deletedChargeLineItems?: Array<CostLineItem>;
+  originAddress?: Location;
+  destinationAddress?: Location;
+  billToAddress?: BillToLocation;
+  shippingPoint?: string;
 }

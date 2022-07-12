@@ -1,6 +1,6 @@
-import {ChangeDetectorRef, Component, Inject, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {combineLatest, forkJoin, Observable, Subject} from 'rxjs';
+import {combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
@@ -12,12 +12,15 @@ import {
   CarrierModeCodeUtils
 } from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
-import {ShippingPointLocation} from 'src/app/models/location/location-model';
+import {BillToLocation, Location, ShippingPointLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation} from 'src/app/models/location/location-model';
 import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
 import {DateParserFormatter} from '../../../utils/date-parser-formatter';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
+import { SubjectValue } from 'src/app/utils/subject-value';
+import { InvoiceService } from 'src/app/services/invoice-service';
+import { InvoiceUtils } from 'src/app/models/invoice/invoice-model';
 
 const {required} = Validators;
 
@@ -44,6 +47,7 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
   ]
 })
 export class TripInformationComponent implements OnInit {
+  @Output() onUpdateAndContinueClickEvent = new EventEmitter<boolean>();
 
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
   public carrierOptions: Array<SelectOption<CarrierReference>> = [];
@@ -54,6 +58,9 @@ export class TripInformationComponent implements OnInit {
 
   public filteredCarrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
   public filteredServiceLevels: Array<SelectOption<ServiceLevel>> = [];
+  public masterDataShippingPoints: Array<ShippingPointLocationSelectOption> = [];
+  public filteredShippingPoints$ = new Subject<Array<ShippingPointLocationSelectOption>>();
+  public masterDataShippingPointWarehouses: Array<ShippingPointWarehouseLocation> = [];
 
   public tripIdControl = new FormControl();
   public vendorNumberControl = new FormControl({}, [required]);
@@ -78,7 +85,8 @@ export class TripInformationComponent implements OnInit {
     this.carrierModeControl,
     this.serviceLevelControl
   ]);
-  private tripInformation: TripInformation = {} as TripInformation;
+  public tripInformation: TripInformation = {} as TripInformation;
+  public localPeristentTripInformation: TripInformation = {} as TripInformation;
   public assumedDeliveryDateTime: Date | undefined;
   public overriddenDeliveryDateTime: Date | undefined;
   public isPickupDateTimeTendered: boolean = false;
@@ -90,7 +98,7 @@ export class TripInformationComponent implements OnInit {
   carrierDetailFound = true;
   loadOriginAddress$ = new Subject<ShippingPointLocation>();
   loadDestinationAddress$ = new Subject<ShippingPointLocation>();
-  loadBillToAddress$ = new Subject<ShippingPointLocation>();
+  loadBillToAddress$ = new Subject<BillToLocation>();
   loadFreightOrders$ = new Subject<FreightOrder[]>();
   filteredCarrierModeOptionsPopulatedSubject: Subject<number> = new Subject<number>();
 
@@ -98,24 +106,34 @@ export class TripInformationComponent implements OnInit {
   carrierModeCodeUtilsToDisplayLabel = CarrierModeCodeUtils.toDisplayLabel;
   carrierUtilsToDisplayLabel = CarrierUtils.toDisplayLabel;
 
+  public isTripEditMode$ = new SubjectValue<boolean>(false);
+
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-              private masterData: MasterDataService, private changeDetection: ChangeDetectorRef) {
+    private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
+    private invoiceService: InvoiceService) {
   }
 
   ngOnInit(): void {
     this.formGroup = this._formGroup;
     this.formGroup.disable();
+    let observables: Observable<any>[] = [this.masterData.getCarrierSCACs(),
+      this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions)),
+      this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions)),
+      this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions)),
+      this.masterData.getCarrierDetails(),
+      this.invoiceService.getMasterDataShippingPointWarehouses().pipe(map(InvoiceUtils.toShippingPointWarehouseLocations)),
+      this.invoiceService.getMasterDataShippingPoints().pipe(map(InvoiceUtils.toShippingPointLocations))];
     this.subscriptionManager.manage(
-      forkJoin([this.masterData.getCarrierSCACs(),
-        this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions)),
-        this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions)),
-        this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions)),
-        this.masterData.getCarrierDetails()]).subscribe(
+      forkJoin(observables).subscribe(
         ([carrierSCACs,
            carrierModeCodes,
            carrierReferences,
            serviceLevels,
-           carrierDetails]) => {
+           carrierDetails,
+           masterDataShippingPointWarehouses,
+           masterDataShippingPoints]) => {
+          this.masterDataShippingPointWarehouses = masterDataShippingPointWarehouses;
+          this.masterDataShippingPoints = masterDataShippingPoints;
           this.carrierSCACs = carrierSCACs;
           this.carrierOptions = carrierReferences;
           this.carrierControl.setValidators([
@@ -220,9 +238,10 @@ export class TripInformationComponent implements OnInit {
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
-      isEditMode => isEditMode
-        ? this._editableFormArray.enable()
-        : this._editableFormArray.disable()
+      isEditMode => {
+        this.isTripEditMode$.value = isEditMode;
+        this.isTripEditMode$.value ? this._editableFormArray.enable() : this._editableFormArray.disable();
+      }
     ));
   }
 
@@ -231,7 +250,12 @@ export class TripInformationComponent implements OnInit {
       this.filteredCarrierModeOptionsPopulatedSubject.asObservable(),
       observable
     ]).subscribe(([populated, tripInfo]) => {
-      this.tripInformation = tripInfo;
+      this.loadTripInformationData(tripInfo);
+    }));
+  }
+
+  loadTripInformationData(tripInfo: TripInformation) {
+    this.localPeristentTripInformation = this.tripInformation = tripInfo;
       if (this._editableFormArray.disabled) {
         this.formGroup.enable();
       }
@@ -259,6 +283,9 @@ export class TripInformationComponent implements OnInit {
       this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
       this.freightOrders.setValue(tripInfo.freightOrders ?? undefined);
       this.loadOriginAddress$.next(tripInfo.originAddress);
+      this.filteredShippingPoints$.next(this.masterDataShippingPoints.filter(function (shippingPointLocation) {
+        return shippingPointLocation.businessUnit == tripInfo.businessUnit
+      }));
       this.loadDestinationAddress$.next(tripInfo.destinationAddress);
       this.loadBillToAddress$.next(tripInfo.billToAddress);
       this.loadFreightOrders$.next(tripInfo.freightOrders);
@@ -266,7 +293,6 @@ export class TripInformationComponent implements OnInit {
       if (this._editableFormArray.disabled) {
         this.formGroup.disable();
       }
-    }));
   }
 
   derivePickupDate(tripInfo?: TripInformation): Date | undefined {
@@ -303,6 +329,79 @@ export class TripInformationComponent implements OnInit {
     return dateToReturn;
   }
 
+  clickEditButton(): void {
+    this.isTripEditMode$.value = true;
+    this._editableFormArray.enable();
+  }
+
+  clickCancelButton(): void {
+    this.isTripEditMode$.value = false;
+    this._editableFormArray.disable();
+    this.loadTripInformationData(this.localPeristentTripInformation);
+    this.onUpdateAndContinueClickEvent.emit(false);
+  }
+
+  clickUpdateButton(): void {
+    this.localPeristentTripInformation.pickUpDate = this.pickUpDateControl.value;
+    this.localPeristentTripInformation.carrier = this.carrierControl.value;
+    this.localPeristentTripInformation.carrierMode = this.carrierModeControl.value;
+    this.localPeristentTripInformation.serviceLevel = this.serviceLevelControl.value;
+
+    const originAddressFormGroup = this.originAddressFormGroup as FormGroup;
+    this.localPeristentTripInformation.originAddress = this.extractLocation(originAddressFormGroup);
+    const destinationAddressFormGroup = this.destinationAddressFormGroup as FormGroup;
+    this.localPeristentTripInformation.destinationAddress = this.extractLocation(destinationAddressFormGroup);
+    const billToAddressFormGroup = this.billToAddressFormGroup as FormGroup;
+    this.localPeristentTripInformation.billToAddress = this.extractBillToLocation(billToAddressFormGroup);
+    this.onUpdateAndContinueClickEvent.emit(true);
+  }
+
+  private extractLocation(locationFormGroup: FormGroup, type?: string): ShippingPointLocation {
+    let locationObject: ShippingPointLocation =  {
+      shippingPoint: this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value?.value),
+      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
+      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
+      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
+      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
+      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
+      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
+      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value)
+    };
+    if (type === 'origin') {
+      locationObject.code = this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value);
+    } else if (type === 'destination') {
+      locationObject.code = this.localPeristentTripInformation.destinationAddress?.code;
+    }
+    return locationObject;
+  }
+
+  extractBillToLocation(locationFormGroup: FormGroup): BillToLocation {
+    let locationObject: BillToLocation =  {
+      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
+      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
+      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
+      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
+      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
+      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
+      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value),
+      name2: this.handleNAValues(locationFormGroup?.controls?.name2?.value),
+      idCode: this.handleNAValues(locationFormGroup?.controls?.idCode?.value),
+    };
+    return locationObject;
+  }
+  
+  private handleNAValues(value: any, defaultValue?: any): any {
+    return value === 'N/A' ? defaultValue : value;
+  }
+
+  updateBillToEvent($event: any): void {
+    let shippingPointWarehouse = this.masterDataShippingPointWarehouses.find(function(spWarehouse){
+      return spWarehouse.shippingPointCode == $event
+    });
+    if (shippingPointWarehouse?.billto) {
+      this.loadBillToAddress$.next(shippingPointWarehouse?.billto);
+    }
+  }
 
   toggleFreightOrderDetailsSection(): void {
     this.showFreightOrderSection = !this.showFreightOrderSection;
