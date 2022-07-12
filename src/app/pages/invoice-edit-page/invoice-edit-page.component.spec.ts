@@ -110,11 +110,13 @@ describe('InvoiceEditPageComponent', () => {
     // Mock Toast Service
     toastService = TestBed.inject(ToastService);
     spyOn(toastService, 'openErrorToast').and.stub();
+    spyOn(toastService, 'openSuccessToast').and.stub();
 
     // Mock Web Service
     rateService = TestBed.inject(RateService);
     spyOn(rateService, 'getAccessorialDetails').and.returnValue(of());
     spyOn(rateService, 'getRates').and.returnValue(of());
+    spyOn(rateService, 'glAllocateInvoice').and.returnValue(of());
 
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
@@ -290,6 +292,24 @@ describe('InvoiceEditPageComponent', () => {
         ratesResponse$.next(true);
       });
 
+      it('handle getRates response with rate engine error', done => {
+        // Setup
+        const ratesResponse$ = new Subject<any>();
+        asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
+        component.invoice = new InvoiceDataModel();
+        component.invoice.hasRateEngineError = true;
+        component.getRates('testAccessorialCode');
+
+        // Assertions
+        ratesResponse$.subscribe(() => {
+          expect(rateService.rateInvoice).toHaveBeenCalled();
+          done();
+        });
+
+        // Run Test
+        ratesResponse$.next(true);
+      });
+
       it('should load milestones', done => {
         // Assertions
         routeParamMap$.subscribe(() => {
@@ -388,32 +408,16 @@ describe('InvoiceEditPageComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
   });
 
-  it('#clickDeleteButton', done => {
-    // Setup
-    const deleteInvoice$ = new Subject<any>();
-    asSpy(invoiceService.deleteInvoice).and.returnValue(deleteInvoice$.asObservable());
-    const confirmationModal$ = new Subject<boolean>();
-    asSpy(utilService.openConfirmationModal).and.returnValue(confirmationModal$.asObservable());
-    component.clickDeleteButton();
-    const TEST_DELETE_FAILURE = new Error('TEST DELETE FAILURE');
-
-    // Assertions
-    confirmationModal$.subscribe(() => {
-      expect(utilService.openConfirmationModal).toHaveBeenCalled();
-      deleteInvoice$.error(TEST_DELETE_FAILURE);
-    });
-    deleteInvoice$.subscribe(response => {
-        fail('Expected to receive error response, but was ' + response);
-        done();
-      },
-      error => {
-        expect(error).toBe(TEST_DELETE_FAILURE);
-        done();
-      }
-    );
-
-    // Run Test
-    confirmationModal$.next(true);
+  it('#clickCancelButton should ask the user to confirm canceling changes', async (done) => {
+    component.isEditMode$.value = true;
+    component.invoiceFormGroup.markAsDirty();
+    spyOn(component, 'askForCancelConfirmation').and.callThrough();
+    component.clickCancelButton();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(component.askForCancelConfirmation).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
+    done();
   });
 
   it('#clickDeleteButton with deleted reason', done => {
@@ -579,6 +583,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     const setUpControlsForInvalidGlLineItems = () => {
@@ -597,6 +602,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', invalidGlLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should call performPostUpdateActions when update succeeds', () => {
@@ -671,6 +677,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
@@ -744,7 +751,6 @@ describe('InvoiceEditPageComponent', () => {
     it('should call ngOnInit and openSuccessToast when invoked', () => {
       const successMessage = 'I am a success message';
       spyOn(component, 'ngOnInit');
-      spyOn(toastService, 'openSuccessToast');
 
       component.performPostUpdateActions(successMessage);
 
@@ -772,6 +778,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
     };
 
     it('should return EditAutoInvoiceModel object', () => {
@@ -780,6 +787,7 @@ describe('InvoiceEditPageComponent', () => {
       let shippingPointValue = (component.tripInformationFormGroup.controls.originAddress as FormGroup)?.controls?.shippingPoint?.value;
       
       expect(result).toEqual({
+        amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
         mode: {
           mode: component.tripInformationFormGroup.controls.carrierMode.value.mode,
           reportKeyMode: component.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
@@ -935,6 +943,20 @@ describe('InvoiceEditPageComponent', () => {
     component.invoiceAmountFormGroup.controls.disputeLineItems = new FormControl('');
     const results = component.getDisputeLineItems(component.invoiceAmountFormGroup.controls.costDisputeItems);
     expect(results.length).toBe(0);
+  });
+
+  it('onGlAllocationRequestEvent should call backend api', done => {
+    const mockGlAllocateRequest$ = new Subject();
+    spyOn(component, 'updateInvoiceFromForms').and.stub();
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(rateService.glAllocateInvoice).and.returnValue(mockGlAllocateRequest$.asObservable());
+    component.onGlAllocationRequestEvent(true);
+    mockGlAllocateRequest$.subscribe(() => {
+      expect(component.updateInvoiceFromForms).toHaveBeenCalled();
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockGlAllocateRequest$.next({});
   });
 
 });

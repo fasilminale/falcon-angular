@@ -34,7 +34,7 @@ describe('FalControlValueAccessor', () => {
     const valueSpy = spyOnProperty(component, 'value', 'set').and.stub();
     const newValue = 'new value';
     component.writeValue(newValue);
-    expect(valueSpy).toHaveBeenCalledWith(newValue);
+    expect(valueSpy).not.toHaveBeenCalledWith(newValue);
   });
 
   it('should call registered onChange function', () => {

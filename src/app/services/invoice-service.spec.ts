@@ -3,8 +3,8 @@ import {WebServices} from './web-services';
 import {of, Subscription, throwError} from 'rxjs';
 import {InvoiceService} from './invoice-service';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
-import {EditAutoInvoiceModel} from "../models/invoice/edit-auto-invoice.model";
-import {environment} from "../../environments/environment";
+import {EditAutoInvoiceModel} from '../models/invoice/edit-auto-invoice.model';
+import {environment} from '../../environments/environment';
 
 describe('InvoiceService', () => {
 
@@ -92,24 +92,24 @@ describe('InvoiceService', () => {
   });
 
   it('should return Observable when updateAutoInvoice invoked', (done) => {
-     const body: EditAutoInvoiceModel = {}
-     const falconInvoiceNumber = 'F0000001234'
-     const env = environment;
-     env.baseServiceUrl = 'https://somedomain.com';
-     spyOn(web, 'httpPut').and.returnValue(of(invoice));
-     subscription.add(invoiceService.updateAutoInvoice(body, falconInvoiceNumber).subscribe(
-       (result) => {
-         expect(result).toEqual(invoice);
-         expect(web.httpPut).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/auto/${falconInvoiceNumber}`, body);
-         done();
-       },
-       () => fail(`Subscription should have succeeded`)
-     ))
+    const body: EditAutoInvoiceModel = {} as any;
+    const falconInvoiceNumber = 'F0000001234';
+    const env = environment;
+    env.baseServiceUrl = 'https://somedomain.com';
+    spyOn(web, 'httpPut').and.returnValue(of(invoice));
+    subscription.add(invoiceService.updateAutoInvoice(body, falconInvoiceNumber).subscribe(
+      (result) => {
+        expect(result).toEqual(invoice);
+        expect(web.httpPut).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/auto/${falconInvoiceNumber}`, body);
+        done();
+      },
+      () => fail(`Subscription should have succeeded`)
+    ));
   });
 
   it('should return error when updateAutoInvoice invoked and fails', (done) => {
-    const body: EditAutoInvoiceModel = {}
-    const falconInvoiceNumber = 'F0000001234'
+    const body: EditAutoInvoiceModel = {} as any;
+    const falconInvoiceNumber = 'F0000001234';
     const env = environment;
     env.baseServiceUrl = 'https://somedomain.com';
     spyOn(web, 'httpPut').and.returnValue(throwError(new Error('Bad')));
@@ -122,7 +122,7 @@ describe('InvoiceService', () => {
         expect(web.httpPut).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/auto/${falconInvoiceNumber}`, body);
         done();
       }
-    ))
+    ));
   });
 
   it('should return Observable when getMasterDataScacs invoked', (done) => {
@@ -136,7 +136,7 @@ describe('InvoiceService', () => {
         done();
       },
       () => fail(`Subscription should have succeeded`)
-    ))
+    ));
   });
 
   it('should return error when getMasterDataScacs invoked and fails', (done) => {
@@ -152,7 +152,7 @@ describe('InvoiceService', () => {
         expect(web.httpGet).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/carriers`);
         done();
       }
-    ))
+    ));
   });
 
 });

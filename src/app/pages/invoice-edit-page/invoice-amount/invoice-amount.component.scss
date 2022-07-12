@@ -1,6 +1,6 @@
 @import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
 
-.error-div{
+.error-div {
   border: 1px solid $cardinal-red;
 }
 
@@ -12,71 +12,81 @@
   border-radius: 5px;
 }
 
+.background_color_quantity ::ng-deep{
+  background-color: #ffffff !important;
+}
+
+.background_color_currency ::ng-deep #currency-input {
+  background-color: #ffffff !important;
+}
+
 .ng-select.ng-select-disabled ::ng-deep .ng-select-container,
 app-fal-radio-input ::ng-deep .background-disabled,
 ::ng-deep .form-control:disabled,
-::ng-deep .form-control[readonly]{
+::ng-deep .form-control[readonly] {
   opacity: 0.65;
   background-color: #e5e4e4
 }
 
 ::ng-deep #currency-input {
-    div[role="radiogroup"].form-control {
-      border: none;
-      padding: 0px;
-      & > div {
-        display: flex;
-      }
+  div[role="radiogroup"].form-control {
+    border: none;
+    padding: 0px;
+
+    & > div {
+      display: flex;
     }
   }
+}
 
-  .text-right{
+.text-right {
+  text-align: right;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.pending-action-label {
+  padding-left: 8em;
+}
+
+.dispute-action-label {
+  padding-left: 5em;
+}
+
+.override-stp-checkbox-div {
+  flex-grow: 0.5;
+  align-self: center;
+  margin-top: 35px;
+}
+
+.payment-terms-div {
+  flex-grow: 4
+}
+
+.cost-breakdown-item-header {
+  background-color: #f6f6f6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.cost-breakdown-item-header > div {
+  font-size: 14px;
+  font-weight: 700;
+
+  &:last-child {
     text-align: right;
   }
+}
 
-  .text-bold {
-    font-weight: 700;
-  }
+.cost-breakdown-item-row {
+  margin-bottom: 24px;
+}
 
-  .pending-action-label{
-    padding-left: 8em;
-  }
-
-  .dispute-action-label{
-    padding-left: 5em;
-  }
-
-  .override-stp-checkbox-div{
-    flex-grow: 0.5;
-    align-self: center;
-    margin-top: 35px;
-  }
-
-  .payment-terms-div{
-    flex-grow: 4
-  }
-
-  .cost-breakdown-item-header {
-    background-color: #f6f6f6;
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
- .cost-breakdown-item-header > div{
-    font-size: 14px;
-    font-weight: 700;
-
-    &:last-child{
-      text-align: right;
-    }
- }
-
- .cost-breakdown-item-row{
-   margin-bottom: 24px;
- }
-
- .cost-breakdown-total-div {
-    background-color:#f6f6f6;
- }
+.cost-breakdown-total-div {
+  background-color: #f6f6f6;
+}
 
 .pending-line-item-header {
   background-color: #f6f6f6;
@@ -84,7 +94,7 @@ app-fal-radio-input ::ng-deep .background-disabled,
   padding-bottom: 10px;
 }
 
-.pending-line-item-header > div{
+.pending-line-item-header > div {
   font-size: 14px;
   font-weight: 700;
 }
@@ -99,28 +109,31 @@ app-fal-radio-input ::ng-deep .background-disabled,
   padding-top: 10px;
   padding-bottom: 10px;
 }
-.dispute-item-header > div{
+
+.dispute-item-header > div {
   font-size: 14px;
   font-weight: 700;
 }
+
 .dispute-item-row {
   margin-bottom: 24px;
 }
+
 .download-icon {
-  display:inline-flex;
-  vertical-align:top;
+  display: inline-flex;
+  vertical-align: top;
 }
 
 .edit-icon {
-  display:inline-flex;
-  vertical-align:top;
+  display: inline-flex;
+  vertical-align: top;
   padding: 6px;
   cursor: pointer;
 }
 
 .edit-icon-invisible {
-  display:inline-flex;
-  vertical-align:top;
+  display: inline-flex;
+  vertical-align: top;
   padding: 6px 18px;
 }
 
@@ -128,7 +141,7 @@ app-fal-radio-input ::ng-deep .background-disabled,
   margin-left: 8px;
 }
 
-.no-results{
+.no-results {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -136,7 +149,7 @@ app-fal-radio-input ::ng-deep .background-disabled,
   overflow: auto;
 }
 
-.input_na{
+.input_na {
   background-color: #e5e4e4;
   opacity: 0.65;
   text-align: right;

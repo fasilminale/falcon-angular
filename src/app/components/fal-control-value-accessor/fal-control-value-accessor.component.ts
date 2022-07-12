@@ -40,7 +40,7 @@ export class FalControlValueAccessorComponent<T> implements ControlValueAccessor
   }
 
   writeValue(obj: any): void {
-    this.value = obj as T;
+    this._value = obj as T;
   }
 
 }

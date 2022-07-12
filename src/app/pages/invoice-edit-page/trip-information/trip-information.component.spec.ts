@@ -567,6 +567,41 @@ describe('TripInformationComponent', () => {
       expect(component.isPickupDateTimeTendered).toBeFalsy();
     });
 
+    it('pickup date and tender date are the same', () => {
+
+      var customDeliveryDate = new Date(2020, 10, 30);
+      const tripInformation: TripInformation = {
+        bolNumber: 'TestBolNumber',
+        carrier: {
+          scac: 'TestScac',
+          name: 'TestCarrierName'
+
+        },
+        carrierMode: {
+          mode: 'CarrierMode',
+          reportModeDescription: 'ReportModeDescription',
+          reportKeyMode: 'ReportKeyMode'
+        },
+        deliveryDate: customDeliveryDate,
+        freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+        invoiceDate: new Date(),
+        pickUpDate: customDeliveryDate,
+        tripTenderTime: customDeliveryDate,
+        proTrackingNumber: 'TestProTrackingNumber',
+        serviceLevel: {
+          level: 'TL1',
+          name: 'TestLevel'
+        },
+        tripId: 'TestTripId',
+        freightOrders: [],
+        vendorNumber: '1234321'
+      };
+
+      component.derivePickupDate(tripInformation);
+
+      expect(component.pickupDateMatchesTenderDate).toBeTruthy();
+    });
+
     it('tripTenderTime is null', () => {
 
       var customDeliveryDate = new Date(2020, 10, 30);
@@ -1037,12 +1072,12 @@ describe('TripInformationComponent', () => {
   describe('should compare with service level', () => {
     it('should return true', () => {
       fixture.detectChanges();
-      expect(component.compareServiceLevelWith({value: {level: 't1'}}, {level: 't1'})).toBeTrue();
+      expect(component.compareServiceLevelWith({level: 't1'}, {level: 't1'})).toBeTrue();
     });
 
     it('should return false', () => {
       fixture.detectChanges();
-      expect(component.compareServiceLevelWith({value: {level: 't1'}}, {level: 't2'})).toBeFalse();
+      expect(component.compareServiceLevelWith({level: 't1'}, {level: 't2'})).toBeFalse();
     });
 
   });

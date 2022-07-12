@@ -90,6 +90,7 @@ export class TripInformationComponent implements OnInit {
   public assumedDeliveryDateTime: Date | undefined;
   public overriddenDeliveryDateTime: Date | undefined;
   public isPickupDateTimeTendered: boolean = false;
+  public pickupDateMatchesTenderDate: boolean = false;
   public arrowLabelForDeliveryDateTime: string = "";
   public showArrowForDeliveryDateTime: boolean = false;
 
@@ -295,11 +296,13 @@ export class TripInformationComponent implements OnInit {
   }
 
   derivePickupDate(tripInfo?: TripInformation): Date | undefined {
-   let deliveryDate =tripInfo?.deliveryDate?.getTime();
-    if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
+   let deliveryDate = tripInfo?.deliveryDate?.getTime();
+  if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()) {
+    this.pickupDateMatchesTenderDate = true;
+  } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
       this.isPickupDateTimeTendered = true;
-    }
-    return tripInfo?.pickUpDate ?? undefined;
+   }
+   return tripInfo?.pickUpDate ?? undefined;
   }
 
   deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
@@ -409,7 +412,7 @@ export class TripInformationComponent implements OnInit {
   }
 
   compareServiceLevelWith(item: any, value: any): boolean {
-    return item.value.level === (value.level || value);
+    return item?.level === (value?.level || value);
   }
 
   compareCarrierWith(a: any, b: any): boolean {

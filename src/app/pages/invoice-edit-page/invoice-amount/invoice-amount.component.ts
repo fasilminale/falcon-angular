@@ -20,83 +20,9 @@ import {UserInfoModel} from '../../../models/user-info/user-info-model';
 })
 export class InvoiceAmountComponent implements OnInit {
 
-  public readonly dateFormat = 'MM-dd-YYYY';
-  public readonly ellipsisPipeLimit = 10;
-
-  _formGroup = new FormGroup({});
-  amountOfInvoiceControl = new FormControl();
-  isValidCostBreakdownAmount = true;
-  isPrepaid?: boolean;
-
-  public paymentTermOptions: Array<FalRadioOption> = [
-    {value: 'Z000', display: 'Pay Immediately'},
-    {value: 'ZN14', display: 'Pay in 14 days'}
-  ];
-  public currencyOptions = [
-    {label: 'USD', value: 'USD', disabled: false},
-    {label: 'CAD', value: 'CAD', disabled: false}
-  ];
-  public overridePaymentTermsOptions = [
-    {label: 'Override Standard Payment Terms', value: 'override', disabled: false}
-  ];
-  isPaymentOverrideSelected = new FormArray([]);
-  overridePaymentTermsFormGroup = new FormGroup({
-    isPaymentOverrideSelected: this.isPaymentOverrideSelected,
-    paymentTerms: new FormControl('')
-  });
-
-  public costBreakdownOptions$: SubjectValue<Array<SelectOption<CalcDetail>>> = new SubjectValue<Array<SelectOption<CalcDetail>>>([]);
-
-  readOnlyForm = true;
-  costBreakdownItems = new FormArray([]);
-  pendingChargeLineItems = new FormArray([]);
-  deniedChargeLineItems = new FormArray([]);
-  deletedChargeLineItems = new FormArray([]);
-  disputeLineItems = new FormArray([]);
-  pendingAccessorialCode = '';
-  @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
-
-  @Output() rateEngineCall: EventEmitter<string> = new EventEmitter<string>();
-  @Output() getAccessorialDetails: EventEmitter<any> = new EventEmitter<any>();
-  @Output() resolveDisputeCall: EventEmitter<any> = new EventEmitter<any>();
-
-  chargeLineItemOptionsSubscription: Subscription = new Subscription();
-  updateIsEditModeSubscription: Subscription = new Subscription();
-  loadInvoiceOverviewDetailSubscription: Subscription = new Subscription();
-
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private utilService: UtilService,
               private toastService: ToastService) {
-  }
-
-  ngOnInit(): void {
-    this.setUpOverrideStandardPaymentTermsSubscription();
-    this.enableDisableOverrideStandardPaymentTerms(true);
-    this.enableDisableCurrency(true);
-  }
-
-  setUpOverrideStandardPaymentTermsSubscription(): void {
-    this.subscriptionManager.manage(this.isPaymentOverrideSelected.valueChanges
-      .subscribe((selected: string) => {
-        const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value;
-        if (!selectedBool) {
-          this.overridePaymentTermsFormGroup.controls.paymentTerms.reset();
-        }
-      }));
-  }
-
-  enableDisableOverrideStandardPaymentTerms(disable: boolean): void {
-    this.overridePaymentTermsOptions[0].disabled = disable;
-  }
-
-  enableDisableCurrency(disable: boolean): void {
-    if (this._formGroup.controls.currency) {
-      if (disable) {
-        this._formGroup.controls.currency.disable();
-      } else {
-        this._formGroup.controls.currency.enable();
-      }
-    }
   }
 
   @Input() set chargeLineItemOptions$(observable: Observable<RateDetailResponse>) {
@@ -130,8 +56,10 @@ export class InvoiceAmountComponent implements OnInit {
     );
   }
 
+
   @Input() set formGroup(givenFormGroup: FormGroup) {
-    givenFormGroup.setControl('amountOfInvoice', new FormControl('', [Validators.required]));
+    this.amountOfInvoiceControl.valueChanges.subscribe(() => this.requestGlAllocation.emit(true));
+    givenFormGroup.setControl('amountOfInvoice', this.amountOfInvoiceControl);
     givenFormGroup.setControl('currency', new FormControl(''));
     givenFormGroup.setControl('overridePaymentTerms', this.overridePaymentTermsFormGroup);
     givenFormGroup.setControl('paymentTerms', new FormControl(''));
@@ -147,91 +75,6 @@ export class InvoiceAmountComponent implements OnInit {
     this.insertDisputeLineItems();
     givenFormGroup.setControl('disputeLineItems', this.disputeLineItems);
     this._formGroup = givenFormGroup;
-  }
-
-  loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
-    givenFormGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal ?? '');
-    givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
-    if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
-      ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
-        this.overridePaymentTermsOptions[0], true);
-    }
-    this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ?? '');
-    givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
-    (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
-    (givenFormGroup.get('pendingChargeLineItems') as FormArray).clear();
-    (givenFormGroup.get('disputeLineItems') as FormArray).clear();
-    this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls, invoiceAmountDetail?.costLineItems);
-    this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls, invoiceAmountDetail?.pendingChargeLineItems);
-    this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls, invoiceAmountDetail?.deniedChargeLineItems);
-    this.insertLineItems(this.deletedChargeLineItems, this.deletedChargeLineItemControls, invoiceAmountDetail?.deletedChargeLineItems);
-    this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
-  }
-
-  insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
-    if (lineItems && lineItems.length > 0) {
-      lineItems.forEach((lineItem) => {
-        const group = new FormGroup({
-          attachment: new FormControl(lineItem.attachment ?? null),
-          accessorial: new FormControl(lineItem.accessorial ?? false),
-          accessorialCode: new FormControl(lineItem.accessorialCode),
-          charge: new FormControl(lineItem.chargeCode),
-          rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
-          rateSourcePair: new FormControl(lineItem.rateSource),
-          entrySource: new FormControl(lineItem.entrySource?.label ?? 'N/A'),
-          entrySourcePair: new FormControl(lineItem.entrySource),
-          rate: new FormControl(lineItem.rateAmount ? `${lineItem.rateAmount}` : 'N/A'),
-          type: new FormControl(lineItem.rateType ? lineItem.rateType : ''),
-          quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
-          totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
-          requestStatus: new FormControl(lineItem.requestStatus?.label ?? 'N/A'),
-          requestStatusPair: new FormControl(lineItem.requestStatus),
-          message: new FormControl(lineItem.message ?? 'N/A'),
-          createdBy: new FormControl(lineItem.createdBy ?? 'N/A'),
-          createdDate: new FormControl(lineItem.createdDate ?? 'N/A'),
-          closedBy: new FormControl(lineItem.closedBy ?? 'N/A'),
-          closedDate: new FormControl(lineItem.closedDate ?? 'N/A'),
-          carrierComment: new FormControl(lineItem.carrierComment ?? 'N/A'),
-          responseComment: new FormControl(lineItem.responseComment ?? 'N/A'),
-          rateResponse: new FormControl(lineItem.rateResponse ?? 'N/A'),
-          autoApproved: new FormControl(lineItem.autoApproved ?? true),
-          attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
-          planned: new FormControl(lineItem.planned ?? false),
-          fuel: new FormControl(lineItem.fuel ?? false),
-          manual: new FormControl(false),
-          lineItemType: new FormControl(lineItem.lineItemType ?? null),
-          variables: new FormControl(lineItem.variables ?? [])
-        });
-        group.get('rateSourcePair')?.valueChanges?.subscribe(
-          value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
-        );
-        group.get('entrySourcePair')?.valueChanges?.subscribe(
-          value => group.get('entrySource')?.setValue(value?.label ?? 'N/A')
-        );
-        group.get('requestStatusPair')?.valueChanges?.subscribe(
-          value => group.get('requestStatus')?.setValue(value?.label ?? 'N/A')
-        );
-        controls.push(group);
-      });
-    }
-  }
-
-  insertDisputeLineItems(disputeLineItems?: DisputeLineItem[]): void {
-    if (disputeLineItems && disputeLineItems.length > 0) {
-      this.disputeLineItems = new FormArray([]);
-      disputeLineItems.forEach((disputeLineItem) => {
-        this.disputeLineItemControls.push(new FormGroup({
-          comment: new FormControl(disputeLineItem.comment),
-          attachment: new FormControl(disputeLineItem.attachment),
-          createdDate: new FormControl(disputeLineItem.createdDate),
-          createdBy: new FormControl(disputeLineItem.createdBy),
-          disputeStatus: new FormControl(disputeLineItem.disputeStatus),
-          responseComment: new FormControl(disputeLineItem.responseComment ? disputeLineItem.responseComment : 'N/A'),
-          closedDate: new FormControl(disputeLineItem.closedDate ?? 'N/A'),
-          closedBy: new FormControl(disputeLineItem.closedBy ?? 'N/A')
-        }));
-      });
-    }
   }
 
   get costBreakdownItemsControls(): AbstractControl[] {
@@ -300,13 +143,182 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   @Input() set loadInvoiceAmountDetail$(observable: Observable<InvoiceAmountDetail>) {
-    this.subscriptionManager.manage(observable.subscribe(
+    this.invoiceAmountDetailSubscription.unsubscribe();
+    this.invoiceAmountDetailSubscription = observable.subscribe(
       invoiceAmountDetail => this.loadForm(this._formGroup, invoiceAmountDetail)
-    ));
+    );
   }
 
   get hasMileage(): boolean {
     return !!this._formGroup?.get('mileage')?.value;
+  }
+
+  public readonly dateFormat = 'MM-dd-YYYY';
+  public readonly ellipsisPipeLimit = 10;
+
+  _formGroup = new FormGroup({});
+  amountOfInvoiceControl = new FormControl('', [Validators.required]);
+  isValidCostBreakdownAmount = true;
+  isPrepaid?: boolean;
+
+  public paymentTermOptions: Array<FalRadioOption> = [
+    {value: 'Z000', display: 'Pay Immediately'},
+    {value: 'ZN14', display: 'Pay in 14 days'}
+  ];
+  public currencyOptions = [
+    {label: 'USD', value: 'USD', disabled: false},
+    {label: 'CAD', value: 'CAD', disabled: false}
+  ];
+  public overridePaymentTermsOptions = [
+    {label: 'Override Standard Payment Terms', value: 'override', disabled: false}
+  ];
+  isPaymentOverrideSelected = new FormArray([]);
+  overridePaymentTermsFormGroup = new FormGroup({
+    isPaymentOverrideSelected: this.isPaymentOverrideSelected,
+    paymentTerms: new FormControl('')
+  });
+
+  public costBreakdownOptions$: SubjectValue<Array<SelectOption<CalcDetail>>> = new SubjectValue<Array<SelectOption<CalcDetail>>>([]);
+
+  readOnlyForm = true;
+  costBreakdownItems = new FormArray([]);
+  pendingChargeLineItems = new FormArray([]);
+  deniedChargeLineItems = new FormArray([]);
+  deletedChargeLineItems = new FormArray([]);
+  disputeLineItems = new FormArray([]);
+  pendingAccessorialCode = '';
+  @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
+
+  @Output() rateEngineCall = new EventEmitter<string>();
+  @Output() getAccessorialDetails = new EventEmitter<any>();
+  @Output() resolveDisputeCall = new EventEmitter<any>();
+  @Output() requestGlAllocation = new EventEmitter<boolean>();
+
+  chargeLineItemOptionsSubscription: Subscription = new Subscription();
+  updateIsEditModeSubscription: Subscription = new Subscription();
+  loadInvoiceOverviewDetailSubscription: Subscription = new Subscription();
+
+  invoiceAmountDetailSubscription = new Subscription();
+
+  ngOnInit(): void {
+    this.setUpOverrideStandardPaymentTermsSubscription();
+    this.enableDisableOverrideStandardPaymentTerms(true);
+    this.enableDisableCurrency(true);
+  }
+
+  setUpOverrideStandardPaymentTermsSubscription(): void {
+    this.subscriptionManager.manage(this.isPaymentOverrideSelected.valueChanges
+      .subscribe((selected: string) => {
+        const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value;
+        if (!selectedBool) {
+          this.overridePaymentTermsFormGroup.controls.paymentTerms.reset();
+        }
+      }));
+  }
+
+  enableDisableOverrideStandardPaymentTerms(disable: boolean): void {
+    this.overridePaymentTermsOptions[0].disabled = disable;
+  }
+
+  enableDisableCurrency(disable: boolean): void {
+    if (this._formGroup.controls.currency) {
+      if (disable) {
+        this._formGroup.controls.currency.disable();
+      } else {
+        this._formGroup.controls.currency.enable();
+      }
+    }
+  }
+
+  loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
+    givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
+    if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
+      ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
+        this.overridePaymentTermsOptions[0], true);
+    }
+    this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ?? '');
+    givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
+    (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
+    (givenFormGroup.get('pendingChargeLineItems') as FormArray).clear();
+    (givenFormGroup.get('disputeLineItems') as FormArray)?.clear();
+    (givenFormGroup.get('deletedChargeLineItems') as FormArray)?.clear();
+    (givenFormGroup.get('deniedChargeLineItems') as FormArray)?.clear();
+
+    this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls, invoiceAmountDetail?.costLineItems);
+    this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls, invoiceAmountDetail?.pendingChargeLineItems);
+    this.insertLineItems(this.deniedChargeLineItems, this.deniedChargeLineItemControls, invoiceAmountDetail?.deniedChargeLineItems);
+    this.insertLineItems(this.deletedChargeLineItems, this.deletedChargeLineItemControls, invoiceAmountDetail?.deletedChargeLineItems);
+    this.insertDisputeLineItems(invoiceAmountDetail?.disputeLineItems);
+    this.amountOfInvoiceControl.setValue(
+      parseFloat(invoiceAmountDetail?.amountOfInvoice ?? '0'),
+      {emitEvent: false}
+    );
+  }
+
+  insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
+    if (lineItems && lineItems.length > 0) {
+      lineItems.forEach((lineItem) => {
+        const group = new FormGroup({
+          attachment: new FormControl(lineItem.attachment ?? null),
+          accessorial: new FormControl(lineItem.accessorial ?? false),
+          accessorialCode: new FormControl(lineItem.accessorialCode),
+          charge: new FormControl(lineItem.chargeCode),
+          rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
+          rateSourcePair: new FormControl(lineItem.rateSource),
+          entrySource: new FormControl(lineItem.entrySource?.label ?? 'N/A'),
+          entrySourcePair: new FormControl(lineItem.entrySource),
+          rate: new FormControl(lineItem.rateAmount ? `${lineItem.rateAmount}` : 'N/A'),
+          type: new FormControl(lineItem.rateType ? lineItem.rateType : ''),
+          quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
+          totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
+          requestStatus: new FormControl(lineItem.requestStatus?.label ?? 'N/A'),
+          requestStatusPair: new FormControl(lineItem.requestStatus),
+          message: new FormControl(lineItem.message ?? 'N/A'),
+          createdBy: new FormControl(lineItem.createdBy ?? 'N/A'),
+          createdDate: new FormControl(lineItem.createdDate ?? 'N/A'),
+          closedBy: new FormControl(lineItem.closedBy ?? 'N/A'),
+          closedDate: new FormControl(lineItem.closedDate ?? 'N/A'),
+          carrierComment: new FormControl(lineItem.carrierComment ?? 'N/A'),
+          responseComment: new FormControl(lineItem.responseComment ?? 'N/A'),
+          rateResponse: new FormControl(lineItem.rateResponse ?? 'N/A'),
+          autoApproved: new FormControl(lineItem.autoApproved ?? true),
+          attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
+          planned: new FormControl(lineItem.planned ?? false),
+          fuel: new FormControl(lineItem.fuel ?? false),
+          manual: new FormControl(false),
+          lineItemType: new FormControl(lineItem.lineItemType ?? null),
+          variables: new FormControl(lineItem.variables ?? [])
+        });
+        group.get('rateSourcePair')?.valueChanges?.subscribe(
+          value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
+        );
+        group.get('entrySourcePair')?.valueChanges?.subscribe(
+          value => group.get('entrySource')?.setValue(value?.label ?? 'N/A')
+        );
+        group.get('requestStatusPair')?.valueChanges?.subscribe(
+          value => group.get('requestStatus')?.setValue(value?.label ?? 'N/A')
+        );
+        controls.push(group);
+      });
+    }
+  }
+
+  insertDisputeLineItems(disputeLineItems?: DisputeLineItem[]): void {
+    if (disputeLineItems && disputeLineItems.length > 0) {
+      this.disputeLineItems = new FormArray([]);
+      disputeLineItems.forEach((disputeLineItem) => {
+        this.disputeLineItemControls.push(new FormGroup({
+          comment: new FormControl(disputeLineItem.comment),
+          attachment: new FormControl(disputeLineItem.attachment),
+          createdDate: new FormControl(disputeLineItem.createdDate),
+          createdBy: new FormControl(disputeLineItem.createdBy),
+          disputeStatus: new FormControl(disputeLineItem.disputeStatus),
+          responseComment: new FormControl(disputeLineItem.responseComment ? disputeLineItem.responseComment : 'N/A'),
+          closedDate: new FormControl(disputeLineItem.closedDate ?? 'N/A'),
+          closedBy: new FormControl(disputeLineItem.closedBy ?? 'N/A')
+        }));
+      });
+    }
   }
 
   async onAddChargeButtonClick(): Promise<void> {
@@ -334,7 +346,7 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('quantity')?.setValue('N/A');
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
         newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
-        this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+        this.rateEngineCall.emit(this.pendingAccessorialCode);
       } else {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
@@ -359,7 +371,7 @@ export class InvoiceAmountComponent implements OnInit {
     const rateSourcePair = new FormControl(null);
     const entrySource = new FormControl('');
     const entrySourcePair = new FormControl(null);
-    const requestStatus = new FormControl('')
+    const requestStatus = new FormControl('');
     const requestStatusPair = new FormControl(null);
     const createdDate = new FormControl(new Date().toISOString());
     const createdBy = new FormControl(null);
@@ -442,7 +454,7 @@ export class InvoiceAmountComponent implements OnInit {
           } else {
             this.deniedChargeLineItemControls.push(pendingLineItem);
           }
-          this._formGroup.get('amountOfInvoice')?.setValue(this.costBreakdownTotal);
+          this.amountOfInvoiceControl.setValue(this.costBreakdownTotal, {emitEvent: false});
           this.toastService.openSuccessToast(`Success. Charge was ${action.toLowerCase()}.`);
         }
       }
@@ -451,11 +463,12 @@ export class InvoiceAmountComponent implements OnInit {
 
   setPendingChargeResponse(responseStatus: string, pendingLineItem: AbstractControl, result: CommentModel | boolean): void {
     pendingLineItem.patchValue({
-      requestStatus: responseStatus,
-      requestStatusPair: { key: responseStatus.toUpperCase(), label: responseStatus}}
+        requestStatus: responseStatus,
+        requestStatusPair: {key: responseStatus.toUpperCase(), label: responseStatus}
+      }
     );
     if (typeof result !== 'boolean') {
-      pendingLineItem.get('responseComment')?.setValue(result.comment);
+      pendingLineItem.get('responseComment')?.setValue(result.comment || 'N/A');
     }
     pendingLineItem.get('closedDate')?.setValue(new Date().toISOString());
     pendingLineItem.get('closedBy')?.setValue(this.userInfo?.email);
@@ -468,6 +481,7 @@ export class InvoiceAmountComponent implements OnInit {
       requireField: modalData.title === 'Deny Charge'
     });
   }
+
   async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
     const editChargeDetails = await this.utilService.openEditChargeModal({
       costLineItem
@@ -498,7 +512,9 @@ export class InvoiceAmountComponent implements OnInit {
       requireField: true
     }).pipe(first()).toPromise();
     if (dialogResult) {
-      const index = this.costBreakdownItemsControls.findIndex(lineItem => lineItem.value.accessorialCode === costLineItem.value.accessorialCode);
+      const index = this.costBreakdownItemsControls.findIndex(
+        lineItem => lineItem.value.accessorialCode === costLineItem.value.accessorialCode
+      );
       const existingCostLineItem: AbstractControl | null = this.costBreakdownItems.get(index.toString());
 
       if (existingCostLineItem) {
@@ -509,7 +525,7 @@ export class InvoiceAmountComponent implements OnInit {
         existingCostLineItem.patchValue({
           responseComment: dialogResult.comment,
           requestStatus: 'Deleted',
-          requestStatusPair: { key: 'DELETED', label: 'Deleted'}
+          requestStatusPair: {key: 'DELETED', label: 'Deleted'}
         });
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
@@ -554,6 +570,11 @@ export class InvoiceAmountComponent implements OnInit {
     if (url) {
       window.open(url);
     }
+  }
+
+  public editableField(lineItem: any): boolean {
+    return lineItem.quantity !== 'N/A'
+      && lineItem.entrySource !== 'AUTO';
   }
 
 }

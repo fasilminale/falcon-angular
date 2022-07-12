@@ -23,7 +23,6 @@ import {switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocation, Location} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
-import {KeyedLabel} from '../../models/generic/keyed-label';
 
 
 @Component({
@@ -56,7 +55,6 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
   public chargeLineItemOptions$ = new Subject<RateDetailResponse>();
-  public rateEngineCallResult$ = new Subject<RatesResponse>();
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public invoice: InvoiceDataModel = new InvoiceDataModel();
@@ -186,20 +184,13 @@ export class InvoiceEditPageComponent implements OnInit {
       confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
-    const dialogResult: Observable<CommentModel | boolean> =
-      this.requireDeleteReason()
-        ? this.util.openCommentModal({
-          ...modalData,
-          commentSectionFieldName: 'Reason for Deletion',
-          requireField: true
-        })
-        : this.util.openConfirmationModal(modalData);
-    dialogResult.subscribe((result: CommentModel | boolean) => {
+    this.util.openCommentModal({
+      ...modalData,
+      commentSectionFieldName: 'Reason for Deletion',
+      requireField: true
+    }).subscribe((result: CommentModel) => {
       if (result) {
-        const request = this.requireDeleteReason()
-          ? this.deleteInvoiceWithReason({deletedReason: result})
-          : this.deleteInvoice();
-        request.subscribe(
+        this.deleteInvoiceWithReason({deletedReason: result.comment}).subscribe(
           () => this.router.navigate(
             [`/invoices`],
             {queryParams: {falconInvoiceNumber: this.falconInvoiceNumber}}
@@ -254,14 +245,36 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickToggleEditMode(): void {
     this.isEditMode$.value = !this.isEditMode$.value;
+    this.invoiceFormGroup.markAsPristine();
   }
 
   clickToggleMilestoneTab(): void {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
+  public askForCancelConfirmation(): Observable<boolean> {
+    return this.util.openConfirmationModal({
+      title: 'Cancel',
+      innerHtmlMessage: `All changes to this invoice will be lost if you cancel now.
+                   <br/><br/><strong>
+                   Are you sure you want to cancel?
+                   </strong>`,
+      confirmButtonText: 'Yes, cancel',
+      confirmButtonStyle: 'destructive',
+      cancelButtonText: 'No, go back'
+    });
+  }
+
   clickCancelButton(): void {
-    this.router.navigate(['/invoices']);
+    if (this.isEditMode$.value && this.invoiceFormGroup.dirty) {
+      this.askForCancelConfirmation().subscribe(result => {
+        if (result) {
+          this.router.navigate(['/invoices']);
+        }
+      });
+    } else {
+      this.router.navigate(['/invoices']);
+    }
   }
 
   handleTripEditModeEvent($event: boolean): void {
@@ -291,7 +304,7 @@ export class InvoiceEditPageComponent implements OnInit {
               );
             }
           },
-          (error) => { 
+          (error) => {
             console.error(error);
           }
         )
@@ -335,6 +348,7 @@ export class InvoiceEditPageComponent implements OnInit {
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress as FormGroup;
     let shippingPointValue = originAddressFormGroup?.controls?.shippingPoint?.value;
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
+      amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
       pendingChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems),
       disputeLineItems: this.getDisputeLineItems(this.invoiceAmountFormGroup.controls.disputeLineItems),
@@ -376,9 +390,11 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoice.billTo = this.extractBillToLocation(billToAddressFormGroup);
     this.invoice.costLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems);
     this.invoice.pendingChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems);
-
     let tempObject = originAddressFormGroup?.controls?.shippingPoint?.value;
     this.invoice.shippingPoint = this.handleNAValues(typeof(tempObject) == 'object' ? tempObject?.value : tempObject);
+    this.invoice.amountOfInvoice = this.invoiceAmountFormGroup.controls.amountOfInvoice?.value;
+    this.invoice.deletedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deletedChargeLineItems);
+    this.invoice.deniedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deniedChargeLineItems);
   }
 
   extractLocation(locationFormGroup: FormGroup, type?: string): Location {
@@ -535,13 +551,29 @@ export class InvoiceEditPageComponent implements OnInit {
   getRates(accessorialCode: string): void {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
-      this.rateService.rateInvoice(this.invoice).subscribe(
+      this.rateService.rateInvoice({
+        ...this.invoice,
+        deliveryInstructions: this.invoice.hasRateEngineError ? this.invoice.deliveryInstructions : []
+      }).subscribe(
         ratedInvoiced => {
-          this.toastService.openSuccessToast(`Success. Invoice charges have been re-rated`);
+          this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
           this.loadInvoice(ratedInvoiced);
         }
       );
     }
+  }
+
+  onGlAllocationRequestEvent(request: boolean): void {
+    if (!request) {
+      return;
+    }
+    this.updateInvoiceFromForms();
+    this.rateService.glAllocateInvoice(this.invoice).subscribe(
+      glAllocatedInvoice => {
+        this.toastService.openSuccessToast('Success. Invoice GL Lines have been re-allocated.');
+        this.loadInvoice(glAllocatedInvoice);
+      }
+    );
   }
 
   /**
@@ -567,16 +599,8 @@ export class InvoiceEditPageComponent implements OnInit {
     }).subscribe());
   }
 
-  private deleteInvoice(): Observable<any> {
-    return this.invoiceService.deleteInvoice(this.falconInvoiceNumber);
-  }
-
   private deleteInvoiceWithReason(deletedReasonParameters: any): Observable<any> {
     return this.invoiceService.deleteInvoiceWithReason(this.falconInvoiceNumber, deletedReasonParameters);
-  }
-
-  private requireDeleteReason(): boolean {
-    return this.isAutoInvoice && this.isApprovedInvoice;
   }
 
   private resolveDispute(disputeParameters: any): Observable<any> {

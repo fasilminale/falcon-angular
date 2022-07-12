@@ -62,10 +62,11 @@
       <label id="pickup-date-label" for="pickUpDateInput"
              class="fal-label">
         Pick up Date
-        <span id="pickup-date-container" *ngIf="isPickupDateTimeTendered">
+        <span id="pickup-date-container" *ngIf="isPickupDateTimeTendered || pickupDateMatchesTenderDate">
           &nbsp;
           <mat-icon class="pickup-date-icon">label_important</mat-icon>
-          <span class="pickup-date-icon-message">{{ 'TENDER' }}</span>
+          <span class="pickup-date-icon-message" *ngIf="isPickupDateTimeTendered">{{ 'TENDER' }}</span>
+          <span class="pickup-date-icon-message" *ngIf="pickupDateMatchesTenderDate">{{ 'ESTIMATED' }}</span>
         </span>
       </label>
       <elm-date-picker id="pickUpDateInput"
@@ -219,6 +220,12 @@
                          class="input-error"
                          [isError]="true">
         Service Level is missing<br/>
+      </elm-input-subtext>
+      <elm-input-subtext
+        *ngIf="serviceLevelControl.value && !!validateIsOption(filteredServiceLevels, compareServiceLevelWith)(serviceLevelControl)"
+        class="input-error"
+        [isError]="true">
+        Service Level "{{serviceLevelControl.value}}" missing from master data<br/>
       </elm-input-subtext>
     </div>
   </div>
