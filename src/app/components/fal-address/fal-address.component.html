@@ -3,25 +3,27 @@
     <div *ngIf="showShippingItemField" class="col-md-12 mb-30">
       <label for="shippingPoint"
              class="shippingPoint">
-        {{ addressType === 'origin' ? 'Shipping Point(optional)' : 'Location'}}
+        {{ addressType === 'origin' ? 'Shipping Point' : 'Location'}}
       </label>
       <ng-select id="shippingPoint"
-                 [items]="shippingPointItems"
+                 [items]="addressType === 'origin' || (addressType === 'destination' && destinationType == 'DC') ? masterDataShippingPoints : shippingPointItems"
                  formControlName="shippingPoint"
-                >
+                 (change)="onShippingPointChange($event)">
       </ng-select>
       <elm-input-subtext *ngIf="_formGroup.get('shippingPoint')?.errors?.required"
                          [isError]="true">
         {{ addressType === 'origin' ? 'Shipping Point' : 'Location'}} is required
       </elm-input-subtext>
     </div>
+    <input id="name2" formControlName="name2" type="hidden" />
+    <input id="idCode" formControlName="idCode" type="hidden" />
     <div class="col-md-12">
         <label for="country"
                class="country">
           Country
         </label>
        <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
-        <elm-text-input id="country"
+        <elm-text-input id="country" 
                         formControlName="country" [errorSpacing]="!_formGroup.get('country')?.value && validateField">
         </elm-text-input>
         <elm-input-subtext *ngIf="!_formGroup.get('country')?.value && validateField"

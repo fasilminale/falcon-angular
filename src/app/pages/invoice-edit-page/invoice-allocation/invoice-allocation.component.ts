@@ -88,7 +88,6 @@ export class InvoiceAllocationComponent implements OnInit {
     this.invoiceAllocationsControls.forEach((item: any) => {
       const totalAmount = item.get('allocationAmount')?.value;
       if (!isNaN(parseFloat(totalAmount))) {
-        debugger;
         this.totalAllocationAmount += parseFloat(totalAmount.toFixed(2));
       }
     });

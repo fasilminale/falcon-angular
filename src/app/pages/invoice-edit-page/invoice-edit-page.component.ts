@@ -21,7 +21,7 @@ import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
 import {switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
-import {Location} from '../../models/location/location-model';
+import {BillToLocation, Location} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 
@@ -50,6 +50,7 @@ export class InvoiceEditPageComponent implements OnInit {
   public invoiceAllocationFormGroup: FormGroup;
 
   public isEditMode$ = new SubjectValue<boolean>(false);
+  public isTripEditMode$ = new SubjectValue<boolean>(false);
   public loadTripInformation$ = new Subject<TripInformation>();
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
@@ -105,6 +106,9 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isEditableInvoice = StatusUtil.isEditable(invoice.status);
     this.isAutoInvoice = invoice.entryType === EntryType.AUTO;
     this.invoiceStatus = invoice.status.label;
+    if (this.tripInformationFormGroup.disabled) {
+      this.tripInformationFormGroup.enable();
+    }
     this.loadTripInformation$.next({
       tripId: invoice.tripId,
       vendorNumber: invoice.vendorNumber ?? undefined,
@@ -115,9 +119,11 @@ export class InvoiceEditPageComponent implements OnInit {
       proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
       bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A',
       freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,
+      destinationType: invoice.destinationType,
+      businessUnit: invoice.businessUnit,
       originAddress: {...invoice.origin, shippingPoint: invoice.shippingPoint},
       destinationAddress: {...invoice.destination, shippingPoint: invoice.shippingPoint},
-      billToAddress: {...invoice.billTo, shippingPoint: invoice.shippingPoint},
+      billToAddress: {...invoice.billTo},
       serviceLevel: invoice.serviceLevel,
       carrier: invoice.carrier,
       carrierMode: invoice.mode,
@@ -126,6 +132,9 @@ export class InvoiceEditPageComponent implements OnInit {
       assumedDeliveryDateTime: invoice.assumedDeliveryDateTime ? new Date(invoice.assumedDeliveryDateTime) : undefined,
       tripTenderTime: invoice.tripTenderTime ? new Date(invoice.tripTenderTime) : undefined
     });
+    if (this.tripInformationFormGroup.enabled) {
+      this.tripInformationFormGroup.disable();
+    }
     this.loadInvoiceOverviewDetail$.next({
       invoiceNetAmount: invoice.amountOfInvoice ? parseFloat(invoice.amountOfInvoice) : 0.0,
       invoiceDate: new Date(invoice.invoiceDate),
@@ -255,6 +264,16 @@ export class InvoiceEditPageComponent implements OnInit {
     this.router.navigate(['/invoices']);
   }
 
+  handleTripEditModeEvent($event: boolean): void {
+    if ($event) {
+      this.isEditMode$.value = true;
+      this.getRates('');
+    } else {
+      this.isEditMode$.value = false;
+    }
+    this.isTripEditMode$.value = false;
+  }
+
   clickSaveButton(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
       this.subscriptions.manage(
@@ -311,6 +330,10 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   mapTripInformationToEditAutoInvoiceModel(): EditAutoInvoiceModel {
+    const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
+    const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
+    const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress as FormGroup;
+    let shippingPointValue = originAddressFormGroup?.controls?.shippingPoint?.value;
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
       pendingChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems),
@@ -331,24 +354,35 @@ export class InvoiceEditPageComponent implements OnInit {
         name: this.tripInformationFormGroup.controls.serviceLevel.value.name,
       },
       pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value,
-      glLineItemList: this.invoiceAllocationFormGroup.controls.invoiceAllocations.value
+      glLineItemList: this.invoiceAllocationFormGroup.controls.invoiceAllocations.value,
+      originAddress: this.extractLocation(originAddressFormGroup, 'origin'),
+      destinationAddress: this.extractLocation(destinationAddressFormGroup, 'destination'),
+      billToAddress: this.extractBillToLocation(billToAddressFormGroup),
+      shippingPoint: typeof(shippingPointValue) == 'object' ? shippingPointValue?.value : shippingPointValue
     };
     return editAutoInvoiceModel;
   }
 
   updateInvoiceFromForms(): void {
+    this.invoice.pickupDateTime = this.tripInformationFormGroup.controls.pickUpDate?.value;
+    this.invoice.serviceLevel = this.tripInformationFormGroup.controls.serviceLevel?.value;
     this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode?.value;
     this.invoice.carrier = this.tripInformationFormGroup.controls.carrier?.value;
     const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
-    this.invoice.origin = this.extractLocation(originAddressFormGroup);
+    this.invoice.origin = this.extractLocation(originAddressFormGroup, 'origin');
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
-    this.invoice.destination = this.extractLocation(destinationAddressFormGroup);
+    this.invoice.destination = this.extractLocation(destinationAddressFormGroup, 'destination');
+    const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress as FormGroup;
+    this.invoice.billTo = this.extractBillToLocation(billToAddressFormGroup);
     this.invoice.costLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems);
     this.invoice.pendingChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems);
+
+    let tempObject = originAddressFormGroup?.controls?.shippingPoint?.value;
+    this.invoice.shippingPoint = this.handleNAValues(typeof(tempObject) == 'object' ? tempObject?.value : tempObject);
   }
 
-  extractLocation(locationFormGroup: FormGroup): Location {
-    return {
+  extractLocation(locationFormGroup: FormGroup, type?: string): Location {
+    let locationObject: Location = {
       name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
       city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
       country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
@@ -357,6 +391,28 @@ export class InvoiceEditPageComponent implements OnInit {
       address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
       address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value)
     };
+    if (type === 'origin') {
+      let tempObject = locationFormGroup?.controls?.shippingPoint?.value;
+      locationObject.code = this.handleNAValues(typeof(tempObject) == 'object' ? tempObject?.value : tempObject);
+    } else if (type === 'destination') {
+      locationObject.code = this.invoice.destination.code;
+    }
+    return locationObject;
+  }
+
+  extractBillToLocation(locationFormGroup: FormGroup): BillToLocation {
+    let locationObject: BillToLocation =  {
+      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
+      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
+      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
+      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
+      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
+      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
+      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value),
+      name2: this.handleNAValues(locationFormGroup?.controls?.name2?.value),
+      idCode: this.handleNAValues(locationFormGroup?.controls?.idCode?.value),
+    };
+    return locationObject;
   }
 
   getDisputeLineItems(items: AbstractControl): Array<DisputeLineItem> {

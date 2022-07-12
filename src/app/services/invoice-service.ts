@@ -6,6 +6,7 @@ import {Injectable} from '@angular/core';
 import {Invoice, InvoiceDataModel} from '../models/invoice/invoice-model';
 import { FreightOrder } from '../models/invoice/freight-model';
 import {EditAutoInvoiceModel} from "../models/invoice/edit-auto-invoice.model";
+import { ShippingPointWarehouseLocation } from '../models/location/location-model';
 
 @Injectable()
 export class InvoiceService {
@@ -69,6 +70,10 @@ export class InvoiceService {
 
   public getMasterDataShippingPoints(): Observable<Array<any>> {
     return this.web.httpGet(`${environment.baseServiceUrl}/v1/carrierShippingPoints`);
+  }
+
+  public getMasterDataShippingPointWarehouses(): Observable<Array<any>> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/carrierShippingPointWarehouses`);
   }
 
   public getInvoice(invoiceNumber: string): Observable<InvoiceDataModel> {

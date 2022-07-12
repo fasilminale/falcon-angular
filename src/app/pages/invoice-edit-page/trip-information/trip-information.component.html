@@ -1,5 +1,20 @@
 <div [formGroup]="formGroup">
-  <div class="headline2">Trip Information</div>
+  <div class="headline2 row">
+    <div class="col-4">
+      Trip Information
+      <span *ngIf="isTripEditMode$.value" class="text-primary">(Edit Mode)</span>
+    </div>
+    <div class="col-4 float-right">
+      <elm-button id="edit-button"
+                  buttonType="button"
+                  buttonStyle="primary"
+                  class="flex-shrink-1 header-button"
+                  [isDisabled]="isTripEditMode$.value"
+                  (buttonClick)="clickEditButton()">
+        Edit
+      </elm-button>
+    </div>
+  </div>
   <div class="row">
     <div class="col-4">
       <label for="tripIdInput"
@@ -216,11 +231,13 @@
       </label>
       <elm-card id="originAddressCard">
         <app-fal-address
-          [formGroup]="originAddressFormGroup"
           [addressType]="'origin'"
+          [formGroup]="originAddressFormGroup"
+          [destinationType]="tripInformation.destinationType"
           [loadAddress$]="loadOriginAddress$.asObservable()"
-        >
-
+          [updateIsEditMode$]="isTripEditMode$.asObservable()"
+          [loadFilteredShippingPointLocations$]="filteredShippingPoints$.asObservable()"
+          (originShippingPointChangeEvent)="updateBillToEvent($event)">
         </app-fal-address>
       </elm-card>
     </div>
@@ -231,10 +248,12 @@
       </label>
       <elm-card id="destinationAddressCard">
         <app-fal-address
-          [formGroup]="destinationAddressFormGroup"
           [addressType]="'destination'"
+          [formGroup]="destinationAddressFormGroup"
+          [destinationType]="tripInformation.destinationType"
           [loadAddress$]="loadDestinationAddress$.asObservable()"
-        >
+          [updateIsEditMode$]="isTripEditMode$.asObservable()"
+          [loadFilteredShippingPointLocations$]="filteredShippingPoints$.asObservable()">
         </app-fal-address>
       </elm-card>
     </div>
@@ -272,6 +291,25 @@
       <app-freight-order-details
         [loadFreightOrders$]="loadFreightOrders$.asObservable()">
       </app-freight-order-details>
+    </div>
+
+    <div *ngIf="isTripEditMode$.value" class="col-12 d-flex justify-content-end">
+      <elm-button id="cancel-button"
+                  buttonType="button"
+                  buttonStyle="secondary"
+                  class="mx-3"
+                  [isDisabled]="!isTripEditMode$.value"
+                  (buttonClick)="clickCancelButton()">
+        Cancel
+      </elm-button>
+      <elm-button id="update-button"
+                  buttonType="button"
+                  buttonStyle="primary"
+                  class=""
+                  [isDisabled]="!isTripEditMode$.value"
+                  (buttonClick)="clickUpdateButton()">
+        Update & Continue
+      </elm-button>
     </div>
   </div>
 </div>

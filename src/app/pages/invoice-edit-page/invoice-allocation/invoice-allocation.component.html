@@ -21,7 +21,7 @@
             [value]="invoiceAllocation.get('allocationPercent')?.value | percent"
             [attr.disabled]="isEditMode? '': null" />
             <small class="error-text col-2" *ngIf="!invoiceAllocation.get('allocationPercent')?.value" [ngClass]="{ 'mt-3' : true }" >
-              Allocation % is missing
+              Allocation % is missing 
             </small>
         </div>
 
