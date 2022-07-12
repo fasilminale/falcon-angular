@@ -52,6 +52,10 @@ export class TripInformationComponent implements OnInit {
   public carrierSCACs: Array<CarrierSCAC> = [];
   public carrierDetails: Array<CarrierDetailModel> = [];
 
+  public totalGrossWeight = new FormControl(0);
+  public totalVolume = new FormControl(0);
+  public totalPalletCount = new FormControl(0);
+
   public filteredCarrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
   public filteredServiceLevels: Array<SelectOption<ServiceLevel>> = [];
 
@@ -172,6 +176,9 @@ export class TripInformationComponent implements OnInit {
     givenFormGroup.setControl('destinationAddress', this.destinationAddressFormGroup);
     givenFormGroup.setControl('billToAddress', this.billToAddressFormGroup);
     givenFormGroup.setControl('freightOrders', this.freightOrders);
+    givenFormGroup.setControl('totalGrossWeight', this.totalGrossWeight);
+    givenFormGroup.setControl('totalVolume', this.totalVolume);
+    givenFormGroup.setControl('totalPalletCount', this.totalPalletCount);
     this._formGroup = givenFormGroup;
   }
 
@@ -344,6 +351,12 @@ export class TripInformationComponent implements OnInit {
     if (!this.filteredServiceLevels.some(opt => opt.value.level === serviceLevelValue)) {
       this.serviceLevelControl.setValue(null);
     }
+  }
+
+  updateFreightOrderTotals(totals: any): void {
+    this.totalGrossWeight.setValue(totals.totalGrossWeight);
+    this.totalVolume.setValue(totals.totalVolume);
+    this.totalPalletCount.setValue(totals.totalPalletCount);
   }
 }
 
