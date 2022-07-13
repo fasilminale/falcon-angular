@@ -6,7 +6,6 @@ import {Injectable} from '@angular/core';
 import {Invoice, InvoiceDataModel} from '../models/invoice/invoice-model';
 import { FreightOrder } from '../models/invoice/freight-model';
 import {EditAutoInvoiceModel} from "../models/invoice/edit-auto-invoice.model";
-import { ShippingPointWarehouseLocation } from '../models/location/location-model';
 
 @Injectable()
 export class InvoiceService {

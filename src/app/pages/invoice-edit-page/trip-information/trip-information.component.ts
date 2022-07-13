@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
+import {combineLatest, forkJoin, Observable, Subject} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
@@ -12,7 +12,7 @@ import {
   CarrierModeCodeUtils
 } from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
-import {BillToLocation, Location, ShippingPointLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation} from 'src/app/models/location/location-model';
+import {BillToLocation, ShippingPointLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation} from 'src/app/models/location/location-model';
 import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
@@ -354,11 +354,11 @@ export class TripInformationComponent implements OnInit {
     this.localPeristentTripInformation.carrierMode = this.carrierModeControl.value;
     this.localPeristentTripInformation.serviceLevel = this.serviceLevelControl.value;
 
-    const originAddressFormGroup = this.originAddressFormGroup as FormGroup;
+    const originAddressFormGroup = this.originAddressFormGroup;
     this.localPeristentTripInformation.originAddress = this.extractLocation(originAddressFormGroup, 'origin');
-    const destinationAddressFormGroup = this.destinationAddressFormGroup as FormGroup;
+    const destinationAddressFormGroup = this.destinationAddressFormGroup;
     this.localPeristentTripInformation.destinationAddress = this.extractLocation(destinationAddressFormGroup, 'destination');
-    const billToAddressFormGroup = this.billToAddressFormGroup as FormGroup;
+    const billToAddressFormGroup = this.billToAddressFormGroup;
     this.localPeristentTripInformation.billToAddress = this.extractBillToLocation(billToAddressFormGroup);
     this.onUpdateAndContinueClickEvent.emit(true);
   }
@@ -384,7 +384,7 @@ export class TripInformationComponent implements OnInit {
   }
 
   extractBillToLocation(locationFormGroup: FormGroup): BillToLocation {
-    let locationObject: BillToLocation =  {
+    return {
       name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
       city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
       country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
@@ -395,7 +395,6 @@ export class TripInformationComponent implements OnInit {
       name2: this.handleNAValues(locationFormGroup?.controls?.name2?.value),
       idCode: this.handleNAValues(locationFormGroup?.controls?.idCode?.value),
     };
-    return locationObject;
   }
   
   handleNAValues(value: any, defaultValue?: any): any {
