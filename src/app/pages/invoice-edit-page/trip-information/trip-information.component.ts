@@ -12,7 +12,7 @@ import {
   CarrierModeCodeUtils
 } from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
-import {BillToLocation, ShippingPointLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation} from 'src/app/models/location/location-model';
+import {BillToLocation, BillToLocationUtils, LocationUtils, ShippingPointLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation} from 'src/app/models/location/location-model';
 import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
@@ -355,50 +355,12 @@ export class TripInformationComponent implements OnInit {
     this.localPeristentTripInformation.serviceLevel = this.serviceLevelControl.value;
 
     const originAddressFormGroup = this.originAddressFormGroup;
-    this.localPeristentTripInformation.originAddress = this.extractLocation(originAddressFormGroup, 'origin');
+    this.localPeristentTripInformation.originAddress = LocationUtils.extractShippingPointLocation(originAddressFormGroup, 'origin');
     const destinationAddressFormGroup = this.destinationAddressFormGroup;
-    this.localPeristentTripInformation.destinationAddress = this.extractLocation(destinationAddressFormGroup, 'destination');
+    this.localPeristentTripInformation.destinationAddress = LocationUtils.extractShippingPointLocation(destinationAddressFormGroup, 'destination', this.localPeristentTripInformation.destinationAddress?.code);
     const billToAddressFormGroup = this.billToAddressFormGroup;
-    this.localPeristentTripInformation.billToAddress = this.extractBillToLocation(billToAddressFormGroup);
+    this.localPeristentTripInformation.billToAddress = BillToLocationUtils.extractBillToLocation(billToAddressFormGroup);
     this.onUpdateAndContinueClickEvent.emit(true);
-  }
-
-  extractLocation(locationFormGroup: FormGroup, type?: string): ShippingPointLocation {
-    let locationObject: ShippingPointLocation =  {
-      shippingPoint: this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value?.value),
-      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
-      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
-      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
-      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
-      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
-      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
-      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value)
-    };
-    if (type === 'origin') {
-      locationObject.code = this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value);
-    }
-    if (type === 'destination') {
-      locationObject.code = this.localPeristentTripInformation.destinationAddress?.code;
-    }
-    return locationObject;
-  }
-
-  extractBillToLocation(locationFormGroup: FormGroup): BillToLocation {
-    return {
-      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
-      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
-      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
-      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
-      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
-      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
-      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value),
-      name2: this.handleNAValues(locationFormGroup?.controls?.name2?.value),
-      idCode: this.handleNAValues(locationFormGroup?.controls?.idCode?.value),
-    };
-  }
-  
-  handleNAValues(value: any, defaultValue?: any): any {
-    return value === 'N/A' ? defaultValue : value;
   }
 
   updateBillToEvent($event: any): void {

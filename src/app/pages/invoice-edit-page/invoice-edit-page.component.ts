@@ -21,7 +21,7 @@ import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
 import {switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
-import {BillToLocation, Location} from '../../models/location/location-model';
+import {BillToLocation, BillToLocationUtils, CommonUtils, Location, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
 
 
@@ -347,7 +347,7 @@ export class InvoiceEditPageComponent implements OnInit {
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress;
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress;
 
-    let originLocation = this.extractLocation(originAddressFormGroup, 'origin');
+    let originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
@@ -371,8 +371,8 @@ export class InvoiceEditPageComponent implements OnInit {
       pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value,
       glLineItemList: this.invoiceAllocationFormGroup.controls.invoiceAllocations.value,
       originAddress: originLocation,
-      destinationAddress: this.extractLocation(destinationAddressFormGroup, 'destination'),
-      billToAddress: this.extractBillToLocation(billToAddressFormGroup),
+      destinationAddress: LocationUtils.extractLocation(destinationAddressFormGroup, 'destination', this.invoice.destination.code),
+      billToAddress: BillToLocationUtils.extractBillToLocation(billToAddressFormGroup),
       shippingPoint: originLocation.code
     };
   }
@@ -383,50 +383,17 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode?.value;
     this.invoice.carrier = this.tripInformationFormGroup.controls.carrier?.value;
     const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
-    this.invoice.origin = this.extractLocation(originAddressFormGroup, 'origin');
+    this.invoice.origin = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
-    this.invoice.destination = this.extractLocation(destinationAddressFormGroup, 'destination');
+    this.invoice.destination = LocationUtils.extractLocation(destinationAddressFormGroup, 'destination', this.invoice.destination.code);
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress as FormGroup;
-    this.invoice.billTo = this.extractBillToLocation(billToAddressFormGroup);
+    this.invoice.billTo = BillToLocationUtils.extractBillToLocation(billToAddressFormGroup);
     this.invoice.costLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems);
     this.invoice.pendingChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems);
-    this.invoice.shippingPoint = this.handleNAValues(originAddressFormGroup.controls.shippingPoint?.value);
+    this.invoice.shippingPoint = CommonUtils.handleNAValues(originAddressFormGroup.controls.shippingPoint?.value);
     this.invoice.amountOfInvoice = this.invoiceAmountFormGroup.controls.amountOfInvoice?.value;
     this.invoice.deletedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deletedChargeLineItems);
     this.invoice.deniedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deniedChargeLineItems);
-  }
-
-  extractLocation(locationFormGroup: any, type?: string): Location {
-    let locationObject: Location = {
-      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
-      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
-      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
-      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
-      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
-      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
-      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value)
-    };
-    if (type === 'origin') {
-      locationObject.code = this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value);
-    }
-    if (type === 'destination') {
-      locationObject.code = this.invoice.destination.code;
-    }
-    return locationObject;
-  }
-
-  extractBillToLocation(locationFormGroup: any): BillToLocation {
-    return {
-      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
-      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
-      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
-      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
-      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
-      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
-      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value),
-      name2: this.handleNAValues(locationFormGroup?.controls?.name2?.value),
-      idCode: this.handleNAValues(locationFormGroup?.controls?.idCode?.value),
-    };
   }
 
   getDisputeLineItems(items: AbstractControl): Array<DisputeLineItem> {
@@ -439,17 +406,17 @@ export class InvoiceEditPageComponent implements OnInit {
       const item = control as FormGroup;
       results.push({
 
-        comment: this.handleNAValues(item.controls?.comment?.value),
-        attachment: this.handleNAValues(item.controls?.attachment?.value),
-        createdDate: this.handleNAValues(item.controls?.createdDate?.value),
-        createdBy: this.handleNAValues(item.controls?.createdBy?.value),
+        comment: CommonUtils.handleNAValues(item.controls?.comment?.value),
+        attachment: CommonUtils.handleNAValues(item.controls?.attachment?.value),
+        createdDate: CommonUtils.handleNAValues(item.controls?.createdDate?.value),
+        createdBy: CommonUtils.handleNAValues(item.controls?.createdBy?.value),
         disputeStatus: {
-          key: this.handleNAValues(item.controls?.disputeStatus?.value?.key),
-          label: this.handleNAValues(item.controls?.disputeStatus?.value?.label)
+          key: CommonUtils.handleNAValues(item.controls?.disputeStatus?.value?.key),
+          label: CommonUtils.handleNAValues(item.controls?.disputeStatus?.value?.label)
         },
-        responseComment: this.handleNAValues(item.controls?.responseComment?.value),
-        closedDate: this.handleNAValues(item.controls?.closedDate?.value),
-        closedBy: this.handleNAValues(item.controls?.closedBy?.value)
+        responseComment: CommonUtils.handleNAValues(item.controls?.responseComment?.value),
+        closedDate: CommonUtils.handleNAValues(item.controls?.closedDate?.value),
+        closedBy: CommonUtils.handleNAValues(item.controls?.closedBy?.value)
 
       });
     }
@@ -465,40 +432,36 @@ export class InvoiceEditPageComponent implements OnInit {
     for (const control of lineItems.controls) {
       const item = control as FormGroup;
       results.push({
-        accessorialCode: this.handleNAValues(item.controls?.accessorialCode?.value),
-        chargeCode: this.handleNAValues(item.controls?.charge?.value),
-        attachment: this.handleNAValues(item.controls?.attachment?.value),
-        attachmentRequired: this.handleNAValues(item.controls?.attachmentRequired?.value),
-        autoApproved: this.handleNAValues(item.controls?.autoApproved?.value),
-        carrierComment: this.handleNAValues(item.controls?.carrierComment?.value),
-        chargeLineTotal: this.handleNAValues(item.controls?.totalAmount?.value),
-        closedBy: this.handleNAValues(item.controls?.closedBy?.value),
-        closedDate: this.handleNAValues(item.controls?.closedDate?.value),
+        accessorialCode: CommonUtils.handleNAValues(item.controls?.accessorialCode?.value),
+        chargeCode: CommonUtils.handleNAValues(item.controls?.charge?.value),
+        attachment: CommonUtils.handleNAValues(item.controls?.attachment?.value),
+        attachmentRequired: CommonUtils.handleNAValues(item.controls?.attachmentRequired?.value),
+        autoApproved: CommonUtils.handleNAValues(item.controls?.autoApproved?.value),
+        carrierComment: CommonUtils.handleNAValues(item.controls?.carrierComment?.value),
+        chargeLineTotal: CommonUtils.handleNAValues(item.controls?.totalAmount?.value),
+        closedBy: CommonUtils.handleNAValues(item.controls?.closedBy?.value),
+        closedDate: CommonUtils.handleNAValues(item.controls?.closedDate?.value),
         costName: '',
-        createdBy: this.handleNAValues(item.controls?.createdBy?.value),
-        createdDate: this.handleNAValues(item.controls?.createdDate?.value),
-        entrySource: this.handleNAValues(item.controls?.entrySourcePair?.value),
+        createdBy: CommonUtils.handleNAValues(item.controls?.createdBy?.value),
+        createdDate: CommonUtils.handleNAValues(item.controls?.createdDate?.value),
+        entrySource: CommonUtils.handleNAValues(item.controls?.entrySourcePair?.value),
         expanded: false,
-        fuel: this.handleNAValues(item.controls?.fuel?.value),
-        manual: this.handleNAValues(item.controls?.manual?.value),
-        message: this.handleNAValues(item.controls?.message?.value),
-        planned: this.handleNAValues(item.controls?.planned?.value),
-        quantity: this.handleNAValues(item.controls?.quantity?.value),
-        rateAmount: this.handleNAValues(item.controls?.rate?.value),
-        rateResponse: this.handleNAValues(item.controls?.rateResponse?.value),
-        rateSource: this.handleNAValues(item.controls?.rateSourcePair?.value),
-        rateType: this.handleNAValues(item.controls?.type?.value),
-        requestStatus: this.handleNAValues(item.controls?.requestStatusPair?.value),
-        responseComment: this.handleNAValues(item.controls?.responseComment?.value),
-        lineItemType: this.handleNAValues(item.controls?.lineItemType?.value),
+        fuel: CommonUtils.handleNAValues(item.controls?.fuel?.value),
+        manual: CommonUtils.handleNAValues(item.controls?.manual?.value),
+        message: CommonUtils.handleNAValues(item.controls?.message?.value),
+        planned: CommonUtils.handleNAValues(item.controls?.planned?.value),
+        quantity: CommonUtils.handleNAValues(item.controls?.quantity?.value),
+        rateAmount: CommonUtils.handleNAValues(item.controls?.rate?.value),
+        rateResponse: CommonUtils.handleNAValues(item.controls?.rateResponse?.value),
+        rateSource: CommonUtils.handleNAValues(item.controls?.rateSourcePair?.value),
+        rateType: CommonUtils.handleNAValues(item.controls?.type?.value),
+        requestStatus: CommonUtils.handleNAValues(item.controls?.requestStatusPair?.value),
+        responseComment: CommonUtils.handleNAValues(item.controls?.responseComment?.value),
+        lineItemType: CommonUtils.handleNAValues(item.controls?.lineItemType?.value),
         variables: item.controls?.variables?.value ?? []
       });
     }
     return results;
-  }
-
-  handleNAValues(value: any, defaultValue?: any): any {
-    return value === 'N/A' ? defaultValue : value;
   }
 
   private createRequest(accessorialCode: string): RateEngineRequest {
