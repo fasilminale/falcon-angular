@@ -296,7 +296,6 @@ export class InvoiceEditPageComponent implements OnInit {
               this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated.`);
             } else {
               this.toastService.openErrorToast('The Invoice Allocations line items have values which do not match with master data.');
-              this.clickToggleEditMode();
               this.subscriptions.manage(
                 new Observable((observer: Observer<object>) => {
                   observer.next({});
