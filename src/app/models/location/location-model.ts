@@ -18,6 +18,17 @@ export const EMPTY_LOCATION: Location = {
   zipCode: ''
 };
 
+export const EMPTY_BILL_TO_LOCATION: BillToLocation = {
+  name: '',
+  address: '',
+  city: '',
+  state: '',
+  country: '',
+  zipCode: '',
+  idCode: '',
+  name2: ''
+};
+
 export interface ShippingPointLocation extends Location{
   shippingPoint?: string;
 }

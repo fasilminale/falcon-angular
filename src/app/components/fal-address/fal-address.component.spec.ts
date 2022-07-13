@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormArray, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { EMPTY_LOCATION, ShippingPointLocation, ShippingPointLocationSelectOption } from 'src/app/models/location/location-model';
+import { BillToLocation, EMPTY_LOCATION, ShippingPointLocation, ShippingPointLocationSelectOption } from 'src/app/models/location/location-model';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
 import { FalAddressComponent } from './fal-address.component';
@@ -62,6 +62,7 @@ describe('FalAddressComponent', () => {
         location: {
           name: 'TestName',
           address: 'TestAddress',
+          address2: 'TestAddress2',
           city: 'TestCity',
           state: 'TestState',
           country: 'TestCountry',
@@ -78,6 +79,7 @@ describe('FalAddressComponent', () => {
       expect(component._formGroup.get('zipCode')?.value).toBe(shippingPointSelect.location.zipCode);
       expect(component._formGroup.get('state')?.value).toBe(shippingPointSelect.location.state);
       expect(component._formGroup.get('streetAddress')?.value).toBe(shippingPointSelect.location.address);
+      expect(component._formGroup.get('streetAddress2')?.value).toBe(shippingPointSelect.location.address2);
       flush();
     }));
 
@@ -107,7 +109,7 @@ describe('FalAddressComponent', () => {
 
   describe('should loadAddress$', () => {
     let updateIsEditMode$: Subject<boolean>;
-    let loadAddress$: Subject<ShippingPointLocation>;
+    let loadAddress$: Subject<any>;
     let loadFilteredShippingPointLocations$: Subject<ShippingPointLocationSelectOption[]>;
     beforeEach(() => {
       loadAddress$ = new Subject();
@@ -348,6 +350,25 @@ describe('FalAddressComponent', () => {
           zipCode: 'TestZipCode'
         }
       }]);
+    });
+    
+    it('should set BillTo when address type is not defined', done => {
+      loadAddress$.subscribe(address => {
+        expect(component._formGroup.get('idCode')?.value).toEqual('TestCode');
+        expect(component._formGroup.get('name2')?.value).toEqual('TestName2');
+        done();
+      });
+      loadAddress$.next({
+        city: 'TestCity',
+        address: 'TestAddress',
+        address2: 'TestAddress2',
+        name: 'TestName',
+        state: 'TestState',
+        country: 'TestCountry',
+        idCode: 'TestCode',
+        zipCode: 'TestZipCode',
+        name2: 'TestName2'
+      });
     });
   });
 

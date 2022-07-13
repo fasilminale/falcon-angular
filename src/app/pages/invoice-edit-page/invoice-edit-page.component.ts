@@ -346,7 +346,6 @@ export class InvoiceEditPageComponent implements OnInit {
     const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress as FormGroup;
-    let shippingPointValue = originAddressFormGroup?.controls?.shippingPoint?.value;
     const editAutoInvoiceModel: EditAutoInvoiceModel = {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
@@ -372,7 +371,7 @@ export class InvoiceEditPageComponent implements OnInit {
       originAddress: this.extractLocation(originAddressFormGroup, 'origin'),
       destinationAddress: this.extractLocation(destinationAddressFormGroup, 'destination'),
       billToAddress: this.extractBillToLocation(billToAddressFormGroup),
-      shippingPoint: typeof(shippingPointValue) == 'object' ? shippingPointValue?.value : shippingPointValue
+      shippingPoint: originAddressFormGroup.controls.shippingPoint?.value
     };
     return editAutoInvoiceModel;
   }
@@ -390,8 +389,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoice.billTo = this.extractBillToLocation(billToAddressFormGroup);
     this.invoice.costLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems);
     this.invoice.pendingChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems);
-    let tempObject = originAddressFormGroup?.controls?.shippingPoint?.value;
-    this.invoice.shippingPoint = this.handleNAValues(typeof(tempObject) == 'object' ? tempObject?.value : tempObject);
+    this.invoice.shippingPoint = this.handleNAValues(originAddressFormGroup.controls.shippingPoint?.value);
     this.invoice.amountOfInvoice = this.invoiceAmountFormGroup.controls.amountOfInvoice?.value;
     this.invoice.deletedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deletedChargeLineItems);
     this.invoice.deniedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deniedChargeLineItems);
@@ -408,9 +406,9 @@ export class InvoiceEditPageComponent implements OnInit {
       address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value)
     };
     if (type === 'origin') {
-      let tempObject = locationFormGroup?.controls?.shippingPoint?.value;
-      locationObject.code = this.handleNAValues(typeof(tempObject) == 'object' ? tempObject?.value : tempObject);
-    } else if (type === 'destination') {
+      locationObject.code = this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value);
+    }
+    if (type === 'destination') {
       locationObject.code = this.invoice.destination.code;
     }
     return locationObject;
@@ -499,7 +497,7 @@ export class InvoiceEditPageComponent implements OnInit {
     return results;
   }
 
-  private handleNAValues(value: any, defaultValue?: any): any {
+  handleNAValues(value: any, defaultValue?: any): any {
     return value === 'N/A' ? defaultValue : value;
   }
 

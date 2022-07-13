@@ -355,15 +355,15 @@ export class TripInformationComponent implements OnInit {
     this.localPeristentTripInformation.serviceLevel = this.serviceLevelControl.value;
 
     const originAddressFormGroup = this.originAddressFormGroup as FormGroup;
-    this.localPeristentTripInformation.originAddress = this.extractLocation(originAddressFormGroup);
+    this.localPeristentTripInformation.originAddress = this.extractLocation(originAddressFormGroup, 'origin');
     const destinationAddressFormGroup = this.destinationAddressFormGroup as FormGroup;
-    this.localPeristentTripInformation.destinationAddress = this.extractLocation(destinationAddressFormGroup);
+    this.localPeristentTripInformation.destinationAddress = this.extractLocation(destinationAddressFormGroup, 'destination');
     const billToAddressFormGroup = this.billToAddressFormGroup as FormGroup;
     this.localPeristentTripInformation.billToAddress = this.extractBillToLocation(billToAddressFormGroup);
     this.onUpdateAndContinueClickEvent.emit(true);
   }
 
-  private extractLocation(locationFormGroup: FormGroup, type?: string): ShippingPointLocation {
+  extractLocation(locationFormGroup: FormGroup, type?: string): ShippingPointLocation {
     let locationObject: ShippingPointLocation =  {
       shippingPoint: this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value?.value),
       name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
@@ -376,7 +376,8 @@ export class TripInformationComponent implements OnInit {
     };
     if (type === 'origin') {
       locationObject.code = this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value);
-    } else if (type === 'destination') {
+    }
+    if (type === 'destination') {
       locationObject.code = this.localPeristentTripInformation.destinationAddress?.code;
     }
     return locationObject;
@@ -397,7 +398,7 @@ export class TripInformationComponent implements OnInit {
     return locationObject;
   }
   
-  private handleNAValues(value: any, defaultValue?: any): any {
+  handleNAValues(value: any, defaultValue?: any): any {
     return value === 'N/A' ? defaultValue : value;
   }
 
@@ -406,7 +407,7 @@ export class TripInformationComponent implements OnInit {
       return spWarehouse.shippingPointCode == $event
     });
     if (shippingPointWarehouse?.billto) {
-      this.loadBillToAddress$.next(shippingPointWarehouse?.billto);
+      this.loadBillToAddress$.next(shippingPointWarehouse.billto);
     }
   }
 
