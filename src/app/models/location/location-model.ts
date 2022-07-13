@@ -1,5 +1,3 @@
-import { FormGroup } from "@angular/forms";
-
 export interface Location {
   name: string;
   code?: string;
@@ -31,7 +29,7 @@ export const EMPTY_BILL_TO_LOCATION: BillToLocation = {
   name2: ''
 };
 
-export interface ShippingPointLocation extends Location{
+export interface ShippingPointLocation extends Location {
   shippingPoint?: string;
 }
 
@@ -39,7 +37,7 @@ export interface ShippingPointLocationSelectOption {
   label: string;
   value: string;
   businessUnit: string;
-  location: Location
+  location: Location;
 }
 
 export interface BillToLocation extends Location {
@@ -63,7 +61,7 @@ export class CommonUtils {
 export class LocationUtils {
 
   static extractLocation(locationFormGroup: any, type?: string, destinationCode?: string): Location {
-    let locationObject: Location =  {
+    const locationObject: Location = {
       name: CommonUtils.handleNAValues(locationFormGroup?.controls?.name?.value),
       city: CommonUtils.handleNAValues(locationFormGroup?.controls?.city?.value),
       country: CommonUtils.handleNAValues(locationFormGroup?.controls?.country?.value),
@@ -82,7 +80,7 @@ export class LocationUtils {
   }
 
   static extractShippingPointLocation(locationFormGroup: any, type?: string, destinationCode?: string): ShippingPointLocation {
-    let locationObject: ShippingPointLocation =  {
+    const locationObject: ShippingPointLocation = {
       shippingPoint: CommonUtils.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value),
       name: CommonUtils.handleNAValues(locationFormGroup?.controls?.name?.value),
       city: CommonUtils.handleNAValues(locationFormGroup?.controls?.city?.value),

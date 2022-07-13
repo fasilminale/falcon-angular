@@ -345,8 +345,7 @@ export class InvoiceEditPageComponent implements OnInit {
     const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress;
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress;
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress;
-
-    let originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
+    const originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
@@ -370,7 +369,7 @@ export class InvoiceEditPageComponent implements OnInit {
       pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value,
       glLineItemList: this.invoiceAllocationFormGroup.controls.invoiceAllocations.value,
       originAddress: originLocation,
-      destinationAddress: LocationUtils.extractLocation(destinationAddressFormGroup, 'destination', this.invoice.destination.code),
+      destinationAddress: LocationUtils.extractLocation(destinationAddressFormGroup, 'destination', this.invoice?.destination?.code),
       billToAddress: BillToLocationUtils.extractBillToLocation(billToAddressFormGroup),
       shippingPoint: originLocation.code
     };
