@@ -17,6 +17,49 @@ import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 
 describe('TripInformationComponent', () => {
 
+  const MOCK_LOCATION: ShippingPointLocation = {
+    shippingPoint: undefined,
+    name: 'test',
+    address: '123 Fake Street',
+    address2: 'address2',
+    city: 'test',
+    country: 'USA',
+    state: 'TS',
+    zipCode: '12345',
+    code: 'TXH',
+  };
+  const originAddressFormGroup = new FormGroup({
+    streetAddress: new FormControl(MOCK_LOCATION.address),
+    streetAddress2: new FormControl(MOCK_LOCATION.address2),
+    city: new FormControl(MOCK_LOCATION.city),
+    country: new FormControl(MOCK_LOCATION.country),
+    name: new FormControl(MOCK_LOCATION.name),
+    state: new FormControl(MOCK_LOCATION.state),
+    zipCode: new FormControl(MOCK_LOCATION.zipCode),
+    shippingPoint: new FormControl(MOCK_LOCATION.code)
+  });
+  const destinationAddressFormGroup = new FormGroup({
+    streetAddress: new FormControl(MOCK_LOCATION.address),
+    streetAddress2: new FormControl(MOCK_LOCATION.address2),
+    city: new FormControl(MOCK_LOCATION.city),
+    country: new FormControl(MOCK_LOCATION.country),
+    name: new FormControl(MOCK_LOCATION.name),
+    state: new FormControl(MOCK_LOCATION.state),
+    zipCode: new FormControl(MOCK_LOCATION.zipCode),
+    shippingPoint: new FormControl(MOCK_LOCATION.code)
+  });
+  const billToAddressFormGroup = new FormGroup({
+    streetAddress: new FormControl('123 Fake Street'),
+    streetAddress2: new FormControl('address2'),
+    city: new FormControl('test'),
+    country: new FormControl('USA'),
+    name: new FormControl('test'),
+    state: new FormControl('TS'),
+    zipCode: new FormControl('12345'),
+    idCode: new FormControl('idCode'),
+    name2: new FormControl('name2'),
+  });
+
   let component: TripInformationComponent;
   let fixture: ComponentFixture<TripInformationComponent>;
   let masterDataService: MasterDataService;
@@ -76,6 +119,29 @@ describe('TripInformationComponent', () => {
     });
   });
 
+
+  it('updateBillToEvent should not success', () => {
+    const BILL_TO_LOCATION: BillToLocation = {
+      name: 'n1',
+      address: 'a1',
+      city: 'c',
+      state: 's',
+      country: 'c',
+      zipCode: 'z23',
+      name2: 'name'
+    };
+    const SHIPPING_POINT_WAREHOUSE_LOCATION: ShippingPointWarehouseLocation = {
+      warehouse: 'WHS',
+      customerCategory: 'CAH',
+      shippingPointCode: 'D71',
+      billto: BILL_TO_LOCATION
+    };
+    spyOn(component.loadBillToAddress$, 'next').and.stub();
+    component.masterDataShippingPointWarehouses = [SHIPPING_POINT_WAREHOUSE_LOCATION];
+    expect(component.loadBillToAddress$.next).not.toHaveBeenCalled();
+    component.updateBillToEvent('D72');
+    fixture.detectChanges();
+  });
 
   describe('#forkJoin', () => {
     const CARRIER: Carrier = {
@@ -580,6 +646,90 @@ describe('TripInformationComponent', () => {
       fixture.detectChanges();
       expect(component.formGroup.enable).toHaveBeenCalled();
       expect(component.formGroup.disable).toHaveBeenCalled();
+    });
+  });
+
+  it('should handleValues with default value', () => {
+    const result = component.handleNAValues('N/A', 'origin');
+    expect(result).toEqual('origin');
+  });
+
+  it('should extract bad location data', () => {
+    const location = component.extractLocation(null as  any, 'origin');
+    expect(location).toEqual({
+      shippingPoint: undefined as any,
+      name: undefined as any,
+      city: undefined as any,
+      country: undefined as any,
+      zipCode: undefined as any,
+      state: undefined as any,
+      address: undefined as any,
+      address2: undefined as any,
+      code: undefined as any
+    });
+  });
+
+  it('should extract valid location data', () => {
+    const location = component.extractLocation(originAddressFormGroup, 'origin');
+    expect(location).toEqual(MOCK_LOCATION);
+  });
+
+  it('should extract bad location data for destination', () => {
+    const location = component.extractLocation(null as any, 'destination');
+    expect(location).toEqual({
+      shippingPoint: undefined as any,
+      name: undefined as any,
+      city: undefined as any,
+      country: undefined as any,
+      zipCode: undefined as any,
+      state: undefined as any,
+      address: undefined as any,
+      address2: undefined as any,
+      code: undefined as any
+    });
+  });
+
+  it('should extract valid location data for destination', () => {
+    component.localPeristentTripInformation.destinationAddress = {} as ShippingPointLocation;
+    component.localPeristentTripInformation.destinationAddress.code = 'TXH';
+    const location = component.extractLocation(destinationAddressFormGroup, 'destination');
+    expect(location).toEqual(MOCK_LOCATION);
+  });
+
+  it('should extract valid location data for destination without destination code', () => {
+    const location = component.extractLocation(destinationAddressFormGroup, 'destination');
+    let expected = MOCK_LOCATION;
+    expected.code = undefined;
+    expect(location).toEqual(expected);
+  });
+
+  it('should extract bad bill to location data', () => {
+    const location = component.extractBillToLocation(null as any);
+    expect(location).toEqual({
+      name: undefined as any,
+      city: undefined as any,
+      country: undefined as any,
+      zipCode: undefined as any,
+      state: undefined as any,
+      address: undefined as any,
+      address2: undefined as any,
+      name2: undefined as any,
+      idCode: undefined as any,
+    });
+  });
+
+  it('should extract valid bill to location data', () => {
+    const location = component.extractBillToLocation(billToAddressFormGroup);
+    expect(location).toEqual({
+      name: 'test',
+      city: 'test',
+      country: 'USA',
+      zipCode: '12345',
+      state: 'TS',
+      address: '123 Fake Street',
+      address2: 'address2',
+      name2: 'name2',
+      idCode: 'idCode',
     });
   });
 

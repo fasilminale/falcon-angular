@@ -3,6 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {StatusModel} from './status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {SelectOption} from "../select-option-model/select-option-model";
+import { ShippingPointLocationSelectOption, ShippingPointWarehouseLocation } from '../location/location-model';
 
 describe('Invoice Model Tests', () => {
 
@@ -25,7 +26,8 @@ describe('Invoice Model Tests', () => {
     milestones: [],
     overriddenDeliveryDateTime: '',
     assumedDeliveryDateTime: '',
-    tripTenderTime: ''
+    tripTenderTime: '',
+    billTo: {}
   };
 
   const invoice = {
@@ -50,7 +52,8 @@ describe('Invoice Model Tests', () => {
     milestones: [],
     overriddenDeliveryDateTime: '12/09/1990',
     assumedDeliveryDateTime: '02/11/1971',
-    tripTenderTime: '02/11/1971'
+    tripTenderTime: '02/11/1971',
+    billTo: {}
   };
 
   const expectedInvoice = {
@@ -75,7 +78,8 @@ describe('Invoice Model Tests', () => {
     milestones: [],
     overriddenDeliveryDateTime: '12/09/1990',
     assumedDeliveryDateTime: '02/11/1971',
-    tripTenderTime: '02/11/1971'
+    tripTenderTime: '02/11/1971',
+    billTo: {}
   };
 
   let prototypeEmptyInvoice: InvoiceDataModel;
@@ -143,6 +147,33 @@ describe('Invoice Model Tests', () => {
       const result: SelectOption<string> = InvoiceUtils.toScacOption(carrier);
 
       expect(result.label).toEqual(`Vandalay Industries (ABCD)`)
+    });
+
+    it('should construct ShippingPointLocationSelectOption when toShippingPointLocation invoked ', () => {
+      const carrierShippingPoint = {
+        shippingPointCode: 'ABCD',
+        businessUnitName: 'Vandalay Industries',
+        origin: {}
+      }
+
+      const result: ShippingPointLocationSelectOption = InvoiceUtils.toShippingPointLocation(carrierShippingPoint);
+
+      expect(result.label).toEqual(`ABCD`);
+      expect(result.value).toEqual(`ABCD`);
+    });
+
+    it('should construct ShippingPointWarehouseLocation when toShippingPointWarehouseLocation invoked ', () => {
+      const carrierShippingPointWarehouse = {
+        shippingPointCode: 'ABCD',
+        customerCategory: 'CAH',
+        warehouse: '',
+        billto: {}
+      }
+
+      const result: ShippingPointWarehouseLocation = InvoiceUtils.toShippingPointWarehouseLocation(carrierShippingPointWarehouse);
+
+      expect(result.shippingPointCode).toEqual(`ABCD`);
+      expect(result.customerCategory).toEqual(`CAH`);
     });
   });
 });

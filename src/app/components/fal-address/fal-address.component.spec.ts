@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { ShippingPointLocation } from 'src/app/models/location/location-model';
+import { BillToLocation, EMPTY_LOCATION, ShippingPointLocation, ShippingPointLocationSelectOption } from 'src/app/models/location/location-model';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
 import { FalAddressComponent } from './fal-address.component';
@@ -44,8 +44,71 @@ describe('FalAddressComponent', () => {
     expect(component._formGroup.get('dummyFormField')).toBeNull();
   });
 
+  describe('should emit', () => {
+    let loadFilteredShippingPointLocations$: Subject<ShippingPointLocationSelectOption[]>;
+    beforeEach(() => {
+      loadFilteredShippingPointLocations$ = new Subject();
+      component.loadFilteredShippingPointLocations$ = loadFilteredShippingPointLocations$.asObservable();
+    });
+
+    it(' onchange of shipping control when address type is origin', fakeAsync(() => {
+      component.addressType = 'origin';
+      let shippingPointSelect: ShippingPointLocationSelectOption = {
+        label: 'TestShippingPoint',
+        value: 'TestShippingPoint',
+        businessUnit: 'GSPC',
+        location: {
+          name: 'TestName',
+          address: 'TestAddress',
+          address2: 'TestAddress2',
+          city: 'TestCity',
+          state: 'TestState',
+          country: 'TestCountry',
+          zipCode: 'TestZipCode'
+        }
+      };
+      loadFilteredShippingPointLocations$.next([shippingPointSelect]);
+      component._formGroup.controls.shippingPoint?.setValue(shippingPointSelect);
+      component.onShippingPointChange(shippingPointSelect);
+      tick();
+      expect(component._formGroup.get('name')?.value).toBe(shippingPointSelect.location.name);
+      expect(component._formGroup.get('country')?.value).toBe(shippingPointSelect.location.country);
+      expect(component._formGroup.get('city')?.value).toBe(shippingPointSelect.location.city);
+      expect(component._formGroup.get('zipCode')?.value).toBe(shippingPointSelect.location.zipCode);
+      expect(component._formGroup.get('state')?.value).toBe(shippingPointSelect.location.state);
+      expect(component._formGroup.get('streetAddress')?.value).toBe(shippingPointSelect.location.address);
+      expect(component._formGroup.get('streetAddress2')?.value).toBe(shippingPointSelect.location.address2);
+      flush();
+    }));
+
+    it(' onchange of shipping control when address type is origin with N/A values', fakeAsync(() => {
+      component.addressType = 'origin';
+      component.validateField = false;
+      let shippingPointSelect: ShippingPointLocationSelectOption = {
+        label: 'TestShippingPoint',
+        value: 'TestShippingPoint',
+        businessUnit: 'GSPC',
+        location: EMPTY_LOCATION
+      };
+      loadFilteredShippingPointLocations$.next([shippingPointSelect]);
+      component._formGroup.controls.shippingPoint?.setValue(shippingPointSelect);
+      component.onShippingPointChange(shippingPointSelect);
+      tick();
+      let valueNA = 'N/A';
+      expect(component._formGroup.get('name')?.value).toBe(valueNA);
+      expect(component._formGroup.get('country')?.value).toBe(valueNA);
+      expect(component._formGroup.get('city')?.value).toBe(valueNA);
+      expect(component._formGroup.get('zipCode')?.value).toBe(valueNA);
+      expect(component._formGroup.get('state')?.value).toBe(valueNA);
+      expect(component._formGroup.get('streetAddress')?.value).toBe(valueNA);
+      flush();
+    }));
+  });
+
   describe('should loadAddress$', () => {
-    let loadAddress$: Subject<ShippingPointLocation>;
+    let updateIsEditMode$: Subject<boolean>;
+    let loadAddress$: Subject<any>;
+    let loadFilteredShippingPointLocations$: Subject<ShippingPointLocationSelectOption[]>;
     beforeEach(() => {
       loadAddress$ = new Subject();
       component.loadAddress$ = loadAddress$.asObservable();
@@ -152,6 +215,25 @@ describe('FalAddressComponent', () => {
         code: 'TestCode',
         zipCode: 'TestZipCode',
         shippingPoint: undefined
+      });
+    });
+    
+    it('should set BillTo when address type is not defined', done => {
+      loadAddress$.subscribe(address => {
+        expect(component._formGroup.get('idCode')?.value).toEqual('TestCode');
+        expect(component._formGroup.get('name2')?.value).toEqual('TestName2');
+        done();
+      });
+      loadAddress$.next({
+        city: 'TestCity',
+        address: 'TestAddress',
+        address2: 'TestAddress2',
+        name: 'TestName',
+        state: 'TestState',
+        country: 'TestCountry',
+        idCode: 'TestCode',
+        zipCode: 'TestZipCode',
+        name2: 'TestName2'
       });
     });
   });

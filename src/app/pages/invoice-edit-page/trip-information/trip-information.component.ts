@@ -303,6 +303,80 @@ export class TripInformationComponent implements OnInit {
     return dateToReturn;
   }
 
+  clickEditButton(): void {
+    this.isTripEditMode$.value = true;
+    this._editableFormArray.enable();
+  }
+
+  clickCancelButton(): void {
+    this.isTripEditMode$.value = false;
+    this._editableFormArray.disable();
+    this.loadTripInformationData(this.localPeristentTripInformation);
+    this.onUpdateAndContinueClickEvent.emit(false);
+  }
+
+  clickUpdateButton(): void {
+    this.localPeristentTripInformation.pickUpDate = this.pickUpDateControl.value;
+    this.localPeristentTripInformation.carrier = this.carrierControl.value;
+    this.localPeristentTripInformation.carrierMode = this.carrierModeControl.value;
+    this.localPeristentTripInformation.serviceLevel = this.serviceLevelControl.value;
+
+    const originAddressFormGroup = this.originAddressFormGroup as FormGroup;
+    this.localPeristentTripInformation.originAddress = this.extractLocation(originAddressFormGroup, 'origin');
+    const destinationAddressFormGroup = this.destinationAddressFormGroup as FormGroup;
+    this.localPeristentTripInformation.destinationAddress = this.extractLocation(destinationAddressFormGroup, 'destination');
+    const billToAddressFormGroup = this.billToAddressFormGroup as FormGroup;
+    this.localPeristentTripInformation.billToAddress = this.extractBillToLocation(billToAddressFormGroup);
+    this.onUpdateAndContinueClickEvent.emit(true);
+  }
+
+  extractLocation(locationFormGroup: FormGroup, type?: string): ShippingPointLocation {
+    let locationObject: ShippingPointLocation =  {
+      shippingPoint: this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value?.value),
+      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
+      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
+      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
+      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
+      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
+      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
+      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value)
+    };
+    if (type === 'origin') {
+      locationObject.code = this.handleNAValues(locationFormGroup?.controls?.shippingPoint?.value);
+    }
+    if (type === 'destination') {
+      locationObject.code = this.localPeristentTripInformation.destinationAddress?.code;
+    }
+    return locationObject;
+  }
+
+  extractBillToLocation(locationFormGroup: FormGroup): BillToLocation {
+    let locationObject: BillToLocation =  {
+      name: this.handleNAValues(locationFormGroup?.controls?.name?.value),
+      city: this.handleNAValues(locationFormGroup?.controls?.city?.value),
+      country: this.handleNAValues(locationFormGroup?.controls?.country?.value),
+      zipCode: this.handleNAValues(locationFormGroup?.controls?.zipCode?.value),
+      state: this.handleNAValues(locationFormGroup?.controls?.state?.value),
+      address: this.handleNAValues(locationFormGroup?.controls?.streetAddress?.value),
+      address2: this.handleNAValues(locationFormGroup?.controls?.streetAddress2?.value),
+      name2: this.handleNAValues(locationFormGroup?.controls?.name2?.value),
+      idCode: this.handleNAValues(locationFormGroup?.controls?.idCode?.value),
+    };
+    return locationObject;
+  }
+  
+  handleNAValues(value: any, defaultValue?: any): any {
+    return value === 'N/A' ? defaultValue : value;
+  }
+
+  updateBillToEvent($event: any): void {
+    let shippingPointWarehouse = this.masterDataShippingPointWarehouses.find(function(spWarehouse){
+      return spWarehouse.shippingPointCode == $event
+    });
+    if (shippingPointWarehouse?.billto) {
+      this.loadBillToAddress$.next(shippingPointWarehouse.billto);
+    }
+  }
 
   toggleFreightOrderDetailsSection(): void {
     this.showFreightOrderSection = !this.showFreightOrderSection;

@@ -15,7 +15,7 @@ import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
-import {Location} from '../../models/location/location-model';
+import {EMPTY_LOCATION, Location} from '../../models/location/location-model';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -61,6 +61,47 @@ describe('InvoiceEditPageComponent', () => {
     errorText: new FormControl('Values do not match with master data')
   }));
 
+  const MOCK_LOCATION: Location = {
+    name: 'test',
+    address: '123 Fake Street',
+    address2: 'address2',
+    city: 'test',
+    country: 'USA',
+    state: 'TS',
+    zipCode: '12345',
+    code: 'TXH',
+  };
+  const originAddressFormGroup = new FormGroup({
+    streetAddress: new FormControl(MOCK_LOCATION.address),
+    streetAddress2: new FormControl(MOCK_LOCATION.address2),
+    city: new FormControl(MOCK_LOCATION.city),
+    country: new FormControl(MOCK_LOCATION.country),
+    name: new FormControl(MOCK_LOCATION.name),
+    state: new FormControl(MOCK_LOCATION.state),
+    zipCode: new FormControl(MOCK_LOCATION.zipCode),
+    shippingPoint: new FormControl(MOCK_LOCATION.code)
+  });
+  const destinationAddressFormGroup = new FormGroup({
+    streetAddress: new FormControl(MOCK_LOCATION.address),
+    streetAddress2: new FormControl(MOCK_LOCATION.address2),
+    city: new FormControl(MOCK_LOCATION.city),
+    country: new FormControl(MOCK_LOCATION.country),
+    name: new FormControl(MOCK_LOCATION.name),
+    state: new FormControl(MOCK_LOCATION.state),
+    zipCode: new FormControl(MOCK_LOCATION.zipCode),
+    shippingPoint: new FormControl(MOCK_LOCATION.code)
+  });
+  const billToAddressFormGroup = new FormGroup({
+    streetAddress: new FormControl('123 Fake Street'),
+    streetAddress2: new FormControl('N/A'),
+    city: new FormControl('test'),
+    country: new FormControl('USA'),
+    name: new FormControl('test'),
+    state: new FormControl('TS'),
+    zipCode: new FormControl('12345'),
+    idCode: new FormControl('idCode'),
+    name2: new FormControl('name2'),
+  });
 
   let component: InvoiceEditPageComponent;
   let fixture: ComponentFixture<InvoiceEditPageComponent>;
@@ -764,13 +805,13 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
     };
 
     it('should return EditAutoInvoiceModel object', () => {
 
       setUpControls();
       const result = component.mapTripInformationToEditAutoInvoiceModel();
-
       expect(result).toEqual({
         amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
         mode: {
@@ -793,6 +834,10 @@ describe('InvoiceEditPageComponent', () => {
         disputeLineItems: component.getDisputeLineItems(component.invoiceAmountFormGroup.controls.disputeLineItems),
         deniedChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.deniedChargeLineItems),
         deletedChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.deletedChargeLineItems),
+        originAddress: component.extractLocation(component.tripInformationFormGroup.controls.originAddress as FormGroup, 'origin'),
+        destinationAddress: component.extractLocation(component.tripInformationFormGroup.controls.destinationAddress as FormGroup, 'destination'),
+        billToAddress: component.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as FormGroup),
+        shippingPoint: (component.tripInformationFormGroup.controls.originAddress as FormGroup)?.controls?.shippingPoint?.value
       });
     });
   });
@@ -801,26 +846,7 @@ describe('InvoiceEditPageComponent', () => {
     beforeEach(() => {
       component.tripInformationFormGroup.controls.carrierMode = new FormControl(TEST_MODE);
       component.tripInformationFormGroup.controls.carrier = new FormControl(TEST_CARRIER);
-      component.tripInformationFormGroup.controls.originAddress = new FormGroup({
-        streetAddress: new FormControl('123 Fake Street'),
-        streetAddress2: new FormControl('N/A'),
-        city: new FormControl('test'),
-        country: new FormControl('USA'),
-        name: new FormControl('test'),
-        state: new FormControl('TS'),
-        zipCode: new FormControl('12345'),
-        shippingPoint: new FormControl('N/A')
-      });
-      component.tripInformationFormGroup.controls.destinationAddress = new FormGroup({
-        streetAddress: new FormControl('123 Fake Street'),
-        streetAddress2: new FormControl('N/A'),
-        city: new FormControl('test'),
-        country: new FormControl('USA'),
-        name: new FormControl('test'),
-        state: new FormControl('TS'),
-        zipCode: new FormControl('12345'),
-        shippingPoint: new FormControl('N/A')
-      });
+      component.tripInformationFormGroup.controls.billToAddress = billToAddressFormGroup;
       const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
       costBreakdownItems.push(new FormGroup({
         accessorial: new FormControl(false),
@@ -859,10 +885,29 @@ describe('InvoiceEditPageComponent', () => {
       expect(component.invoice.carrier).toEqual(TEST_CARRIER);
     });
     it('should have origin', () => {
-      expect(component.invoice.origin).toEqual(TEST_LOCATION);
+      component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
+      component.updateInvoiceFromForms();
+      expect(component.invoice.origin).toEqual(MOCK_LOCATION);
+    });
+    it('should have origin with no shipping control', () => {
+      component.tripInformationFormGroup.controls.originAddress = new FormGroup({});
+      component.updateInvoiceFromForms();
+      expect(component.invoice.origin).toEqual({
+        name: undefined as any,
+        city: undefined as any,
+        country: undefined as any,
+        zipCode: undefined as any,
+        state: undefined as any,
+        address: undefined as any,
+        address2: undefined as any,
+        code: undefined as any
+      });
     });
     it('should have destination', () => {
-      expect(component.invoice.destination).toEqual(TEST_LOCATION);
+      component.tripInformationFormGroup.controls.destinationAddress = destinationAddressFormGroup;
+      component.invoice.destination.code = MOCK_LOCATION.code;
+      component.updateInvoiceFromForms();
+      expect(component.invoice.destination).toEqual(MOCK_LOCATION);
     });
     it('should have costLineItems', () => {
       expect(component.invoice.costLineItems.length).toEqual(1);
@@ -885,8 +930,13 @@ describe('InvoiceEditPageComponent', () => {
     // no error means we pass
   });
 
+  it('should handleValues with default value', () => {
+    const result = component.handleNAValues('N/A', 'origin');
+    expect(result).toEqual('origin');
+  });
+
   it('should extract bad location data', () => {
-    const location = component.extractLocation(null as any);
+    const location = component.extractLocation(null as any, 'origin');
     expect(location).toEqual({
       name: undefined as any,
       city: undefined as any,
@@ -894,7 +944,37 @@ describe('InvoiceEditPageComponent', () => {
       zipCode: undefined as any,
       state: undefined as any,
       address: undefined as any,
-      address2: undefined as any
+      address2: undefined as any,
+      code: undefined as any
+    });
+  });
+
+  it('should extract bad location data for destination', () => {
+    const location = component.extractLocation(null as any, 'destination');
+    expect(location).toEqual({
+      name: undefined as any,
+      city: undefined as any,
+      country: undefined as any,
+      zipCode: undefined as any,
+      state: undefined as any,
+      address: undefined as any,
+      address2: undefined as any,
+      code: undefined as any
+    });
+  });
+
+  it('should extract bad bill to location data', () => {
+    const location = component.extractBillToLocation(null as any);
+    expect(location).toEqual({
+      name: undefined as any,
+      city: undefined as any,
+      country: undefined as any,
+      zipCode: undefined as any,
+      state: undefined as any,
+      address: undefined as any,
+      address2: undefined as any,
+      name2: undefined as any,
+      idCode: undefined as any,
     });
   });
 
