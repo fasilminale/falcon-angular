@@ -13,7 +13,7 @@ import {
 } from '../master-data-models/carrier-mode-code-model';
 import {FreightOrder} from '../freight-order/freight-order-model';
 import {CarrierReference, CarrierUtils, EMPTY_CARRIER_REFERENCE} from '../master-data-models/carrier-model';
-import {Location, EMPTY_LOCATION} from '../location/location-model';
+import {Location, EMPTY_LOCATION, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation, BillToLocation} from '../location/location-model';
 import { ServiceLevel } from '../master-data-models/service-level-model';
 import { SelectOption } from '../select-option-model/select-option-model';
 import {RemitHistoryItem} from "./remit-history-item";
@@ -77,7 +77,7 @@ export class InvoiceDataModel {
   destinationType: string;
   destination: Location;
   destinationStr: string;
-  billTo: Location;
+  billTo: BillToLocation;
   shippedDateTime: string;
   estimatedPickupDateTime: string;
   pickupDateTime: string;
@@ -284,6 +284,32 @@ export class InvoiceUtils {
     return {
       label: `${carrierShippingPoints.shippingPointCode}`,
       value: carrierShippingPoints.shippingPointCode
+    };
+  }
+
+  static toShippingPointLocations(carrierShippingPoints: any): Array<ShippingPointLocationSelectOption> {
+    return carrierShippingPoints.map(InvoiceUtils.toShippingPointLocation);
+  }
+
+  static toShippingPointLocation(carrierShippingPoint: any): ShippingPointLocationSelectOption {
+    return {
+      label: `${carrierShippingPoint.shippingPointCode}`,
+      value: carrierShippingPoint.shippingPointCode,
+      businessUnit: carrierShippingPoint.businessUnitName,
+      location: carrierShippingPoint.origin
+    };
+  }
+
+  static toShippingPointWarehouseLocations(shippingPointWarehouses: Array<any>): Array<ShippingPointWarehouseLocation> {
+    return shippingPointWarehouses.map(InvoiceUtils.toShippingPointWarehouseLocation);
+  }
+
+  static toShippingPointWarehouseLocation(carrierShippingPointWarehouse: any): ShippingPointWarehouseLocation {
+    return {
+      warehouse: carrierShippingPointWarehouse.warehouse,
+      customerCategory: carrierShippingPointWarehouse.customerCategory,
+      shippingPointCode: carrierShippingPointWarehouse.shippingPointCode,
+      billto: carrierShippingPointWarehouse.billTo
     };
   }
 

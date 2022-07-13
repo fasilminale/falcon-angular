@@ -1,5 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormGroup } from '@angular/forms';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { FormArray, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { BillToLocation, EMPTY_LOCATION, ShippingPointLocation, ShippingPointLocationSelectOption } from 'src/app/models/location/location-model';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
@@ -24,6 +24,8 @@ describe('FalAddressComponent', () => {
     component.formGroup = new FormGroup({});
 
     component.loadAddress$ = new Subject<ShippingPointLocation>().asObservable();
+    component.loadFilteredShippingPointLocations$ = new Subject<ShippingPointLocationSelectOption[]>().asObservable();
+    component.updateIsEditMode$ = new Subject<boolean>().asObservable();
     fixture.detectChanges();
   });
 
@@ -111,7 +113,84 @@ describe('FalAddressComponent', () => {
     let loadFilteredShippingPointLocations$: Subject<ShippingPointLocationSelectOption[]>;
     beforeEach(() => {
       loadAddress$ = new Subject();
+      loadFilteredShippingPointLocations$ = new Subject();
       component.loadAddress$ = loadAddress$.asObservable();
+      component.loadFilteredShippingPointLocations$ = loadFilteredShippingPointLocations$.asObservable();
+      updateIsEditMode$ = new Subject();
+      component.updateIsEditMode$ = updateIsEditMode$.asObservable();
+    });
+    
+    it('should enable shipping control when address type is origin', done => {
+      component.addressType = 'origin';
+      loadAddress$.next({
+        city: 'TestCity',
+        address: 'TestAddress',
+        address2: 'TestAddress2',
+        name: 'TestName',
+        state: 'TestState',
+        country: 'TestCountry',
+        code: 'TestCode',
+        zipCode: 'TestZipCode',
+        shippingPoint: 'TestShippingPoint'
+      });
+      updateIsEditMode$.subscribe(isEditMode => {
+        expect(component._formGroup.get('shippingPoint')?.enabled).toBe(true);
+        done();
+      });
+      updateIsEditMode$.next(true);
+    });
+
+    it('should disable shipping control when address type is origin', done => {
+      component.addressType = 'origin';
+      component.destinationType = 'CUST';
+      updateIsEditMode$.subscribe(isEditMode => {
+        expect(component._formGroup.get('shippingPoint')?.disabled).toBe(true);
+        done();
+      });
+      updateIsEditMode$.next(false);
+    });
+
+    it('should enable address fields when address type is destination and destination type is CUST', done => {
+      component.addressType = 'destination';
+      component.destinationType = 'CUST';
+      loadAddress$.next({
+        city: 'TestCity',
+        address: 'TestAddress',
+        address2: 'TestAddress2',
+        name: 'TestName',
+        state: 'TestState',
+        country: 'TestCountry',
+        code: 'TestCode',
+        zipCode: 'TestZipCode',
+        shippingPoint: 'TestShippingPoint'
+      });
+      updateIsEditMode$.subscribe(isEditMode => {
+        expect(component._formGroup.get('name')?.enabled).toBe(true);
+        expect(component._formGroup.get('country')?.enabled).toBe(true);
+        expect(component._formGroup.get('city')?.enabled).toBe(true);
+        expect(component._formGroup.get('zipCode')?.enabled).toBe(true);
+        expect(component._formGroup.get('state')?.enabled).toBe(true);
+        expect(component._formGroup.get('streetAddress')?.enabled).toBe(true);
+        expect(component._formGroup.get('streetAddress2')?.enabled).toBe(true);
+        done();
+      });
+      updateIsEditMode$.next(true);
+    });
+
+    it('should disable address fields when address type is destination and destination type is CUST', done => {
+      component.addressType = 'destination';
+      component.destinationType = 'CUST';
+      updateIsEditMode$.subscribe(isEditMode => {
+        expect(component._formGroup.get('name')?.disabled).toBe(true);
+        expect(component._formGroup.get('country')?.disabled).toBe(true);
+        expect(component._formGroup.get('city')?.disabled).toBe(true);
+        expect(component._formGroup.get('zipCode')?.disabled).toBe(true);
+        expect(component._formGroup.get('state')?.disabled).toBe(true);
+        expect(component._formGroup.get('streetAddress')?.disabled).toBe(true);
+        expect(component._formGroup.get('streetAddress2')?.disabled).toBe(true);
+        done();
+      });
+      updateIsEditMode$.next(false);
     });
 
     it('should set form group when address is loaded', done => {
@@ -137,6 +216,19 @@ describe('FalAddressComponent', () => {
         zipCode: 'TestZipCode',
         shippingPoint: 'TestShippingPoint'
       });
+      loadFilteredShippingPointLocations$.next([{
+        label: 'TestShippingPoint',
+        value: 'TestShippingPoint',
+        businessUnit: 'GSPC',
+        location: {
+          name: 'TestName',
+          address: 'TestAddress',
+          city: 'TestCity',
+          state: 'TestState',
+          country: 'TestCountry',
+          zipCode: 'TestZipCode'
+        }
+      }]);
     });
 
     it('should not set form group when required properties of address are undefined', done => {
@@ -146,6 +238,7 @@ describe('FalAddressComponent', () => {
         done();
       });
       loadAddress$.next({} as ShippingPointLocation);
+      loadFilteredShippingPointLocations$.next([] as ShippingPointLocationSelectOption[]);
     });
 
     it('should set form group values to N/A on non-required properties', done => {
@@ -159,10 +252,12 @@ describe('FalAddressComponent', () => {
         done();
       });
       loadAddress$.next({} as ShippingPointLocation);
+      loadFilteredShippingPointLocations$.next([] as ShippingPointLocationSelectOption[]);
     });
 
-    it('should set shipping point to N/A when address type is destination', done => {
+    it('should set shipping point to N/A when address type is destination and destination type is CUST', done => {
       component.addressType = 'destination';
+      component.destinationType = 'CUST';
       loadAddress$.subscribe(address => {
         expect(component._formGroup.get('shippingPoint')?.value).toEqual('N/A');
         done();
@@ -178,6 +273,19 @@ describe('FalAddressComponent', () => {
         zipCode: 'TestZipCode',
         shippingPoint: 'TestShippingPoint'
       });
+      loadFilteredShippingPointLocations$.next([{
+        label: 'TestShippingPoint',
+        value: 'TestShippingPoint',
+        businessUnit: 'GSPC',
+        location: {
+          name: 'TestName',
+          address: 'TestAddress',
+          city: 'TestCity',
+          state: 'TestState',
+          country: 'TestCountry',
+          zipCode: 'TestZipCode'
+        }
+      }]);
     });
 
     it('should set shipping point to proper value when address type is origin', done => {
@@ -197,6 +305,19 @@ describe('FalAddressComponent', () => {
         zipCode: 'TestZipCode',
         shippingPoint: 'TestShippingPoint'
       });
+      loadFilteredShippingPointLocations$.next([{
+        label: 'TestShippingPoint',
+        value: 'TestShippingPoint',
+        businessUnit: 'GSPC',
+        location: {
+          name: 'TestName',
+          address: 'TestAddress',
+          city: 'TestCity',
+          state: 'TestState',
+          country: 'TestCountry',
+          zipCode: 'TestZipCode'
+        }
+      }]);
     });
 
     it('should set shipping point to N/A when address type is origin and shipping point is undefined', done => {
@@ -216,6 +337,19 @@ describe('FalAddressComponent', () => {
         zipCode: 'TestZipCode',
         shippingPoint: undefined
       });
+      loadFilteredShippingPointLocations$.next([{
+        label: 'TestShippingPoint',
+        value: 'TestShippingPoint',
+        businessUnit: 'GSPC',
+        location: {
+          name: 'TestName',
+          address: 'TestAddress',
+          city: 'TestCity',
+          state: 'TestState',
+          country: 'TestCountry',
+          zipCode: 'TestZipCode'
+        }
+      }]);
     });
     
     it('should set BillTo when address type is not defined', done => {

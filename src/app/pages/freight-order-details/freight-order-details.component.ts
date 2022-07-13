@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import { Observable } from 'rxjs';
 import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
@@ -20,6 +20,8 @@ export class FreightOrderDetailsComponent implements OnInit {
   totalVolume = 0;
   totalPalletCount = 0;
 
+  @Output() totalEmitter: EventEmitter<any> = new EventEmitter<any>();
+
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
 
   }
@@ -39,6 +41,11 @@ export class FreightOrderDetailsComponent implements OnInit {
       this.totalGrossWeight = this.getTotalGrossWeight();
       this.totalVolume = this.getTotalVolume();
       this.totalPalletCount = this.getTotalPalletCount();
+      this.totalEmitter.emit({
+        totalGrossWeight: this.totalGrossWeight,
+        totalVolume: this.totalVolume,
+        totalPalletCount: this.totalPalletCount
+      });
     }));
   }
 

@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TripInformationComponent} from './trip-information.component';
 import {FalconTestingModule} from '../../../testing/falcon-testing.module';
@@ -14,6 +14,8 @@ import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
+import { Location, BillToLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation, ShippingPointLocation } from 'src/app/models/location/location-model';
+import { InvoiceService } from 'src/app/services/invoice-service';
 
 describe('TripInformationComponent', () => {
 
@@ -63,6 +65,7 @@ describe('TripInformationComponent', () => {
   let component: TripInformationComponent;
   let fixture: ComponentFixture<TripInformationComponent>;
   let masterDataService: MasterDataService;
+  let invoiceService: InvoiceService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -72,6 +75,9 @@ describe('TripInformationComponent', () => {
 
     // Mock MasterDataService
     masterDataService = TestBed.inject(MasterDataService);
+
+    // Mock InvoiceService
+    invoiceService = TestBed.inject(InvoiceService);
 
 
     // Create Component
@@ -87,6 +93,8 @@ describe('TripInformationComponent', () => {
       spyOn(masterDataService, 'getCarriers').and.returnValue(of([]));
       spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([]));
       spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([]));
+      spyOn(invoiceService, 'getMasterDataShippingPointWarehouses').and.returnValue(of([]));
+      spyOn(invoiceService, 'getMasterDataShippingPoints').and.returnValue(of([]));
     });
 
     it('should have component', () => {
@@ -113,12 +121,157 @@ describe('TripInformationComponent', () => {
       fixture.detectChanges();
       expect(component.serviceLevelOptions).toEqual([]);
     });
+    it('should have zero shipping point warehouse options', () => {
+      fixture.detectChanges();
+      expect(component.masterDataShippingPointWarehouses).toEqual([]);
+    });
+    it('should have zero shipping point options', () => {
+      fixture.detectChanges();
+      expect(component.masterDataShippingPoints).toEqual([]);
+    });
     it('should have controls in formGroup', () => {
       fixture.detectChanges();
-      expect(Object.keys(component.formGroup.controls).length).toBe(15);
+      expect(Object.keys(component.formGroup.controls).length).toBe(18);
     });
   });
 
+  it('#clickEditButton should toggle isEditMode$', () => {
+    const initialValue = component.isTripEditMode$.value;
+    component.clickEditButton();
+    expect(component.isTripEditMode$.value).toEqual(!initialValue);
+  });
+
+  it('#clickCancelButton should toggle isEditMode$', () => {
+    const LOCATION: Location = {
+      name: 'n1',
+      address: 'a1',
+      city: 'c',
+      state: 's',
+      country: 'c',
+      zipCode: 'z23',
+    };
+    const SHIPPING_POINT_LOCATION: ShippingPointLocationSelectOption = {
+      label: 'D26',
+      value: 'D26',
+      businessUnit: 'GPSC',
+      location: LOCATION
+    };
+    component.masterDataShippingPoints = [SHIPPING_POINT_LOCATION];
+    const tripInformation: TripInformation = {
+      bolNumber: 'TestBolNumber',
+      carrier: {
+        scac: 'TestScac',
+        name: 'TestCarrierName'
+      },
+      businessUnit: 'GPSC',
+      carrierMode: {
+        mode: 'CarrierMode',
+        reportModeDescription: 'ReportModeDescription',
+        reportKeyMode: 'ReportKeyMode'
+      },
+      deliveryDate: new Date(),
+      freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+      invoiceDate: new Date(),
+      pickUpDate: new Date(),
+      proTrackingNumber: 'TestProTrackingNumber',
+      serviceLevel: {
+        level: 'TL1',
+        name: 'TestLevel'
+      },
+      tripId: 'TestTripId',
+      freightOrders: [],
+      vendorNumber: '1234321'
+    };
+    const tripInformation$ = new Subject<TripInformation>();
+    component.loadTripInformation$ = tripInformation$.asObservable();
+    tripInformation$.next(tripInformation);
+    component.filteredCarrierModeOptionsPopulatedSubject.next(1);
+    fixture.detectChanges();
+    component.clickEditButton();
+    const initialValue = component.isTripEditMode$.value;
+    component.clickCancelButton();
+    expect(component.isTripEditMode$.value).toEqual(!initialValue);
+  });
+
+  it('#clickUpdateButton should update localPeristentTripInformation', () => {
+    const LOCATION: Location = {
+      name: 'n1',
+      address: 'a1',
+      city: 'c',
+      state: 's',
+      country: 'c',
+      zipCode: 'z23',
+    };
+    const SHIPPING_POINT_LOCATION: ShippingPointLocationSelectOption = {
+      label: 'D26',
+      value: 'D26',
+      businessUnit: 'GPSC',
+      location: LOCATION
+    };
+    component.masterDataShippingPoints = [SHIPPING_POINT_LOCATION];
+    const tripInformation: TripInformation = {
+      bolNumber: 'TestBolNumber',
+      carrier: {
+        scac: 'TestScac',
+        name: 'TestCarrierName'
+      },
+      carrierMode: {
+        mode: 'CarrierMode',
+        reportModeDescription: 'ReportModeDescription',
+        reportKeyMode: 'ReportKeyMode'
+      },
+      deliveryDate: new Date(),
+      freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+      invoiceDate: new Date(),
+      pickUpDate: new Date(),
+      proTrackingNumber: 'TestProTrackingNumber',
+      serviceLevel: {
+        level: 'TL1',
+        name: 'TestLevel'
+      },
+      tripId: 'TestTripId',
+      freightOrders: [],
+      vendorNumber: '1234321'
+    };
+    const tripInformation$ = new Subject<TripInformation>();
+    component.loadTripInformation$ = tripInformation$.asObservable();
+    tripInformation$.next(tripInformation);
+    component.filteredCarrierModeOptionsPopulatedSubject.next(1);
+    fixture.detectChanges();
+    component.clickEditButton();
+    component.pickUpDateControl.setValue(new Date(2001, 1, 1));
+    component.clickUpdateButton();
+    expect(component.localPeristentTripInformation.pickUpDate).toEqual(new Date(2001, 1, 1));
+  });
+
+  it('updateBillToEvent should success', () => {
+    const BILL_TO_LOCATION: BillToLocation = {
+      name: 'n1',
+      address: 'a1',
+      city: 'c',
+      state: 's',
+      country: 'c',
+      zipCode: 'z23',
+      name2: 'name'
+    };
+    const SHIPPING_POINT_WAREHOUSE_LOCATION: ShippingPointWarehouseLocation = {
+      warehouse: 'WHS',
+      customerCategory: 'CAH',
+      shippingPointCode: 'D71',
+      billto: BILL_TO_LOCATION
+    };
+    component.masterDataShippingPointWarehouses = [SHIPPING_POINT_WAREHOUSE_LOCATION];
+    component.loadBillToAddress$.subscribe((billTo) => {
+      expect(billTo.name).toBe(BILL_TO_LOCATION.name);
+      expect(billTo.address).toBe(BILL_TO_LOCATION.address);
+      expect(billTo.city).toBe(BILL_TO_LOCATION.city);
+      expect(billTo.state).toBe(BILL_TO_LOCATION.state);
+      expect(billTo.country).toBe(BILL_TO_LOCATION.country);
+      expect(billTo.zipCode).toBe(BILL_TO_LOCATION.zipCode);
+    });
+    component.updateBillToEvent('D71');
+    fixture.detectChanges();
+  });
 
   it('updateBillToEvent should not success', () => {
     const BILL_TO_LOCATION: BillToLocation = {
@@ -169,12 +322,53 @@ describe('TripInformationComponent', () => {
       level: 't1',
       name: 'Test Service Level'
     };
+    
+    const BILL_TO_LOCATION: BillToLocation = {
+      name: 'n1',
+      code: '',
+      address: 'a1',
+      address2: '',
+      city: 'c',
+      state: 's',
+      country: 'c',
+      zipCode: 'z23',
+      name2: 'name',
+      idCode: '',
+    };
+    const SHIPPING_POINT_WAREHOUSE_LOCATION: ShippingPointWarehouseLocation = {
+      warehouse: 'WHS',
+      customerCategory: 'CAH',
+      shippingPointCode: 'D71',
+      billto: BILL_TO_LOCATION
+    };
+    
+    const LOCATION: Location = {
+      name: 'n1',
+      address: 'a1',
+      city: 'c',
+      state: 's',
+      country: 'c',
+      zipCode: 'z23',
+      code: '',
+      address2: '',
+    };
+    const SHIPPING_POINT_LOCATION: ShippingPointLocationSelectOption = {
+      label: 'D26',
+      value: 'D26',
+      businessUnit: 'GPSC',
+      location: LOCATION,
+    };
+
+    // TODO - Below invoice service spyOn return value not matching with mocked objects
+    // SHIPPING_POINT_WAREHOUSE_LOCATION - SHIPPING_POINT_LOCATION
     beforeEach(() => {
       spyOn(masterDataService, 'getCarriers').and.returnValue(of([CARRIER]));
       spyOn(masterDataService, 'getCarrierDetails').and.returnValue(of([CARRIER_DETAIL]));
       spyOn(masterDataService, 'getCarrierSCACs').and.returnValue(of([CARRIER_SCAC]));
       spyOn(masterDataService, 'getCarrierModeCodes').and.returnValue(of([CARRIER_MODE]));
       spyOn(masterDataService, 'getServiceLevels').and.returnValue(of([SERVICE_LEVEL]));
+      spyOn(invoiceService, 'getMasterDataShippingPointWarehouses').and.returnValue(of([]));
+      spyOn(invoiceService, 'getMasterDataShippingPoints').and.returnValue(of([]));
       component.ngOnInit();
     });
     it('should have carrier option', () => {
@@ -212,6 +406,14 @@ describe('TripInformationComponent', () => {
         label: 't1 (Test Service Level)',
         value: SERVICE_LEVEL
       }]);
+    });
+    it('should have shipping point warehouse option', () => {
+      fixture.detectChanges();
+      expect(component.masterDataShippingPointWarehouses).toEqual([]);
+    });
+    it('should have shipping point option', () => {
+      fixture.detectChanges();
+      expect(component.masterDataShippingPoints).toEqual([]);
     });
   });
 
@@ -1193,6 +1395,20 @@ describe('TripInformationComponent', () => {
       const b = {reportKeyMode: 'SOME', reportModeDescription: 'SOME DESC'};
       const result = component.compareCarrierModeWith(a, b);
       expect(result).toBeTrue();
+    });
+  });
+
+  describe('update total values', () => {
+    it('update the weight, volume, and pallet values', () => {
+      const totals = {
+        totalGrossWeight: 1,
+        totalVolume: 2,
+        totalPalletCount: 3,
+      };
+      component.updateFreightOrderTotals(totals);
+      expect(component.totalGrossWeight.value).toEqual(1);
+      expect(component.totalVolume.value).toEqual(2);
+      expect(component.totalPalletCount.value).toEqual(3);
     });
   });
 

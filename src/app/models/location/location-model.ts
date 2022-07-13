@@ -32,3 +32,22 @@ export const EMPTY_BILL_TO_LOCATION: BillToLocation = {
 export interface ShippingPointLocation extends Location{
   shippingPoint?: string;
 }
+
+export interface ShippingPointLocationSelectOption {
+  label: string;
+  value: string;
+  businessUnit: string;
+  location: Location
+}
+
+export interface BillToLocation extends Location {
+  name2: string;
+  idCode?: string;
+}
+
+export interface ShippingPointWarehouseLocation {
+  warehouse: string;
+  customerCategory: string;
+  shippingPointCode: string;
+  billto: BillToLocation;
+}

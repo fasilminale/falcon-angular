@@ -1,8 +1,9 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { ShippingPointLocation } from 'src/app/models/location/location-model';
+import { ShippingPointLocationSelectOption } from 'src/app/models/location/location-model';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
+
 const { minLength, required } = Validators;
 
 @Component({
@@ -18,22 +19,45 @@ export class FalAddressComponent implements OnInit {
   ];
 
   public _formGroup = new FormGroup({});
+  private _editableFormArray = new FormArray([]);;
   @Input() addressType!: 'origin' | 'destination';
+  @Input() destinationType?: string;
+  @Output() originShippingPointChangeEvent = new EventEmitter<String>();
+  public masterDataShippingPoints: Array<ShippingPointLocationSelectOption> = [];
+
+  public nameControl = new FormControl('', [required]);
+  public countryControl = new FormControl('', [required]);
+  public cityControl = new FormControl('', [required]);
+  public zipCodeControl = new FormControl('', [required, minLength(5)]);
+  public stateControl = new FormControl('', [required]);
+  public streetAddressControl = new FormControl('', [required]);
+  public streetAddress2Control = new FormControl();
+  public shippingPointControl = new FormControl('', [required]);
+  public name2Control = new FormControl();
+  public idCodeControl = new FormControl();
 
   @Input() set formGroup (newFormGroup: FormGroup) {
-    newFormGroup.setControl('name', new FormControl('', [required]))
-    newFormGroup.setControl('country', new FormControl('', [required]))
-    newFormGroup.setControl('city', new FormControl('', [required]))
-    newFormGroup.setControl('zipCode', new FormControl('', [required, minLength(5)]))
-    newFormGroup.setControl('state', new FormControl('', [required]))
-    newFormGroup.setControl('streetAddress', new FormControl('', [required]))
-    newFormGroup.setControl('streetAddress2', new FormControl())
-    newFormGroup.setControl('shippingPoint', new FormControl('', [required]))
+    newFormGroup.setControl('name', this.nameControl);
+    newFormGroup.setControl('country', this.countryControl);
+    newFormGroup.setControl('city', this.cityControl);
+    newFormGroup.setControl('zipCode', this.zipCodeControl);
+    newFormGroup.setControl('state', this.stateControl);
+    newFormGroup.setControl('streetAddress', this.streetAddressControl);
+    newFormGroup.setControl('streetAddress2', this.streetAddress2Control);
+    newFormGroup.setControl('shippingPoint', this.shippingPointControl);
+    newFormGroup.setControl('name2', this.name2Control);
+    newFormGroup.setControl('idCode', this.idCodeControl);
     this._formGroup = newFormGroup;
     this._formGroup.disable();
   }
 
-  @Input() set loadAddress$(observable: Observable<ShippingPointLocation>) {
+  @Input() set loadFilteredShippingPointLocations$(observable: Observable<Array<ShippingPointLocationSelectOption>>) {
+    this.subscriptionManager.manage(observable.subscribe(spl => {
+      this.masterDataShippingPoints = spl;
+    }));
+  }
+
+  @Input() set loadAddress$(observable: Observable<any>) {
     this.subscriptionManager.manage(observable.subscribe(l => {
         this.nameControl.setValue(l.name ? l.name: 'N/A');
         this.countryControl.setValue(l.country ? l.country: this.validateField ? undefined : 'N/A');
@@ -61,6 +85,14 @@ export class FalAddressComponent implements OnInit {
           this._editableFormArray.push(this.streetAddress2Control);
         }
     }))
+  }
+  
+  @Input() set updateIsEditMode$(observable: Observable<boolean>) {
+    this.subscriptionManager.manage(observable.subscribe(
+      isEditMode => {
+        isEditMode ? this._editableFormArray.enable() : this._editableFormArray.disable();
+      }
+    ));
   }
 
   @Input() showShippingItemField = true;

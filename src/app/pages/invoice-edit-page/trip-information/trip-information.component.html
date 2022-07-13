@@ -1,5 +1,20 @@
 <div [formGroup]="formGroup">
-  <div class="headline2">Trip Information</div>
+  <div class="headline2 row">
+    <div class="col-4">
+      Trip Information
+      <span *ngIf="isTripEditMode$.value" class="text-primary">(Edit Mode)</span>
+    </div>
+    <div class="col-4 float-right">
+      <elm-button id="edit-button"
+                  buttonType="button"
+                  buttonStyle="primary"
+                  class="flex-shrink-1 header-button"
+                  [isDisabled]="isTripEditMode$.value"
+                  (buttonClick)="clickEditButton()">
+        Edit
+      </elm-button>
+    </div>
+  </div>
   <div class="row">
     <div class="col-4">
       <label for="tripIdInput"
@@ -223,11 +238,13 @@
       </label>
       <elm-card id="originAddressCard">
         <app-fal-address
-          [formGroup]="originAddressFormGroup"
           [addressType]="'origin'"
+          [formGroup]="originAddressFormGroup"
+          [destinationType]="tripInformation.destinationType"
           [loadAddress$]="loadOriginAddress$.asObservable()"
-        >
-
+          [updateIsEditMode$]="isTripEditMode$.asObservable()"
+          [loadFilteredShippingPointLocations$]="filteredShippingPoints$.asObservable()"
+          (originShippingPointChangeEvent)="updateBillToEvent($event)">
         </app-fal-address>
       </elm-card>
     </div>
@@ -238,10 +255,12 @@
       </label>
       <elm-card id="destinationAddressCard">
         <app-fal-address
-          [formGroup]="destinationAddressFormGroup"
           [addressType]="'destination'"
+          [formGroup]="destinationAddressFormGroup"
+          [destinationType]="tripInformation.destinationType"
           [loadAddress$]="loadDestinationAddress$.asObservable()"
-        >
+          [updateIsEditMode$]="isTripEditMode$.asObservable()"
+          [loadFilteredShippingPointLocations$]="filteredShippingPoints$.asObservable()">
         </app-fal-address>
       </elm-card>
     </div>
@@ -264,6 +283,38 @@
 
   <!--Freight orders section starts here-->
   <div class="row mt-3">
+    <div class="col-lg-6">
+
+      <div class="row">
+        <div class="col">
+          <label>Total Gross Weight (lb)</label>
+
+        </div>
+        <div class="col">
+          <label>Total Volume (ft<sup>3</sup>)</label>
+
+        </div>
+        <div class="col">
+          <label>Total Pallet Ct (plt)</label>
+
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <input type="text=" [value]="totalGrossWeight" [attr.disabled]="true" class="form-control col-1" matInput
+                 formControlName="totalGrossWeight">
+        </div>
+        <div class="col">
+          <input type="text=" [value]="totalVolume" [attr.disabled]="true" class="form-control col-1" matInput
+                 formControlName="totalVolume">
+        </div>
+        <div class="col">
+          <input type="text=" [value]="totalPalletCount" [attr.disabled]="true" class="form-control col-1" matInput
+                 formControlName="totalPalletCount">
+        </div>
+      </div>
+    </div>
+
     <div class="col-md-12" (click)="toggleFreightOrderDetailsSection()">
         <span class="accordion-header" *ngIf="!showFreightOrderSection">
           <span class="material-icons">keyboard_arrow_down</span>
@@ -277,8 +328,28 @@
 
     <div id="freightOrderSectionDiv" [hidden]="!showFreightOrderSection" class="col-md-12 mt-3">
       <app-freight-order-details
-        [loadFreightOrders$]="loadFreightOrders$.asObservable()">
+        [loadFreightOrders$]="loadFreightOrders$.asObservable()"
+        (totalEmitter)="updateFreightOrderTotals($event)">
       </app-freight-order-details>
+    </div>
+
+    <div *ngIf="isTripEditMode$.value" class="col-12 d-flex justify-content-end">
+      <elm-button id="cancel-button"
+                  buttonType="button"
+                  buttonStyle="secondary"
+                  class="mx-3"
+                  [isDisabled]="!isTripEditMode$.value"
+                  (buttonClick)="clickCancelButton()">
+        Cancel
+      </elm-button>
+      <elm-button id="update-button"
+                  buttonType="button"
+                  buttonStyle="primary"
+                  class=""
+                  [isDisabled]="!isTripEditMode$.value"
+                  (buttonClick)="clickUpdateButton()">
+        Update & Continue
+      </elm-button>
     </div>
   </div>
 </div>

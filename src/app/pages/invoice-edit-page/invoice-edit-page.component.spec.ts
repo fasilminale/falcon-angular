@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, flush, TestBed, tick} from '@angular/core/testing';
 
 import {InvoiceEditPageComponent} from './invoice-edit-page.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
@@ -36,7 +36,8 @@ describe('InvoiceEditPageComponent', () => {
     country: 'USA',
     name: 'test',
     state: 'TS',
-    zipCode: '12345'
+    zipCode: '12345',
+    code: undefined
   };
 
   const glLineItemFormArray = new FormArray([]);
@@ -283,6 +284,20 @@ describe('InvoiceEditPageComponent', () => {
         component.getRates('testAccessorialCode');
         expect(rateService.rateInvoice).not.toHaveBeenCalled();
       });
+
+      it('handleTripEditModeEvent should call getRates', fakeAsync(() => {
+        component.handleTripEditModeEvent(true);
+        tick();
+        expect(rateService.rateInvoice).toHaveBeenCalled();
+        flush();
+      }));
+
+      it('handleTripEditModeEvent should not call getRates', fakeAsync(() => {
+        component.handleTripEditModeEvent(false);
+        tick();
+        expect(rateService.rateInvoice).not.toHaveBeenCalled();
+        flush();
+      }));
 
       it('handle getAccessorialDetails response', done => {
         // Setup
@@ -809,7 +824,6 @@ describe('InvoiceEditPageComponent', () => {
     };
 
     it('should return EditAutoInvoiceModel object', () => {
-
       setUpControls();
       const result = component.mapTripInformationToEditAutoInvoiceModel();
       expect(result).toEqual({
