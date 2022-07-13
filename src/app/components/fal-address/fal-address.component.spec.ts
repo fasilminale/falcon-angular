@@ -53,6 +53,21 @@ describe('FalAddressComponent', () => {
       component.loadFilteredShippingPointLocations$ = loadFilteredShippingPointLocations$.asObservable();
     });
 
+    it(' onchange of shipping control with empty shippingPoint select value', fakeAsync(() => {
+      component.addressType = 'origin';
+      let shippingPointSelect = {} as ShippingPointLocationSelectOption;
+      component.onShippingPointChange(shippingPointSelect);
+      tick();
+      expect(component._formGroup.get('name')?.value).toEqual('N/A');
+      expect(component._formGroup.get('country')?.value).toEqual('N/A');
+      expect(component._formGroup.get('city')?.value).toEqual('N/A');
+      expect(component._formGroup.get('zipCode')?.value).toEqual('N/A');
+      expect(component._formGroup.get('state')?.value).toEqual('N/A');
+      expect(component._formGroup.get('streetAddress')?.value).toEqual('N/A');
+      expect(component._formGroup.get('streetAddress2')?.value).toEqual('N/A');
+      flush();
+    }));
+
     it(' onchange of shipping control when address type is origin', fakeAsync(() => {
       component.addressType = 'origin';
       let shippingPointSelect: ShippingPointLocationSelectOption = {
@@ -231,15 +246,15 @@ describe('FalAddressComponent', () => {
       }]);
     });
 
-    it('should not set form group when required properties of address are undefined', done => {
-      loadAddress$.subscribe(address => {
-        expect(component._formGroup.get('country')?.value).toBeUndefined();
-        expect(component._formGroup.get('zipCode')?.value).toBeUndefined();
-        done();
-      });
-      loadAddress$.next({} as ShippingPointLocation);
-      loadFilteredShippingPointLocations$.next([] as ShippingPointLocationSelectOption[]);
-    });
+    // it('should not set form group when required properties of address are undefined', done => {
+    //   loadAddress$.subscribe(address => {
+    //     expect(component._formGroup.get('country')?.value).toBeUndefined();
+    //     expect(component._formGroup.get('zipCode')?.value).toBeUndefined();
+    //     done();
+    //   });
+    //   loadAddress$.next({} as ShippingPointLocation);
+    //   loadFilteredShippingPointLocations$.next([] as ShippingPointLocationSelectOption[]);
+    // });
 
     it('should set form group values to N/A on non-required properties', done => {
       loadAddress$.subscribe(address => {
@@ -249,6 +264,8 @@ describe('FalAddressComponent', () => {
         expect(component._formGroup.get('streetAddress')?.value).toEqual('N/A');
         expect(component._formGroup.get('streetAddress2')?.value).toEqual('N/A');
         expect(component._formGroup.get('shippingPoint')?.value).toEqual('N/A');
+        expect(component._formGroup.get('country')?.value).toEqual('N/A');
+        expect(component._formGroup.get('zipCode')?.value).toEqual('N/A');
         done();
       });
       loadAddress$.next({} as ShippingPointLocation);

@@ -15,7 +15,7 @@ import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
-import {EMPTY_LOCATION, Location} from '../../models/location/location-model';
+import {BillToLocationUtils, Location, LocationUtils} from '../../models/location/location-model';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -848,9 +848,9 @@ describe('InvoiceEditPageComponent', () => {
         disputeLineItems: component.getDisputeLineItems(component.invoiceAmountFormGroup.controls.disputeLineItems),
         deniedChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.deniedChargeLineItems),
         deletedChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.deletedChargeLineItems),
-        originAddress: component.extractLocation(component.tripInformationFormGroup.controls.originAddress as FormGroup, 'origin'),
-        destinationAddress: component.extractLocation(component.tripInformationFormGroup.controls.destinationAddress as FormGroup, 'destination'),
-        billToAddress: component.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as FormGroup),
+        originAddress: LocationUtils.extractLocation(component.tripInformationFormGroup.controls.originAddress as FormGroup, 'origin'),
+        destinationAddress: LocationUtils.extractLocation(component.tripInformationFormGroup.controls.destinationAddress as FormGroup, 'destination', component.invoice.destination.code),
+        billToAddress: BillToLocationUtils.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as FormGroup),
         shippingPoint: (component.tripInformationFormGroup.controls.originAddress as FormGroup)?.controls?.shippingPoint?.value
       });
     });
@@ -942,54 +942,6 @@ describe('InvoiceEditPageComponent', () => {
     badInvoice.mode = null as any;
     component.loadInvoice(badInvoice);
     // no error means we pass
-  });
-
-  it('should handleValues with default value', () => {
-    const result = component.handleNAValues('N/A', 'origin');
-    expect(result).toEqual('origin');
-  });
-
-  it('should extract bad location data', () => {
-    const location = component.extractLocation(null as any, 'origin');
-    expect(location).toEqual({
-      name: undefined as any,
-      city: undefined as any,
-      country: undefined as any,
-      zipCode: undefined as any,
-      state: undefined as any,
-      address: undefined as any,
-      address2: undefined as any,
-      code: undefined as any
-    });
-  });
-
-  it('should extract bad location data for destination', () => {
-    const location = component.extractLocation(null as any, 'destination');
-    expect(location).toEqual({
-      name: undefined as any,
-      city: undefined as any,
-      country: undefined as any,
-      zipCode: undefined as any,
-      state: undefined as any,
-      address: undefined as any,
-      address2: undefined as any,
-      code: undefined as any
-    });
-  });
-
-  it('should extract bad bill to location data', () => {
-    const location = component.extractBillToLocation(null as any);
-    expect(location).toEqual({
-      name: undefined as any,
-      city: undefined as any,
-      country: undefined as any,
-      zipCode: undefined as any,
-      state: undefined as any,
-      address: undefined as any,
-      address2: undefined as any,
-      name2: undefined as any,
-      idCode: undefined as any,
-    });
   });
 
   it('should get bad cost line item data', () => {
