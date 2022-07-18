@@ -1,18 +1,10 @@
 <div [formGroup]="formGroup">
   <div class="headline2 row">
     <div class="col-4">
-      Trip Information
-      <span *ngIf="isTripEditMode$.value" class="text-primary">(Edit Mode)</span>
-    </div>
-    <div class="col-4 float-right">
-      <elm-button id="edit-button"
-                  buttonType="button"
-                  buttonStyle="primary"
-                  class="flex-shrink-1 header-button"
-                  [isDisabled]="isTripEditMode$.value"
-                  (buttonClick)="clickEditButton()">
-        Edit
-      </elm-button>
+      <span>Trip Information</span>
+      <span *ngIf="enableTripEditButton" role="button" class="material-icons material-icons-outlined valign-middle" (click)="clickEditButton()">
+        edit
+      </span>
     </div>
   </div>
   <div class="row">

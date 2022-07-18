@@ -16,12 +16,12 @@ import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-det
 import {ConfirmationModalData, ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
-import {RateEngineRequest, RateDetailResponse, RatesResponse} from '../../models/rate-engine/rate-engine-request';
+import {RateEngineRequest, RateDetailResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
 import {switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
-import {BillToLocation, BillToLocationUtils, CommonUtils, Location, LocationUtils} from '../../models/location/location-model';
+import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
 
 
@@ -48,8 +48,9 @@ export class InvoiceEditPageComponent implements OnInit {
   public invoiceAmountFormGroup: FormGroup;
   public invoiceAllocationFormGroup: FormGroup;
 
-  public isEditMode$ = new SubjectValue<boolean>(false);
+  public isGlobalEditMode$ = new SubjectValue<boolean>(false);
   public isTripEditMode$ = new SubjectValue<boolean>(false);
+  public otherSectionEditMode$ = new SubjectValue<boolean>(false);
   public loadTripInformation$ = new Subject<TripInformation>();
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
@@ -88,6 +89,10 @@ export class InvoiceEditPageComponent implements OnInit {
 
   private handleRouteParams(params: ParamMap): void {
     this.falconInvoiceNumber = params.get('falconInvoiceNumber') ?? '';
+    this.fetchFalconInvoice();
+  }
+
+  private fetchFalconInvoice(): void {
     if (this.falconInvoiceNumber) {
       this.subscriptions.manage(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
@@ -244,7 +249,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickToggleEditMode(): void {
-    this.isEditMode$.value = !this.isEditMode$.value;
+    this.isGlobalEditMode$.value = !this.isGlobalEditMode$.value;
     this.invoiceFormGroup.markAsPristine();
   }
 
@@ -266,25 +271,29 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickCancelButton(): void {
-    if (this.isEditMode$.value && this.invoiceFormGroup.dirty) {
+    if (this.isGlobalEditMode$.value && this.invoiceFormGroup.dirty) {
       this.askForCancelConfirmation().subscribe(result => {
         if (result) {
-          this.router.navigate(['/invoices']);
+          this.resetInvoiceForm();
         }
       });
     } else {
-      this.router.navigate(['/invoices']);
+      this.resetInvoiceForm();
     }
+  }
+
+  private resetInvoiceForm(): void {
+    this.fetchFalconInvoice();
+    this.isGlobalEditMode$.value = false;
+    this.isTripEditMode$.value = false;
+    this.otherSectionEditMode$.value = false;
   }
 
   handleTripEditModeEvent($event: boolean): void {
     if ($event) {
-      this.isEditMode$.value = true;
       this.getRates('');
-    } else {
-      this.isEditMode$.value = false;
     }
-    this.isTripEditMode$.value = false;
+    this.otherSectionEditMode$.value = true;
   }
 
   clickSaveButton(): void {

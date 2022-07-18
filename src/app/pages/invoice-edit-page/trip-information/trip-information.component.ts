@@ -110,6 +110,7 @@ export class TripInformationComponent implements OnInit {
   carrierModeCodeUtilsToDisplayLabel = CarrierModeCodeUtils.toDisplayLabel;
   carrierUtilsToDisplayLabel = CarrierUtils.toDisplayLabel;
 
+  public enableTripEditButton: boolean= false;
   public isTripEditMode$ = new SubjectValue<boolean>(false);
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
@@ -245,9 +246,8 @@ export class TripInformationComponent implements OnInit {
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
-      isEditMode => {
-        this.isTripEditMode$.value = isEditMode;
-        this.isTripEditMode$.value ? this._editableFormArray.enable() : this._editableFormArray.disable();
+      isGlobalEditMode => {
+        this.enableTripEditButton = isGlobalEditMode;
       }
     ));
   }
@@ -342,10 +342,10 @@ export class TripInformationComponent implements OnInit {
   }
 
   clickCancelButton(): void {
-    this.isTripEditMode$.value = false;
-    this._editableFormArray.disable();
     this.loadTripInformationData(this.localPeristentTripInformation);
     this.onUpdateAndContinueClickEvent.emit(false);
+    this.isTripEditMode$.value = false;
+    this._editableFormArray.disable();
   }
 
   clickUpdateButton(): void {
@@ -361,6 +361,8 @@ export class TripInformationComponent implements OnInit {
     const billToAddressFormGroup = this.billToAddressFormGroup;
     this.localPeristentTripInformation.billToAddress = BillToLocationUtils.extractBillToLocation(billToAddressFormGroup);
     this.onUpdateAndContinueClickEvent.emit(true);
+    this.isTripEditMode$.value = false;
+    this._editableFormArray.disable();
   }
 
   updateBillToEvent($event: any): void {

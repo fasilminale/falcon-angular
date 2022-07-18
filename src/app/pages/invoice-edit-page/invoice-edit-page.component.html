@@ -14,7 +14,7 @@
                   buttonType="button"
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="(isDeletedInvoice
+                  [isDisabled]="(isGlobalEditMode$.value || isDeletedInvoice
                           || (!isEditableInvoice && !(isAutoInvoice && isApprovedInvoice)))"
                   (buttonClick)="clickDeleteButton()">
         Delete
@@ -23,7 +23,7 @@
                   buttonType="button"
                   buttonStyle="primary"
                   class="flex-shrink-1 header-button"
-                  [isDisabled]="isEditMode$.value
+                  [isDisabled]="isGlobalEditMode$.value
                             || isDeletedInvoice
                             || !isEditableInvoice"
                   (buttonClick)="clickToggleEditMode()">
@@ -66,7 +66,7 @@
         <!-- Trip Information -->
         <app-trip-information [formGroup]="tripInformationFormGroup"
                               [loadTripInformation$]="loadTripInformation$.asObservable()"
-                              [updateIsEditMode$]="isTripEditMode$.asObservable()"
+                              [updateIsEditMode$]="isGlobalEditMode$.asObservable()"
                               (onUpdateAndContinueClickEvent)="handleTripEditModeEvent($event)">
         </app-trip-information>
         <hr/>
@@ -74,7 +74,7 @@
         <app-invoice-amount
          [formGroup]="invoiceAmountFormGroup"
          [userInfo]="userInfo"
-         [updateIsEditMode$]="isEditMode$.asObservable()"
+         [updateIsEditMode$]="otherSectionEditMode$.asObservable()"
          [loadInvoiceAmountDetail$]="loadInvoiceAmountDetail$.asObservable()"
          [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
          [chargeLineItemOptions$]="chargeLineItemOptions$.asObservable()"
@@ -89,7 +89,7 @@
         <!-- Allocation -->
         <app-invoice-allocation
         [formGroup]="invoiceAllocationFormGroup"
-        [updateIsEditMode$]="isEditMode$.asObservable()"
+        [updateIsEditMode$]="otherSectionEditMode$.asObservable()"
         [loadAllocationDetails]="loadAllocationDetails$.asObservable()"
         [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
         >
@@ -115,7 +115,7 @@
                         buttonType="button"
                         buttonStyle="secondary"
                         class="fake-form-control"
-                        [isDisabled]="!isEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound"
+                        [isDisabled]="!otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound"
                         (buttonClick)="clickSaveButton()">
               Save
             </elm-button>
@@ -125,7 +125,7 @@
                         buttonType="button"
                         buttonStyle="primary"
                         class="fake-form-control"
-                        [isDisabled]="!isEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound"
+                        [isDisabled]="!otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound"
                         (buttonClick)="clickSubmitForApprovalButton()">
               Submit for Approval
             </elm-button>
