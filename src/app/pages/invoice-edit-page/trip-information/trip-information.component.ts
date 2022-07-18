@@ -417,7 +417,6 @@ export class TripInformationComponent implements OnInit {
   }
 
   updateFreightOrderTotals(totals: any): void {
-    //this.totalGrossWeight.setValue(totals.totalGrossWeight);
     this.totalVolume.setValue(totals.totalVolume);
     this.totalPalletCount.setValue(totals.totalPalletCount);
   }
