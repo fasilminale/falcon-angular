@@ -808,19 +808,34 @@ describe('InvoiceAmountComponent', () => {
     expect(component.rateEngineCall.emit).toHaveBeenCalled();
   });
 
-  it('should call onDeleteCostLineItem and remove the line item', async () => {
-    component.costBreakdownItems.push(new FormGroup({
-      accessorialCode: new FormControl('TST')
-    }));
+  describe('should remove line item', () => {
+    beforeEach(() => {
+      spyOn(component.getAccessorialDetails, 'emit').and.stub();
+      spyOn(utilService, 'openCommentModal').and.returnValue(of({
+        comment: ''
+      }));
+      spyOn(component.rateEngineCall, 'emit').and.stub();
+    });
 
-    const costLineItem = component.costBreakdownItemsControls[0];
-    spyOn(component.getAccessorialDetails, 'emit').and.stub();
-    spyOn(utilService, 'openCommentModal').and.returnValue(of({
-      comment: ''
-    }));
-    spyOn(component.rateEngineCall, 'emit').and.stub();
-    await component.onDeleteCostLineItem(costLineItem);
-    expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
-    expect(component.rateEngineCall.emit).toHaveBeenCalled();
+    it('should call onDeleteCostLineItem and remove the line item', async () => {
+      component.costBreakdownItems.push(new FormGroup({
+        accessorialCode: new FormControl('TST')
+      }));
+      const costLineItem = component.costBreakdownItemsControls[0];
+      await component.onDeleteCostLineItem(costLineItem);
+      expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
+      expect(component.rateEngineCall.emit).toHaveBeenCalled();
+    });
+
+    it('should call onDeleteCostLineItem and remove the OTHER line item', async () => {
+      component.costBreakdownItems.push(new FormGroup({
+        accessorialCode: new FormControl(''),
+        charge: new FormControl('OTHER')
+      }));
+      const costLineItem = component.costBreakdownItemsControls[0];
+      await component.onDeleteCostLineItem(costLineItem);
+      expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
+      expect(component.rateEngineCall.emit).toHaveBeenCalled();
+    });
   });
 });

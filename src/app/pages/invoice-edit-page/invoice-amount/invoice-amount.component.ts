@@ -513,7 +513,9 @@ export class InvoiceAmountComponent implements OnInit {
     }).pipe(first()).toPromise();
     if (dialogResult) {
       const index = this.costBreakdownItemsControls.findIndex(
-        lineItem => lineItem.value.accessorialCode === costLineItem.value.accessorialCode
+        lineItem => lineItem.value.accessorialCode !== ''
+          ? lineItem.value.accessorialCode === costLineItem.value.accessorialCode
+          : lineItem.value.charge === 'OTHER'
       );
       const existingCostLineItem: AbstractControl | null = this.costBreakdownItems.get(index.toString());
 
