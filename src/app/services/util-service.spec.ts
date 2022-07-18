@@ -3,6 +3,7 @@ import {UtilService} from './util-service';
 import {MatDialog} from '@angular/material/dialog';
 import {of} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
+import {FormControl} from '@angular/forms';
 
 describe('UtilService', () => {
 
@@ -13,6 +14,22 @@ describe('UtilService', () => {
     title: 'Test Modal',
     innerHtmlMessage: 'I\'m a test modal',
     primaryButtonText: 'Close',
+  };
+
+  const testNewChargeData = {
+    title: 'Test New Charge Modal',
+    innerHtmlMessage: 'I\'m a test new charge modal',
+    costBreakdownOptions: []
+  };
+
+  const testEditChargeData = {
+    title: 'Test Edit Charge Modal',
+    innerHtmlMessage: 'I\'m a test edit charge modal',
+    costLineItem: new FormControl()
+  };
+
+  const weightAdjustmentTestModalData = {
+    currentWeight: 1.0
   };
 
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -62,6 +79,48 @@ describe('UtilService', () => {
   it('openConfirmationModal should cancel', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
     const result = await util.openConfirmationModal(testModalData).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeFalse();
+  });
+
+  it('openNewChargeModal should confirm', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    const result = await util.openNewChargeModal(testNewChargeData).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeTrue();
+  });
+
+  it('openNewChargeModal should cancel', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
+    const result = await util.openNewChargeModal(testNewChargeData).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeFalse();
+  });
+
+  it('openEditChargeModal should confirm', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    const result = await util.openEditChargeModal(testEditChargeData).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeTrue();
+  });
+
+  it('openEditChargeModal should cancel', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
+    const result = await util.openEditChargeModal(testEditChargeData).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeFalse();
+  });
+
+  it('openNewChargeModal should confirm', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    const result = await util.openWeightAdjustmentModal(weightAdjustmentTestModalData).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeTrue();
+  });
+
+  it('openNewChargeModal should cancel', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
+    const result = await util.openWeightAdjustmentModal(weightAdjustmentTestModalData).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeFalse();
   });

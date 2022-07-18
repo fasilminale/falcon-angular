@@ -128,7 +128,8 @@ export class InvoiceEditPageComponent implements OnInit {
       freightOrders: invoice.freightOrders,
       overriddenDeliveryDateTime: invoice.overriddenDeliveryDateTime ? new Date(invoice.overriddenDeliveryDateTime) : undefined,
       assumedDeliveryDateTime: invoice.assumedDeliveryDateTime ? new Date(invoice.assumedDeliveryDateTime) : undefined,
-      tripTenderTime: invoice.tripTenderTime ? new Date(invoice.tripTenderTime) : undefined
+      tripTenderTime: invoice.tripTenderTime ? new Date(invoice.tripTenderTime) : undefined,
+      totalGrossWeight: invoice.totalGrossWeight ? invoice.totalGrossWeight : 0
     });
     if (this.tripInformationFormGroup.enabled) {
       this.tripInformationFormGroup.disable();
@@ -287,6 +288,18 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isTripEditMode$.value = false;
   }
 
+  handleWeightAdjustmentModalEvent($event: number): void {
+    const dialogResult: Observable<any> =
+      this.util.openWeightAdjustmentModal({ currentWeight: $event });
+
+    dialogResult.subscribe(result => {
+      if (result) {
+        this.invoice.totalGrossWeight = result.adjustedWeight;
+        this.loadInvoice(this.invoice);
+      }
+    });
+  }
+
   clickSaveButton(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
       this.subscriptions.manage(
@@ -348,6 +361,7 @@ export class InvoiceEditPageComponent implements OnInit {
     const originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
+      totalGrossWeight: this.tripInformationFormGroup.controls.totalGrossWeight.value,
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
       pendingChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems),
       disputeLineItems: this.getDisputeLineItems(this.invoiceAmountFormGroup.controls.disputeLineItems),

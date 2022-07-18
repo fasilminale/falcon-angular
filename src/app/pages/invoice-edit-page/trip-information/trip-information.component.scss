@@ -88,3 +88,10 @@
 .field-invalid ::ng-deep input{
   border: 1pt solid #db0000 !important;
 }
+
+.edit-icon {
+  display: inline-flex;
+  vertical-align: top;
+  padding: 4px;
+  cursor: pointer;
+}

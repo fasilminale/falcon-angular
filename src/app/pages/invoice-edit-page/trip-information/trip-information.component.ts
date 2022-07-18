@@ -20,7 +20,7 @@ import {DateParserFormatter} from '../../../utils/date-parser-formatter';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
 import { SubjectValue } from 'src/app/utils/subject-value';
 import { InvoiceService } from 'src/app/services/invoice-service';
-import { InvoiceUtils } from 'src/app/models/invoice/invoice-model';
+import {InvoiceDataModel, InvoiceUtils} from 'src/app/models/invoice/invoice-model';
 
 const {required} = Validators;
 
@@ -48,6 +48,7 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
 })
 export class TripInformationComponent implements OnInit {
   @Output() onUpdateAndContinueClickEvent = new EventEmitter<boolean>();
+  @Output() openWeightAdjustmentModalEvent = new EventEmitter<any>();
 
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
   public carrierOptions: Array<SelectOption<CarrierReference>> = [];
@@ -296,6 +297,7 @@ export class TripInformationComponent implements OnInit {
       this.loadDestinationAddress$.next(tripInfo.destinationAddress);
       this.loadBillToAddress$.next(tripInfo.billToAddress);
       this.loadFreightOrders$.next(tripInfo.freightOrders);
+      this.totalGrossWeight.setValue(tripInfo.totalGrossWeight);
       this.formGroup.updateValueAndValidity();
       if (this._editableFormArray.disabled) {
         this.formGroup.disable();
@@ -415,9 +417,12 @@ export class TripInformationComponent implements OnInit {
   }
 
   updateFreightOrderTotals(totals: any): void {
-    this.totalGrossWeight.setValue(totals.totalGrossWeight);
     this.totalVolume.setValue(totals.totalVolume);
     this.totalPalletCount.setValue(totals.totalPalletCount);
+  }
+
+  openWeightAdjustmentModal(): void {
+    this.openWeightAdjustmentModalEvent.emit(this.totalGrossWeight.value);
   }
 }
 

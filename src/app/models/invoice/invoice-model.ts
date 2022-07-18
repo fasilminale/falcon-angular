@@ -86,6 +86,7 @@ export class InvoiceDataModel {
   assumedDeliveryDateTime: string;
   tripTenderTime: string;
   hasRateEngineError: boolean;
+  totalGrossWeight: number;
 
   /* --- AUTOMATED INVOICE: COST BREAKDOWN FIELDS --- */
   deliveryInstructions: Array<string>;
@@ -186,6 +187,7 @@ export class InvoiceDataModel {
     this.assumedDeliveryDateTime = date(json?.assumedDeliveryDateTime);
     this.tripTenderTime = date(json?.tripTenderTime);
     this.hasRateEngineError = json?.hasRateEngineError ?? false;
+    this.totalGrossWeight = json?.totalGrossWeight ?? 0;
 
     // AUTOMATED INVOICE: COST BREAKDOWN
     this.deliveryInstructions = json?.deliveryInstructions ?? [];

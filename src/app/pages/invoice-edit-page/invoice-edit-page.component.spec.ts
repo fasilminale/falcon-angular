@@ -147,6 +147,7 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(utilService, 'openErrorModal').and.returnValue(of());
     spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
     spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: 'deleteReason'}));
+    spyOn(utilService, 'openWeightAdjustmentModal').and.returnValue(of({adjustedWeight: 1.0}));
 
     // Mock Toast Service
     toastService = TestBed.inject(ToastService);
@@ -245,7 +246,8 @@ describe('InvoiceEditPageComponent', () => {
           }],
           overriddenDeliveryDateTime: new Date().toISOString(),
           assumedDeliveryDateTime: new Date().toISOString(),
-          tripTenderTime: new Date().toISOString()
+          tripTenderTime: new Date().toISOString(),
+          totalGrossWeight: 0
         };
         spyOn(component, 'updateInvoiceFromForms').and.stub();
         spyOn(rateService, 'rateInvoice').and.returnValue(of(testInvoice));
@@ -606,6 +608,23 @@ describe('InvoiceEditPageComponent', () => {
     ));
   });
 
+  it('should handle the weight adjustment modal', done => {
+    // Setup
+    const weightAdjustmentResult$ = new Subject<any>();
+    const weightAdjustmentModal$ = new Subject<any>();
+    asSpy(utilService.openWeightAdjustmentModal).and.returnValue(weightAdjustmentModal$.asObservable());
+    component.handleWeightAdjustmentModalEvent(1);
+
+    // Assertions
+    weightAdjustmentModal$.subscribe(() => {
+      expect(utilService.openWeightAdjustmentModal).toHaveBeenCalled();
+      done();
+    });
+
+    // Run Test
+    weightAdjustmentModal$.next({ currentWeight: 1.0 });
+  });
+
   describe('clickSaveButton method', () => {
 
     const setUpControls = () => {
@@ -828,6 +847,7 @@ describe('InvoiceEditPageComponent', () => {
       const result = component.mapTripInformationToEditAutoInvoiceModel();
       expect(result).toEqual({
         amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
+        totalGrossWeight: component.tripInformationFormGroup.controls.totalGrossWeight.value,
         mode: {
           mode: component.tripInformationFormGroup.controls.carrierMode.value.mode,
           reportKeyMode: component.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
