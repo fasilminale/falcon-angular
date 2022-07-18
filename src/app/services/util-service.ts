@@ -22,6 +22,10 @@ import {
   EditChargeModalOutput,
   FalEditChargeModalComponent
 } from '../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
+import {
+  FalAdjustWeightModalComponent, WeightAdjustmentModalInput,
+  WeightAdjustmentModalOutput
+} from '../components/fal-adjust-weight-modal/fal-adjust-weight-modal.component';
 
 @Injectable()
 export class UtilService {
@@ -78,6 +82,12 @@ export class UtilService {
     return this.dialog.open(FalEditChargeModalComponent, {autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<EditChargeModalOutput>>(result => of(result)));
+  }
+
+  public openWeightAdjustmentModal(data: WeightAdjustmentModalInput): Observable<WeightAdjustmentModalOutput> {
+    return this.dialog.open(FalAdjustWeightModalComponent, {minWidth: '1000px', autoFocus: false, data})
+      .afterClosed()
+      .pipe(mergeMap<any, Observable<WeightAdjustmentModalOutput>>(result => of(result)));
   }
 
   public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {

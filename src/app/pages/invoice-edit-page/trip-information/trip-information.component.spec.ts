@@ -279,7 +279,7 @@ describe('TripInformationComponent', () => {
       level: 't1',
       name: 'Test Service Level'
     };
-    
+
     const BILL_TO_LOCATION: BillToLocation = {
       name: 'n1',
       code: '',
@@ -298,7 +298,7 @@ describe('TripInformationComponent', () => {
       shippingPointCode: 'D71',
       billto: BILL_TO_LOCATION
     };
-    
+
     const LOCATION: Location = {
       name: 'n1',
       address: 'a1',
@@ -1274,14 +1274,20 @@ describe('TripInformationComponent', () => {
   describe('update total values', () => {
     it('update the weight, volume, and pallet values', () => {
       const totals = {
-        totalGrossWeight: 1,
         totalVolume: 2,
         totalPalletCount: 3,
       };
       component.updateFreightOrderTotals(totals);
-      expect(component.totalGrossWeight.value).toEqual(1);
       expect(component.totalVolume.value).toEqual(2);
       expect(component.totalPalletCount.value).toEqual(3);
+    });
+  });
+
+  describe('display weight adjustment modal', () => {
+    it('should emit event to display modal', () => {
+      spyOn(component.openWeightAdjustmentModalEvent, 'emit').and.stub();
+      component.openWeightAdjustmentModal();
+      expect(component.openWeightAdjustmentModalEvent.emit).toHaveBeenCalled();
     });
   });
 
