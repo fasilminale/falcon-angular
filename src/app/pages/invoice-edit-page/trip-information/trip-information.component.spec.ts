@@ -709,36 +709,18 @@ describe('TripInformationComponent', () => {
       component.updateIsEditMode$ = isEditMode$.asObservable();
     });
 
-    it('(edit mode = true) should enable editable forms', done => {
+    it('(edit mode = true) should show edit button next to Trip Information title', done => {
       fixture.detectChanges();
       isEditMode$.subscribe(() => {
-        expect(component.tripIdControl.enabled).toBeFalse();
-        expect(component.invoiceDateControl.enabled).toBeFalse();
-        expect(component.pickUpDateControl.enabled).toBeTrue();
-        expect(component.deliveryDateControl.enabled).toBeFalse();
-        expect(component.proTrackingNumberControl.enabled).toBeFalse();
-        expect(component.bolNumberControl.enabled).toBeFalse();
-        expect(component.freightPaymentTermsControl.enabled).toBeFalse();
-        expect(component.carrierControl.enabled).toBeTrue();
-        expect(component.carrierModeControl.enabled).toBeTrue();
-        expect(component.serviceLevelControl.enabled).toBeTrue();
+        expect(component.enableTripEditButton).toBeTrue();
         done();
       });
       isEditMode$.next(true);
     });
-    it('(edit mode = false) should disable editable forms', done => {
+    it('(edit mode = false) should hide edit button next to Trip Information title', done => {
       fixture.detectChanges();
       isEditMode$.subscribe(() => {
-        expect(component.tripIdControl.disabled).toBeTrue();
-        expect(component.invoiceDateControl.disabled).toBeTrue();
-        expect(component.pickUpDateControl.disabled).toBeTrue();
-        expect(component.deliveryDateControl.disabled).toBeTrue();
-        expect(component.proTrackingNumberControl.disabled).toBeTrue();
-        expect(component.bolNumberControl.disabled).toBeTrue();
-        expect(component.freightPaymentTermsControl.disabled).toBeTrue();
-        expect(component.carrierControl.disabled).toBeTrue();
-        expect(component.carrierModeControl.disabled).toBeTrue();
-        expect(component.serviceLevelControl.disabled).toBeTrue();
+        expect(component.enableTripEditButton).toBeFalse();
         done();
       });
       isEditMode$.next(false);
@@ -790,21 +772,6 @@ describe('TripInformationComponent', () => {
       expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
       expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
       expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
-    });
-
-    it('should load trip information with form enabled', () => {
-      const tripInformation$ = new Subject<TripInformation>();
-      const updateIsEditMode$ = new Subject<boolean>();
-      spyOn(component.formGroup, 'enable').and.stub();
-      spyOn(component.formGroup, 'disable').and.stub();
-      component.loadTripInformation$ = tripInformation$.asObservable();
-      component.updateIsEditMode$ = updateIsEditMode$.asObservable();
-      updateIsEditMode$.next(false);
-      tripInformation$.next(tripInformation);
-      component.filteredCarrierModeOptionsPopulatedSubject.next(1);
-      fixture.detectChanges();
-      expect(component.formGroup.enable).toHaveBeenCalled();
-      expect(component.formGroup.disable).toHaveBeenCalled();
     });
   });
 
@@ -1267,6 +1234,33 @@ describe('TripInformationComponent', () => {
       const a = {reportKeyMode: 'SOME', reportModeDescription: 'SOME DESC'};
       const b = {reportKeyMode: 'SOME', reportModeDescription: 'SOME DESC'};
       const result = component.compareCarrierModeWith(a, b);
+      expect(result).toBeTrue();
+    });
+  });
+
+  describe('#compareServiceLevelWith', () => {
+    it('should mark empty objects as equal', () => {
+      const a = {};
+      const b = {};
+      const result = component.compareServiceLevelWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark null objects as equal', () => {
+      const a = null;
+      const b = null;
+      const result = component.compareServiceLevelWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark equal SelectOptions objects as equal', () => {
+      const a = {label: 'Service Level', value: {level: 'SERVICE'}};
+      const b = {label: 'Service Level', value: {level: 'SERVICE'}};
+      const result = component.compareServiceLevelWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should compare and mark equal options as equal', () => {
+      const a = {label: 'Service Level', level: 'SERVICE'};
+      const b = 'SERVICE';
+      const result = component.compareServiceLevelWith(a, b);
       expect(result).toBeTrue();
     });
   });

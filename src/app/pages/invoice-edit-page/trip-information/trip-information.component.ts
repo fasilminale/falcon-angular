@@ -47,7 +47,7 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
   ]
 })
 export class TripInformationComponent implements OnInit {
-  @Output() onUpdateAndContinueClickEvent = new EventEmitter<boolean>();
+  @Output() onUpdateAndContinueClickEvent = new EventEmitter<any>();
   @Output() openWeightAdjustmentModalEvent = new EventEmitter<any>();
 
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
@@ -111,6 +111,7 @@ export class TripInformationComponent implements OnInit {
   carrierModeCodeUtilsToDisplayLabel = CarrierModeCodeUtils.toDisplayLabel;
   carrierUtilsToDisplayLabel = CarrierUtils.toDisplayLabel;
 
+  public enableTripEditButton: boolean= false;
   public isTripEditMode$ = new SubjectValue<boolean>(false);
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
@@ -246,9 +247,8 @@ export class TripInformationComponent implements OnInit {
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.subscriptionManager.manage(observable.subscribe(
-      isEditMode => {
-        this.isTripEditMode$.value = isEditMode;
-        this.isTripEditMode$.value ? this._editableFormArray.enable() : this._editableFormArray.disable();
+      isGlobalEditMode => {
+        this.enableTripEditButton = isGlobalEditMode;
       }
     ));
   }
@@ -341,13 +341,14 @@ export class TripInformationComponent implements OnInit {
   clickEditButton(): void {
     this.isTripEditMode$.value = true;
     this._editableFormArray.enable();
+    this.onUpdateAndContinueClickEvent.emit({event: 'edit', value: false});
   }
 
   clickCancelButton(): void {
+    this.loadTripInformationData(this.localPeristentTripInformation);
+    this.onUpdateAndContinueClickEvent.emit({event: 'cancel', value: false});
     this.isTripEditMode$.value = false;
     this._editableFormArray.disable();
-    this.loadTripInformationData(this.localPeristentTripInformation);
-    this.onUpdateAndContinueClickEvent.emit(false);
   }
 
   clickUpdateButton(): void {
@@ -362,7 +363,9 @@ export class TripInformationComponent implements OnInit {
     this.localPeristentTripInformation.destinationAddress = LocationUtils.extractShippingPointLocation(destinationAddressFormGroup, 'destination', this.localPeristentTripInformation.destinationAddress?.code);
     const billToAddressFormGroup = this.billToAddressFormGroup;
     this.localPeristentTripInformation.billToAddress = BillToLocationUtils.extractBillToLocation(billToAddressFormGroup);
-    this.onUpdateAndContinueClickEvent.emit(true);
+    this.onUpdateAndContinueClickEvent.emit({event: 'update', value: true});
+    this.isTripEditMode$.value = false;
+    this._editableFormArray.disable();
   }
 
   updateBillToEvent($event: any): void {
@@ -382,8 +385,10 @@ export class TripInformationComponent implements OnInit {
     return item.id === value.id;
   }
 
-  compareServiceLevelWith(item: any, value: any): boolean {
-    return item?.level === (value?.level || value);
+  compareServiceLevelWith(a: any, b: any): boolean {
+    const aLevel = a?.level ?? a?.value?.level;
+    const bLevel = b?.level ?? b?.value?.level;
+    return (aLevel === bLevel) || (aLevel === b);
   }
 
   compareCarrierWith(a: any, b: any): boolean {
