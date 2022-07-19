@@ -256,6 +256,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickToggleEditMode(): void {
     this.isGlobalEditMode$.value = !this.isGlobalEditMode$.value;
+    this.isTripEditMode$.value = true;
     this.showEditInfoBanner = this.isGlobalEditMode$.value;
     this.otherSectionEditMode$.value = true;
     this.invoiceFormGroup.markAsPristine();
@@ -282,16 +283,17 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.isGlobalEditMode$.value && this.invoiceFormGroup.dirty) {
       this.askForCancelConfirmation().subscribe(result => {
         if (result) {
+          this.fetchFalconInvoice();
           this.resetInvoiceForm();
         }
       });
     } else {
+      this.fetchFalconInvoice();
       this.resetInvoiceForm();
     }
   }
 
   private resetInvoiceForm(): void {
-    this.fetchFalconInvoice();
     this.isGlobalEditMode$.value = false;
     this.showEditInfoBanner = this.isGlobalEditMode$.value;
     this.isTripEditMode$.value = false;
@@ -328,6 +330,7 @@ export class InvoiceEditPageComponent implements OnInit {
           (value) => {
             if (!value.glLineItemsInvalid) {
               this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated.`);
+              this.resetInvoiceForm();
             } else {
               this.toastService.openErrorToast('The Invoice Allocations line items have values which do not match with master data.');
               this.subscriptions.manage(

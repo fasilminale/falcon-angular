@@ -773,21 +773,6 @@ describe('TripInformationComponent', () => {
       expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
       expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
     });
-
-    // it('should load trip information with form enabled', () => {
-    //   const tripInformation$ = new Subject<TripInformation>();
-    //   const updateIsEditMode$ = new Subject<boolean>();
-    //   spyOn(component.formGroup, 'enable').and.stub();
-    //   spyOn(component.formGroup, 'disable').and.stub();
-    //   component.loadTripInformation$ = tripInformation$.asObservable();
-    //   component.updateIsEditMode$ = updateIsEditMode$.asObservable();
-    //   updateIsEditMode$.next(false);
-    //   tripInformation$.next(tripInformation);
-    //   component.filteredCarrierModeOptionsPopulatedSubject.next(1);
-    //   fixture.detectChanges();
-    //   expect(component.formGroup.enable).toHaveBeenCalled();
-    //   expect(component.formGroup.disable).toHaveBeenCalled();
-    // });
   });
 
   it('should load trip information and use First FO Delivery date when First FO Delivery date is given', () => {

@@ -273,6 +273,28 @@
     </div>
   </div>
 
+  <br />
+  <div class="row">
+    <div *ngIf="isTripEditMode$.value" class="col-12 d-flex justify-content-end">
+      <elm-button id="cancel-button"
+                  buttonType="button"
+                  buttonStyle="secondary"
+                  class="mx-3"
+                  [isDisabled]="!isTripEditMode$.value"
+                  (buttonClick)="clickCancelButton()">
+        Cancel
+      </elm-button>
+      <elm-button id="update-button"
+                  buttonType="button"
+                  buttonStyle="primary"
+                  class=""
+                  [isDisabled]="!isTripEditMode$.value"
+                  (buttonClick)="clickUpdateButton()">
+        Update & Continue
+      </elm-button>
+    </div>
+  </div>
+
   <!--Freight orders section starts here-->
   <div class="row mt-3">
     <div class="col-lg-6">
@@ -329,25 +351,6 @@
         [loadFreightOrders$]="loadFreightOrders$.asObservable()"
         (totalEmitter)="updateFreightOrderTotals($event)">
       </app-freight-order-details>
-    </div>
-
-    <div *ngIf="isTripEditMode$.value" class="col-12 d-flex justify-content-end">
-      <elm-button id="cancel-button"
-                  buttonType="button"
-                  buttonStyle="secondary"
-                  class="mx-3"
-                  [isDisabled]="!isTripEditMode$.value"
-                  (buttonClick)="clickCancelButton()">
-        Cancel
-      </elm-button>
-      <elm-button id="update-button"
-                  buttonType="button"
-                  buttonStyle="primary"
-                  class=""
-                  [isDisabled]="!isTripEditMode$.value"
-                  (buttonClick)="clickUpdateButton()">
-        Update & Continue
-      </elm-button>
     </div>
   </div>
 </div>
