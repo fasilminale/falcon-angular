@@ -48,8 +48,7 @@
 
     <ng-container matColumnDef="stopReferenceID">
       <th id="stopReferenceID" mat-header-cell *matHeaderCellDef> Stop Ref</th>
-      <td mat-cell class="width-90" [ngClass]="{ 'missing-error' : !freightOrder.stopReferenceId }"
-          *matCellDef="let freightOrder"> {{freightOrder.stopReferenceId || 'Missing'}}</td>
+      <td mat-cell class="width-90" *matCellDef="let freightOrder"> {{freightOrder.stopReferenceId || 'N/A'}}</td>
     </ng-container>
 
     <ng-container matColumnDef="destination">
