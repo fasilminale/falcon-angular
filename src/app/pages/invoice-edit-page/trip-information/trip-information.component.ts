@@ -382,8 +382,10 @@ export class TripInformationComponent implements OnInit {
     return item.id === value.id;
   }
 
-  compareServiceLevelWith(item: any, value: any): boolean {
-    return item?.level === (value?.level || value);
+  compareServiceLevelWith(a: any, b: any): boolean {
+    const aLevel = a?.level ?? a?.value?.level;
+    const bLevel = b?.level ?? b?.value?.level;
+    return (aLevel === bLevel) || (aLevel === b);
   }
 
   compareCarrierWith(a: any, b: any): boolean {

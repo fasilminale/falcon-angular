@@ -235,6 +235,7 @@ describe('InvoiceEditPageComponent', () => {
             amountOfPayment: 873.83,
             dateOfPayment: '2022-03-09T15:31:30.986Z'
           },
+          serviceCode: 'GROUND',
           standardPaymentTermsOverride: '',
           status: {key: 'FAKE', label: 'Fake Status'},
           vendorNumber: '123',
@@ -858,8 +859,8 @@ describe('InvoiceEditPageComponent', () => {
           name: component.tripInformationFormGroup.controls.carrier.value.name,
         },
         serviceLevel: {
-          level: component.tripInformationFormGroup.controls.serviceLevel.value.level,
-          name: component.tripInformationFormGroup.controls.serviceLevel.value.name,
+          level: component.tripInformationFormGroup.controls.serviceLevel.value,
+          name: component.invoice.serviceCode,
         },
         pickupDateTime: component.tripInformationFormGroup.controls.pickUpDate.value,
         glLineItemList: component.invoiceAllocationFormGroup.controls.invoiceAllocations.value,
