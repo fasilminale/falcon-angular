@@ -26,6 +26,7 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatListModule} from '@angular/material/list';
 import {FalRadioInputComponent} from './components/fal-radio-input/fal-radio-input.component';
 import {InvoiceDetailPageComponent} from './pages/invoice-detail-page/invoice-detail-page.component';
@@ -201,6 +202,7 @@ const oktaConfig = {
     MatSnackBarModule,
     MatDialogModule,
     MatSidenavModule,
+    MatToolbarModule,
     MatListModule,
     MatTableModule,
     MatTooltipModule,

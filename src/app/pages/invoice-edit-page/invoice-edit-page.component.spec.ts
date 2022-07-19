@@ -286,16 +286,25 @@ describe('InvoiceEditPageComponent', () => {
       });
 
       it('handleTripEditModeEvent should call getRates', fakeAsync(() => {
-        component.handleTripEditModeEvent(true);
+        component.handleTripEditModeEvent({event: 'update', value: true});
         tick();
         expect(rateService.rateInvoice).toHaveBeenCalled();
+        expect(component.otherSectionEditMode$.value).toEqual(true);
         flush();
       }));
 
       it('handleTripEditModeEvent should not call getRates', fakeAsync(() => {
-        component.handleTripEditModeEvent(false);
+        component.handleTripEditModeEvent({event: 'cancel', value: false});
         tick();
         expect(rateService.rateInvoice).not.toHaveBeenCalled();
+        expect(component.otherSectionEditMode$.value).toEqual(true);
+        flush();
+      }));
+
+      it('handleTripEditModeEvent should disable otherSection form controls', fakeAsync(() => {
+        component.handleTripEditModeEvent({event: 'edit', value: false});
+        tick();
+        expect(component.otherSectionEditMode$.value).toEqual(false);
         flush();
       }));
 
@@ -430,6 +439,12 @@ describe('InvoiceEditPageComponent', () => {
     });
     // Run Test
     getUserInfo$.next(testUser);
+  });
+
+  it('#clickCloseBanner should close banner', () => {
+    const initialValue = component.showEditInfoBanner;
+    component.clickCloseBanner();
+    expect(component.showEditInfoBanner).toEqual(false);
   });
 
   it('#clickToggleEditMode should toggle isGlobalEditMode$', () => {

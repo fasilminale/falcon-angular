@@ -32,7 +32,12 @@
     </div>
   </div>
 </elm-page-header>
-
+<mat-toolbar *ngIf="showEditInfoBanner" class="margin-b-24">
+  <div class="headline3 w-100 text-center text-danger">
+    <span><b>ATTENTION:</b> To update and apply changes, click the <b>"SAVE"</b> button</span>
+    <span role="button" class="material-icons material-icons-outlined close-icon" (click)="clickCloseBanner()">close</span>
+  </div>
+</mat-toolbar>
 <elm-card>
   <mat-sidenav-container class="side-nav-container"
                          [hasBackdrop]="false">

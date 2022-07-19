@@ -47,7 +47,7 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
   ]
 })
 export class TripInformationComponent implements OnInit {
-  @Output() onUpdateAndContinueClickEvent = new EventEmitter<boolean>();
+  @Output() onUpdateAndContinueClickEvent = new EventEmitter<any>();
 
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
   public carrierOptions: Array<SelectOption<CarrierReference>> = [];
@@ -339,11 +339,12 @@ export class TripInformationComponent implements OnInit {
   clickEditButton(): void {
     this.isTripEditMode$.value = true;
     this._editableFormArray.enable();
+    this.onUpdateAndContinueClickEvent.emit({event: 'edit', value: false});
   }
 
   clickCancelButton(): void {
     this.loadTripInformationData(this.localPeristentTripInformation);
-    this.onUpdateAndContinueClickEvent.emit(false);
+    this.onUpdateAndContinueClickEvent.emit({event: 'cancel', value: false});
     this.isTripEditMode$.value = false;
     this._editableFormArray.disable();
   }
@@ -360,7 +361,7 @@ export class TripInformationComponent implements OnInit {
     this.localPeristentTripInformation.destinationAddress = LocationUtils.extractShippingPointLocation(destinationAddressFormGroup, 'destination', this.localPeristentTripInformation.destinationAddress?.code);
     const billToAddressFormGroup = this.billToAddressFormGroup;
     this.localPeristentTripInformation.billToAddress = BillToLocationUtils.extractBillToLocation(billToAddressFormGroup);
-    this.onUpdateAndContinueClickEvent.emit(true);
+    this.onUpdateAndContinueClickEvent.emit({event: 'update', value: true});
     this.isTripEditMode$.value = false;
     this._editableFormArray.disable();
   }

@@ -44,6 +44,20 @@
   padding-right: 0;
 }
 
+.margin-b-24 {
+  margin: -24px 0 24px;
+}
+
+.close-icon {
+  vertical-align: middle;
+  background-color: #000000;
+  font-size: 18px;
+  margin-left: 15px;
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 15px;
+}
+
 ::ng-deep .fake-form-control {
   padding: 0.375rem 0.75rem;
 }

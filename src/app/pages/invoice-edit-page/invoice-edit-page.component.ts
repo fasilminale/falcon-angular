@@ -60,6 +60,7 @@ export class InvoiceEditPageComponent implements OnInit {
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
+  public showEditInfoBanner: boolean = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
 
   constructor(private util: UtilService,
@@ -248,8 +249,14 @@ export class InvoiceEditPageComponent implements OnInit {
     });
   }
 
+  clickCloseBanner(): void {
+    this.showEditInfoBanner = false;
+  }
+
   clickToggleEditMode(): void {
     this.isGlobalEditMode$.value = !this.isGlobalEditMode$.value;
+    this.showEditInfoBanner = this.isGlobalEditMode$.value;
+    this.otherSectionEditMode$.value = true;
     this.invoiceFormGroup.markAsPristine();
   }
 
@@ -285,15 +292,20 @@ export class InvoiceEditPageComponent implements OnInit {
   private resetInvoiceForm(): void {
     this.fetchFalconInvoice();
     this.isGlobalEditMode$.value = false;
+    this.showEditInfoBanner = this.isGlobalEditMode$.value;
     this.isTripEditMode$.value = false;
     this.otherSectionEditMode$.value = false;
   }
 
-  handleTripEditModeEvent($event: boolean): void {
-    if ($event) {
+  handleTripEditModeEvent($event: any): void {
+    if ($event && $event.event == 'update' && $event.value) {
       this.getRates('');
+      this.otherSectionEditMode$.value = true;
+    } else if ($event && $event.event == 'cancel' && !$event.value) {
+      this.otherSectionEditMode$.value = true;
+    } else if ($event && $event.event == 'edit' && !$event.value) {
+      this.otherSectionEditMode$.value = false;
     }
-    this.otherSectionEditMode$.value = true;
   }
 
   clickSaveButton(): void {
