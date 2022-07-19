@@ -27,6 +27,7 @@ export interface TripInformation {
   overriddenDeliveryDateTime?: Date;
   assumedDeliveryDateTime?: Date;
   tripTenderTime?: Date;
+  totalGrossWeight?: number;
 }
 
 export interface InvoiceAllocationDetail {

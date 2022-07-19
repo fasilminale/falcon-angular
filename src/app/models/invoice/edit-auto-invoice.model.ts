@@ -7,6 +7,7 @@ import { BillToLocation, Location } from "../location/location-model";
 
 export interface EditAutoInvoiceModel {
   amountOfInvoice: number;
+  totalGrossWeight?: number;
   carrier?: CarrierReference;
   mode?: CarrierModeCodeReference;
   serviceLevel?: ServiceLevel;

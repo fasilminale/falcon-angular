@@ -276,18 +276,24 @@
   <!--Freight orders section starts here-->
   <div class="row mt-3">
     <div class="col-lg-6">
+      <div class="headline2 row">
+        <div class="col-4">
+          Weight Adjustment
+          <span *ngIf="isTripEditMode$.value === true" class="material-icons edit-icon" (click)="openWeightAdjustmentModal()">edit</span>
+        </div>
+      </div>
 
       <div class="row">
         <div class="col">
-          <label>Total Gross Weight (lb)</label>
+          <label class="fal-label">Total Gross Weight (lb)</label>
 
         </div>
         <div class="col">
-          <label>Total Volume (ft<sup>3</sup>)</label>
+          <label class="fal-label">Total Volume (ft<sup>3</sup>)</label>
 
         </div>
         <div class="col">
-          <label>Total Pallet Ct (plt)</label>
+          <label class="fal-label">Total Pallet Ct (plt)</label>
 
         </div>
       </div>

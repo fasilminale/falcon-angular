@@ -71,8 +71,9 @@
         <!-- Trip Information -->
         <app-trip-information [formGroup]="tripInformationFormGroup"
                               [loadTripInformation$]="loadTripInformation$.asObservable()"
-                              [updateIsEditMode$]="isGlobalEditMode$.asObservable()"
-                              (onUpdateAndContinueClickEvent)="handleTripEditModeEvent($event)">
+                              [updateIsEditMode$]="isTripEditMode$.asObservable()"
+                              (onUpdateAndContinueClickEvent)="handleTripEditModeEvent($event)"
+                              (openWeightAdjustmentModalEvent)="handleWeightAdjustmentModalEvent($event)">
         </app-trip-information>
         <hr/>
 
