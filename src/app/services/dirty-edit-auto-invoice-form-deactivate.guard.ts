@@ -12,7 +12,7 @@ export class DirtyAutoInvoiceEditFormGuard implements CanDeactivate<InvoiceEditP
                 currentRoute: ActivatedRouteSnapshot,
                 currentState: RouterStateSnapshot,
                 nextState: RouterStateSnapshot): Observable<boolean> {
-    if (!component.isEditMode$.value) {
+    if (!component.isGlobalEditMode$.value) {
       return of(true);
     }
     else if (component.invoiceFormGroup && !component.invoiceFormGroup?.pristine) {

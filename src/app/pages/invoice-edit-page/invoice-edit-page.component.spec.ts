@@ -289,16 +289,25 @@ describe('InvoiceEditPageComponent', () => {
       });
 
       it('handleTripEditModeEvent should call getRates', fakeAsync(() => {
-        component.handleTripEditModeEvent(true);
+        component.handleTripEditModeEvent({event: 'update', value: true});
         tick();
         expect(rateService.rateInvoice).toHaveBeenCalled();
+        expect(component.otherSectionEditMode$.value).toEqual(true);
         flush();
       }));
 
       it('handleTripEditModeEvent should not call getRates', fakeAsync(() => {
-        component.handleTripEditModeEvent(false);
+        component.handleTripEditModeEvent({event: 'cancel', value: false});
         tick();
         expect(rateService.rateInvoice).not.toHaveBeenCalled();
+        expect(component.otherSectionEditMode$.value).toEqual(true);
+        flush();
+      }));
+
+      it('handleTripEditModeEvent should disable otherSection form controls', fakeAsync(() => {
+        component.handleTripEditModeEvent({event: 'edit', value: false});
+        tick();
+        expect(component.otherSectionEditMode$.value).toEqual(false);
         flush();
       }));
 
@@ -435,10 +444,16 @@ describe('InvoiceEditPageComponent', () => {
     getUserInfo$.next(testUser);
   });
 
-  it('#clickToggleEditMode should toggle isEditMode$', () => {
-    const initialValue = component.isEditMode$.value;
+  it('#clickCloseBanner should close banner', () => {
+    const initialValue = component.showEditInfoBanner;
+    component.clickCloseBanner();
+    expect(component.showEditInfoBanner).toEqual(false);
+  });
+
+  it('#clickToggleEditMode should toggle isGlobalEditMode$', () => {
+    const initialValue = component.isGlobalEditMode$.value;
     component.clickToggleEditMode();
-    expect(component.isEditMode$.value).toEqual(!initialValue);
+    expect(component.isGlobalEditMode$.value).toEqual(!initialValue);
   });
 
   it('#clickToggleMilestoneTab should toggle isMilestoneTabOpen', () => {
@@ -449,18 +464,22 @@ describe('InvoiceEditPageComponent', () => {
 
   it('#clickCancelButton should call router to navigate to invoice list', () => {
     component.clickCancelButton();
-    expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
+    expect(component.isGlobalEditMode$.value).toEqual(false);
+    expect(component.otherSectionEditMode$.value).toEqual(false);
+    expect(component.isTripEditMode$.value).toEqual(false);
   });
 
   it('#clickCancelButton should ask the user to confirm canceling changes', async (done) => {
-    component.isEditMode$.value = true;
+    component.isGlobalEditMode$.value = true;
     component.invoiceFormGroup.markAsDirty();
     spyOn(component, 'askForCancelConfirmation').and.callThrough();
     component.clickCancelButton();
     fixture.detectChanges();
     await fixture.whenStable();
     expect(component.askForCancelConfirmation).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/invoices']);
+    expect(component.isGlobalEditMode$.value).toEqual(false);
+    expect(component.otherSectionEditMode$.value).toEqual(false);
+    expect(component.isTripEditMode$.value).toEqual(false);
     done();
   });
 

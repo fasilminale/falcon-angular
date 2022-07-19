@@ -14,7 +14,7 @@ describe('DirtyInvoiceAutoEditFormGuard', () => {
   const setUpSpies = (editMode: boolean, pristine: boolean, dialogReturn: boolean, invoiceFormUndefined: boolean) => {
     invoiceEditPageComponentSpy = createSpyObj('InvoiceEditPageComponent Spy',
       ['askForCancelConfirmation'],
-      {isEditMode$: { value: editMode }, invoiceFormGroup: invoiceFormUndefined ? undefined : {pristine}});
+      {isGlobalEditMode$: { value: editMode }, invoiceFormGroup: invoiceFormUndefined ? undefined : {pristine}});
     invoiceEditPageComponentSpy.askForCancelConfirmation.and.returnValue(of(dialogReturn));
   };
 
