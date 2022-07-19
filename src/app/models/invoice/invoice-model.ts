@@ -62,6 +62,7 @@ export class InvoiceDataModel {
   carrierModeDisplay: string;
   freightPaymentTerms: string;
   serviceLevel: ServiceLevel;
+  serviceCode: string;
   trackingNumber: string;
   proNumber: string;
   billOfLadingNumber: string;
@@ -153,6 +154,7 @@ export class InvoiceDataModel {
     this.carrierModeDisplay = CarrierModeCodeUtils.toDisplayLabel(json?.mode);
     this.freightPaymentTerms = json?.freightPaymentTerms ?? '';
     this.serviceLevel = json?.serviceLevel ?? '';
+    this.serviceCode = json?.serviceCode ?? '';
     this.trackingNumber = json?.trackingNumber ?? '';
     this.proNumber = json?.proNumber ?? '';
     this.billOfLadingNumber = json?.billOfLadingNumber ?? '';

@@ -1271,6 +1271,33 @@ describe('TripInformationComponent', () => {
     });
   });
 
+  describe('#compareServiceLevelWith', () => {
+    it('should mark empty objects as equal', () => {
+      const a = {};
+      const b = {};
+      const result = component.compareServiceLevelWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark null objects as equal', () => {
+      const a = null;
+      const b = null;
+      const result = component.compareServiceLevelWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should mark equal SelectOptions objects as equal', () => {
+      const a = {label: 'Service Level', value: {level: 'SERVICE'}};
+      const b = {label: 'Service Level', value: {level: 'SERVICE'}};
+      const result = component.compareServiceLevelWith(a, b);
+      expect(result).toBeTrue();
+    });
+    it('should compare and mark equal options as equal', () => {
+      const a = {label: 'Service Level', level: 'SERVICE'};
+      const b = 'SERVICE';
+      const result = component.compareServiceLevelWith(a, b);
+      expect(result).toBeTrue();
+    });
+  });
+
   describe('update total values', () => {
     it('update the weight, volume, and pallet values', () => {
       const totals = {
