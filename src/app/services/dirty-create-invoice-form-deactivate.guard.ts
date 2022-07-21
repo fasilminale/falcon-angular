@@ -13,7 +13,7 @@ export class DirtyInvoiceCreateFormGuard implements CanDeactivate<InvoiceCreateP
                 currentState: RouterStateSnapshot,
                 nextState: RouterStateSnapshot): Observable<boolean> {
     const formComponent = component.formComponent;
-    if (formComponent.isFormPristine) {
+    if (formComponent.isInvoiceSaved || formComponent.isFormPristine) {
       return of(true);
     }
     else {
