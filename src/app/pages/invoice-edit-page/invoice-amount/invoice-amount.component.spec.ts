@@ -791,15 +791,18 @@ describe('InvoiceAmountComponent', () => {
     component._formGroup = new FormGroup({
       pendingChargeLineItems: new FormArray([
         new FormGroup({
-          charge: new FormControl('test')
+          charge: new FormControl('OTHER')
         })
       ])
     });
     const costLineItem = component.pendingChargeLineItemControls[0];
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
     spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
-      charge: 'test',
-      variables: []
+      charge: 'OTHER',
+      variables: [{
+        variable: 'test',
+        quantity: 1
+      }]
     }));
     spyOn(component.rateEngineCall, 'emit').and.stub();
     const promise = component.onEditCostLineItem(costLineItem, component.pendingChargeLineItemControls);
@@ -822,7 +825,7 @@ describe('InvoiceAmountComponent', () => {
         accessorialCode: new FormControl('TST')
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
-      await component.onDeleteCostLineItem(costLineItem);
+      await component.onDeleteCostLineItem(costLineItem, 0);
       expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
       expect(component.rateEngineCall.emit).toHaveBeenCalled();
     });
@@ -833,7 +836,7 @@ describe('InvoiceAmountComponent', () => {
         charge: new FormControl('OTHER')
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
-      await component.onDeleteCostLineItem(costLineItem);
+      await component.onDeleteCostLineItem(costLineItem, 0);
       expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
       expect(component.rateEngineCall.emit).toHaveBeenCalled();
     });

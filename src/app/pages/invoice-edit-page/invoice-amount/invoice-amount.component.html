@@ -194,8 +194,8 @@
               <app-fal-currency-input
                 [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
                 formControlName="totalAmount"
-                [ngClass]="{ 'background_color_currency': _.value.variables.length === 0 && editableField(_.value) }"
-                [isDisabled]="readOnlyForm || _.value.variables.length > 0 || _.value.entrySource === 'AUTO'">
+                [ngClass]="{ 'background_color_currency': _.value.charge === 'OTHER' }"
+                [isDisabled]="true">
               </app-fal-currency-input>
               <small class="error-text"
                      *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
@@ -208,11 +208,11 @@
                 *ngIf="_.value.entrySource === 'FAL'
                 || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')
                 || (_.value.entrySource === 'AUTO' && _.value.lineItemType === 'ACCESSORIAL' && (_.value.message === 'NOT FOUND' || _.value.totalAmount === 0))">
-                <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon"
+                <div *ngIf="_.value.variables?.length > 0 || _.value.charge === 'OTHER'" class="material-icons edit-icon"
                      (click)="onEditCostLineItem(_, costBreakdownItemsControls)">edit
                 </div>
-                <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
-                <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_)">delete</div>
+                <div *ngIf="_.value.variables?.length === 0 && _.value.charge !== 'OTHER'" class="edit-icon-invisible"></div>
+                <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_, i)">delete</div>
               </div>
               <div
                 *ngIf="!(_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract'))">
