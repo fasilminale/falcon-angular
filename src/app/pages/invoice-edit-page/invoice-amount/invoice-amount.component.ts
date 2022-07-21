@@ -346,6 +346,7 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('quantity')?.setValue('N/A');
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
         newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
+        newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
         this.rateEngineCall.emit(this.pendingAccessorialCode);
       } else {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
@@ -489,6 +490,11 @@ export class InvoiceAmountComponent implements OnInit {
     if (editChargeDetails) {
       const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.charge === lineItem.value?.charge);
       if (existingCostLineItem) {
+        if (existingCostLineItem.value.charge === 'OTHER') {
+          existingCostLineItem.patchValue({
+            totalAmount: editChargeDetails.variables[0].quantity
+          });
+        }
         this.toastService.openSuccessToast(`Success. Variables have been updated for the line item.`);
         existingCostLineItem.patchValue({
           variables: editChargeDetails.variables
@@ -500,7 +506,7 @@ export class InvoiceAmountComponent implements OnInit {
     }
   }
 
-  async onDeleteCostLineItem(costLineItem: any): Promise<void> {
+  async onDeleteCostLineItem(costLineItem: any, index: number): Promise<void> {
     const dialogResult = await this.utilService.openCommentModal({
       title: 'Delete Charge',
       innerHtmlMessage: `Are you sure you want to delete this charge?
@@ -512,11 +518,6 @@ export class InvoiceAmountComponent implements OnInit {
       requireField: true
     }).pipe(first()).toPromise();
     if (dialogResult) {
-      const index = this.costBreakdownItemsControls.findIndex(
-        lineItem => lineItem.value.accessorialCode !== ''
-          ? lineItem.value.accessorialCode === costLineItem.value.accessorialCode
-          : lineItem.value.charge === 'OTHER'
-      );
       const existingCostLineItem: AbstractControl | null = this.costBreakdownItems.get(index.toString());
 
       if (existingCostLineItem) {
