@@ -57,6 +57,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
   public validAmount = true;
   public externalAttachment = false;
   public file = null;
+  public isInvoiceSaved: boolean = false;
 
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
@@ -472,6 +473,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
         if (savedInvoice.falconInvoiceNumber) {
           // INVOICE SAVED
           shouldReset = true;
+          this.isInvoiceSaved = true;
           this.onSaveSuccess(savedInvoice.falconInvoiceNumber);
           const attachedSuccess = await this.attachmentService.saveAttachments(
             savedInvoice.falconInvoiceNumber,
