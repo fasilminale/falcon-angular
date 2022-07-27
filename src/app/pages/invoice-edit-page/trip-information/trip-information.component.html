@@ -2,7 +2,8 @@
   <div class="headline2 row">
     <div class="col-4">
       <span>Trip Information</span>
-      <span *ngIf="enableTripEditButton" role="button" class="material-icons material-icons-outlined valign-middle" (click)="clickEditButton()">
+      <span *ngIf="enableTripEditButton" role="button" class="material-icons material-icons-outlined valign-middle"
+            (click)="clickEditButton()">
         edit
       </span>
     </div>
@@ -273,7 +274,7 @@
     </div>
   </div>
 
-  <br />
+  <br/>
   <div class="row">
     <div *ngIf="isTripEditMode$.value" class="col-12 d-flex justify-content-end">
       <elm-button id="cancel-button"
@@ -301,7 +302,8 @@
       <div class="headline2 row">
         <div class="col-4">
           Weight Adjustment
-          <span *ngIf="isTripEditMode$.value === true" class="material-icons edit-icon" (click)="openWeightAdjustmentModal()">edit</span>
+          <span *ngIf="isTripEditMode$.value === true" class="material-icons edit-icon"
+                (click)="openWeightAdjustmentModal()">edit</span>
         </div>
       </div>
 
@@ -331,6 +333,22 @@
         <div class="col">
           <input type="text=" [value]="totalPalletCount" [attr.disabled]="true" class="form-control col-1" matInput
                  formControlName="totalPalletCount">
+        </div>
+      </div>
+      <div class="row mb-3 ms-5">
+        <div class="col-12" (click)="toggleWeightAdjustmentDetailsSection()">
+        <span class="accordion-header" *ngIf="!showWeightAdjustmentSection">
+          <span class="material-icons">keyboard_arrow_down</span>
+          <span class="accordian-link-text">Show Weight Adjustment Details</span>
+        </span>
+          <span class="accordion-header" *ngIf="showWeightAdjustmentSection">
+          <span class="material-icons">keyboard_arrow_up</span>
+          <span class="accordian-link-text">Hide Weight Adjustment Details</span>
+        </span>
+        </div>
+        <div id="weightAdjustmentSection" class="col-12 mt-3"
+             [hidden]="!showWeightAdjustmentSection">
+          Weight Adjustment Details Go Here!
         </div>
       </div>
     </div>

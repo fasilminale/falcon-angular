@@ -12,14 +12,21 @@ import {
   CarrierModeCodeUtils
 } from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
-import {BillToLocation, BillToLocationUtils, LocationUtils, ShippingPointLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation} from 'src/app/models/location/location-model';
+import {
+  BillToLocation,
+  BillToLocationUtils,
+  LocationUtils,
+  ShippingPointLocation,
+  ShippingPointLocationSelectOption,
+  ShippingPointWarehouseLocation
+} from 'src/app/models/location/location-model';
 import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
 import {DateParserFormatter} from '../../../utils/date-parser-formatter';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
-import { SubjectValue } from 'src/app/utils/subject-value';
-import { InvoiceService } from 'src/app/services/invoice-service';
+import {SubjectValue} from 'src/app/utils/subject-value';
+import {InvoiceService} from 'src/app/services/invoice-service';
 import {InvoiceDataModel, InvoiceUtils} from 'src/app/models/invoice/invoice-model';
 
 const {required} = Validators;
@@ -96,10 +103,11 @@ export class TripInformationComponent implements OnInit {
   public overriddenDeliveryDateTime: Date | undefined;
   public isPickupDateTimeTendered: boolean = false;
   public pickupDateMatchesTenderDate: boolean = false;
-  public arrowLabelForDeliveryDateTime: string = "";
+  public arrowLabelForDeliveryDateTime: string = '';
   public showArrowForDeliveryDateTime: boolean = false;
 
   public showFreightOrderSection = false;
+  public showWeightAdjustmentSection = false;
   carrierDetailFound = true;
   loadOriginAddress$ = new Subject<ShippingPointLocation>();
   loadDestinationAddress$ = new Subject<ShippingPointLocation>();
@@ -111,12 +119,12 @@ export class TripInformationComponent implements OnInit {
   carrierModeCodeUtilsToDisplayLabel = CarrierModeCodeUtils.toDisplayLabel;
   carrierUtilsToDisplayLabel = CarrierUtils.toDisplayLabel;
 
-  public enableTripEditButton: boolean= false;
+  public enableTripEditButton: boolean = false;
   public isTripEditMode$ = new SubjectValue<boolean>(false);
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-    private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
-    private invoiceService: InvoiceService) {
+              private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
+              private invoiceService: InvoiceService) {
   }
 
   ngOnInit(): void {
@@ -264,54 +272,54 @@ export class TripInformationComponent implements OnInit {
 
   loadTripInformationData(tripInfo: TripInformation) {
     this.localPeristentTripInformation = this.tripInformation = tripInfo;
-      if (this._editableFormArray.disabled) {
-        this.formGroup.enable();
-      }
-      this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
-      this.vendorNumberControl.setValue(tripInfo.vendorNumber);
-      this.vendorNumberControl.markAsDirty();
-      this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
-      this.pickUpDateControl.setValue(this.derivePickupDate(tripInfo));
-      this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
-      this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
-      this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
-      this.freightPaymentTermsControl.setValue(tripInfo.freightPaymentTerms ?? undefined);
-      this.carrierControl.valueChanges.subscribe(() => {
-        this.filteredCarrierModeOptions = this.filterCarrierModes();
-        this.carrierModeControl.setValidators([
-          required,
-          this.validateIsOption(this.filteredCarrierModeOptions, this.compareCarrierModeWith)
-        ]);
-        this.filteredServiceLevels = this.filterServiceLevels();
-        this.carrierModeControl.updateValueAndValidity();
-      });
-      this.carrierControl.setValue(tripInfo.carrier ?? undefined);
-      this.changeDetection.detectChanges();
-      this.carrierModeControl.setValue(tripInfo.carrierMode ?? undefined);
-      this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
-      this.freightOrders.setValue(tripInfo.freightOrders ?? undefined);
-      this.loadOriginAddress$.next(tripInfo.originAddress);
-      this.filteredShippingPoints$.next(this.masterDataShippingPoints.filter(function (shippingPointLocation) {
-        return shippingPointLocation.businessUnit == tripInfo.businessUnit
-      }));
-      this.loadDestinationAddress$.next(tripInfo.destinationAddress);
-      this.loadBillToAddress$.next(tripInfo.billToAddress);
-      this.loadFreightOrders$.next(tripInfo.freightOrders);
-      this.totalGrossWeight.setValue(tripInfo.totalGrossWeight);
-      this.formGroup.updateValueAndValidity();
-      if (this._editableFormArray.disabled) {
-        this.formGroup.disable();
-      }
+    if (this._editableFormArray.disabled) {
+      this.formGroup.enable();
+    }
+    this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
+    this.vendorNumberControl.setValue(tripInfo.vendorNumber);
+    this.vendorNumberControl.markAsDirty();
+    this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
+    this.pickUpDateControl.setValue(this.derivePickupDate(tripInfo));
+    this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
+    this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
+    this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
+    this.freightPaymentTermsControl.setValue(tripInfo.freightPaymentTerms ?? undefined);
+    this.carrierControl.valueChanges.subscribe(() => {
+      this.filteredCarrierModeOptions = this.filterCarrierModes();
+      this.carrierModeControl.setValidators([
+        required,
+        this.validateIsOption(this.filteredCarrierModeOptions, this.compareCarrierModeWith)
+      ]);
+      this.filteredServiceLevels = this.filterServiceLevels();
+      this.carrierModeControl.updateValueAndValidity();
+    });
+    this.carrierControl.setValue(tripInfo.carrier ?? undefined);
+    this.changeDetection.detectChanges();
+    this.carrierModeControl.setValue(tripInfo.carrierMode ?? undefined);
+    this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
+    this.freightOrders.setValue(tripInfo.freightOrders ?? undefined);
+    this.loadOriginAddress$.next(tripInfo.originAddress);
+    this.filteredShippingPoints$.next(this.masterDataShippingPoints.filter(function(shippingPointLocation) {
+      return shippingPointLocation.businessUnit == tripInfo.businessUnit;
+    }));
+    this.loadDestinationAddress$.next(tripInfo.destinationAddress);
+    this.loadBillToAddress$.next(tripInfo.billToAddress);
+    this.loadFreightOrders$.next(tripInfo.freightOrders);
+    this.totalGrossWeight.setValue(tripInfo.totalGrossWeight);
+    this.formGroup.updateValueAndValidity();
+    if (this._editableFormArray.disabled) {
+      this.formGroup.disable();
+    }
   }
 
   derivePickupDate(tripInfo?: TripInformation): Date | undefined {
-   let deliveryDate = tripInfo?.deliveryDate?.getTime();
-  if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()) {
-    this.pickupDateMatchesTenderDate = true;
-  } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
+    let deliveryDate = tripInfo?.deliveryDate?.getTime();
+    if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()) {
+      this.pickupDateMatchesTenderDate = true;
+    } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
       this.isPickupDateTimeTendered = true;
-   }
-   return tripInfo?.pickUpDate ?? undefined;
+    }
+    return tripInfo?.pickUpDate ?? undefined;
   }
 
   deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
@@ -369,8 +377,8 @@ export class TripInformationComponent implements OnInit {
   }
 
   updateBillToEvent($event: any): void {
-    let shippingPointWarehouse = this.masterDataShippingPointWarehouses.find(function(spWarehouse){
-      return spWarehouse.shippingPointCode == $event
+    let shippingPointWarehouse = this.masterDataShippingPointWarehouses.find(function(spWarehouse) {
+      return spWarehouse.shippingPointCode == $event;
     });
     if (shippingPointWarehouse?.billto) {
       this.loadBillToAddress$.next(shippingPointWarehouse.billto);
@@ -379,6 +387,10 @@ export class TripInformationComponent implements OnInit {
 
   toggleFreightOrderDetailsSection(): void {
     this.showFreightOrderSection = !this.showFreightOrderSection;
+  }
+
+  toggleWeightAdjustmentDetailsSection(): void {
+    this.showWeightAdjustmentSection = !this.showWeightAdjustmentSection;
   }
 
   compareWith(item: any, value: any): boolean {
