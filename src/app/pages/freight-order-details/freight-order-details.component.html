@@ -91,28 +91,7 @@
                class="form-control col-11" matInput>
       </td>
     </ng-container>
-
-    <ng-container matColumnDef="actions">
-      <th id="actions" class="width-90" mat-header-cell *matHeaderCellDef> Action</th>
-      <td class="padding-left-5" mat-cell *matCellDef="let freightOrder">
-        <span *ngIf="freightOrder.isEdit ; else submit" role="button"
-              class="disabled material-icons material-icons-outlined">
-          edit
-        </span>
-        <span *ngIf="freightOrder.isEdit" role="button" class="disabled material-icons material-icons-outlined">
-          delete
-        </span>
-        <ng-template #submit>
-          <span role="button" class="material-icons material-icons-outlined">
-            done
-          </span>
-          <span role="button" class="material-icons material-icons-outlined">
-            block
-          </span>
-        </ng-template>
-      </td>
-    </ng-container>
-
+    
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>

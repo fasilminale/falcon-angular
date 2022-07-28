@@ -11,7 +11,7 @@ import { NumberFormatter } from 'src/app/utils/number-formatter';
 })
 export class FreightOrderDetailsComponent implements OnInit {
 
-  displayedColumns: string[] = ['freightOrderNumber', 'tmsLoadId', 'shippingPoint', 'warehouse', 'customerCategory', 'sequence', 'stopId', 'stopReferenceID', 'destination', 'grossWeight', 'volume', 'pallets', 'actions'];
+  displayedColumns: string[] = ['freightOrderNumber', 'tmsLoadId', 'shippingPoint', 'warehouse', 'customerCategory', 'sequence', 'stopId', 'stopReferenceID', 'destination', 'grossWeight', 'volume', 'pallets'];
 
 
   freightOrders: FreightOrder[] = [];
