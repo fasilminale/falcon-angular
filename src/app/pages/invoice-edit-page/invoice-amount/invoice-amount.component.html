@@ -201,6 +201,10 @@
                      *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
                 Base Rate Amount is required
               </small>
+              <small class="error-text"
+                     *ngIf="_.get('charge')?.value !== 'Base Rate' && _.get('totalAmount')?.value === 0">
+                Charge Rate not Found
+              </small>
             </div>
 
             <div class="col-6" *ngIf="!readOnlyForm">
@@ -374,7 +378,7 @@
                           'col-5': !readOnlyForm}">
             <app-fal-currency-input
               id="pending-line-item-total"
-              [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
+              [isError]="_.get('totalAmount')?.value === 0"
               formControlName="totalAmount"
               [isDisabled]="true">
             </app-fal-currency-input>
@@ -382,6 +386,10 @@
             <small class="error-text"
                    *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
               Base Rate Amount is required
+            </small>
+            <small class="error-text"
+                   *ngIf="_.get('charge')?.value !== 'Base Rate' && _.get('totalAmount')?.value === 0">
+              Charge Rate not Found
             </small>
           </div>
 

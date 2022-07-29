@@ -229,7 +229,7 @@
              class="cardLabel">
         Origin Address
       </label>
-      <elm-card id="originAddressCard">
+      <elm-card id="originAddressCard" overflow="visible">
         <app-fal-address
           [addressType]="'origin'"
           [formGroup]="originAddressFormGroup"
@@ -246,7 +246,7 @@
              for="destinationAddressCard">
         Destination Address
       </label>
-      <elm-card id="destinationAddressCard">
+      <elm-card id="destinationAddressCard" overflow="visible">
         <app-fal-address
           [addressType]="'destination'"
           [formGroup]="destinationAddressFormGroup"
@@ -262,7 +262,7 @@
              for="billToAddressCard">
         Bill to Address
       </label>
-      <elm-card id="billToAddressCard">
+      <elm-card id="billToAddressCard" overflow="visible">
         <app-fal-address
           [loadAddress$]="loadBillToAddress$.asObservable()"
           [formGroup]="billToAddressFormGroup"
