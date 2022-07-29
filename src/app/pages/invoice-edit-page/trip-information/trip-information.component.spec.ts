@@ -492,14 +492,12 @@ describe('TripInformationComponent', () => {
 
   describe('when pickup date time is not tendered', () => {
     it('pickup date cannot be derived', () => {
-
-      var customDeliveryDate = new Date(2020, 10, 30);
+      const customDeliveryDate = new Date(2020, 10, 30);
       const tripInformation: TripInformation = {
         bolNumber: 'TestBolNumber',
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -519,21 +517,17 @@ describe('TripInformationComponent', () => {
         freightOrders: [],
         vendorNumber: '1234321'
       };
-
       component.derivePickupDate(tripInformation);
-
       expect(component.isPickupDateTimeTendered).toBeFalse();
     });
 
     it('pickup date can be derived and tendered', () => {
-
-      var customDeliveryDate = new Date(2020, 10, 30);
+      const customDeliveryDate = new Date(2020, 10, 30);
       const tripInformation: TripInformation = {
         bolNumber: 'TestBolNumber',
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -554,21 +548,17 @@ describe('TripInformationComponent', () => {
         freightOrders: [],
         vendorNumber: '1234321'
       };
-
       component.derivePickupDate(tripInformation);
-
       expect(component.isPickupDateTimeTendered).toBeTrue();
     });
 
     it('pickup date is null', () => {
-
-      var customDeliveryDate = new Date(2020, 10, 30);
+      const customDeliveryDate = new Date(2020, 10, 30);
       const tripInformation: TripInformation = {
         bolNumber: 'TestBolNumber',
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -589,15 +579,12 @@ describe('TripInformationComponent', () => {
         freightOrders: [],
         vendorNumber: '1234321'
       };
-
       component.derivePickupDate(tripInformation);
-
       expect(component.isPickupDateTimeTendered).toBeFalsy();
     });
 
     it('pickup date and tender date are the same', () => {
-
-      var customDeliveryDate = new Date(2020, 10, 30);
+      const customDeliveryDate = new Date(2020, 10, 30);
       const tripInformation: TripInformation = {
         bolNumber: 'TestBolNumber',
         carrier: {
@@ -624,21 +611,17 @@ describe('TripInformationComponent', () => {
         freightOrders: [],
         vendorNumber: '1234321'
       };
-
       component.derivePickupDate(tripInformation);
-
       expect(component.pickupDateMatchesTenderDate).toBeTruthy();
     });
 
     it('tripTenderTime is null', () => {
-
-      var customDeliveryDate = new Date(2020, 10, 30);
+      const customDeliveryDate = new Date(2020, 10, 30);
       const tripInformation: TripInformation = {
         bolNumber: 'TestBolNumber',
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-
         },
         carrierMode: {
           mode: 'CarrierMode',
@@ -659,15 +642,12 @@ describe('TripInformationComponent', () => {
         freightOrders: [],
         vendorNumber: '1234321'
       };
-
       component.derivePickupDate(tripInformation);
-
       expect(component.isPickupDateTimeTendered).toBeFalsy();
     });
 
     it('deliverDate  is null', () => {
-
-      var customDeliveryDate = new Date(2020, 10, 30);
+      const customDeliveryDate = new Date(2020, 10, 30);
       const tripInformation: TripInformation = {
         bolNumber: 'TestBolNumber',
         carrier: {
@@ -847,7 +827,6 @@ describe('TripInformationComponent', () => {
       carrier: {
         scac: 'TestScac',
         name: 'TestCarrierName'
-
       },
       carrierMode: {
         mode: 'CarrierMode',
@@ -890,7 +869,6 @@ describe('TripInformationComponent', () => {
       carrier: {
         scac: 'TestScac',
         name: 'TestCarrierName'
-
       },
       carrierMode: {
         mode: 'CarrierMode',
@@ -934,7 +912,6 @@ describe('TripInformationComponent', () => {
       carrier: {
         scac: 'TestScac',
         name: 'TestCarrierName'
-
       },
       carrierMode: {
         mode: 'CarrierMode',
@@ -980,7 +957,6 @@ describe('TripInformationComponent', () => {
         carrier: {
           scac: 'TestScac',
           name: 'TestCarrierName'
-
         },
         carrierMode: {
           mode: 'CarrierMode',
