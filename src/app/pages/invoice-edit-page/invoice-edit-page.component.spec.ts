@@ -159,6 +159,7 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(rateService, 'getAccessorialDetails').and.returnValue(of());
     spyOn(rateService, 'getRates').and.returnValue(of());
     spyOn(rateService, 'glAllocateInvoice').and.returnValue(of());
+    spyOn(rateService, 'adjustWeightOnInvoice').and.returnValue(of());
 
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
@@ -628,21 +629,21 @@ describe('InvoiceEditPageComponent', () => {
     ));
   });
 
-  it('should handle the weight adjustment modal', done => {
+  it('should handle the weight adjustment modal', async () => {
     // Setup
-    const weightAdjustmentResult$ = new Subject<any>();
-    const weightAdjustmentModal$ = new Subject<any>();
-    asSpy(utilService.openWeightAdjustmentModal).and.returnValue(weightAdjustmentModal$.asObservable());
-    component.handleWeightAdjustmentModalEvent(1);
-
-    // Assertions
-    weightAdjustmentModal$.subscribe(() => {
-      expect(utilService.openWeightAdjustmentModal).toHaveBeenCalled();
-      done();
-    });
+    asSpy(utilService.openWeightAdjustmentModal).and.returnValue(of({currentWeight: 1.0}));
+    asSpy(rateService.adjustWeightOnInvoice).and.returnValue(of({}));
+    spyOn(component, 'loadInvoice').and.stub();
+    spyOn(component, 'updateInvoiceFromForms').and.stub();
+    asSpy(toastService.openSuccessToast).and.stub();
 
     // Run Test
-    weightAdjustmentModal$.next({ currentWeight: 1.0 });
+    await component.handleWeightAdjustmentModalEvent(1);
+
+    // Assertions
+    expect(utilService.openWeightAdjustmentModal).toHaveBeenCalled();
+    expect(rateService.adjustWeightOnInvoice).toHaveBeenCalled();
+    expect(component.loadInvoice).toHaveBeenCalled();
   });
 
   describe('clickSaveButton method', () => {
@@ -868,6 +869,8 @@ describe('InvoiceEditPageComponent', () => {
       expect(result).toEqual({
         amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
         totalGrossWeight: component.tripInformationFormGroup.controls.totalGrossWeight.value,
+        originalTotalGrossWeight: 0,
+        weightAdjustments: [],
         mode: {
           mode: component.tripInformationFormGroup.controls.carrierMode.value.mode,
           reportKeyMode: component.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
@@ -901,6 +904,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.controls.carrierMode = new FormControl(TEST_MODE);
       component.tripInformationFormGroup.controls.carrier = new FormControl(TEST_CARRIER);
       component.tripInformationFormGroup.controls.billToAddress = billToAddressFormGroup;
+      component.invoiceAllocationFormGroup.controls.invoiceAllocations = new FormArray([]);
       const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
       costBreakdownItems.push(new FormGroup({
         accessorial: new FormControl(false),

@@ -13,9 +13,14 @@ import {FreightPaymentTerms, TripInformation} from '../../../models/invoice/trip
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
-import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
-import { Location, BillToLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation } from 'src/app/models/location/location-model';
-import { InvoiceService } from 'src/app/services/invoice-service';
+import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
+import {
+  Location,
+  BillToLocation,
+  ShippingPointLocationSelectOption,
+  ShippingPointWarehouseLocation
+} from 'src/app/models/location/location-model';
+import {InvoiceService} from 'src/app/services/invoice-service';
 
 describe('TripInformationComponent', () => {
 
@@ -88,7 +93,7 @@ describe('TripInformationComponent', () => {
     });
     it('should have controls in formGroup', () => {
       fixture.detectChanges();
-      expect(Object.keys(component.formGroup.controls).length).toBe(18);
+      expect(Object.keys(component.formGroup.controls).length).toBe(20);
     });
   });
 
@@ -755,12 +760,21 @@ describe('TripInformationComponent', () => {
       vendorNumber: '1234321'
     };
 
-    it('should load trip information', () => {
+    it('should trigger load trip information', done => {
+      spyOn(component, 'loadTripInformationData').and.returnValue(Promise.resolve());
       const tripInformation$ = new Subject<TripInformation>();
       component.loadTripInformation$ = tripInformation$.asObservable();
+      tripInformation$.subscribe(() => {
+        expect(component.loadTripInformationData).toHaveBeenCalled();
+        done();
+      });
       tripInformation$.next(tripInformation);
+    });
+
+    it('should load trip information data', async () => {
       component.filteredCarrierModeOptionsPopulatedSubject.next(1);
-      fixture.detectChanges();
+      component.filteredCarrierModeOptionsPopulatedSubject.complete();
+      await component.loadTripInformationData(tripInformation);
       expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
       expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
       expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
@@ -775,12 +789,12 @@ describe('TripInformationComponent', () => {
     });
   });
 
-  it('should load trip information and use First FO Delivery date when First FO Delivery date is given', () => {
-    const firstFODeliveryDateTime = "2001-06-07T20:16:11Z";
+  it('should load trip information and use First FO Delivery date when First FO Delivery date is given', async () => {
+    const firstFODeliveryDateTime = '2001-06-07T20:16:11Z';
     const freightOrder: FreightOrder = {
       deliverydatetime: firstFODeliveryDateTime,
       accountGroup: '',
-      billOfLadingNumber:'',
+      billOfLadingNumber: '',
       carrierModeCode: '',
       createDateTime: '',
       customerPurchaseOrders: null as any,
@@ -827,7 +841,7 @@ describe('TripInformationComponent', () => {
       tmsLoadId: '',
       trackingNumbers: '',
       palletCount: 0
-    }
+    };
     const tripInformation: TripInformation = {
       bolNumber: 'TestBolNumber',
       carrier: {
@@ -853,11 +867,9 @@ describe('TripInformationComponent', () => {
       freightOrders: [freightOrder],
       vendorNumber: '1234321'
     };
-    const tripInformation$ = new Subject<TripInformation>();
-    component.loadTripInformation$ = tripInformation$.asObservable();
-    tripInformation$.next(tripInformation);
     component.filteredCarrierModeOptionsPopulatedSubject.next(1);
-    fixture.detectChanges();
+    component.filteredCarrierModeOptionsPopulatedSubject.complete();
+    await component.loadTripInformationData(tripInformation);
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
     expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
     expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
@@ -871,7 +883,7 @@ describe('TripInformationComponent', () => {
     expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
   });
 
-  it('should load trip information and use overriddenDeliveryDateTime when overriddenDeliveryDateTime given', () => {
+  it('should load trip information and use overriddenDeliveryDateTime when overriddenDeliveryDateTime given', async () => {
     const overriddenDeliveryDateTime = new Date(new Date().setFullYear(1971, 2, 11));
     const tripInformation: TripInformation = {
       bolNumber: 'TestBolNumber',
@@ -899,11 +911,9 @@ describe('TripInformationComponent', () => {
       overriddenDeliveryDateTime,
       vendorNumber: '1234321'
     };
-    const tripInformation$ = new Subject<TripInformation>();
-    component.loadTripInformation$ = tripInformation$.asObservable();
-    tripInformation$.next(tripInformation);
     component.filteredCarrierModeOptionsPopulatedSubject.next(1);
-    fixture.detectChanges();
+    component.filteredCarrierModeOptionsPopulatedSubject.complete();
+    await component.loadTripInformationData(tripInformation);
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
     expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
     expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
@@ -917,7 +927,7 @@ describe('TripInformationComponent', () => {
     expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
   });
 
-  it('should load trip information and use assumedDeliveryDateTime when assumedDeliveryDateTime given', () => {
+  it('should load trip information and use assumedDeliveryDateTime when assumedDeliveryDateTime given', async () => {
     const assumedDeliveryDateTime = new Date(new Date().setFullYear(2011, 8, 6));
     const tripInformation: TripInformation = {
       bolNumber: 'TestBolNumber',
@@ -945,11 +955,9 @@ describe('TripInformationComponent', () => {
       assumedDeliveryDateTime,
       vendorNumber: '1234321'
     };
-    const tripInformation$ = new Subject<TripInformation>();
-    component.loadTripInformation$ = tripInformation$.asObservable();
-    tripInformation$.next(tripInformation);
     component.filteredCarrierModeOptionsPopulatedSubject.next(1);
-    fixture.detectChanges();
+    component.filteredCarrierModeOptionsPopulatedSubject.complete();
+    await component.loadTripInformationData(tripInformation);
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
     expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
     expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
@@ -963,54 +971,52 @@ describe('TripInformationComponent', () => {
     expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
   });
 
-  it('should load trip information and use overriddenDeliveryDateTime ' +
-    'when both overriddenDeliveryDateTime and assumedDeliveryDateTime given', () => {
-    const overriddenDeliveryDateTime = new Date(new Date().setFullYear(1971, 2, 11));
-    const assumedDeliveryDateTime = new Date(new Date().setFullYear(2011, 8, 6));
-    const tripInformation: TripInformation = {
-      bolNumber: 'TestBolNumber',
-      carrier: {
-        scac: 'TestScac',
-        name: 'TestCarrierName'
+  it('should load trip information and use overriddenDeliveryDateTime when both overriddenDeliveryDateTime and assumedDeliveryDateTime given',
+    async () => {
+      const overriddenDeliveryDateTime = new Date(new Date().setFullYear(1971, 2, 11));
+      const assumedDeliveryDateTime = new Date(new Date().setFullYear(2011, 8, 6));
+      const tripInformation: TripInformation = {
+        bolNumber: 'TestBolNumber',
+        carrier: {
+          scac: 'TestScac',
+          name: 'TestCarrierName'
 
-      },
-      carrierMode: {
-        mode: 'CarrierMode',
-        reportModeDescription: 'ReportModeDescription',
-        reportKeyMode: 'ReportKeyMode'
-      },
-      deliveryDate: new Date(),
-      freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
-      invoiceDate: new Date(),
-      pickUpDate: new Date(),
-      proTrackingNumber: 'TestProTrackingNumber',
-      serviceLevel: {
-        level: 'TL1',
-        name: 'TestLevel'
-      },
-      tripId: 'TestTripId',
-      freightOrders: [],
-      overriddenDeliveryDateTime,
-      assumedDeliveryDateTime,
-      vendorNumber: '1234321'
-    };
-    const tripInformation$ = new Subject<TripInformation>();
-    component.loadTripInformation$ = tripInformation$.asObservable();
-    tripInformation$.next(tripInformation);
-    component.filteredCarrierModeOptionsPopulatedSubject.next(1);
-    fixture.detectChanges();
-    expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
-    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
-    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
-    expect(component.deliveryDateControl.value).toEqual(tripInformation.overriddenDeliveryDateTime);
-    expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
-    expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
-    expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
-    expect(component.carrierControl.value).toEqual(tripInformation.carrier);
-    expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
-    expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
-    expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
-  });
+        },
+        carrierMode: {
+          mode: 'CarrierMode',
+          reportModeDescription: 'ReportModeDescription',
+          reportKeyMode: 'ReportKeyMode'
+        },
+        deliveryDate: new Date(),
+        freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+        invoiceDate: new Date(),
+        pickUpDate: new Date(),
+        proTrackingNumber: 'TestProTrackingNumber',
+        serviceLevel: {
+          level: 'TL1',
+          name: 'TestLevel'
+        },
+        tripId: 'TestTripId',
+        freightOrders: [],
+        overriddenDeliveryDateTime,
+        assumedDeliveryDateTime,
+        vendorNumber: '1234321'
+      };
+      component.filteredCarrierModeOptionsPopulatedSubject.next(1);
+      component.filteredCarrierModeOptionsPopulatedSubject.complete();
+      await component.loadTripInformationData(tripInformation);
+      expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
+      expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
+      expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
+      expect(component.deliveryDateControl.value).toEqual(tripInformation.overriddenDeliveryDateTime);
+      expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
+      expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
+      expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
+      expect(component.carrierControl.value).toEqual(tripInformation.carrier);
+      expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
+      expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+      expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
+    });
 
   describe('should toggle freight orders section', () => {
     it('toggles freight order section', () => {
