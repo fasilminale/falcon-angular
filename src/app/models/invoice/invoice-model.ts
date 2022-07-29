@@ -17,6 +17,7 @@ import {Location, EMPTY_LOCATION, ShippingPointLocationSelectOption, ShippingPoi
 import { ServiceLevel } from '../master-data-models/service-level-model';
 import { SelectOption } from '../select-option-model/select-option-model';
 import {RemitHistoryItem} from "./remit-history-item";
+import {WeightAdjustment} from './trip-information-model';
 
 export class InvoiceDataModel {
 
@@ -88,6 +89,8 @@ export class InvoiceDataModel {
   tripTenderTime: string;
   hasRateEngineError: boolean;
   totalGrossWeight: number;
+  originalTotalGrossWeight: number;
+  weightAdjustments: Array<WeightAdjustment>
 
   /* --- AUTOMATED INVOICE: COST BREAKDOWN FIELDS --- */
   deliveryInstructions: Array<string>;
@@ -190,6 +193,8 @@ export class InvoiceDataModel {
     this.tripTenderTime = date(json?.tripTenderTime);
     this.hasRateEngineError = json?.hasRateEngineError ?? false;
     this.totalGrossWeight = json?.totalGrossWeight ?? 0;
+    this.originalTotalGrossWeight = json?.totalGrossWeight ?? 0;
+    this.weightAdjustments = json?.weightAdjustmentst ?? [];
 
     // AUTOMATED INVOICE: COST BREAKDOWN
     this.deliveryInstructions = json?.deliveryInstructions ?? [];

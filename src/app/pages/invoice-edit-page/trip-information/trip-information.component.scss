@@ -59,27 +59,27 @@
   }
 }
 
-#delivery-date-label, #pickup-date-label {
+#delivery-date-label, #pickup-date-label, #weight-label {
   display: flex;
   flex-direction: row;
   justify-items: flex-start;
   align-items: center;
 }
 
-#override-assume-delivery-date-container, #pickup-date-container {
+#override-assume-delivery-date-container, #pickup-date-container, #weight-sub-label-container {
   display: flex;
   flex-direction: row;
   justify-items: flex-start;
   align-items: center;
 }
 
-.delivery-date-icon, .pickup-date-icon {
+.delivery-date-icon, .pickup-date-icon, .weight-icon {
   bottom: 1px;
   position: relative;
   color: rgba(0, 0, 0, 0.87);
 }
 
-.delivery-date-icon-message, .pickup-date-icon-message {
+.delivery-date-icon-message, .pickup-date-icon-message, .weight-icon-message {
   top: 1px;
   position: relative;
   color: rgba(0, 0, 0, 0.87);

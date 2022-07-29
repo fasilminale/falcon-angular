@@ -309,7 +309,15 @@
 
       <div class="row">
         <div class="col">
-          <label class="fal-label">Total Gross Weight (lb)</label>
+          <label id="weight-label"
+                 class="fal-label">
+            Total Gross Weight (lb)
+            <div id="weight-sub-label-container"
+                 *ngIf="hasWeightAdjustments">
+              <mat-icon class="weight-icon">label_important</mat-icon>
+              <div class="weight-icon-message fw-bold">Adjusted</div>
+            </div>
+          </label>
 
         </div>
         <div class="col">
@@ -335,7 +343,7 @@
                  formControlName="totalPalletCount">
         </div>
       </div>
-      <div class="row mb-3 ms-5">
+      <div *ngIf="hasWeightAdjustments" class="row mb-3 ms-5">
         <div class="col-12" (click)="toggleWeightAdjustmentDetailsSection()">
         <span class="accordion-header" *ngIf="!showWeightAdjustmentSection">
           <span class="material-icons">keyboard_arrow_down</span>
@@ -346,9 +354,45 @@
           <span class="accordian-link-text">Hide Weight Adjustment Details</span>
         </span>
         </div>
-        <div id="weightAdjustmentSection" class="col-12 mt-3"
+        <div id="weightAdjustmentSection"
+             class="row col-12 mt-3"
              [hidden]="!showWeightAdjustmentSection">
-          Weight Adjustment Details Go Here!
+          <div class="col-4">
+            <label for="originalTotalGrossWeight"
+                   class="fal-label">
+              Total Gross Weight (lb): <span class="fw-bold">Original</span>
+            </label>
+            <elm-text-input id="originalTotalGrossWeight"
+                            formControlName="originalTotalGrossWeight">
+            </elm-text-input>
+          </div>
+          <div formArrayName="weightAdjustments">
+            <div *ngFor="let _ of weightAdjustments.controls; index as i"
+                 [formGroupName]="i"
+                 class="row col-12">
+              <div class="col-4">
+                <label *ngIf="i === 0" class="fal-label">
+                  Weight Adjusted
+                </label>
+                <elm-text-input formControlName="amount">
+                </elm-text-input>
+              </div>
+              <div class="col-4">
+                <label *ngIf="i === 0" class="fal-label">
+                  Customer Category
+                </label>
+                <elm-text-input formControlName="customerCategory">
+                </elm-text-input>
+              </div>
+              <div class="col-4">
+                <label *ngIf="i === 0" class="fal-label">
+                  Freight Class
+                </label>
+                <elm-text-input formControlName="freightClasses">
+                </elm-text-input>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
