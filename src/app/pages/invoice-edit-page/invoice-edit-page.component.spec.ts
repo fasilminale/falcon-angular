@@ -249,7 +249,7 @@ describe('InvoiceEditPageComponent', () => {
           overriddenDeliveryDateTime: new Date().toISOString(),
           assumedDeliveryDateTime: new Date().toISOString(),
           tripTenderTime: new Date().toISOString(),
-          totalGrossWeight: 0
+          totalGrossWeight: 1000
         };
         spyOn(component, 'updateInvoiceFromForms').and.stub();
         spyOn(rateService, 'rateInvoice').and.returnValue(of(testInvoice));
@@ -861,6 +861,7 @@ describe('InvoiceEditPageComponent', () => {
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
       component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
+      component.invoice.weightAdjustments = undefined as any;
     };
 
     it('should return EditAutoInvoiceModel object', () => {

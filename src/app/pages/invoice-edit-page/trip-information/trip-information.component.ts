@@ -169,7 +169,6 @@ export class TripInformationComponent implements OnInit {
           this.carrierModeControl.updateValueAndValidity();
           this.serviceLevelOptions = serviceLevels;
           this.carrierDetails = carrierDetails;
-          // this.carrierModeControl.setValue(this.tripInformation.carrierMode);
           this.filteredCarrierModeOptionsPopulatedSubject.next(0);
           this.filteredCarrierModeOptionsPopulatedSubject.complete();
         }
@@ -331,7 +330,7 @@ export class TripInformationComponent implements OnInit {
     }
   }
 
-  private toWeightAdjustmentFormGroup(weightAdjustment: WeightAdjustment): FormGroup {
+  public toWeightAdjustmentFormGroup(weightAdjustment: WeightAdjustment): FormGroup {
     const formGroup = new FormGroup({
       amount: new FormControl(weightAdjustment.amount),
       customerCategory: new FormControl(weightAdjustment.customerCategory),

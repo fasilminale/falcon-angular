@@ -9,7 +9,7 @@ import {YesNo} from '../../../models/master-data-models/yes-no-model';
 import {CarrierModeCode, TripType} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel} from '../../../models/master-data-models/service-level-model';
 import {FormControl, FormGroup} from '@angular/forms';
-import {FreightPaymentTerms, TripInformation} from '../../../models/invoice/trip-information-model';
+import {FreightPaymentTerms, TripInformation, WeightAdjustment} from '../../../models/invoice/trip-information-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
@@ -1265,6 +1265,25 @@ describe('TripInformationComponent', () => {
       component.openWeightAdjustmentModal();
       expect(component.openWeightAdjustmentModalEvent.emit).toHaveBeenCalled();
     });
+  });
+
+  it('should convert WeightAdjustment to FormGroup', () => {
+    const weightAdjustment: WeightAdjustment = {
+      amount: 50,
+      freightClasses: ['55', '110'],
+      customerCategory: 'CAH'
+    };
+    const result = component.toWeightAdjustmentFormGroup(weightAdjustment);
+    expect(result.disabled).toBeTrue();
+    expect(result.controls.amount.value).toEqual(50);
+    expect(result.controls.freightClasses.value).toEqual('55, 110');
+    expect(result.controls.customerCategory.value).toEqual('CAH');
+  });
+
+  it('should toggle weight adjustment section', () => {
+    component.showWeightAdjustmentSection = false;
+    component.toggleWeightAdjustmentDetailsSection();
+    expect(component.showWeightAdjustmentSection).toBeTrue();
   });
 
 });
