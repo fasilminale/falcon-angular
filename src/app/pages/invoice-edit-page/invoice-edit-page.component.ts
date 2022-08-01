@@ -314,25 +314,17 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   async handleWeightAdjustmentModalEvent(currentWeight: number): Promise<void> {
-    console.log('DEBUG: handleWeightAdjustmentModalEvent - START');
     // await response from modal
     const result = await this.util.openWeightAdjustmentModal({currentWeight})
       .pipe(first()).toPromise();
-    console.log('DEBUG: handleWeightAdjustmentModalEvent - AFTER MODAL');
     if (result) {
-      console.log('DEBUG: handleWeightAdjustmentModalEvent - HAS RESULT');
       this.updateInvoiceFromForms();
-      console.log('DEBUG: handleWeightAdjustmentModalEvent - AFTER UPDATE FROM FORMS');
       // await response from backend
       const adjustedInvoice = await this.rateService.adjustWeightOnInvoice(this.invoice, result.adjustedWeight)
         .pipe(first()).toPromise();
-      console.log('DEBUG: handleWeightAdjustmentModalEvent - AFTER API CALL');
       this.toastService.openSuccessToast('Success. Invoice weight has been adjusted.');
-      console.log('DEBUG: handleWeightAdjustmentModalEvent - AFTER SUCCESS TOAST');
       // reload the invoice
       this.loadInvoice(adjustedInvoice);
-      console.log('DEBUG: handleWeightAdjustmentModalEvent - AFTER LOAD INVOICE');
-      console.log('DEBUG: handleWeightAdjustmentModalEvent - END');
     }
   }
 
