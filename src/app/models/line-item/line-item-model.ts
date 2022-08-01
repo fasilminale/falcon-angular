@@ -43,6 +43,7 @@ export interface CostLineItem {
   runningTotal?: number;
   lineItemType?: string;
   variables: Array<CalcDetailVariable>;
+  deletedDate?: string
 }
 
 export interface DisputeLineItem {

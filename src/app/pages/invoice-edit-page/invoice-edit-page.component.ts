@@ -498,7 +498,8 @@ export class InvoiceEditPageComponent implements OnInit {
         requestStatus: CommonUtils.handleNAValues(item.controls?.requestStatusPair?.value),
         responseComment: CommonUtils.handleNAValues(item.controls?.responseComment?.value),
         lineItemType: CommonUtils.handleNAValues(item.controls?.lineItemType?.value),
-        variables: item.controls?.variables?.value ?? []
+        variables: item.controls?.variables?.value ?? [],
+        deletedDate: item.controls?.deletedDate?.value
       });
     }
     return results;
