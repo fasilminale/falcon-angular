@@ -192,7 +192,7 @@
             <div [ngClass]="{'col-11': readOnlyForm,
                            'col-5': !readOnlyForm}">
               <app-fal-currency-input
-                [isError]="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0"
+                [isError]="_.get('totalAmount')?.value === 0"
                 formControlName="totalAmount"
                 [ngClass]="{ 'background_color_currency': _.value.charge === 'OTHER' }"
                 [isDisabled]="true">

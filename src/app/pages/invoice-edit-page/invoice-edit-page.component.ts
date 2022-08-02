@@ -302,7 +302,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
   handleTripEditModeEvent($event: any): void {
     if ($event && $event.event == 'update' && $event.value) {
-      this.getRates('');
+      this.updateAndGetRates();
       this.otherSectionEditMode$.value = true;
     } else if ($event && $event.event == 'cancel' && !$event.value) {
       this.otherSectionEditMode$.value = true;
@@ -541,6 +541,19 @@ export class InvoiceEditPageComponent implements OnInit {
       this.subscriptions.manage(
         this.rateService.getAccessorialDetails(request).subscribe(result => this.chargeLineItemOptions$.next(result))
       );
+    }
+  }
+
+  updateAndGetRates(): void {
+    this.updateInvoiceFromForms();
+    if (this.checkAccessorialData(this.invoice)) {
+      this.rateService.updateInvoice(this.invoice).subscribe((invoice: any) => {
+          this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
+          this.loadInvoice(invoice);
+      }, (error) => {
+        const errorMessage = error.error.error.message;
+          this.toastService.openErrorToast(errorMessage);
+      });
     }
   }
 

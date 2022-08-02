@@ -27,4 +27,8 @@ export class RateService {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/glallocation/invoice`, invoice);
   }
 
+  public updateInvoice(invoice: any): Observable<any> {
+    return this.web.httpPut(`${environment.baseServiceUrl}/v1/glallocation/updateInvoice`, invoice);
+  }
+
 }

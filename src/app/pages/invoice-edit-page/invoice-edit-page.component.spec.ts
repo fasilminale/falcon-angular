@@ -159,6 +159,7 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(rateService, 'getAccessorialDetails').and.returnValue(of());
     spyOn(rateService, 'getRates').and.returnValue(of());
     spyOn(rateService, 'glAllocateInvoice').and.returnValue(of());
+    spyOn(rateService, 'updateInvoice').and.returnValue(of());
 
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
@@ -291,7 +292,7 @@ describe('InvoiceEditPageComponent', () => {
       it('handleTripEditModeEvent should call getRates', fakeAsync(() => {
         component.handleTripEditModeEvent({event: 'update', value: true});
         tick();
-        expect(rateService.rateInvoice).toHaveBeenCalled();
+        expect(rateService.updateInvoice).toHaveBeenCalled();
         expect(component.otherSectionEditMode$.value).toEqual(true);
         flush();
       }));
@@ -1024,6 +1025,20 @@ describe('InvoiceEditPageComponent', () => {
       done();
     });
     mockGlAllocateRequest$.next({});
+  });
+
+  it('updateAndGetRates should call backend api', done => {
+    const mockUpdateRequest$ = new Subject();
+    spyOn(component, 'updateInvoiceFromForms').and.stub();
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(rateService.updateInvoice).and.returnValue(mockUpdateRequest$.asObservable());
+    component.updateAndGetRates();
+    mockUpdateRequest$.subscribe(() => {
+      expect(component.updateInvoiceFromForms).toHaveBeenCalled();
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockUpdateRequest$.next({});
   });
 
 });
