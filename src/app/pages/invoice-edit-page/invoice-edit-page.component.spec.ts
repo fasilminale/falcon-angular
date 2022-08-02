@@ -928,7 +928,9 @@ describe('InvoiceEditPageComponent', () => {
         planned: new FormControl(true),
         fuel: new FormControl(true),
         manual: new FormControl(true),
-        lineItemType: new FormControl('Test Line Item Type')
+        lineItemType: new FormControl('Test Line Item Type'),
+        variables: new FormControl({variable: 'key', quantity: 'test'}),
+        deletedDate: new FormControl(TEST_DATE)
       }));
       component.updateInvoiceFromForms();
     });
@@ -1026,4 +1028,43 @@ describe('InvoiceEditPageComponent', () => {
     mockGlAllocateRequest$.next({});
   });
 
+  describe('Unpopulated fields', () => {
+    let lineItems = new FormArray([]);
+    beforeEach(() => {
+      lineItems.push(new FormGroup({
+        accessorial: new FormControl(false),
+        accessorialCode: new FormControl('Test Accessorial Code'),
+        charge: new FormControl('Test Charge Code'),
+        rateSource: new FormControl('Test Rate Source Label'),
+        rateSourcePair: new FormControl({key: 'Test Rate Source Key', label: 'Test Rate Source Label'}),
+        entrySource: new FormControl('Test Entry Source Label'),
+        entrySourcePair: new FormControl({key: 'Test Entry Source Key', label: 'Test Entry Source Label'}),
+        rate: new FormControl(123.45),
+        type: new FormControl('Test Type'),
+        quantity: new FormControl(1),
+        totalAmount: new FormControl(123.45),
+        requestStatus: new FormControl('Test Request Status Label'),
+        message: new FormControl('Test Message'),
+        createdBy: new FormControl('Test Created By'),
+        createdDate: new FormControl(TEST_DATE),
+        closedBy: new FormControl('Test Close By'),
+        closedDate: new FormControl(TEST_DATE),
+        carrierComment: new FormControl('Test Carrier Comment'),
+        responseComment: new FormControl('Test Response Comment'),
+        rateResponse: new FormControl('Test Rate Response'),
+        autoApproved: new FormControl(true),
+        attachmentRequired: new FormControl(true),
+        planned: new FormControl(true),
+        fuel: new FormControl(true),
+        manual: new FormControl(true),
+        lineItemType: new FormControl('Test Line Item Type'),
+        variables: new FormControl(null),
+        deletedDate: new FormControl(null)
+      }));
+    });
+    it('deletedChargeLineItem.deletedDate equals than null', () => {
+      const result = component.getLineItems(lineItems);
+      expect(result[0].deletedDate).toBeNull();
+    });
+  });
 });
