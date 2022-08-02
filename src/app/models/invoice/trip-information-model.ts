@@ -1,9 +1,9 @@
 import {CarrierReference} from '../master-data-models/carrier-model';
 import {CarrierModeCodeReference} from '../master-data-models/carrier-mode-code-model';
 import {ServiceLevel} from '../master-data-models/service-level-model';
-import { BillToLocation, ShippingPointLocation } from '../location/location-model';
+import {BillToLocation, ShippingPointLocation} from '../location/location-model';
 import {GlLineItem, GlLineItemError} from '../line-item/line-item-model';
-import { FreightOrder } from '../freight-order/freight-order-model';
+import {FreightOrder} from '../freight-order/freight-order-model';
 
 export interface TripInformation {
   tripId: string;
@@ -28,6 +28,14 @@ export interface TripInformation {
   assumedDeliveryDateTime?: Date;
   tripTenderTime?: Date;
   totalGrossWeight?: number;
+  originalTotalGrossWeight?: number;
+  weightAdjustments?: Array<WeightAdjustment>;
+}
+
+export interface WeightAdjustment {
+  amount: number;
+  customerCategory: string;
+  freightClasses: Array<string>;
 }
 
 export interface InvoiceAllocationDetail {
