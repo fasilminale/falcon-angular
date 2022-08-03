@@ -287,7 +287,8 @@ export class InvoiceAmountComponent implements OnInit {
           fuel: new FormControl(lineItem.fuel ?? false),
           manual: new FormControl(false),
           lineItemType: new FormControl(lineItem.lineItemType ?? null),
-          variables: new FormControl(lineItem.variables ?? [])
+          variables: new FormControl(lineItem.variables ?? []),
+          deletedDate: new FormControl(lineItem.deletedDate)
         });
         group.get('rateSourcePair')?.valueChanges?.subscribe(
           value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')

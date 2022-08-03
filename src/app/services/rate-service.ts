@@ -27,6 +27,13 @@ export class RateService {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/glallocation/invoice`, invoice);
   }
 
+  public adjustWeightOnInvoice(invoice: InvoiceDataModel, newWeight: number): Observable<InvoiceDataModel> {
+    return this.web.httpPost(`${environment.baseServiceUrl}/v1/invoice/adjustweight`, {
+      newTotalGrossWeight: newWeight,
+      invoiceToAdjust: invoice
+    });
+  }
+
   public updateInvoice(invoice: any): Observable<any> {
     return this.web.httpPut(`${environment.baseServiceUrl}/v1/glallocation/updateInvoice`, invoice);
   }

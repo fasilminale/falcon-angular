@@ -1,8 +1,8 @@
 import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {combineLatest, forkJoin, Observable, Subject} from 'rxjs';
+import {forkJoin, Observable, Subject, Subscription} from 'rxjs';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
-import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation} from '../../../models/invoice/trip-information-model';
+import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation, WeightAdjustment} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {CarrierReference, CarrierUtils} from '../../../models/master-data-models/carrier-model';
@@ -12,15 +12,22 @@ import {
   CarrierModeCodeUtils
 } from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel, ServiceLevelUtils} from '../../../models/master-data-models/service-level-model';
-import {BillToLocation, BillToLocationUtils, LocationUtils, ShippingPointLocation, ShippingPointLocationSelectOption, ShippingPointWarehouseLocation} from 'src/app/models/location/location-model';
+import {
+  BillToLocation,
+  BillToLocationUtils,
+  LocationUtils,
+  ShippingPointLocation,
+  ShippingPointLocationSelectOption,
+  ShippingPointWarehouseLocation
+} from 'src/app/models/location/location-model';
 import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
 import {DateParserFormatter} from '../../../utils/date-parser-formatter';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
-import { SubjectValue } from 'src/app/utils/subject-value';
-import { InvoiceService } from 'src/app/services/invoice-service';
-import {InvoiceDataModel, InvoiceUtils} from 'src/app/models/invoice/invoice-model';
+import {SubjectValue} from 'src/app/utils/subject-value';
+import {InvoiceService} from 'src/app/services/invoice-service';
+import {InvoiceUtils} from 'src/app/models/invoice/invoice-model';
 
 const {required} = Validators;
 
@@ -47,7 +54,7 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
   ]
 })
 export class TripInformationComponent implements OnInit {
-  @Output() onUpdateAndContinueClickEvent = new EventEmitter<any>();
+  @Output() updateAndContinueClickEvent = new EventEmitter<any>();
   @Output() openWeightAdjustmentModalEvent = new EventEmitter<any>();
 
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
@@ -58,6 +65,8 @@ export class TripInformationComponent implements OnInit {
   public carrierDetails: Array<CarrierDetailModel> = [];
 
   public totalGrossWeight = new FormControl(0);
+  public originalTotalGrossWeight = new FormControl(0);
+  public weightAdjustments = new FormArray([]);
   public totalVolume = new FormControl(0);
   public totalPalletCount = new FormControl(0);
 
@@ -94,12 +103,14 @@ export class TripInformationComponent implements OnInit {
   public localPeristentTripInformation: TripInformation = {} as TripInformation;
   public assumedDeliveryDateTime: Date | undefined;
   public overriddenDeliveryDateTime: Date | undefined;
-  public isPickupDateTimeTendered: boolean = false;
-  public pickupDateMatchesTenderDate: boolean = false;
-  public arrowLabelForDeliveryDateTime: string = "";
-  public showArrowForDeliveryDateTime: boolean = false;
+  public isPickupDateTimeTendered = false;
+  public pickupDateMatchesTenderDate = false;
+  public arrowLabelForDeliveryDateTime = '';
+  public showArrowForDeliveryDateTime = false;
+  public hasWeightAdjustments = false;
 
   public showFreightOrderSection = false;
+  public showWeightAdjustmentSection = false;
   carrierDetailFound = true;
   loadOriginAddress$ = new Subject<ShippingPointLocation>();
   loadDestinationAddress$ = new Subject<ShippingPointLocation>();
@@ -111,18 +122,20 @@ export class TripInformationComponent implements OnInit {
   carrierModeCodeUtilsToDisplayLabel = CarrierModeCodeUtils.toDisplayLabel;
   carrierUtilsToDisplayLabel = CarrierUtils.toDisplayLabel;
 
-  public enableTripEditButton: boolean= false;
+  public enableTripEditButton = false;
   public isTripEditMode$ = new SubjectValue<boolean>(false);
 
+  private loadTripInformationSubscription = new Subscription();
+
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-    private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
-    private invoiceService: InvoiceService) {
+              private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
+              private invoiceService: InvoiceService) {
   }
 
   ngOnInit(): void {
     this.formGroup = this._formGroup;
     this.formGroup.disable();
-    let observables: Observable<any>[] = [this.masterData.getCarrierSCACs(),
+    const observables: Observable<any>[] = [this.masterData.getCarrierSCACs(),
       this.masterData.getCarrierModeCodes().pipe(map(CarrierModeCodeUtils.toOptions)),
       this.masterData.getCarriers().pipe(map(CarrierUtils.toOptions)),
       this.masterData.getServiceLevels().pipe(map(ServiceLevelUtils.toOptions)),
@@ -156,8 +169,8 @@ export class TripInformationComponent implements OnInit {
           this.carrierModeControl.updateValueAndValidity();
           this.serviceLevelOptions = serviceLevels;
           this.carrierDetails = carrierDetails;
-          this.carrierModeControl.setValue(this.tripInformation.carrierMode);
           this.filteredCarrierModeOptionsPopulatedSubject.next(0);
+          this.filteredCarrierModeOptionsPopulatedSubject.complete();
         }
       ),
     );
@@ -197,6 +210,8 @@ export class TripInformationComponent implements OnInit {
     givenFormGroup.setControl('billToAddress', this.billToAddressFormGroup);
     givenFormGroup.setControl('freightOrders', this.freightOrders);
     givenFormGroup.setControl('totalGrossWeight', this.totalGrossWeight);
+    givenFormGroup.setControl('originalTotalGrossWeight', this.originalTotalGrossWeight);
+    givenFormGroup.setControl('weightAdjustments', this.weightAdjustments);
     givenFormGroup.setControl('totalVolume', this.totalVolume);
     givenFormGroup.setControl('totalPalletCount', this.totalPalletCount);
     this._formGroup = givenFormGroup;
@@ -254,71 +269,92 @@ export class TripInformationComponent implements OnInit {
   }
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {
-    this.subscriptionManager.manage(combineLatest([
-      this.filteredCarrierModeOptionsPopulatedSubject.asObservable(),
-      observable
-    ]).subscribe(([populated, tripInfo]) => {
-      this.loadTripInformationData(tripInfo);
-    }));
+    this.loadTripInformationSubscription.unsubscribe();
+    this.loadTripInformationSubscription = observable.subscribe(
+      async tripInfo => {
+        // TODO fix this workaround
+        await this.loadTripInformationData(tripInfo);
+        // running the loading logic twice because it always fails to properly load the first time
+        await this.loadTripInformationData(tripInfo);
+      }
+    );
   }
 
-  loadTripInformationData(tripInfo: TripInformation) {
+  async loadTripInformationData(tripInfo: TripInformation): Promise<void> {
+    // wait on the options to be loaded before moving on
+    await this.filteredCarrierModeOptionsPopulatedSubject.toPromise();
     this.localPeristentTripInformation = this.tripInformation = tripInfo;
-      if (this._editableFormArray.disabled) {
-        this.formGroup.enable();
-      }
-      this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
-      this.vendorNumberControl.setValue(tripInfo.vendorNumber);
-      this.vendorNumberControl.markAsDirty();
-      this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
-      this.pickUpDateControl.setValue(this.derivePickupDate(tripInfo));
-      this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
-      this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
-      this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
-      this.freightPaymentTermsControl.setValue(tripInfo.freightPaymentTerms ?? undefined);
-      this.carrierControl.valueChanges.subscribe(() => {
-        this.filteredCarrierModeOptions = this.filterCarrierModes();
-        this.carrierModeControl.setValidators([
-          required,
-          this.validateIsOption(this.filteredCarrierModeOptions, this.compareCarrierModeWith)
-        ]);
-        this.filteredServiceLevels = this.filterServiceLevels();
-        this.carrierModeControl.updateValueAndValidity();
-      });
-      this.carrierControl.setValue(tripInfo.carrier ?? undefined);
-      this.changeDetection.detectChanges();
-      this.carrierModeControl.setValue(tripInfo.carrierMode ?? undefined);
-      this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
-      this.freightOrders.setValue(tripInfo.freightOrders ?? undefined);
-      this.loadOriginAddress$.next(tripInfo.originAddress);
-      this.filteredShippingPoints$.next(this.masterDataShippingPoints.filter(function (shippingPointLocation) {
-        return shippingPointLocation.businessUnit == tripInfo.businessUnit
-      }));
-      this.loadDestinationAddress$.next(tripInfo.destinationAddress);
-      this.loadBillToAddress$.next(tripInfo.billToAddress);
-      this.loadFreightOrders$.next(tripInfo.freightOrders);
-      this.totalGrossWeight.setValue(tripInfo.totalGrossWeight);
-      this.formGroup.updateValueAndValidity();
-      if (this._editableFormArray.disabled) {
-        this.formGroup.disable();
-      }
+    if (this._editableFormArray.disabled) {
+      this.formGroup.enable();
+    }
+    this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
+    this.vendorNumberControl.setValue(tripInfo.vendorNumber);
+    this.vendorNumberControl.markAsDirty();
+    this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
+    this.pickUpDateControl.setValue(this.derivePickupDate(tripInfo));
+    this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
+    this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
+    this.bolNumberControl.setValue(tripInfo.bolNumber ?? 'N/A');
+    this.freightPaymentTermsControl.setValue(tripInfo.freightPaymentTerms ?? undefined);
+    this.carrierControl.valueChanges.subscribe(() => {
+      this.filteredCarrierModeOptions = this.filterCarrierModes();
+      this.carrierModeControl.setValidators([
+        required,
+        this.validateIsOption(this.filteredCarrierModeOptions, this.compareCarrierModeWith)
+      ]);
+      this.filteredServiceLevels = this.filterServiceLevels();
+      this.carrierModeControl.updateValueAndValidity();
+    });
+    this.carrierControl.setValue(tripInfo.carrier ?? undefined);
+    this.changeDetection.detectChanges();
+    this.carrierModeControl.setValue(tripInfo.carrierMode ?? undefined);
+    this.serviceLevelControl.setValue(tripInfo.serviceLevel ?? undefined);
+    this.freightOrders.setValue(tripInfo.freightOrders ?? undefined);
+    this.loadOriginAddress$.next(tripInfo.originAddress);
+    this.filteredShippingPoints$.next(this.masterDataShippingPoints.filter(
+      shippingPointLocation => shippingPointLocation.businessUnit == tripInfo.businessUnit)
+    );
+    this.loadDestinationAddress$.next(tripInfo.destinationAddress);
+    this.loadBillToAddress$.next(tripInfo.billToAddress);
+    this.loadFreightOrders$.next(tripInfo.freightOrders);
+    this.totalGrossWeight.setValue(tripInfo.totalGrossWeight);
+    this.originalTotalGrossWeight.setValue(tripInfo.originalTotalGrossWeight);
+    this.weightAdjustments.clear();
+    tripInfo.weightAdjustments
+      ?.map(this.toWeightAdjustmentFormGroup)
+      .forEach(fg => this.weightAdjustments.push(fg));
+    this.hasWeightAdjustments = this.weightAdjustments.controls.length > 0;
+    this.formGroup.updateValueAndValidity();
+    if (this._editableFormArray.disabled) {
+      this.formGroup.disable();
+    }
+  }
+
+  public toWeightAdjustmentFormGroup(weightAdjustment: WeightAdjustment): FormGroup {
+    const formGroup = new FormGroup({
+      amount: new FormControl(weightAdjustment.amount),
+      customerCategory: new FormControl(weightAdjustment.customerCategory),
+      freightClasses: new FormControl(weightAdjustment.freightClasses.join(', '))
+    });
+    formGroup.disable();
+    return formGroup;
   }
 
   derivePickupDate(tripInfo?: TripInformation): Date | undefined {
-   let deliveryDate = tripInfo?.deliveryDate?.getTime();
-  if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()) {
-    this.pickupDateMatchesTenderDate = true;
-  } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
+    const deliveryDate = tripInfo?.deliveryDate?.getTime();
+    if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()) {
+      this.pickupDateMatchesTenderDate = true;
+    } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
       this.isPickupDateTimeTendered = true;
-   }
-   return tripInfo?.pickUpDate ?? undefined;
+    }
+    return tripInfo?.pickUpDate ?? undefined;
   }
 
   deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
     let dateToReturn: Date | undefined;
-    let foDeliveryDateTime = tripInfo.freightOrders[0]?.deliverydatetime;
-    let overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
-    let assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
+    const foDeliveryDateTime = tripInfo.freightOrders[0]?.deliverydatetime;
+    const overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
+    const assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
     if (foDeliveryDateTime) {
       dateToReturn = new Date(foDeliveryDateTime);
       this.showArrowForDeliveryDateTime = false;
@@ -341,12 +377,12 @@ export class TripInformationComponent implements OnInit {
   clickEditButton(): void {
     this.isTripEditMode$.value = true;
     this._editableFormArray.enable();
-    this.onUpdateAndContinueClickEvent.emit({event: 'edit', value: false});
+    this.updateAndContinueClickEvent.emit({event: 'edit', value: false});
   }
 
   clickCancelButton(): void {
     this.loadTripInformationData(this.localPeristentTripInformation);
-    this.onUpdateAndContinueClickEvent.emit({event: 'cancel', value: false});
+    this.updateAndContinueClickEvent.emit({event: 'cancel', value: false});
     this.isTripEditMode$.value = false;
     this._editableFormArray.disable();
   }
@@ -363,15 +399,15 @@ export class TripInformationComponent implements OnInit {
     this.localPeristentTripInformation.destinationAddress = LocationUtils.extractShippingPointLocation(destinationAddressFormGroup, 'destination', this.localPeristentTripInformation.destinationAddress?.code);
     const billToAddressFormGroup = this.billToAddressFormGroup;
     this.localPeristentTripInformation.billToAddress = BillToLocationUtils.extractBillToLocation(billToAddressFormGroup);
-    this.onUpdateAndContinueClickEvent.emit({event: 'update', value: true});
+    this.updateAndContinueClickEvent.emit({event: 'update', value: true});
     this.isTripEditMode$.value = false;
     this._editableFormArray.disable();
   }
 
   updateBillToEvent($event: any): void {
-    let shippingPointWarehouse = this.masterDataShippingPointWarehouses.find(function(spWarehouse){
-      return spWarehouse.shippingPointCode == $event
-    });
+    const shippingPointWarehouse = this.masterDataShippingPointWarehouses.find(
+      spWarehouse => spWarehouse.shippingPointCode == $event
+    );
     if (shippingPointWarehouse?.billto) {
       this.loadBillToAddress$.next(shippingPointWarehouse.billto);
     }
@@ -379,6 +415,10 @@ export class TripInformationComponent implements OnInit {
 
   toggleFreightOrderDetailsSection(): void {
     this.showFreightOrderSection = !this.showFreightOrderSection;
+  }
+
+  toggleWeightAdjustmentDetailsSection(): void {
+    this.showWeightAdjustmentSection = !this.showWeightAdjustmentSection;
   }
 
   compareWith(item: any, value: any): boolean {

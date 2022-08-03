@@ -19,7 +19,7 @@ import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
-import {switchMap} from 'rxjs/operators';
+import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
@@ -135,7 +135,9 @@ export class InvoiceEditPageComponent implements OnInit {
       overriddenDeliveryDateTime: invoice.overriddenDeliveryDateTime ? new Date(invoice.overriddenDeliveryDateTime) : undefined,
       assumedDeliveryDateTime: invoice.assumedDeliveryDateTime ? new Date(invoice.assumedDeliveryDateTime) : undefined,
       tripTenderTime: invoice.tripTenderTime ? new Date(invoice.tripTenderTime) : undefined,
-      totalGrossWeight: invoice.totalGrossWeight ? invoice.totalGrossWeight : 0
+      totalGrossWeight: invoice.totalGrossWeight ? invoice.totalGrossWeight : 0,
+      originalTotalGrossWeight: invoice.originalTotalGrossWeight ?? 0,
+      weightAdjustments: invoice.weightAdjustments ?? [],
     });
     if (this.tripInformationFormGroup.enabled) {
       this.tripInformationFormGroup.disable();
@@ -311,16 +313,19 @@ export class InvoiceEditPageComponent implements OnInit {
     }
   }
 
-  handleWeightAdjustmentModalEvent($event: number): void {
-    const dialogResult: Observable<any> =
-      this.util.openWeightAdjustmentModal({ currentWeight: $event });
-
-    dialogResult.subscribe(result => {
-      if (result) {
-        this.invoice.totalGrossWeight = result.adjustedWeight;
-        this.loadInvoice(this.invoice);
-      }
-    });
+  async handleWeightAdjustmentModalEvent(currentWeight: number): Promise<void> {
+    // await response from modal
+    const result = await this.util.openWeightAdjustmentModal({currentWeight})
+      .pipe(first()).toPromise();
+    if (result) {
+      this.updateInvoiceFromForms();
+      // await response from backend
+      const adjustedInvoice = await this.rateService.adjustWeightOnInvoice(this.invoice, result.adjustedWeight)
+        .pipe(first()).toPromise();
+      this.toastService.openSuccessToast('Success. Invoice weight has been adjusted.');
+      // reload the invoice
+      this.loadInvoice(adjustedInvoice);
+    }
   }
 
   clickSaveButton(): void {
@@ -386,6 +391,8 @@ export class InvoiceEditPageComponent implements OnInit {
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       totalGrossWeight: this.tripInformationFormGroup.controls.totalGrossWeight.value,
+      originalTotalGrossWeight: this.tripInformationFormGroup.controls.originalTotalGrossWeight.value,
+      weightAdjustments: this.invoice.weightAdjustments ?? [],
       freightOrders: this.tripInformationFormGroup.controls.freightOrders.value,
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
       pendingChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems),
@@ -435,6 +442,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoice.amountOfInvoice = this.invoiceAmountFormGroup.controls.amountOfInvoice?.value;
     this.invoice.deletedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deletedChargeLineItems);
     this.invoice.deniedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deniedChargeLineItems);
+    this.invoice.glLineItems = this.invoiceAllocationFormGroup.controls.invoiceAllocations.value;
   }
 
   getDisputeLineItems(items: AbstractControl): Array<DisputeLineItem> {
@@ -499,7 +507,8 @@ export class InvoiceEditPageComponent implements OnInit {
         requestStatus: CommonUtils.handleNAValues(item.controls?.requestStatusPair?.value),
         responseComment: CommonUtils.handleNAValues(item.controls?.responseComment?.value),
         lineItemType: CommonUtils.handleNAValues(item.controls?.lineItemType?.value),
-        variables: item.controls?.variables?.value ?? []
+        variables: item.controls?.variables?.value ?? [],
+        deletedDate: item.controls?.deletedDate?.value
       });
     }
     return results;

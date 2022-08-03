@@ -124,7 +124,21 @@ describe('RateService', () => {
 
   it('rateInvoice should call web service', async () => {
     spyOn(web, 'httpPost').and.returnValue(of(new InvoiceDataModel()));
-    const response = await rateService.rateInvoice(new InvoiceDataModel());
+    const response = await rateService.rateInvoice(new InvoiceDataModel()).toPromise();
+    expect(web.httpPost).toHaveBeenCalled();
+    expect(response).toBeTruthy();
+  });
+
+  it('should call glAllocation endpoint', async () => {
+    spyOn(web, 'httpPost').and.returnValue(of(new InvoiceDataModel()));
+    const response = await rateService.glAllocateInvoice(new InvoiceDataModel()).toPromise();
+    expect(web.httpPost).toHaveBeenCalled();
+    expect(response).toBeTruthy();
+  });
+
+  it('should call adjustWeight endpoint', async () => {
+    spyOn(web, 'httpPost').and.returnValue(of(new InvoiceDataModel()));
+    const response = await rateService.adjustWeightOnInvoice(new InvoiceDataModel(), 500).toPromise();
     expect(web.httpPost).toHaveBeenCalled();
     expect(response).toBeTruthy();
   });
