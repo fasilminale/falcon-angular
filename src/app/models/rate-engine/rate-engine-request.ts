@@ -73,6 +73,7 @@ export interface CalcDetail {
 
 export interface CalcDetailVariable {
   variable: string;
+  displayName?: string;
   quantity: number;
 }
 

@@ -7,13 +7,20 @@ import {CalcDetail} from '../../models/rate-engine/rate-engine-request';
 
 describe('FalCommentModalComponent', () => {
   const otherCharge: CalcDetail = {accessorialCode: 'OTHER', name: 'OTHER'};
-  const TEST_VARIABLE_NAME = 'Test Variable';
+  const TEST_VAR_1 = 'Test Variable';
+  const TEST_VAR_2 = 'Test Variable 2';
+  const TEST_DISPLAY_2 = 'Test Display';
   const TEST_CALC_DETAIL: CalcDetail = {
     accessorialCode: 'TEST',
     name: 'Test Calc Detail',
     variables: [
       {
-        variable: TEST_VARIABLE_NAME,
+        variable: TEST_VAR_1,
+        quantity: 0
+      },
+      {
+        variable: TEST_VAR_2,
+        displayName: TEST_DISPLAY_2,
         quantity: 0
       }
     ]
@@ -65,14 +72,14 @@ describe('FalCommentModalComponent', () => {
   it('should give variable control names', () => {
     component.chargeControl.setValue(TEST_CALC_DETAIL);
     const controlNames = component.getVariableControlNames();
-    expect(controlNames).toEqual([TEST_VARIABLE_NAME]);
+    expect(controlNames).toEqual([TEST_VAR_1, TEST_DISPLAY_2]);
   });
 
   it('should clear all variable controls', () => {
     spyOn(component.variableControls, 'removeControl').and.callThrough();
     component.chargeControl.setValue(TEST_CALC_DETAIL);
     component.clearAllVariableControls();
-    expect(component.variableControls.removeControl).toHaveBeenCalledOnceWith(TEST_VARIABLE_NAME);
+    expect(component.variableControls.removeControl).toHaveBeenCalledTimes(2);
   });
 
   it('should close the dialog WITHOUT a response when a charge type is NOT selected', () => {

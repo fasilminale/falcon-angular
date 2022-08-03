@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControlOptions, AsyncValidatorFn, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {buttonStyleOptions} from '@elm/elm-styleguide-ui';
 import {SelectOption} from '../../models/select-option-model/select-option-model';
 import {CalcDetail} from '../../models/rate-engine/rate-engine-request';
@@ -54,8 +54,13 @@ export class FalNewChargeModalComponent {
     const variables = charge.variables ?? [];
     this.clearAllVariableControls();
     variables.forEach(variable => {
-      this.variableControls.addControl(variable.variable,
-        new FormControl('', Validators.required));
+      const vfc = new VariableFormControl(
+        variable.variable,
+        variable.displayName ?? variable.variable,
+        '',
+        Validators.required
+      );
+      this.variableControls.addControl(vfc.displayName, vfc);
     });
   }
 
@@ -73,10 +78,11 @@ export class FalNewChargeModalComponent {
       };
       this.getVariableControlNames()
         .forEach(vcName => {
-          const control = this.variableControls.get(vcName);
+          const control = this.variableControls.get(vcName) as VariableFormControl;
           if (control) {
             selected.variables?.push({
-              variable: vcName,
+              variable: control.variableName,
+              displayName: control.displayName,
               quantity: control.value
             });
           }
@@ -110,3 +116,13 @@ export type NewChargeModalOutput = undefined | {
   selected: CalcDetail,
   comment?: string
 };
+
+class VariableFormControl extends FormControl {
+  constructor(public readonly variableName: string,
+              public readonly displayName: string,
+              formState?: any,
+              validatorOrOpts?: ValidatorFn | ValidatorFn[] | AbstractControlOptions | null,
+              asyncValidator?: AsyncValidatorFn | AsyncValidatorFn[] | null) {
+    super(formState, validatorOrOpts, asyncValidator);
+  }
+}
