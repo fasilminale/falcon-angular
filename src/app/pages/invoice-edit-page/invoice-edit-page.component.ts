@@ -386,6 +386,7 @@ export class InvoiceEditPageComponent implements OnInit {
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       totalGrossWeight: this.tripInformationFormGroup.controls.totalGrossWeight.value,
+      freightOrders: this.tripInformationFormGroup.controls.freightOrders.value,
       costLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems),
       pendingChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems),
       disputeLineItems: this.getDisputeLineItems(this.invoiceAmountFormGroup.controls.disputeLineItems),

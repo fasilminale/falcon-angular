@@ -3,11 +3,13 @@ import {CarrierModeCodeReference} from '../master-data-models/carrier-mode-code-
 import {ServiceLevel} from '../master-data-models/service-level-model';
 import {GlLineItem} from '../line-item/line-item-model';
 import {CostLineItem, DisputeLineItem} from '../line-item/line-item-model';
-import { BillToLocation, Location } from "../location/location-model";
+import { BillToLocation, Location } from '../location/location-model';
+import {FreightOrder} from './freight-model';
 
 export interface EditAutoInvoiceModel {
   amountOfInvoice: number;
   totalGrossWeight?: number;
+  freightOrders?: Array<FreightOrder>;
   carrier?: CarrierReference;
   mode?: CarrierModeCodeReference;
   serviceLevel?: ServiceLevel;
