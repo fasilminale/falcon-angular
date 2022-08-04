@@ -143,4 +143,11 @@ describe('RateService', () => {
     expect(response).toBeTruthy();
   });
 
+  it('updateInvoice should call web service', async () => {
+    spyOn(web, 'httpPut').and.returnValue(of(new InvoiceDataModel()));
+    const response = await rateService.updateInvoice(new InvoiceDataModel());
+    expect(web.httpPut).toHaveBeenCalled();
+    expect(response).toBeTruthy();
+  });
+
 });

@@ -159,6 +159,7 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(rateService, 'getAccessorialDetails').and.returnValue(of());
     spyOn(rateService, 'getRates').and.returnValue(of());
     spyOn(rateService, 'glAllocateInvoice').and.returnValue(of());
+    spyOn(rateService, 'updateInvoice').and.returnValue(of());
     spyOn(rateService, 'adjustWeightOnInvoice').and.returnValue(of());
 
     // Create Component
@@ -292,7 +293,7 @@ describe('InvoiceEditPageComponent', () => {
       it('handleTripEditModeEvent should call getRates', fakeAsync(() => {
         component.handleTripEditModeEvent({event: 'update', value: true});
         tick();
-        expect(rateService.rateInvoice).toHaveBeenCalled();
+        expect(rateService.updateInvoice).toHaveBeenCalled();
         expect(component.otherSectionEditMode$.value).toEqual(true);
         flush();
       }));
@@ -872,6 +873,7 @@ describe('InvoiceEditPageComponent', () => {
         totalGrossWeight: component.tripInformationFormGroup.controls.totalGrossWeight.value,
         originalTotalGrossWeight: 0,
         weightAdjustments: [],
+        freightOrders: component.tripInformationFormGroup.controls.freightOrders.value,
         mode: {
           mode: component.tripInformationFormGroup.controls.carrierMode.value.mode,
           reportKeyMode: component.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
@@ -1072,4 +1074,19 @@ describe('InvoiceEditPageComponent', () => {
       expect(result[0].deletedDate).toBeNull();
     });
   });
+
+  it('updateAndGetRates should call backend api', done => {
+    const mockUpdateRequest$ = new Subject();
+    spyOn(component, 'updateInvoiceFromForms').and.stub();
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(rateService.updateInvoice).and.returnValue(mockUpdateRequest$.asObservable());
+    component.updateAndGetRates();
+    mockUpdateRequest$.subscribe(() => {
+      expect(component.updateInvoiceFromForms).toHaveBeenCalled();
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockUpdateRequest$.next({});
+  });
+
 });
