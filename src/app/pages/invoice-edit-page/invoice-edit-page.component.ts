@@ -232,17 +232,7 @@ export class InvoiceEditPageComponent implements OnInit {
         request.subscribe(
           (invoice: InvoiceDataModel) => {
             this.toastService.openSuccessToast(`Success, dispute was closed.`);
-            this.loadInvoiceAmountDetail$.next({
-              costLineItems: invoice.costLineItems,
-              pendingChargeLineItems: invoice.pendingChargeLineItems,
-              deniedChargeLineItems: invoice.deniedChargeLineItems,
-              disputeLineItems: invoice.disputeLineItems,
-              deletedChargeLineItems: invoice.deletedChargeLineItems,
-              amountOfInvoice: invoice.amountOfInvoice,
-              mileage: invoice.distance,
-              currency: invoice.currency,
-              standardPaymentTermsOverride: invoice.standardPaymentTermsOverride
-            });
+            this.loadInvoice(invoice);
           },
           () => this.toastService.openErrorToast(
             `Failure, dispute was not closed.`
