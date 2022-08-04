@@ -1089,4 +1089,17 @@ describe('InvoiceEditPageComponent', () => {
     mockUpdateRequest$.next({});
   });
 
+  it('updateAndGetRates should call backend and error', done => {
+    const mockUpdateRequest$ = new Subject();
+    spyOn(component, 'updateInvoiceFromForms').and.stub();
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(rateService.updateInvoice).and.returnValue(throwError({error: { error: { message: 'Test Error'}}}));
+    component.updateAndGetRates();
+    mockUpdateRequest$.subscribe(() => {
+      expect(component.updateInvoiceFromForms).toHaveBeenCalled();
+      done();
+    });
+    mockUpdateRequest$.next({});
+  });
+
 });
