@@ -200,12 +200,12 @@ describe('InvoiceListPageComponent', () => {
       expect(result).toEqual('status');
     }));
 
-    it('carrierDisplay should be carrier.scac', fakeAsync(() => {
+    it('carrierDisplay should be carrier.name', fakeAsync(() => {
       const result = component.checkSortFields('carrierDisplay');
       tick(150);
       fixture.detectChanges();
       expect(component.checkSortFields).toHaveBeenCalled();
-      expect(result).toEqual('carrier.scac');
+      expect(result).toEqual('carrier.name');
     }));
 
     it('carrierModeDisplay should be mode.mode', fakeAsync(() => {
