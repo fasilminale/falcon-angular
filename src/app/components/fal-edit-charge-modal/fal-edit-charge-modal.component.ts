@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {buttonStyleOptions} from '@elm/elm-styleguide-ui';
 import {Subscription} from 'rxjs';
+import { VariableFormControl } from '../fal-new-charge-modal/fal-new-charge-modal.component';
 
 @Component({
   selector: 'app-fal-edit-charge-modal',
@@ -20,8 +21,13 @@ export class FalEditChargeModalComponent {
               private dialogRef: MatDialogRef<FalEditChargeModalComponent>) {
     this.subscriptions.add(this.dialogRef.afterClosed().subscribe(() => this.subscriptions.unsubscribe()));
     data.costLineItem?.value?.variables.forEach((variable: any) => {
-      this.variableControls.addControl(variable.variable,
-        new FormControl(variable.quantity));
+      const vfc = new VariableFormControl(
+        variable.variable,
+        variable.displayName,
+        variable.quantity,
+        Validators.required
+      );
+      this.variableControls.addControl(vfc.displayName,vfc);
     });
 
     this.chargeControl.patchValue(data.costLineItem?.value?.charge);
@@ -42,11 +48,14 @@ export class FalEditChargeModalComponent {
       const variables: any = [];
       this.getVariableControlNames()
         .forEach(vcName => {
-          const control = this.form.get('variables');
-          if (control && control.get(vcName)?.value) {
+          //const control = this.form.get('variables');
+          const control = this.variableControls.get(vcName) as VariableFormControl;
+          console.log(control.variableName);
+          if (control && control.variableName) {
             variables.push({
-              variable: vcName,
-              quantity: control.get(vcName)?.value
+              variable: control.variableName,
+              quantity: control.value,
+              displayName: control.displayName
             });
           }
         });
@@ -78,3 +87,4 @@ export type EditChargeModalOutput = undefined | {
   charge: string,
   variables: any
 };
+
