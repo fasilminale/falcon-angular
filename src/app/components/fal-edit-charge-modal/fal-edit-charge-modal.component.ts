@@ -20,16 +20,7 @@ export class FalEditChargeModalComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: EditChargeModalInput,
               private dialogRef: MatDialogRef<FalEditChargeModalComponent>) {
     this.subscriptions.add(this.dialogRef.afterClosed().subscribe(() => this.subscriptions.unsubscribe()));
-    data.costLineItem?.value?.variables.forEach((variable: any) => {
-      const vfc = new VariableFormControl(
-        variable.variable,
-        variable.displayName,
-        variable.quantity,
-        Validators.required
-      );
-      this.variableControls.addControl(vfc.displayName,vfc);
-    });
-
+    this.setVariablesControl(data);
     this.chargeControl.patchValue(data.costLineItem?.value?.charge);
     this.form = new FormGroup({
       charge: this.chargeControl,
@@ -48,7 +39,6 @@ export class FalEditChargeModalComponent {
       const variables: any = [];
       this.getVariableControlNames()
         .forEach(vcName => {
-          //const control = this.form.get('variables');
           const control = this.variableControls.get(vcName) as VariableFormControl;
           console.log(control.variableName);
           if (control && control.variableName) {
@@ -65,6 +55,18 @@ export class FalEditChargeModalComponent {
       };
     }
     this.dialogRef.close(result);
+  }
+
+  setVariablesControl(data :EditChargeModalInput){
+    data.costLineItem?.value?.variables.forEach((variable: any) => {
+      const vfc = new VariableFormControl(
+        variable.variable,
+        variable.displayName,
+        variable.quantity,
+        Validators.required
+      );
+      this.variableControls.addControl(vfc.displayName,vfc);
+    });
   }
 }
 

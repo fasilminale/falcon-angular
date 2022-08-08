@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed, tick} from '@angular/core/testing';
-import {FalEditChargeModalComponent} from './fal-edit-charge-modal.component';
+import {FalEditChargeModalComponent, EditChargeModalInput} from './fal-edit-charge-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {SubjectValue} from '@elm/elm-styleguide-ui';
@@ -27,12 +27,6 @@ describe('FalEditChargeModalComponent', () => {
     1,
     Validators.required
   );
-
-  const TEST_VARIABLE: AbstractControl = new FormControl({
-    variable: TEST_VARIABLE_NAME,
-    quantity: 0,
-    displayName: TEST_DISPLAY_NAME
-  });
 
   let component: FalEditChargeModalComponent;
   let fixture: ComponentFixture<FalEditChargeModalComponent>;
@@ -86,5 +80,25 @@ describe('FalEditChargeModalComponent', () => {
     spyOn(MOCK_DIALOG, 'close');
     component.confirm();
     expect(MOCK_DIALOG.close).toHaveBeenCalledTimes(1);
+  });
+
+  fit('should set variables controls correctly', () => {
+    let costLine = new FormControl();
+    costLine.patchValue({
+      variables: [VARIABLE_FORM_CONTROL],
+    });
+
+    let data: EditChargeModalInput = {
+      title: 'title',
+      innerHtmlMessage: 'innerHtmlMessage',
+      confirmButtonStyle: 'dark-primary',
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      costLineItem: costLine
+    };
+    
+    component.setVariablesControl(data);
+    
+    expect(component.variableControls.get(VARIABLE_FORM_CONTROL.displayName) !== null);
   });
 });
