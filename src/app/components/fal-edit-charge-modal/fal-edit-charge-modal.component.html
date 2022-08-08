@@ -46,7 +46,7 @@
     </elm-button>
     <elm-button [buttonStyle]="data.confirmButtonStyle ?? 'primary'"
                 class="ms-3"
-                (buttonClick)="confirm()"
+                (buttonClick)="onConfirmButtonClick()"
                 [isDisabled]="form.invalid"
                 id="confirm"
                 aria-label="confirm">

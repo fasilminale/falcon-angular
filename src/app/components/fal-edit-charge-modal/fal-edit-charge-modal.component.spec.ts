@@ -1,13 +1,15 @@
-import {ComponentFixture, TestBed, tick} from '@angular/core/testing';
-import {FalEditChargeModalComponent, EditChargeModalInput} from './fal-edit-charge-modal.component';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {FalEditChargeModalComponent, EditChargeModalInput, VariableFormControl} from './fal-edit-charge-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {SubjectValue} from '@elm/elm-styleguide-ui';
 import {CalcDetail} from '../../models/rate-engine/rate-engine-request';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import {VariableFormControl } from '../fal-new-charge-modal/fal-new-charge-modal.component';
+import {FormControl, Validators} from '@angular/forms';
+import {Subject} from 'rxjs';
 
 describe('FalEditChargeModalComponent', () => {
+
+  /* TEST CONSTANTS */
+
   const TEST_VARIABLE_NAME = 'Test Variable';
   const TEST_DISPLAY_NAME = 'Test Display';
   const TEST_CALC_DETAIL: CalcDetail = {
@@ -28,13 +30,17 @@ describe('FalEditChargeModalComponent', () => {
     Validators.required
   );
 
+  /* TEST FIELDS */
+
   let component: FalEditChargeModalComponent;
   let fixture: ComponentFixture<FalEditChargeModalComponent>;
-  let afterClosed$: SubjectValue<any>;
+  let afterClosed$: Subject<any>;
   let MOCK_DIALOG: any;
 
+  /* BEGIN TESTS */
+
   beforeEach(async () => {
-    afterClosed$ = new SubjectValue<any>(false);
+    afterClosed$ = new Subject();
     MOCK_DIALOG = {
       close: () => {
       },
@@ -70,7 +76,7 @@ describe('FalEditChargeModalComponent', () => {
 
   it('should close the dialog WITHOUT a response when a charge type is NOT selected', () => {
     spyOn(MOCK_DIALOG, 'close');
-    component.confirm();
+    component.onConfirmButtonClick();
     expect(MOCK_DIALOG.close).toHaveBeenCalledOnceWith(undefined);
   });
 
@@ -78,17 +84,16 @@ describe('FalEditChargeModalComponent', () => {
     component.variableControls.addControl(VARIABLE_FORM_CONTROL.displayName, VARIABLE_FORM_CONTROL);
     component.chargeControl.setValue(TEST_CALC_DETAIL);
     spyOn(MOCK_DIALOG, 'close');
-    component.confirm();
+    component.onConfirmButtonClick();
     expect(MOCK_DIALOG.close).toHaveBeenCalledTimes(1);
   });
 
   it('should set variables controls correctly', () => {
-    let costLine = new FormControl();
+    const costLine = new FormControl();
     costLine.patchValue({
       variables: [VARIABLE_FORM_CONTROL],
     });
-
-    let data: EditChargeModalInput = {
+    const data: EditChargeModalInput = {
       title: 'title',
       innerHtmlMessage: 'innerHtmlMessage',
       confirmButtonStyle: 'dark-primary',
@@ -96,9 +101,7 @@ describe('FalEditChargeModalComponent', () => {
       cancelButtonText: 'Cancel',
       costLineItem: costLine
     };
-    
-    component.setVariablesControl(data);
-    
-    expect(component.variableControls.get(VARIABLE_FORM_CONTROL.displayName) !== null);
+    component.loadData(data);
+    expect(component.variableControls.get(VARIABLE_FORM_CONTROL.displayName)).not.toBeNull();
   });
 });

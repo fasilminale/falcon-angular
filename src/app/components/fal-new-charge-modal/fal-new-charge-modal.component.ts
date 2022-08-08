@@ -117,7 +117,7 @@ export type NewChargeModalOutput = undefined | {
   comment?: string
 };
 
-export class VariableFormControl extends FormControl {
+class VariableFormControl extends FormControl {
   constructor(public readonly variableName: string,
               public readonly displayName: string,
               formState?: any,
