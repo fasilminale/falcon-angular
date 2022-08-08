@@ -300,7 +300,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       case 'statusLabel':
         return 'status';
       case 'carrierDisplay':
-        return 'carrier.scac';
+        return 'carrier.name';
       case 'carrierModeDisplay':
         return 'mode.mode';
       case 'paymentDueDisplay':
