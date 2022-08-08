@@ -82,7 +82,7 @@ describe('FalEditChargeModalComponent', () => {
     expect(MOCK_DIALOG.close).toHaveBeenCalledTimes(1);
   });
 
-  fit('should set variables controls correctly', () => {
+  it('should set variables controls correctly', () => {
     let costLine = new FormControl();
     costLine.patchValue({
       variables: [VARIABLE_FORM_CONTROL],
