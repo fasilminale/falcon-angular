@@ -39,6 +39,7 @@ export class InvoiceDataModel {
   milestones: Array<Milestone>;
   deleted: boolean;
   failedToCreate: boolean;
+  payable: boolean;
 
   /* --- MANUAL INVOICE FIELDS --- */
   workType: string;
@@ -131,6 +132,7 @@ export class InvoiceDataModel {
     this.milestones = json?.milestones ?? [];
     this.deleted = !!json?.deleted;
     this.failedToCreate = !!json?.failedToCreate;
+    this.payable = !!json?.payable;
 
     // MANUAL INVOICE
     this.workType = json?.workType ?? '';
