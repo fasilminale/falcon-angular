@@ -7,7 +7,7 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {of} from 'rxjs';
 
-describe('FalEditGlModalComponent', () => {
+fdescribe('FalEditGlModalComponent', () => {
   const TEST_GL_LINE_ITEM = {
     glLineItem: new FormGroup ({
       allocationPercent: new FormControl('50'),
@@ -55,15 +55,12 @@ describe('FalEditGlModalComponent', () => {
   });
 
   it('should close dialog with a successful response', () => {
-    component.invoiceFormGroup = new FormGroup({
-      invoiceAllocation: new FormGroup({
-        invoiceAllocations: new FormArray([
-          new FormControl({
-            customerCategory: 'BAX'
-          })
-        ])
-      })
-    });
+    component.customerCategoryControl.setValue('BAX');
+    component.glLineItems = [
+      {
+        customerCategory: 'BAX'
+      }
+    ] as any;
     spyOn(component.invoiceService, 'validateGlLineItem').and.returnValue(of(null));
     spyOn(MOCK_DIALOG, 'close');
     component.confirm();
@@ -72,15 +69,12 @@ describe('FalEditGlModalComponent', () => {
   });
 
   it('should not close dialog with an error response', () => {
-    component.invoiceFormGroup = new FormGroup({
-      invoiceAllocation: new FormGroup({
-        invoiceAllocations: new FormArray([
-          new FormControl({
-            customerCategory: 'BAX'
-          })
-        ])
-      })
-    });
+    component.customerCategoryControl.setValue('BAX');
+    component.glLineItems = [
+      {
+        customerCategory: 'BAX'
+      }
+    ] as any;
     spyOn(component.invoiceService, 'validateGlLineItem').and.returnValue(of({}));
     spyOn(MOCK_DIALOG, 'close');
     component.confirm();

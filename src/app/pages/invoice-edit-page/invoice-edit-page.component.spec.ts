@@ -650,13 +650,18 @@ describe('InvoiceEditPageComponent', () => {
 
   it('should handle the gl line item modal', async () => {
     // Setup
+    component.invoiceFormGroup = new FormGroup({
+      invoiceAllocation: new FormGroup({
+        invoiceAllocations: new FormArray([])
+      })
+    });
     asSpy(utilService.openGlLineItemModal).and.returnValue(of([{
       glAmount: 0
     }]));
     spyOn(component, 'loadInvoice').and.stub();
 
     // Run Test
-    await component.handleEditGlLineItem(new FormControl({}));
+    await component.handleEditGlLineItem({} as any);
 
     // Assertions
     expect(component.loadInvoice).toHaveBeenCalled();

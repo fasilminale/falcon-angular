@@ -124,7 +124,7 @@
         </div>
         <div class="col-auto">
           <div class="material-icons edit-icon" *ngIf="!isEditMode"
-               (click)="onEditGlLineItem(invoiceAllocation)">edit
+               (click)="onEditGlLineItem(invoiceAllocation.value)">edit
           </div>
           <div *ngIf="isEditMode" class="edit-icon-invisible"></div>
         </div>

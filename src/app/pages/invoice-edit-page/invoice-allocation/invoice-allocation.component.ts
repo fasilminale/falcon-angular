@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
 import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
-import { GlLineItemError } from 'src/app/models/line-item/line-item-model';
+import {GlLineItem, GlLineItemError} from 'src/app/models/line-item/line-item-model';
 import {first} from 'rxjs/operators';
 import {UtilService} from '../../../services/util-service';
 
@@ -109,8 +109,8 @@ export class InvoiceAllocationComponent implements OnInit {
     return this._formGroup.get('invoiceAllocations') ? (this._formGroup.get('invoiceAllocations') as FormArray).controls : new FormArray([]).controls;
   }
 
-  onEditGlLineItem(invoiceAllocation: any): void {
-    this.editGlLineItemEvent.emit(invoiceAllocation);
+  onEditGlLineItem(glLineItem: GlLineItem): void {
+    this.editGlLineItemEvent.emit(glLineItem);
   }
 
 }

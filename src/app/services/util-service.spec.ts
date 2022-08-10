@@ -33,8 +33,8 @@ describe('UtilService', () => {
   };
 
   const testEditGlLineItemModalData = {
-    glLineItem: new FormControl(),
-    invoiceFormGroup: new FormControl()
+    glLineItem: {},
+    glLineItems: {}
   };
 
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -132,14 +132,14 @@ describe('UtilService', () => {
 
   it('openEditGlLineItemModal should confirm', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
-    const result = await util.openGlLineItemModal(testEditGlLineItemModalData).toPromise();
+    const result = await util.openGlLineItemModal(testEditGlLineItemModalData as any).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeTrue();
   });
 
   it('openEditGlLineItemModal should cancel', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
-    const result = await util.openGlLineItemModal(testEditGlLineItemModalData).toPromise();
+    const result = await util.openGlLineItemModal(testEditGlLineItemModalData as any).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeFalse();
   });
