@@ -1,0 +1,36 @@
+@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+
+.error-div{
+  border: 1px solid $cardinal-red;
+}
+
+.error-text {
+  color: $cardinal-red;
+}
+
+.dialog-close-button {
+  margin-left: auto;
+  margin-bottom: auto;
+}
+
+.invoice-allocation-header {
+  background-color: #f6f6f6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.invoice-allocation-header > div{
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.invoice-allocation-row{
+  margin-bottom: 15px;
+  .allocation-amount-div {
+    text-align: right;
+    padding-right: 25px;
+  }
+}
+
+.modal-height {
+  min-height: 244px;
+}

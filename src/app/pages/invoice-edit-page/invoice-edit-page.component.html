@@ -98,6 +98,7 @@
         [updateIsEditMode$]="otherSectionEditMode$.asObservable()"
         [loadAllocationDetails]="loadAllocationDetails$.asObservable()"
         [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
+        (editGlLineItemEvent)="handleEditGlLineItem($event)"
         >
         </app-invoice-allocation>
         <hr/>

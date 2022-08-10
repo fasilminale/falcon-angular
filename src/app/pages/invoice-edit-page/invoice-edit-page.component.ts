@@ -23,6 +23,7 @@ import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
+import {EditGlLineItemModal} from '../../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 
 
 @Component({
@@ -315,6 +316,20 @@ export class InvoiceEditPageComponent implements OnInit {
       this.toastService.openSuccessToast('Success. Invoice weight has been adjusted.');
       // reload the invoice
       this.loadInvoice(adjustedInvoice);
+    }
+  }
+
+  async handleEditGlLineItem(glLineItem: AbstractControl): Promise<void> {
+    const updatedGlLineItems: any = await this.util.openGlLineItemModal({
+      glLineItem,
+      invoiceFormGroup: this.invoiceFormGroup
+    }).pipe(first()).toPromise();
+    if (updatedGlLineItems) {
+      updatedGlLineItems.map((lineItem: any) => {
+        lineItem.glAmount = lineItem.allocationAmount;
+      });
+      this.invoice.glLineItems = updatedGlLineItems;
+      this.loadInvoice(this.invoice);
     }
   }
 

@@ -182,6 +182,12 @@ describe('InvoiceAllocationComponent', () => {
         }]
       });
     });
+
+    it('should emit an event to open the edit modal', () => {
+      spyOn(component.editGlLineItemEvent, 'emit').and.stub();
+      component.onEditGlLineItem({});
+      expect(component.editGlLineItemEvent.emit).toHaveBeenCalled();
+    });
   });
 
   describe('when edit mode is updated', () => {
@@ -206,5 +212,4 @@ describe('InvoiceAllocationComponent', () => {
       isEditMode$.next(false);
     });
   });
-
 });

@@ -5,6 +5,7 @@ import {InvoiceService} from './invoice-service';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 import {EditAutoInvoiceModel} from '../models/invoice/edit-auto-invoice.model';
 import {environment} from '../../environments/environment';
+import {GlLineItem} from '../models/line-item/line-item-model';
 
 describe('InvoiceService', () => {
 
@@ -122,6 +123,21 @@ describe('InvoiceService', () => {
         expect(web.httpPut).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/auto/${falconInvoiceNumber}`, body);
         done();
       }
+    ));
+  });
+
+  it('should return null when no errors were found', (done) => {
+    const body: GlLineItem = {} as any;
+    const env = environment;
+    env.baseServiceUrl = 'https://somedomain.com';
+    spyOn(web, 'httpPost').and.returnValue(of(null));
+    subscription.add(invoiceService.validateGlLineItem(body).subscribe(
+      (result) => {
+        expect(result).toBeNull();
+        expect(web.httpPost).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/auto/validate`, body);
+        done();
+      },
+      () => fail(`Subscription should have succeeded`)
     ));
   });
 

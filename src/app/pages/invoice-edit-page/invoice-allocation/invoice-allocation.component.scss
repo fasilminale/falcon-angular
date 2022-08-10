@@ -20,6 +20,25 @@
   font-weight: 700;
 }
 
+.edit-icon {
+  display: inline-flex;
+  vertical-align: top;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.edit-icon-invisible {
+  display: inline-flex;
+  vertical-align: top;
+  padding: 6px 18px;
+}
+
+.column-spacing {
+  display: inline-flex;
+  vertical-align: top;
+  padding: 6px 31px;
+}
+
 .invoice-allocation-header {
     background-color: #f6f6f6;
     padding-top: 10px;

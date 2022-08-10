@@ -1,0 +1,148 @@
+<div mat-dialog-title class="d-flex align-items-center" xmlns="http://www.w3.org/1999/html">
+  <span class="headline2">Edit Invoice Allocation</span>
+  <elm-close-button class="dialog-close-button" mat-dialog-close></elm-close-button>
+</div>
+<form [formGroup]="form">
+  <div mat-dialog-content class="modal-height">
+    <div class="col-12 my-3">Allocation Breakdown</div>
+    <div class="row my-3 mx-0 invoice-allocation-header">
+      <div class="col">Allocation %</div>
+      <div class="col">Customer Category</div>
+      <div class="col">GL Cost Center</div>
+      <div class="col">GL Profit Center</div>
+      <div class="col">GL Account</div>
+      <div class="col">GL Company Code</div>
+      <div class="col">Total</div>
+    </div>
+    <div class="invoice-allocation-row row my-3 mx-0 ">
+      <!-- Invoice allocation- allocationPercentage -->
+      <div class="col">
+        <input type="text" class="form-control" formControlName="allocationPercent"
+               [ngClass]="{ 'error-div' : !form.get('allocationPercent')?.value }"
+               [value]="form.get('allocationPercent')?.value | percent"
+               [attr.disabled]="true"/>
+        <small class="error-text col-2"
+               *ngIf="!form.get('allocationPercent')?.value"
+               [ngClass]="{ 'mt-3' : true }">
+          Allocation % is missing
+        </small>
+      </div>
+
+      <!-- Invoice allocation - customerCategory -->
+      <div class="col">
+
+        <input type="text" class="form-control" formControlName="customerCategory"
+               [ngClass]="{ 'error-div' : !form.get('customerCategory')?.value }"
+               [attr.disabled]="true"/>
+        <small class="error-text col-2"
+               *ngIf="!form.get('customerCategory')?.value"
+               [ngClass]="{ 'mt-3' : true }">
+          Customer Category is missing
+        </small>
+      </div>
+
+      <!-- Invoice allocation - glCostCenter -->
+      <div class="col">
+        <input type="text" class="form-control" formControlName="glCostCenter"
+               [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glCostCenter ||
+                !form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value}"/>
+        <small class="error-text col-2"
+               *ngIf="!form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value"
+               [ngClass]="{ 'mt-3' : true }">
+          GL Cost Center is missing
+          <span *ngIf="(!form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value) && invoiceAllocationErrors?.glCostCenter"> / </span>
+        </small>
+        <small class="error-text col-2"
+               *ngIf="invoiceAllocationErrors?.glCostCenter"
+               [ngClass]="{ 'mt-3' : true }">
+          {{ invoiceAllocationErrors?.glCostCenter}}
+        </small>
+      </div>
+
+      <!-- Invoice allocation - glProfitCenter -->
+      <div class="col">
+        <input type="text" class="form-control" formControlName="glProfitCenter"
+               [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glProfitCenter ||
+                !form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value}"/>
+        <small class="error-text col-2"
+               *ngIf="!form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value"
+               [ngClass]="{ 'mt-3' : true }">
+          GL Profit Center is missing
+          <span *ngIf="(!form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value) && invoiceAllocationErrors?.glProfitCenter"> / </span>
+        </small>
+        <small class="error-text col-2" *ngIf="invoiceAllocationErrors?.glProfitCenter"
+               [ngClass]="{ 'mt-3' : true }">
+          {{ invoiceAllocationErrors?.glProfitCenter}}
+        </small>
+      </div>
+
+      <!-- Invoice allocation - glAccount -->
+      <div class="col">
+        <input type="text" class="form-control" formControlName="glAccount"
+               [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glAccount ||
+                !form.get('glAccount')?.value}"/>
+        <small class="error-text col-2" *ngIf="!form.get('glAccount')?.value"
+               [ngClass]="{ 'mt-3' : true }">
+          GL Account is missing
+          <span *ngIf="!form.get('glAccount')?.value && invoiceAllocationErrors?.glAccount"> / </span>
+        </small>
+        <small class="error-text col-2"
+               *ngIf="invoiceAllocationErrors?.glAccount" [ngClass]="{ 'mt-3' : true }">
+          {{ invoiceAllocationErrors?.glAccount}}
+        </small>
+      </div>
+
+      <!-- Invoice allocation - glCompanyCode -->
+      <div class="col">
+        <input type="text" class="form-control" formControlName="glCompanyCode"
+               [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glCompanyCode ||
+                !form.get('glCompanyCode')?.value}"/>
+        <small class="error-text col-2"
+               *ngIf="!form.get('glCompanyCode')?.value"
+               [ngClass]="{ 'mt-3' : true }">
+          GL Company Code is missing
+          <span *ngIf="!form.get('glCompanyCode')?.value && invoiceAllocationErrors?.glCompanyCode"> / </span>
+        </small>
+        <small class="error-text col-2"
+               *ngIf="invoiceAllocationErrors?.glCompanyCode"
+               [ngClass]="{ 'mt-3' : true }">
+          {{ invoiceAllocationErrors?.glCompanyCode}}
+        </small>
+      </div>
+
+      <!-- Invoice allocation - allocationAmount -->
+      <div class="col">
+        <app-fal-currency-input
+          [isError]="form.get('allocationAmount')?.value === 0"
+          formControlName="allocationAmount"
+          [isDisabled]="true"
+        >
+
+        </app-fal-currency-input>
+
+        <small class="error-text"
+               *ngIf="form.get('allocationAmount')?.value === 0">
+          Allocation Amount is required
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="float-right">
+    <elm-button buttonStyle="secondary"
+                class="ms-auto"
+                mat-dialog-close
+                id="cancel"
+                aria-label="cancel">
+      Cancel
+    </elm-button>
+    <elm-button buttonStyle="dark-primary"
+                class="ms-3"
+                (buttonClick)="confirm()"
+                id="confirm"
+                aria-label="confirm"
+                [isDisabled]="!validateGlLineItem">
+      Update & Continue
+    </elm-button>
+  </div>
+</form>
