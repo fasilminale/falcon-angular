@@ -152,7 +152,7 @@ export class InvoiceDataModel {
     this.tripType = json?.tripType ?? TripType.NONE;
     this.invoiceReference = json?.invoiceReference ?? '';
     this.carrier = json?.carrier ?? EMPTY_CARRIER_REFERENCE;
-    this.carrierDisplay = CarrierUtils.toDisplayLabel(json?.carrier);
+    this.carrierDisplay = CarrierUtils.toNameLabel(json?.carrier);
     this.mode = json?.mode ?? EMPTY_CARRIER_MODE_CODE_REFERENCE;
     this.carrierModeDisplay = CarrierModeCodeUtils.toDisplayLabel(json?.mode);
     this.freightPaymentTerms = json?.freightPaymentTerms ?? '';
