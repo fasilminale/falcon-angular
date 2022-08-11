@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { Observable } from 'rxjs';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
@@ -17,6 +17,7 @@ export class InvoiceAllocationComponent implements OnInit {
   isEditMode = true;
   totalAllocationAmount = 0;
   isAllocationAmountValid = true;
+  @Output() allocationAmountInvalid = new EventEmitter<any>();
   isPrepaid?: boolean;
 
   public totalGlAmount = new FormControl({});
@@ -100,6 +101,7 @@ export class InvoiceAllocationComponent implements OnInit {
       sum += lineItemAmount.value;
     });
     this.isAllocationAmountValid = parseFloat(this.invoiceNetAmount.value) > 0 && sum.toFixed(2) === parseFloat(this.invoiceNetAmount.value).toFixed(2);
+    this.allocationAmountInvalid.emit({'form': 'invoice-allocation', 'value': this.isAllocationAmountValid});
   }
 
   get invoiceAllocationsControls(): AbstractControl[] {

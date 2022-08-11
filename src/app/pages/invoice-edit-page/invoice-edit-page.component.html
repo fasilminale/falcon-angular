@@ -84,6 +84,7 @@
          [loadInvoiceAmountDetail$]="loadInvoiceAmountDetail$.asObservable()"
          [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
          [chargeLineItemOptions$]="chargeLineItemOptions$.asObservable()"
+         (costBreakdownAmountInvalid)="handleFormIfInvalid($event)"
          (getAccessorialDetails)="getAccessorialList()"
          (rateEngineCall)="getRates($event)"
          (requestGlAllocation)="onGlAllocationRequestEvent($event)"
@@ -98,6 +99,7 @@
         [updateIsEditMode$]="otherSectionEditMode$.asObservable()"
         [loadAllocationDetails]="loadAllocationDetails$.asObservable()"
         [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
+        (allocationAmountInvalid)="handleFormIfInvalid($event)"
         >
         </app-invoice-allocation>
         <hr/>
@@ -121,7 +123,7 @@
                         buttonType="button"
                         buttonStyle="secondary"
                         class="fake-form-control"
-                        [isDisabled]="!otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound"
+                        [isDisabled]="!otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound || !this.costBreakdownValid || !this.netAllocationAmountValid"
                         (buttonClick)="clickSaveButton()">
               Save
             </elm-button>
@@ -131,7 +133,7 @@
                         buttonType="button"
                         buttonStyle="primary"
                         class="fake-form-control"
-                        [isDisabled]="!otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound"
+                        [isDisabled]="!invoice.payable || !otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound || !this.costBreakdownValid || !this.netAllocationAmountValid"
                         (buttonClick)="clickSubmitForApprovalButton()">
               Submit for Approval
             </elm-button>

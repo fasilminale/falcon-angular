@@ -258,6 +258,20 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
+  INVOICE_AMOUNT_FORM: string = 'invoice-amount';
+  INVOICE_ALLOCATION_FORM: string = 'invoice-allocation';
+  public costBreakdownValid: boolean = true;
+  public netAllocationAmountValid: boolean = true;
+
+  handleFormIfInvalid($event: any) {
+    if ($event.form === this.INVOICE_AMOUNT_FORM) {
+      this.costBreakdownValid = $event.value;
+    } 
+    if ($event.form === this.INVOICE_ALLOCATION_FORM) {
+      this.netAllocationAmountValid = $event.value;
+    }
+  }
+
   public askForCancelConfirmation(): Observable<boolean> {
     return this.util.openConfirmationModal({
       title: 'Cancel',
