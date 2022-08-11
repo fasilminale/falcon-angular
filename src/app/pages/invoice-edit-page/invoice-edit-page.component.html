@@ -100,6 +100,7 @@
         [loadAllocationDetails]="loadAllocationDetails$.asObservable()"
         [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
         (allocationAmountInvalid)="handleFormIfInvalid($event)"
+        (editGlLineItemEvent)="handleEditGlLineItem($event)"
         >
         </app-invoice-allocation>
         <hr/>

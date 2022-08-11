@@ -4,7 +4,9 @@ import { Observable } from 'rxjs';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
 import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
-import { GlLineItemError } from 'src/app/models/line-item/line-item-model';
+import {GlLineItem, GlLineItemError} from 'src/app/models/line-item/line-item-model';
+import {first} from 'rxjs/operators';
+import {UtilService} from '../../../services/util-service';
 
 @Component({
   selector: 'app-invoice-allocation',
@@ -24,6 +26,7 @@ export class InvoiceAllocationComponent implements OnInit {
   public invoiceNetAmount = new FormControl({});
   public invoiceAllocations = new FormArray([]);
   public invoiceAllocationErrors?: Array<GlLineItemError>;
+  @Output() editGlLineItemEvent = new EventEmitter<any>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
   }
@@ -107,6 +110,10 @@ export class InvoiceAllocationComponent implements OnInit {
 
   get invoiceAllocationsControls(): AbstractControl[] {
     return this._formGroup.get('invoiceAllocations') ? (this._formGroup.get('invoiceAllocations') as FormArray).controls : new FormArray([]).controls;
+  }
+
+  onEditGlLineItem(glLineItem: GlLineItem): void {
+    this.editGlLineItemEvent.emit(glLineItem);
   }
 
 }

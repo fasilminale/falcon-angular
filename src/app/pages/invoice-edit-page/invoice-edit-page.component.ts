@@ -22,7 +22,8 @@ import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model
 import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
-import {CostLineItem, DisputeLineItem} from '../../models/line-item/line-item-model';
+import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
+import {EditGlLineItemModal} from '../../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 
 
 @Component({
@@ -329,6 +330,21 @@ export class InvoiceEditPageComponent implements OnInit {
       this.toastService.openSuccessToast('Success. Invoice weight has been adjusted.');
       // reload the invoice
       this.loadInvoice(adjustedInvoice);
+    }
+  }
+
+  async handleEditGlLineItem(glLineItem: GlLineItem): Promise<void> {
+    const glLineItems: any = JSON.parse(JSON.stringify(this.invoiceFormGroup.value.invoiceAllocation.invoiceAllocations));
+    const updatedGlLineItems: any = await this.util.openGlLineItemModal({
+      glLineItem,
+      glLineItems
+    }).pipe(first()).toPromise();
+    if (updatedGlLineItems) {
+      updatedGlLineItems.map((lineItem: any) => {
+        lineItem.glAmount = lineItem.allocationAmount;
+      });
+      this.invoice.glLineItems = updatedGlLineItems;
+      this.loadInvoice(this.invoice);
     }
   }
 

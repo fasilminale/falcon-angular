@@ -148,6 +148,7 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
     spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: 'deleteReason'}));
     spyOn(utilService, 'openWeightAdjustmentModal').and.returnValue(of({adjustedWeight: 1.0}));
+    spyOn(utilService, 'openGlLineItemModal').and.returnValue(of());
 
     // Mock Toast Service
     toastService = TestBed.inject(ToastService);
@@ -658,6 +659,25 @@ describe('InvoiceEditPageComponent', () => {
     // Assertions
     expect(utilService.openWeightAdjustmentModal).toHaveBeenCalled();
     expect(rateService.adjustWeightOnInvoice).toHaveBeenCalled();
+    expect(component.loadInvoice).toHaveBeenCalled();
+  });
+
+  it('should handle the gl line item modal', async () => {
+    // Setup
+    component.invoiceFormGroup = new FormGroup({
+      invoiceAllocation: new FormGroup({
+        invoiceAllocations: new FormArray([])
+      })
+    });
+    asSpy(utilService.openGlLineItemModal).and.returnValue(of([{
+      glAmount: 0
+    }]));
+    spyOn(component, 'loadInvoice').and.stub();
+
+    // Run Test
+    await component.handleEditGlLineItem({} as any);
+
+    // Assertions
     expect(component.loadInvoice).toHaveBeenCalled();
   });
 

@@ -32,6 +32,11 @@ describe('UtilService', () => {
     currentWeight: 1.0
   };
 
+  const testEditGlLineItemModalData = {
+    glLineItem: {},
+    glLineItems: {}
+  };
+
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
     afterClosed: of(true),
     close: null
@@ -121,6 +126,20 @@ describe('UtilService', () => {
   it('openNewChargeModal should cancel', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
     const result = await util.openWeightAdjustmentModal(weightAdjustmentTestModalData).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeFalse();
+  });
+
+  it('openEditGlLineItemModal should confirm', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    const result = await util.openGlLineItemModal(testEditGlLineItemModalData as any).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeTrue();
+  });
+
+  it('openEditGlLineItemModal should cancel', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
+    const result = await util.openGlLineItemModal(testEditGlLineItemModalData as any).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeFalse();
   });

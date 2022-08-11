@@ -86,6 +86,7 @@ import {FalNewChargeModalComponent} from './components/fal-new-charge-modal/fal-
 import {FalAccessorialDetailComponent} from './components/fal-accessorial-detail/fal-accessorial-detail.component';
 import {FalEditChargeModalComponent} from './components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 import { FalAdjustWeightModalComponent } from './components/fal-adjust-weight-modal/fal-adjust-weight-modal.component';
+import { FalEditGlModalComponent } from './components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -185,7 +186,8 @@ const oktaConfig = {
     NewUserLogoutPageComponent,
     EllipsisPipe,
     FalAccessorialDetailComponent,
-    FalAdjustWeightModalComponent
+    FalAdjustWeightModalComponent,
+    FalEditGlModalComponent
   ],
   imports: [
     BrowserModule,

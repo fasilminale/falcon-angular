@@ -10,6 +10,7 @@
       <div class="col">GL Account</div>
       <div class="col">GL Company Code</div>
       <div class="col">Total</div>
+      <div class="col-auto column-spacing"></div>
     </div>
     <ng-container *ngIf="invoiceAllocationsControls && invoiceAllocationsControls.length > 0 && isPrepaid">
       <div *ngFor="let invoiceAllocation of invoiceAllocationsControls; index as i"
@@ -45,7 +46,7 @@
         <div class="col">
           <input type="text" class="form-control" formControlName="glCostCenter"
                  [ngClass]="{ 'error-div' : invoiceAllocationErrors?.[i]?.glCostCenter }"
-                 [attr.disabled]="isEditMode? '': null"/>
+                 [attr.disabled]="true"/>
           <small class="error-text col-2"
                  *ngIf="!invoiceAllocation.get('glCostCenter')?.value && !invoiceAllocation.get('glProfitCenter')?.value"
                  [ngClass]="{ 'mt-3' : true }">
@@ -62,7 +63,7 @@
         <div class="col">
           <input type="text" class="form-control" formControlName="glProfitCenter"
                  [ngClass]="{ 'error-div' : invoiceAllocationErrors?.[i]?.glProfitCenter }"
-                 [attr.disabled]="isEditMode? '': null"/>
+                 [attr.disabled]="true"/>
           <small class="error-text col-2"
                  *ngIf="!invoiceAllocation.get('glProfitCenter')?.value && !invoiceAllocation.get('glCostCenter')?.value"
                  [ngClass]="{ 'mt-3' : true }">
@@ -78,7 +79,7 @@
         <div class="col">
           <input type="text" class="form-control" formControlName="glAccount"
                  [ngClass]="{ 'error-div' : invoiceAllocationErrors?.[i]?.glAccount }"
-                 [attr.disabled]="isEditMode? '': null"/>
+                 [attr.disabled]="true"/>
           <small class="error-text col-2" *ngIf="!invoiceAllocation.get('glAccount')?.value"
                  [ngClass]="{ 'mt-3' : true }">
             GL Account is missing
@@ -93,7 +94,7 @@
         <div class="col">
           <input type="text" class="form-control" formControlName="glCompanyCode"
                  [ngClass]="{ 'error-div' : invoiceAllocationErrors?.[i]?.glCompanyCode }"
-                 [attr.disabled]="isEditMode? '': null"/>
+                 [attr.disabled]="true"/>
           <small class="error-text col-2"
                  *ngIf="!invoiceAllocation.get('glCompanyCode')?.value"
                  [ngClass]="{ 'mt-3' : true }">
@@ -120,6 +121,12 @@
                  *ngIf="invoiceAllocation.get('allocationAmount')?.value === 0">
             Allocation Amount is required
           </small>
+        </div>
+        <div class="col-auto">
+          <div class="material-icons edit-icon" *ngIf="!isEditMode"
+               (click)="onEditGlLineItem(invoiceAllocation.value)">edit
+          </div>
+          <div *ngIf="isEditMode" class="edit-icon-invisible"></div>
         </div>
       </div>
     </ng-container>

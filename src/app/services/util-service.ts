@@ -26,6 +26,9 @@ import {
   FalAdjustWeightModalComponent, WeightAdjustmentModalInput,
   WeightAdjustmentModalOutput
 } from '../components/fal-adjust-weight-modal/fal-adjust-weight-modal.component';
+import {EditGlLineItemModal, FalEditGlModalComponent} from '../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
+import {AbstractControl} from '@angular/forms';
+import {GlLineItem, GlLineItemError} from '../models/line-item/line-item-model';
 
 @Injectable()
 export class UtilService {
@@ -88,6 +91,12 @@ export class UtilService {
     return this.dialog.open(FalAdjustWeightModalComponent, {minWidth: '1000px', autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<WeightAdjustmentModalOutput>>(result => of(result)));
+  }
+
+  public openGlLineItemModal(data: EditGlLineItemModal): Observable<Array<GlLineItem>> {
+    return this.dialog.open(FalEditGlModalComponent, {minWidth: '1000px', autoFocus: false, data})
+      .afterClosed()
+      .pipe(mergeMap<any, Observable<Array<GlLineItem>>>(result => of(result)));
   }
 
   public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {

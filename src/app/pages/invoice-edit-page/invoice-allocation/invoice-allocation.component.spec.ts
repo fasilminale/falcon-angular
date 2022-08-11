@@ -5,8 +5,7 @@ import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
 import { InvoiceAllocationComponent } from './invoice-allocation.component';
 import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
-import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
-import {InvoiceAmountDetail} from "../../../models/invoice/invoice-amount-detail-model";
+import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
 
 describe('InvoiceAllocationComponent', () => {
   let component: InvoiceAllocationComponent;
@@ -205,6 +204,12 @@ describe('InvoiceAllocationComponent', () => {
         }]
       });
     });
+
+    it('should emit an event to open the edit modal', () => {
+      spyOn(component.editGlLineItemEvent, 'emit').and.stub();
+      component.onEditGlLineItem({} as any);
+      expect(component.editGlLineItemEvent.emit).toHaveBeenCalled();
+    });
   });
 
   describe('when edit mode is updated', () => {
@@ -229,5 +234,4 @@ describe('InvoiceAllocationComponent', () => {
       isEditMode$.next(false);
     });
   });
-
 });

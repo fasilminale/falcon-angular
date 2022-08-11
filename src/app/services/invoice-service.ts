@@ -93,6 +93,13 @@ export class InvoiceService {
     );
   }
 
+  public validateGlLineItem(body: any): Observable<any> {
+    return this.web.httpPost(
+      `${environment.baseServiceUrl}/v1/invoice/auto/validate`,
+      body
+    );
+  }
+
   public createInvoice(invoice: any): Observable<any> {
     return this.web.httpPost(`${environment.baseServiceUrl}/v1/invoice`, invoice);
   }
