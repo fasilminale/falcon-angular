@@ -13,14 +13,9 @@ import {TemplateInputModalComponent} from '../components/template-input-modal/te
 import {Milestone} from '../models/milestone/milestone-model';
 import {FalCommentModalComponent} from '../components/fal-comment-modal/fal-comment-modal.component';
 import {
-  FalNewChargeModalComponent,
-  NewChargeModalInput,
-  NewChargeModalOutput
-} from '../components/fal-new-charge-modal/fal-new-charge-modal.component';
-import {
   EditChargeModalInput,
   EditChargeModalOutput,
-  FalEditChargeModalComponent
+  FalEditChargeModalComponent, NewChargeModalInput, NewChargeModalOutput
 } from '../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 import {
   FalAdjustWeightModalComponent, WeightAdjustmentModalInput,

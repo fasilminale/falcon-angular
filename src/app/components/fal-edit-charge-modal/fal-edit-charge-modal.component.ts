@@ -20,7 +20,7 @@ export class FalEditChargeModalComponent {
     charge: this.chargeControl,
     variables: this.variableControls
   });
-  private readonly subscriptions = new Subscription();
+  public readonly subscriptions = new Subscription();
 
   /**
    * Constructor initializes data
@@ -184,28 +184,24 @@ export class FalEditChargeModalComponent {
    * Called when the confirm button in the modal is clicked.
    */
   onConfirmButtonClick(): void {
-    let modalOutput: EditChargeModalOutput;
+    let output: EditChargeModalOutput;
     if (this.chargeControl.value) {
       if (this.isEditModal) {
-
         // CONFIRM EDIT
-        const variables = this.selectedVariables;
-        modalOutput = {
-          charge: this.chargeControl?.value,
-          variables
+        output = {
+          charge: this.chargeControl.value,
+          variables: this.selectedVariables
         };
       } else {
-
         // CONFIRM ADD
-        const selected = this.selectedCalcDetail;
-        modalOutput = {
-          selected,
+        output = {
+          selected: this.selectedCalcDetail,
           variables: [],
           comment: this.commentValue
         };
       }
     }
-    this.close(modalOutput);
+    this.close(output);
   }
 
   /**
@@ -223,6 +219,9 @@ export class FalEditChargeModalComponent {
     };
   }
 
+  /**
+   * Builds an array of CalcDetailVariable based on the form data.
+   */
   get selectedVariables(): Array<CalcDetailVariable> {
     const variables: Array<CalcDetailVariable> = [];
     this.variableControlNames.forEach(vcName => {
@@ -238,6 +237,10 @@ export class FalEditChargeModalComponent {
     return variables;
   }
 
+  /**
+   * Get the comment value from the form.
+   * Forces undefined to be returned if comment control is disabled.
+   */
   get commentValue(): string | undefined {
     return this.commentControl.enabled
       ? this.commentControl.value
@@ -273,6 +276,26 @@ export type EditChargeModalOutput = undefined | {
   charge?: string,
   variables: Array<CalcDetailVariable>,
   selected?: CalcDetail,
+  comment?: string
+};
+
+/**
+ * Input type used for helper services working with the Add New Charge scenario.
+ */
+export type NewChargeModalInput = {
+  title?: string,
+  innerHtmlMessage?: string,
+  confirmButtonStyle?: buttonStyleOptions,
+  confirmButtonText?: string,
+  cancelButtonText?: string,
+  costBreakdownOptions: Array<SelectOption<CalcDetail>>
+};
+
+/**
+ * Output type used for helper services working with the Add New Charge scenario.
+ */
+export type NewChargeModalOutput = undefined | {
+  selected: CalcDetail,
   comment?: string
 };
 
