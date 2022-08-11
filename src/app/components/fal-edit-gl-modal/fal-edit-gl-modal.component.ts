@@ -1,12 +1,9 @@
-import {Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component, Inject} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {NewChargeModalInput} from '../fal-new-charge-modal/fal-new-charge-modal.component';
-import {Subscription} from 'rxjs';
 import {GlLineItem, GlLineItemError} from '../../models/line-item/line-item-model';
-import {buttonStyleOptions, ToastService} from '@elm/elm-styleguide-ui';
+import {ToastService} from '@elm/elm-styleguide-ui';
 import {InvoiceService} from '../../services/invoice-service';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 @Component({
   selector: 'app-fal-edit-gl-modal',
@@ -58,7 +55,9 @@ export class FalEditGlModalComponent {
   }
 
   confirm(): void {
-    const currentGlLineItem: any = this.glLineItems.find((lineItem: any) => this.customerCategoryControl.value === lineItem.customerCategory);
+    const currentGlLineItem: any = this.glLineItems.find(
+      (lineItem: any) => this.customerCategoryControl.value === lineItem.customerCategory
+    );
     if (currentGlLineItem) {
       currentGlLineItem.glCostCenter = this.glCostCenterControl.value;
       currentGlLineItem.glProfitCenter = this.glProfitCenterControl.value;
