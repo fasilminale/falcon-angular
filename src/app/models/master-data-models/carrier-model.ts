@@ -49,5 +49,11 @@ export class CarrierUtils {
       ? `${carrier.scac} (${carrier.name})`
       : '';
   }
+
+  static toNameLabel(carrier?: CarrierReference): string {
+    return carrier
+      ? `${carrier.name} (${carrier.scac})`
+      : '';
+  }
 }
 

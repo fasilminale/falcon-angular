@@ -290,6 +290,20 @@ describe('InvoiceEditPageComponent', () => {
         expect(rateService.rateInvoice).not.toHaveBeenCalled();
       });
 
+      it('handleFormIfInvalid with invoice-amount shoud update costBreakdownValid to false', fakeAsync(() => {
+        component.handleFormIfInvalid({'form': component.INVOICE_AMOUNT_FORM, 'value': false});
+        tick();
+        expect(component.costBreakdownValid).toEqual(false);
+        flush();
+      }));
+
+      it('handleFormIfInvalid with invoice-amount shoud update netAllocationAmountValid to true', fakeAsync(() => {
+        component.handleFormIfInvalid({'form': component.INVOICE_ALLOCATION_FORM, 'value': true});
+        tick();
+        expect(component.netAllocationAmountValid).toEqual(true);
+        flush();
+      }));
+
       it('handleTripEditModeEvent should call getRates', fakeAsync(() => {
         component.handleTripEditModeEvent({event: 'update', value: true});
         tick();

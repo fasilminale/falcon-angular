@@ -302,7 +302,7 @@
       <div class="headline2 row">
         <div class="col-4">
           Weight Adjustment
-          <span *ngIf="isTripEditMode$.value === true" class="material-icons edit-icon"
+          <span *ngIf="enableTripEditButton === true && isTripEditMode$.value === false" class="material-icons edit-icon"
                 (click)="openWeightAdjustmentModal()">edit</span>
         </div>
       </div>
