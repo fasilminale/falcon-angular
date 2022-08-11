@@ -71,6 +71,7 @@ export class InvoiceAllocationComponent implements OnInit {
           glAccount: new FormControl(glLineItem.glAccount ?? undefined, [Validators.required]),
           glCompanyCode: new FormControl(glLineItem.glCompanyCode ?? undefined),
           allocationAmount: new FormControl(glLineItem.glAmount ?? 0),
+          glAmount: new FormControl(glLineItem.glAmount ?? 0)
         }));
       }
       this.updateTotalAllocationAmount();

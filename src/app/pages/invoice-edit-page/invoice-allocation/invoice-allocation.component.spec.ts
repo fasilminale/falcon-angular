@@ -61,6 +61,7 @@ describe('InvoiceAllocationComponent', () => {
     expect(invoiceAllocation.get('glCompanyCode')).toBeDefined();
     expect(invoiceAllocation.get('glAccount')).toBeDefined();
     expect(invoiceAllocation.get('allocationAmount')).toBeDefined();
+    expect(invoiceAllocation.get('glAmount')).toBeDefined();
   });
 
   describe('when invoice overview detail is loaded', () => {
@@ -114,6 +115,28 @@ describe('InvoiceAllocationComponent', () => {
           glAmount: 300.00,
           debitCreditFlag: ''
         }]
+      });
+    });
+
+    it('should load allocation detail form with missing values', done => {
+      loadAllocationDetails$.subscribe(() => {
+        expect(component._formGroup).toBeDefined();
+        done();
+      });
+      loadAllocationDetails$.next({
+        invoiceNetAmount: '1234.56',
+        totalGlAmount: '1234.56',
+        glLineItems: [{
+          allocationPercent: 300.00,
+          customerCategory: 'CAH',
+          shippingPointWarehouse: 'Other',
+          glCostCenter: '',
+          glProfitCenter: '',
+          glAccount: '71257000',
+          glCompanyCode: '4323345',
+          glAmount: undefined,
+          debitCreditFlag: ''
+        }] as any
       });
     });
 
