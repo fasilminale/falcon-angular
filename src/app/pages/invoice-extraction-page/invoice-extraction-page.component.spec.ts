@@ -7,7 +7,7 @@ import {environment} from '../../../environments/environment';
 import {PageEvent} from '@angular/material/paginator';
 import {LoadingService} from '../../services/loading-service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {of} from 'rxjs';
 import {StatusModel} from '../../models/invoice/status-model';
@@ -128,6 +128,14 @@ describe('InvoiceExtractionPageComponent', () => {
       const event: ButtonClickedEvent = {rowData: invoice, rowIndex: 0, header: ''};
       component.buttonClicked(event);
       expect(newWindowSpy).toHaveBeenCalledWith('invoice/F0000000001');
+    });
+
+    it('should open AUTO invoice', () => {
+      const newWindowSpy = spyOn(windowService, 'openInNewWindow').and.stub();
+      const invoice = new InvoiceDataModel({falconInvoiceNumber: 'F0000000001', entryType: EntryType.AUTO});
+      const event: ButtonClickedEvent = {rowData: invoice, rowIndex: 0, header: ''};
+      component.buttonClicked(event);
+      expect(newWindowSpy).toHaveBeenCalledWith('invoice/F0000000001/AUTO');
     });
   });
 
