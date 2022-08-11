@@ -64,13 +64,13 @@ describe('FalEditChargeModalComponent', () => {
   });
 
   it('should give empty variable control names', () => {
-    const controlNames = component.getVariableControlNames();
+    const controlNames = component.variableControlNames();
     expect(controlNames).toEqual([]);
   });
 
   it('should give variable control names', () => {
     component.variableControls.addControl(VARIABLE_FORM_CONTROL.displayName, VARIABLE_FORM_CONTROL);
-    const controlNames = component.getVariableControlNames();
+    const controlNames = component.variableControlNames();
     expect(controlNames).toEqual([TEST_DISPLAY_NAME]);
   });
 
@@ -101,7 +101,7 @@ describe('FalEditChargeModalComponent', () => {
       cancelButtonText: 'Cancel',
       costLineItem: costLine
     };
-    component.loadData(data);
-    expect(component.variableControls.get(VARIABLE_FORM_CONTROL.displayName)).not.toBeNull();
+    const testComponent = new FalEditChargeModalComponent(data, MOCK_DIALOG);
+    expect(testComponent.variableControls.get(VARIABLE_FORM_CONTROL.displayName)).not.toBeNull();
   });
 });

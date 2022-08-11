@@ -73,7 +73,7 @@ export class UtilService {
   }
 
   public openNewChargeModal(data: NewChargeModalInput): Observable<NewChargeModalOutput> {
-    return this.dialog.open(FalNewChargeModalComponent, {autoFocus: false, data})
+    return this.dialog.open(FalEditChargeModalComponent, {autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<NewChargeModalOutput>>(result => of(result)));
   }
