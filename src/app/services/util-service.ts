@@ -4,7 +4,7 @@ import {
   ConfirmationModalData,
   ElmGenericModalData,
   ErrorModalComponent,
-  GenericModalComponent, ModalService
+  GenericModalComponent,
 } from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
@@ -13,14 +13,9 @@ import {TemplateInputModalComponent} from '../components/template-input-modal/te
 import {Milestone} from '../models/milestone/milestone-model';
 import {FalCommentModalComponent} from '../components/fal-comment-modal/fal-comment-modal.component';
 import {
-  FalNewChargeModalComponent,
-  NewChargeModalInput,
-  NewChargeModalOutput
-} from '../components/fal-new-charge-modal/fal-new-charge-modal.component';
-import {
   EditChargeModalInput,
   EditChargeModalOutput,
-  FalEditChargeModalComponent
+  FalEditChargeModalComponent, NewChargeModalOutput
 } from '../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 import {
   FalAdjustWeightModalComponent, WeightAdjustmentModalInput,
@@ -75,8 +70,8 @@ export class UtilService {
       .pipe(mergeMap<any, Observable<CommentModel>>(result => of(result)));
   }
 
-  public openNewChargeModal(data: NewChargeModalInput): Observable<NewChargeModalOutput> {
-    return this.dialog.open(FalNewChargeModalComponent, {autoFocus: false, data})
+  public openNewChargeModal(data: EditChargeModalInput): Observable<NewChargeModalOutput> {
+    return this.dialog.open(FalEditChargeModalComponent, {autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<NewChargeModalOutput>>(result => of(result)));
   }

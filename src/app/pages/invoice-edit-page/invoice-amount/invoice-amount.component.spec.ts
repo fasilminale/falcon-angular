@@ -12,9 +12,12 @@ import {
 } from '../../../models/rate-engine/rate-engine-request';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {CommentModalData, CommentModel, UtilService} from '../../../services/util-service';
-import {NewChargeModalInput, NewChargeModalOutput} from '../../../components/fal-new-charge-modal/fal-new-charge-modal.component';
 import {ConfirmationModalData} from '@elm/elm-styleguide-ui';
-import {FalEditChargeModalComponent} from '../../../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
+import {
+  EditChargeModalInput,
+  FalEditChargeModalComponent,
+  NewChargeModalOutput
+} from '../../../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 
 describe('InvoiceAmountComponent', () => {
 
@@ -72,7 +75,7 @@ describe('InvoiceAmountComponent', () => {
       imports: [FalconTestingModule],
       providers: [{
         provide: UtilService, useValue: {
-          openNewChargeModal: (data: NewChargeModalInput): Observable<NewChargeModalOutput> => {
+          openNewChargeModal: (data: EditChargeModalInput): Observable<NewChargeModalOutput> => {
             throw new Error('Spy On this function instead!');
           },
           openEditChargeModal: FalEditChargeModalComponent,

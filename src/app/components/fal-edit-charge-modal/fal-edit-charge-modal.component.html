@@ -1,19 +1,32 @@
 <div mat-dialog-title class="d-flex align-items-center" xmlns="http://www.w3.org/1999/html">
-  <span class="headline2">{{data.title ?? 'Update Charge Details'}}</span>
+  <span class="headline2">{{title}}</span>
   <elm-close-button class="dialog-close-button" mat-dialog-close></elm-close-button>
 </div>
 <form [formGroup]="form">
   <div mat-dialog-content class="modal-height">
-    <div class="elm-h3" innerHTML="{{data.innerHtmlMessage ?? ''}}"></div>
+    <div class="elm-h3" innerHTML="{{innerHtmlMessage}}"></div>
     <label for="cost-line-item-charge" class="fal-label">
       Charge
     </label>
-    <elm-text-input id="cost-line-item-charge"
-                    formControlName="charge"
-                    [errorSpacing]="false">
-    </elm-text-input>
+    <ng-template [ngIf]="isEditModal">
+      <elm-text-input id="cost-line-item-charge"
+                      formControlName="charge"
+                      [errorSpacing]="false">
+      </elm-text-input>
+    </ng-template>
+    <ng-template [ngIf]="!isEditModal">
+      <ng-select id="chargeField"
+                 formControlName="charge"
+                 [items]="costBreakdownOptions"
+                 [clearable]="false"
+                 appendTo="body"
+                 bindLabel="label"
+                 bindValue="value"
+                 placeholder="Select One...">
+      </ng-select>
+    </ng-template>
     <form formGroupName="variables">
-      <div *ngFor="let vcName of getVariableControlNames()">
+      <div *ngFor="let vcName of variableControlNames">
         <label [for]="vcName + 'Input'"
                class="fal-label">
           {{vcName}}
@@ -35,6 +48,22 @@
         </elm-input-subtext>
       </div>
     </form>
+    <div *ngIf="chargeControl.valid && commentControl.enabled">
+      <label for="commentInput"
+             class="fal-label">
+        Comment
+      </label>
+      <elm-textarea-input id="commentInput"
+                          formControlName="comment"
+                          [errorSpacing]="true"
+                          type>
+      </elm-textarea-input>
+      <elm-input-subtext *ngIf="commentControl.invalid ?? false"
+                         class="input-error"
+                         [isError]="true">
+        Comment is missing
+      </elm-input-subtext>
+    </div>
   </div>
   <div mat-dialog-actions class="float-right">
     <elm-button buttonStyle="secondary"
@@ -42,15 +71,15 @@
                 [mat-dialog-close]="undefined"
                 id="cancel"
                 aria-label="cancel">
-      {{data.cancelButtonText ?? 'Close'}}
+      {{cancelButtonText}}
     </elm-button>
-    <elm-button [buttonStyle]="data.confirmButtonStyle ?? 'primary'"
+    <elm-button [buttonStyle]="confirmButtonStyle"
                 class="ms-3"
-                (buttonClick)="confirm()"
+                (buttonClick)="onConfirmButtonClick()"
                 [isDisabled]="form.invalid"
                 id="confirm"
                 aria-label="confirm">
-      {{data.confirmButtonText ?? 'Accept Charge Update'}}
+      {{confirmButtonText}}
     </elm-button>
   </div>
 </form>
