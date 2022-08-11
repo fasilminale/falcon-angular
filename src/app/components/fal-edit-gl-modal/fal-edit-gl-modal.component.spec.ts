@@ -7,7 +7,7 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {of} from 'rxjs';
 
-fdescribe('FalEditGlModalComponent', () => {
+describe('FalEditGlModalComponent', () => {
   const TEST_GL_LINE_ITEM = {
     glLineItem: new FormGroup ({
       allocationPercent: new FormControl('50'),

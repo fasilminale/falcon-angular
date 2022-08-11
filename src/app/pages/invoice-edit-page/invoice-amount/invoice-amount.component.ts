@@ -117,6 +117,7 @@ export class InvoiceAmountComponent implements OnInit {
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
     this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
+    this.costBreakdownAmountInvalid.emit({'form': 'invoice-amount', 'value': this.isValidCostBreakdownAmount});
     return totalAmount;
   }
 
@@ -158,6 +159,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   _formGroup = new FormGroup({});
   amountOfInvoiceControl = new FormControl('', [Validators.required]);
+  @Output() costBreakdownAmountInvalid = new EventEmitter<any>();
   isValidCostBreakdownAmount = true;
   isPrepaid?: boolean;
 
