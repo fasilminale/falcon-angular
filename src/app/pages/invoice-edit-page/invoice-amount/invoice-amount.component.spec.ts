@@ -14,8 +14,8 @@ import {SelectOption} from '../../../models/select-option-model/select-option-mo
 import {CommentModalData, CommentModel, UtilService} from '../../../services/util-service';
 import {ConfirmationModalData} from '@elm/elm-styleguide-ui';
 import {
+  EditChargeModalInput,
   FalEditChargeModalComponent,
-  NewChargeModalInput,
   NewChargeModalOutput
 } from '../../../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 
@@ -75,7 +75,7 @@ describe('InvoiceAmountComponent', () => {
       imports: [FalconTestingModule],
       providers: [{
         provide: UtilService, useValue: {
-          openNewChargeModal: (data: NewChargeModalInput): Observable<NewChargeModalOutput> => {
+          openNewChargeModal: (data: EditChargeModalInput): Observable<NewChargeModalOutput> => {
             throw new Error('Spy On this function instead!');
           },
           openEditChargeModal: FalEditChargeModalComponent,
