@@ -32,13 +32,14 @@ export class InvoiceExtractionPageComponent implements OnInit {
   headers: Array<ElmDataTableHeader> = [
     {header: 'statusLabel', label: 'Status'},
     {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end', button: true, buttonStyle: 'link'},
-    {header: 'externalInvoiceNumber', label: 'External Invoice Number', alignment: 'end'},
+    {header: 'invoiceReference', label: 'Invoice Reference', alignment: 'end'},
+    {header: 'carrierDisplay', label: 'Carrier', alignment: 'end'},
+    {header: 'carrierModeDisplay', label: 'Carrier Mode'},
+    {header: 'businessUnit', label: 'Business Unit'},
     {header: 'amountOfInvoice', label: 'Invoice Amount', alignment: 'end'},
     {header: 'currency', label: 'Currency'},
-    {header: 'vendorNumber', label: 'Vendor Number', alignment: 'end'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'createdBy', label: 'Created By'},
-    {header: 'companyCode', label: 'Company Code', alignment: 'end'},
     {header: 'standardPaymentTermsOverride', label: 'Override'}
   ];
   invoices: Array<InvoiceDataModel> = [];
