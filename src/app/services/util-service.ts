@@ -4,7 +4,7 @@ import {
   ConfirmationModalData,
   ElmGenericModalData,
   ErrorModalComponent,
-  GenericModalComponent, ModalService
+  GenericModalComponent,
 } from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
@@ -15,7 +15,7 @@ import {FalCommentModalComponent} from '../components/fal-comment-modal/fal-comm
 import {
   EditChargeModalInput,
   EditChargeModalOutput,
-  FalEditChargeModalComponent, NewChargeModalInput, NewChargeModalOutput
+  FalEditChargeModalComponent, NewChargeModalOutput
 } from '../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 import {
   FalAdjustWeightModalComponent, WeightAdjustmentModalInput,
@@ -67,7 +67,7 @@ export class UtilService {
       .pipe(mergeMap<any, Observable<CommentModel>>(result => of(result)));
   }
 
-  public openNewChargeModal(data: NewChargeModalInput): Observable<NewChargeModalOutput> {
+  public openNewChargeModal(data: EditChargeModalInput): Observable<NewChargeModalOutput> {
     return this.dialog.open(FalEditChargeModalComponent, {autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<NewChargeModalOutput>>(result => of(result)));

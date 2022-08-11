@@ -255,7 +255,6 @@ export class FalEditChargeModalComponent {
   }
 
 }
-
 /**
  * Input type required to create the modal.
  */
@@ -277,18 +276,6 @@ export type EditChargeModalOutput = undefined | {
   variables: Array<CalcDetailVariable>,
   selected?: CalcDetail,
   comment?: string
-};
-
-/**
- * Input type used for helper services working with the Add New Charge scenario.
- */
-export type NewChargeModalInput = {
-  title?: string,
-  innerHtmlMessage?: string,
-  confirmButtonStyle?: buttonStyleOptions,
-  confirmButtonText?: string,
-  cancelButtonText?: string,
-  costBreakdownOptions: Array<SelectOption<CalcDetail>>
 };
 
 /**
