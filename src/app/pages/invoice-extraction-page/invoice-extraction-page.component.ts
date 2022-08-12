@@ -92,7 +92,11 @@ export class InvoiceExtractionPageComponent implements OnInit {
   }
 
   buttonClicked(event : ButtonClickedEvent): void {
-    this.windowService.openInNewWindow(`invoice/${event.rowData.falconInvoiceNumber}`);
+    if (event.rowData.entryType === 'AUTO') {
+      this.windowService.openInNewWindow(`invoice/${event.rowData.falconInvoiceNumber}/AUTO`);
+    } else {
+      this.windowService.openInNewWindow(`invoice/${event.rowData.falconInvoiceNumber}`);
+    }
   }
 
   sortChanged(sort: Sort): void {
