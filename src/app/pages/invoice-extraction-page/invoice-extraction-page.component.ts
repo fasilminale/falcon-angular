@@ -31,11 +31,11 @@ export class InvoiceExtractionPageComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
   headers: Array<ElmDataTableHeader> = [
     {header: 'statusLabel', label: 'Status'},
-    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'end', button: true, buttonStyle: 'link'},
-    {header: 'invoiceReference', label: 'Invoice Reference', alignment: 'end'},
-    {header: 'carrierDisplay', label: 'Carrier', alignment: 'end'},
-    {header: 'carrierModeDisplay', label: 'Carrier Mode'},
-    {header: 'businessUnit', label: 'Business Unit'},
+    {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number', alignment: 'center', button: true, buttonStyle: 'link'},
+    {header: 'invoiceReference', label: 'Invoice Reference'},
+    {header: 'carrierDisplay', label: 'Carrier'},
+    {header: 'carrierModeDisplay', label: 'Carrier Mode', alignment: 'center'},
+    {header: 'businessUnit', label: 'Business Unit', alignment: 'center'},
     {header: 'amountOfInvoice', label: 'Invoice Amount', alignment: 'end'},
     {header: 'currency', label: 'Currency'},
     {header: 'invoiceDate', label: 'Invoice Date'},
