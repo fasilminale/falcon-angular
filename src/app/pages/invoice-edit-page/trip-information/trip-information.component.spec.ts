@@ -22,7 +22,7 @@ import {
 } from 'src/app/models/location/location-model';
 import {InvoiceService} from 'src/app/services/invoice-service';
 
-fdescribe('TripInformationComponent', () => {
+describe('TripInformationComponent', () => {
 
   let component: TripInformationComponent;
   let fixture: ComponentFixture<TripInformationComponent>;
