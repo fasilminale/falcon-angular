@@ -22,7 +22,7 @@ import {
 } from 'src/app/models/location/location-model';
 import {InvoiceService} from 'src/app/services/invoice-service';
 
-describe('TripInformationComponent', () => {
+fdescribe('TripInformationComponent', () => {
 
   let component: TripInformationComponent;
   let fixture: ComponentFixture<TripInformationComponent>;
@@ -665,6 +665,40 @@ describe('TripInformationComponent', () => {
         invoiceDate: new Date(),
         pickUpDate: new Date(),
         tripTenderTime: customDeliveryDate,
+        proTrackingNumber: 'TestProTrackingNumber',
+        serviceLevel: {
+          level: 'TL1',
+          name: 'TestLevel'
+        },
+        tripId: 'TestTripId',
+        freightOrders: [],
+        vendorNumber: '1234321'
+      };
+
+      component.derivePickupDate(tripInformation);
+
+      expect(component.isPickupDateTimeTendered).toBeFalsy();
+    });
+
+    it('both pickup date and trip tender date is null', () => {
+      const customDeliveryDate = new Date(2020, 10, 30);
+      const tripInformation: TripInformation = {
+        bolNumber: 'TestBolNumber',
+        carrier: {
+          scac: 'TestScac',
+          name: 'TestCarrierName'
+
+        },
+        carrierMode: {
+          mode: 'CarrierMode',
+          reportModeDescription: 'ReportModeDescription',
+          reportKeyMode: 'ReportKeyMode'
+        },
+        deliveryDate: undefined,
+        freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
+        invoiceDate: new Date(),
+        pickUpDate: null as any,
+        tripTenderTime: null as any,
         proTrackingNumber: 'TestProTrackingNumber',
         serviceLevel: {
           level: 'TL1',
