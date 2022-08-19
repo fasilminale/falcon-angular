@@ -1293,6 +1293,14 @@ describe('TripInformationComponent', () => {
     });
   });
 
+  describe('refresh master data', () => {
+    it('should emit event to edit component', () => {
+      spyOn(component.refreshMasterDataEvent, 'emit').and.stub();
+      component.refreshMasterData();
+      expect(component.refreshMasterDataEvent.emit).toHaveBeenCalled();
+    });
+  });
+
   describe('display weight adjustment modal', () => {
     it('should emit event to display modal', () => {
       spyOn(component.openWeightAdjustmentModalEvent, 'emit').and.stub();

@@ -154,6 +154,7 @@ describe('InvoiceEditPageComponent', () => {
     toastService = TestBed.inject(ToastService);
     spyOn(toastService, 'openErrorToast').and.stub();
     spyOn(toastService, 'openSuccessToast').and.stub();
+    spyOn(toastService, 'openWarningToast').and.stub();
 
     // Mock Web Service
     rateService = TestBed.inject(RateService);
@@ -292,14 +293,14 @@ describe('InvoiceEditPageComponent', () => {
       });
 
       it('handleFormIfInvalid with invoice-amount shoud update costBreakdownValid to false', fakeAsync(() => {
-        component.handleFormIfInvalid({'form': component.INVOICE_AMOUNT_FORM, 'value': false});
+        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_FORM, value: false});
         tick();
         expect(component.costBreakdownValid).toEqual(false);
         flush();
       }));
 
       it('handleFormIfInvalid with invoice-amount shoud update netAllocationAmountValid to true', fakeAsync(() => {
-        component.handleFormIfInvalid({'form': component.INVOICE_ALLOCATION_FORM, 'value': true});
+        component.handleFormIfInvalid({form: component.INVOICE_ALLOCATION_FORM, value: true});
         tick();
         expect(component.netAllocationAmountValid).toEqual(true);
         flush();
@@ -660,6 +661,79 @@ describe('InvoiceEditPageComponent', () => {
     expect(utilService.openWeightAdjustmentModal).toHaveBeenCalled();
     expect(rateService.adjustWeightOnInvoice).toHaveBeenCalled();
     expect(component.loadInvoice).toHaveBeenCalled();
+  });
+
+  it('should handle refresh master data modal', async () => {
+    const invoice = {
+      refreshMasterDataStatus: 'REFRESHED'
+    };
+    // Setup
+    spyOn(invoiceService, 'refreshMasterData').and.returnValue(of(invoice));
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openSuccessToast).and.stub();
+    // Run Test
+    await component.handleRefreshMasterDataEvent();
+    // Assertions
+    expect(component.loadInvoice).toHaveBeenCalled();
+    expect(toastService.openSuccessToast).toHaveBeenCalled();
+  });
+
+  it('should handle not refresh master data modal', async () => {
+    const invoice = {
+      refreshMasterDataStatus: 'NOT_REFRESHED'
+    };
+    // Setup
+    spyOn(invoiceService, 'refreshMasterData').and.returnValue(of(invoice));
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openWarningToast).and.stub();
+    // Run Test
+    await component.handleRefreshMasterDataEvent();
+    // Assertions
+    expect(component.loadInvoice).not.toHaveBeenCalled();
+    expect(toastService.openWarningToast).toHaveBeenCalled();
+  });
+
+  it('should handle error refresh master data modal', async () => {
+    const invoice = {
+      refreshMasterDataStatus: 'LOOKUP_ERROR'
+    };
+    // Setup
+    spyOn(invoiceService, 'refreshMasterData').and.returnValue(of(invoice));
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openErrorToast).and.stub();
+    // Run Test
+    await component.handleRefreshMasterDataEvent();
+    // Assertions
+    expect(component.loadInvoice).not.toHaveBeenCalled();
+    expect(toastService.openErrorToast).toHaveBeenCalled();
+  });
+
+  it('should handle error refresh master data modal if wrong status', async () => {
+    const invoice = {
+      refreshMasterDataStatus: 'MISTAKE_STATUS'
+    };
+    // Setup
+    spyOn(invoiceService, 'refreshMasterData').and.returnValue(of(invoice));
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openErrorToast).and.stub();
+    // Run Test
+    await component.handleRefreshMasterDataEvent();
+    // Assertions
+    expect(component.loadInvoice).not.toHaveBeenCalled();
+    expect(toastService.openErrorToast).toHaveBeenCalled();
+  });
+
+  it('should handle error refresh master data modal if no status', async () => {
+    const invoice = {};
+    // Setup
+    spyOn(invoiceService, 'refreshMasterData').and.returnValue(of(invoice));
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openErrorToast).and.stub();
+    // Run Test
+    await component.handleRefreshMasterDataEvent();
+    // Assertions
+    expect(component.loadInvoice).not.toHaveBeenCalled();
+    expect(toastService.openErrorToast).toHaveBeenCalled();
   });
 
   it('should handle the gl line item modal', async () => {
@@ -1070,7 +1144,7 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   describe('Unpopulated fields', () => {
-    let lineItems = new FormArray([]);
+    const lineItems = new FormArray([]);
     beforeEach(() => {
       lineItems.push(new FormGroup({
         accessorial: new FormControl(false),

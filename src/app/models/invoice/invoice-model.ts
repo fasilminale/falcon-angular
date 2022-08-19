@@ -91,7 +91,8 @@ export class InvoiceDataModel {
   hasRateEngineError: boolean;
   totalGrossWeight: number;
   originalTotalGrossWeight: number;
-  weightAdjustments: Array<WeightAdjustment>
+  weightAdjustments: Array<WeightAdjustment>;
+  refreshMasterDataStatus: string;
 
   /* --- AUTOMATED INVOICE: COST BREAKDOWN FIELDS --- */
   deliveryInstructions: Array<string>;
@@ -197,6 +198,7 @@ export class InvoiceDataModel {
     this.totalGrossWeight = json?.totalGrossWeight ?? 0;
     this.originalTotalGrossWeight = json?.totalGrossWeight ?? 0;
     this.weightAdjustments = json?.weightAdjustmentst ?? [];
+    this.refreshMasterDataStatus = json?.refreshMasterDataStatus  ?? 'NOT_REFRESHED';
 
     // AUTOMATED INVOICE: COST BREAKDOWN
     this.deliveryInstructions = json?.deliveryInstructions ?? [];

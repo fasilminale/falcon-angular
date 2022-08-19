@@ -124,6 +124,10 @@ export class InvoiceService {
     return this.web.httpPut(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}/resolveDispute`, disputeParameters);
   }
 
+  public refreshMasterData(invoice: any): Observable<any> {
+    return this.web.httpPost(`${environment.baseServiceUrl}/v1/refreshMasterData`, invoice);
+  }
+
   public getFreightOrderDetails(): Observable<FreightOrder[]> {
     return of([{
       freightOrderNumber: '123456789',

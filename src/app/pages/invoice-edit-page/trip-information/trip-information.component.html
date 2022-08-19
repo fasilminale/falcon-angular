@@ -1,11 +1,17 @@
 <div [formGroup]="formGroup">
-  <div class="headline2 row">
-    <div class="col-4">
+  <div class="row">
+    <div class="headline2 col-4">
       <span>Trip Information</span>
-      <span *ngIf="enableTripEditButton" role="button" class="material-icons material-icons-outlined valign-middle"
+          <span *ngIf="enableTripEditButton" role="button" class="material-icons material-icons-outlined valign-middle"
             (click)="clickEditButton()">
         edit
       </span>
+    </div>
+    <div class="col-7 text-end">
+      Master Data
+      <elm-button [isDisabled]="!isTripEditMode$.value" buttonColor="black" (buttonClick)="refreshMasterData()" >
+        <div class="material-icons">change_circle</div>
+      </elm-button>
     </div>
   </div>
   <div class="row">
