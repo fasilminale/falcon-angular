@@ -86,6 +86,13 @@ describe('InvoiceService', () => {
     expect(web.httpPut).toHaveBeenCalled();
   });
 
+  it('should refresh master data', async () => {
+    spyOn(web, 'httpPost').and.returnValue(of(invoice));
+    const result = await invoiceService.refreshMasterData(invoice).toPromise();
+    expect(web.httpPost).toHaveBeenCalled();
+    expect(result).toEqual(invoice);
+  });
+
   it('should get invoice details', async () => {
     const freightOrders = await invoiceService.getFreightOrderDetails().toPromise();
     expect(freightOrders.length).toBe(1);

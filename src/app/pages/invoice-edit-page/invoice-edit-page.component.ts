@@ -267,7 +267,7 @@ export class InvoiceEditPageComponent implements OnInit {
   handleFormIfInvalid($event: any) {
     if ($event.form === this.INVOICE_AMOUNT_FORM) {
       this.costBreakdownValid = $event.value;
-    } 
+    }
     if ($event.form === this.INVOICE_ALLOCATION_FORM) {
       this.netAllocationAmountValid = $event.value;
     }
@@ -315,6 +315,20 @@ export class InvoiceEditPageComponent implements OnInit {
       this.otherSectionEditMode$.value = true;
     } else if ($event && $event.event == 'edit' && !$event.value) {
       this.otherSectionEditMode$.value = false;
+    }
+  }
+
+  async handleRefreshMasterDataEvent(): Promise<void> {
+    const refreshedInvoice = await this.invoiceService.refreshMasterData(this.invoice).pipe(first()).toPromise();
+    if (refreshedInvoice.refreshMasterDataStatus === 'REFRESHED') {
+      this.toastService.openSuccessToast('Success. Master data has successfully been updated.');
+      this.loadInvoice(refreshedInvoice);
+    } else if (refreshedInvoice.refreshMasterDataStatus === 'LOOKUP_ERROR'){
+      this.toastService.openErrorToast('Master data update failed due to invoice field not found in master data.');
+    } else if ((refreshedInvoice.refreshMasterDataStatus === 'NOT_REFRESHED')){
+      this.toastService.openWarningToast('No master data updates needed for vendor number, business unit, customer category.');
+    } else {
+      this.toastService.openErrorToast('Unknown master data update status. ');
     }
   }
 

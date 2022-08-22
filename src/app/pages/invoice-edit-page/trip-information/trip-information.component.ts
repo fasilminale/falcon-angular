@@ -56,6 +56,7 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
 export class TripInformationComponent implements OnInit {
   @Output() updateAndContinueClickEvent = new EventEmitter<any>();
   @Output() openWeightAdjustmentModalEvent = new EventEmitter<any>();
+  @Output() refreshMasterDataEvent = new EventEmitter<any>();
 
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
   public carrierOptions: Array<SelectOption<CarrierReference>> = [];
@@ -445,6 +446,10 @@ export class TripInformationComponent implements OnInit {
     const bReportModeDescription = b?.reportModeDescription ?? b?.value?.reportModeDescription;
     return aReportKeyMode === bReportKeyMode
       && aReportModeDescription === bReportModeDescription;
+  }
+
+  refreshMasterData(): void {
+    this.refreshMasterDataEvent.emit();
   }
 
   refreshCarrierData(): void {

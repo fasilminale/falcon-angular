@@ -73,7 +73,8 @@
                               [loadTripInformation$]="loadTripInformation$.asObservable()"
                               [updateIsEditMode$]="isTripEditMode$.asObservable()"
                               (updateAndContinueClickEvent)="handleTripEditModeEvent($event)"
-                              (openWeightAdjustmentModalEvent)="handleWeightAdjustmentModalEvent($event)">
+                              (openWeightAdjustmentModalEvent)="handleWeightAdjustmentModalEvent($event)"
+                              (refreshMasterDataEvent)="handleRefreshMasterDataEvent()">
         </app-trip-information>
         <hr/>
 
