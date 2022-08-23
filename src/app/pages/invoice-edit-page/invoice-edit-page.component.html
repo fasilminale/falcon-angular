@@ -115,6 +115,7 @@
                       buttonType="button"
                       buttonStyle="text"
                       class="flex-shrink-1"
+                      [isDisabled]="!this.isGlobalEditMode$.value"
                       (buttonClick)="clickCancelButton()">
             <u>Cancel</u>
           </elm-button>
