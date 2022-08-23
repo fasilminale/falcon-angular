@@ -452,7 +452,8 @@ export class InvoiceEditPageComponent implements OnInit {
       originAddress: originLocation,
       destinationAddress: LocationUtils.extractLocation(destinationAddressFormGroup, 'destination', this.invoice?.destination?.code),
       billToAddress: BillToLocationUtils.extractBillToLocation(billToAddressFormGroup),
-      shippingPoint: originLocation.code
+      shippingPoint: originLocation.code,
+      businessUnit: this.invoice.businessUnit
     };
   }
 
