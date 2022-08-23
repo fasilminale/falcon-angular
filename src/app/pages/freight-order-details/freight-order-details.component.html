@@ -66,7 +66,7 @@
       <th id="grossWeight" class="width-90" mat-header-cell *matHeaderCellDef>Gross Weight</th>
       <td class="padding-right-5" mat-cell *matCellDef="let freightOrder">
         <input type="text" [value]="freightOrder.weightGross.value"
-               [ngClass]="{ 'error' : freightOrder.weightGross.value != 0 && !freightOrder.weightGross.value }"
+               [ngClass]="{ 'error' : freightOrder.hasWeightError || (freightOrder.weightGross.value != 0 && !freightOrder.weightGross.value) }"
                [disabled]="freightOrder.isEdit" class="form-control col-11" matInput>
         <elm-input-subtext *ngIf="freightOrder.weightGross.value != 0 && !freightOrder.weightGross.value"
                            class="input-error"
@@ -91,7 +91,7 @@
                class="form-control col-11" matInput>
       </td>
     </ng-container>
-    
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>

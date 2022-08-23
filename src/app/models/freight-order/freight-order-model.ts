@@ -52,6 +52,7 @@ export interface FreightOrder {
   trackingNumbers: string;
   isEdit?: boolean;
   palletCount: number;
+  hasWeightError?: boolean;
 }
 
 export interface RoutePlan {

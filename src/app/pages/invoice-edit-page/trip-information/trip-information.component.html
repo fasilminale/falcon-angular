@@ -302,7 +302,8 @@
       <div class="headline2 row">
         <div class="col-4">
           Weight Adjustment
-          <span *ngIf="enableTripEditButton === true && isTripEditMode$.value === false" class="material-icons edit-icon"
+          <span *ngIf="enableTripEditButton === true && isTripEditMode$.value === false"
+                class="material-icons edit-icon"
                 (click)="openWeightAdjustmentModal()">edit</span>
         </div>
       </div>
@@ -398,14 +399,17 @@
     </div>
 
     <div class="col-md-12" (click)="toggleFreightOrderDetailsSection()">
-        <span class="accordion-header" *ngIf="!showFreightOrderSection">
-          <span class="material-icons">keyboard_arrow_down</span>
-          <span class="accordian-link-text">Show Freight Order Details</span>
-        </span>
+      <span class="accordion-header" *ngIf="!showFreightOrderSection">
+        <span class="material-icons">keyboard_arrow_down</span>
+        <span class="accordian-link-text">Show Freight Order Details</span>
+      </span>
       <span class="accordion-header" *ngIf="showFreightOrderSection">
-          <span class="material-icons">keyboard_arrow_up</span>
-          <span class="accordian-link-text">Hide Freight Order Details</span>
-        </span>
+        <span class="material-icons">keyboard_arrow_up</span>
+        <span class="accordian-link-text">Hide Freight Order Details</span>
+      </span>
+      <div *ngIf="hasAnyWeightToleranceError" class="error-text">
+        Calculated Freight order total weight not within tolerance of Chile provided weight. Please contact Falcon IT support.
+      </div>
     </div>
 
     <div id="freightOrderSectionDiv" [hidden]="!showFreightOrderSection" class="col-md-12 mt-3">
