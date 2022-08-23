@@ -27,4 +27,5 @@ export interface EditAutoInvoiceModel {
   destinationAddress?: Location;
   billToAddress?: BillToLocation;
   shippingPoint?: string;
+  businessUnit?: string;
 }
