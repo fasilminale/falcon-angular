@@ -973,7 +973,7 @@ describe('InvoiceEditPageComponent', () => {
       component.invoice.weightAdjustments = undefined as any;
     };
 
-    fit('should return EditAutoInvoiceModel object', () => {
+    it('should return EditAutoInvoiceModel object', () => {
       setUpControls();
       const result = component.mapTripInformationToEditAutoInvoiceModel();
       expect(result).toEqual({
