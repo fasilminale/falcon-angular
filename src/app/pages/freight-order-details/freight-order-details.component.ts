@@ -1,18 +1,30 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import { Observable } from 'rxjs';
-import { FreightOrder } from 'src/app/models/freight-order/freight-order-model';
-import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
-import { NumberFormatter } from 'src/app/utils/number-formatter';
+import {Component, EventEmitter, Inject, Input, Output} from '@angular/core';
+import {Observable} from 'rxjs';
+import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
+import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
+import {NumberFormatter} from 'src/app/utils/number-formatter';
 
 @Component({
   selector: 'app-freight-order-details',
   templateUrl: './freight-order-details.component.html',
   styleUrls: ['./freight-order-details.component.scss']
 })
-export class FreightOrderDetailsComponent implements OnInit {
+export class FreightOrderDetailsComponent {
 
-  displayedColumns: string[] = ['freightOrderNumber', 'tmsLoadId', 'shippingPoint', 'warehouse', 'customerCategory', 'sequence', 'stopId', 'stopReferenceID', 'destination', 'grossWeight', 'volume', 'pallets'];
-
+  displayedColumns: string[] = [
+    'freightOrderNumber',
+    'tmsLoadId',
+    'shippingPoint',
+    'warehouse',
+    'customerCategory',
+    'sequence',
+    'stopId',
+    'stopReferenceID',
+    'destination',
+    'grossWeight',
+    'volume',
+    'pallets'
+  ];
 
   freightOrders: FreightOrder[] = [];
   freightOrderTitle = '';
@@ -23,15 +35,11 @@ export class FreightOrderDetailsComponent implements OnInit {
   @Output() totalEmitter: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
-
-  }
-
-  ngOnInit(): void {
   }
 
   @Input() set loadFreightOrders$(observable: Observable<FreightOrder[]>) {
+    // TODO fix this to not use subscription manager!
     this.subscriptionManager.manage(observable.subscribe(freightOrders => {
-
       this.freightOrders = freightOrders.map(freightOrder => {
         freightOrder.volumeGross.value = parseFloat(freightOrder?.volumeGross?.value.toFixed(2));
         freightOrder.isEdit = true;
@@ -49,7 +57,7 @@ export class FreightOrderDetailsComponent implements OnInit {
     }));
   }
 
-  getTotalGrossWeight(): number{
+  getTotalGrossWeight(): number {
     let totalGrossWeight = 0;
     this.freightOrders.forEach(fo => {
       totalGrossWeight += fo?.weightGross?.value;
@@ -57,7 +65,7 @@ export class FreightOrderDetailsComponent implements OnInit {
     return NumberFormatter.truncateData(totalGrossWeight);
   }
 
-  getTotalVolume(): number{
+  getTotalVolume(): number {
     let totalVolume = 0;
     this.freightOrders.forEach(fo => {
       totalVolume += fo?.volumeGross?.value;
@@ -65,13 +73,13 @@ export class FreightOrderDetailsComponent implements OnInit {
     return NumberFormatter.truncateData(totalVolume);
   }
 
-  getTotalPalletCount(): number{
+  getTotalPalletCount(): number {
     this.freightOrders.forEach(fo => {
       fo.palletCount = this.getPalletQuantity(fo?.volumeGross?.value);
     });
 
     return NumberFormatter.truncateData(this.freightOrders.reduce((i, fo) => {
-       return i + fo.palletCount;
+      return i + fo.palletCount;
     }, 0));
 
   }
@@ -83,6 +91,5 @@ export class FreightOrderDetailsComponent implements OnInit {
   getPalletQuantity(inputFt3: number): number {
     return NumberFormatter.truncateData((inputFt3 / 60));
   }
-
 
 }

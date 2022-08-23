@@ -475,5 +475,12 @@ export class TripInformationComponent implements OnInit {
   openWeightAdjustmentModal(): void {
     this.openWeightAdjustmentModalEvent.emit(this.totalGrossWeight.value);
   }
+
+  get hasAnyWeightToleranceError(): boolean {
+    return !!this.tripInformation.freightOrders
+      ?.map(fo => !!fo.hasWeightError)
+      ?.some(err => err);
+  }
+
 }
 
