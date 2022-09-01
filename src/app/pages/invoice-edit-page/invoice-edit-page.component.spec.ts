@@ -1006,7 +1006,8 @@ describe('InvoiceEditPageComponent', () => {
         destinationAddress: LocationUtils.extractLocation(component.tripInformationFormGroup.controls.destinationAddress as FormGroup, 'destination', component.invoice.destination.code),
         billToAddress: BillToLocationUtils.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as FormGroup),
         shippingPoint: (component.tripInformationFormGroup.controls.originAddress as FormGroup)?.controls?.shippingPoint?.value,
-        businessUnit: component.invoice.businessUnit
+        businessUnit: component.invoice.businessUnit,
+        hasRateEngineError: component.invoice.hasRateEngineError,
       });
     });
   });
