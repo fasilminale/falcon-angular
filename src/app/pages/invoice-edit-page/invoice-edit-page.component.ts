@@ -433,6 +433,7 @@ export class InvoiceEditPageComponent implements OnInit {
       disputeLineItems: this.getDisputeLineItems(this.invoiceAmountFormGroup.controls.disputeLineItems),
       deniedChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.deniedChargeLineItems),
       deletedChargeLineItems: this.getLineItems(this.invoiceAmountFormGroup.controls.deletedChargeLineItems),
+      hasRateEngineError: this.invoice.hasRateEngineError,
       mode: {
         mode: this.tripInformationFormGroup.controls.carrierMode.value.mode,
         reportKeyMode: this.tripInformationFormGroup.controls.carrierMode.value.reportKeyMode,
