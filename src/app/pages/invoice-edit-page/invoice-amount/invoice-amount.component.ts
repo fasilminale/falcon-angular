@@ -19,6 +19,8 @@ import {UserInfoModel} from '../../../models/user-info/user-info-model';
   styleUrls: ['./invoice-amount.component.scss']
 })
 export class InvoiceAmountComponent implements OnInit {
+  static readonly INVOICE_AMOUNT_CL = 'invoice-amount-cl';
+  static readonly INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private utilService: UtilService,
@@ -117,7 +119,7 @@ export class InvoiceAmountComponent implements OnInit {
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
     this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
-    this.costBreakdownAmountInvalid.emit({'form': 'invoice-amount', 'value': this.isValidCostBreakdownAmount});
+    this.invoiceAmountFormInvalid.emit({'form': InvoiceAmountComponent.INVOICE_AMOUNT_CL, 'value': (this.isValidCostBreakdownAmount && this.paymentTermValid)});
     return totalAmount;
   }
 
@@ -159,7 +161,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   _formGroup = new FormGroup({});
   amountOfInvoiceControl = new FormControl('', [Validators.required]);
-  @Output() costBreakdownAmountInvalid = new EventEmitter<any>();
+  @Output() invoiceAmountFormInvalid = new EventEmitter<any>();
   isValidCostBreakdownAmount = true;
   isPrepaid?: boolean;
 
@@ -189,6 +191,8 @@ export class InvoiceAmountComponent implements OnInit {
   deletedChargeLineItems = new FormArray([]);
   disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
+  paymentTermValid: boolean = true;
+  
   @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
 
   @Output() rateEngineCall = new EventEmitter<string>();
@@ -211,6 +215,14 @@ export class InvoiceAmountComponent implements OnInit {
   setUpOverrideStandardPaymentTermsSubscription(): void {
     this.subscriptionManager.manage(this.isPaymentOverrideSelected.valueChanges
       .subscribe((selected: string) => {
+        if (!selected || selected.length <= 0) {
+          this.paymentTermValid = true;
+          this.emitOverrideStandardPaymentTermsValidity();
+          return;
+        }
+        const payTerm = this.overridePaymentTermsFormGroup.controls?.paymentTerms?.value;
+        this.paymentTermValid = payTerm ? true : false;
+        this.emitOverrideStandardPaymentTermsValidity();
         const selectedBool = selected + '' === this.overridePaymentTermsOptions[0].value;
         if (!selectedBool) {
           this.overridePaymentTermsFormGroup.controls.paymentTerms.reset();
@@ -232,11 +244,22 @@ export class InvoiceAmountComponent implements OnInit {
     }
   }
 
+  emitOverrideStandardPaymentTermsValidity() {
+    this.invoiceAmountFormInvalid.emit({'form': InvoiceAmountComponent.INVOICE_AMOUNT_PAYTERM, 'value': (this.isValidCostBreakdownAmount && this.paymentTermValid)});
+  }
+
+  paymentTermSelected(payTerm: any) {
+    this.paymentTermValid = payTerm && payTerm.value ? true : false;
+    this.emitOverrideStandardPaymentTermsValidity();
+  }
+
   loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
     if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
       ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
         this.overridePaymentTermsOptions[0], true);
+      this.paymentTermValid = true;
+      this.emitOverrideStandardPaymentTermsValidity();
     }
     this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ?? '');
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');

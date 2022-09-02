@@ -492,6 +492,67 @@ describe('InvoiceAmountComponent', () => {
       done();
     });
 
+    it('should reset payment terms when override payment terms checkbox unchecked and empty isPaymentOverrideSelected form array', done => {
+      loadInvoiceAmountDetail$.next({
+        currency: 'USD',
+        amountOfInvoice: '1000',
+        costLineItems: [
+          {
+            accessorialCode: 'TST',
+            chargeCode: 'TestChargeCode',
+            rateSource: {key: 'CONTRACT', label: 'Contract'},
+            entrySource: {key: 'AUTO', label: 'AUTO'},
+            chargeLineTotal: 100,
+            rateAmount: 100,
+            rateType: 'FLAT',
+            quantity: 1,
+            costName: 'TestCostName',
+            requestStatus: {
+              key: 'OPEN',
+              label: 'Open'
+            },
+            createdBy: 'test@test.com',
+            createdDate: '2022-04-25T00:05:00.000Z',
+            carrierComment: 'test comment',
+            rateResponse: 'Successful',
+            closedBy: 'test@test.com',
+            closedDate: '2022-04-26T00:05:00.000Z',
+            responseComment: 'test',
+            attachment: {
+              fileName: 'test.jpg',
+              url: 'signedurl/test.jpg',
+              type: 'Documentation',
+              deleted: false,
+              uploaded: true
+            },
+            step: '1',
+            variables: [{
+              variable: TEST_VARIABLE_NAME,
+              quantity: 1
+            }],
+            accessorial: true,
+            autoApproved: false,
+            attachmentRequired: false,
+            planned: false,
+            fuel: false,
+            message: '',
+            manual: false,
+            expanded: false
+          }
+        ],
+        pendingChargeLineItems: [],
+        deniedChargeLineItems: [],
+        disputeLineItems: [],
+        deletedChargeLineItems: [],
+        standardPaymentTermsOverride: 'TestTerms',
+        mileage: '100'
+      });
+      expect(component.overridePaymentTermsFormGroup.controls.paymentTerms.value).toEqual('TestTerms');
+      component.isPaymentOverrideSelected.clear();
+      expect(component.overridePaymentTermsFormGroup.controls.isPaymentOverrideSelected.value).toEqual([]);
+      done();
+    });
+
     it('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
       component.pendingChargeLineItems.push(new FormGroup({
         charge: new FormControl('Charge'),
@@ -572,6 +633,11 @@ describe('InvoiceAmountComponent', () => {
       component.overridePaymentTermsOptions[0].disabled = false;
       component.enableDisableOverrideStandardPaymentTerms(true);
       expect(component.overridePaymentTermsOptions[0].disabled).toBeTrue();
+    });
+
+    it('should check for payment terms valid', () => {
+      component.paymentTermSelected({value: 'ABCD'});
+      expect(component.paymentTermValid).toBeTrue();
     });
 
     it('should disable currency radios when enableDisableCurrency invoked with true', () => {
