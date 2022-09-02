@@ -299,10 +299,31 @@ describe('InvoiceEditPageComponent', () => {
         flush();
       }));
 
+      it('handleFormIfInvalid with invoice-amount shoud update costBreakdownValid to true', fakeAsync(() => {
+        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_CL, value: true});
+        tick();
+        expect(component.costBreakdownValid).toEqual(true);
+        flush();
+      }));
+
       it('handleFormIfInvalid with invoice-amount shoud update standardPaymentTermsOverrideValid to false', fakeAsync(() => {
         component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_PAYTERM, value: false});
         tick();
         expect(component.standardPaymentTermsOverrideValid).toEqual(false);
+        flush();
+      }));
+
+      it('handleFormIfInvalid with invoice-amount shoud update standardPaymentTermsOverrideValid to true', fakeAsync(() => {
+        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_PAYTERM, value: true});
+        tick();
+        expect(component.standardPaymentTermsOverrideValid).toEqual(true);
+        flush();
+      }));
+
+      it('handleFormIfInvalid with invoice-amount shoud update netAllocationAmountValid to false', fakeAsync(() => {
+        component.handleFormIfInvalid({form: component.INVOICE_ALLOCATION_FORM, value: false});
+        tick();
+        expect(component.netAllocationAmountValid).toEqual(false);
         flush();
       }));
 
@@ -986,8 +1007,10 @@ describe('InvoiceEditPageComponent', () => {
     };
 
     it('should return EditAutoInvoiceModel object', () => {
+      isPaymentOverrideSelected.push(new FormControl('override'));
       setUpControls();
       const result = component.mapTripInformationToEditAutoInvoiceModel();
+      console.log('result - ', result);
       expect(result).toEqual({
         amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
         totalGrossWeight: component.tripInformationFormGroup.controls.totalGrossWeight.value,
@@ -1019,7 +1042,7 @@ describe('InvoiceEditPageComponent', () => {
         billToAddress: BillToLocationUtils.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as FormGroup),
         shippingPoint: (component.tripInformationFormGroup.controls.originAddress as FormGroup)?.controls?.shippingPoint?.value,
         businessUnit: component.invoice.businessUnit,
-        standardPaymentTermsOverride: undefined,
+        standardPaymentTermsOverride: 'ABC',
         hasRateEngineError: component.invoice.hasRateEngineError,
       });
     });
