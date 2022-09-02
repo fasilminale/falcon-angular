@@ -1019,7 +1019,8 @@ describe('InvoiceEditPageComponent', () => {
         billToAddress: BillToLocationUtils.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as FormGroup),
         shippingPoint: (component.tripInformationFormGroup.controls.originAddress as FormGroup)?.controls?.shippingPoint?.value,
         businessUnit: component.invoice.businessUnit,
-        standardPaymentTermsOverride: undefined
+        standardPaymentTermsOverride: undefined,
+        hasRateEngineError: component.invoice.hasRateEngineError,
       });
     });
   });

@@ -29,4 +29,5 @@ export interface EditAutoInvoiceModel {
   shippingPoint?: string;
   businessUnit?: string;
   standardPaymentTermsOverride?: string;
+  hasRateEngineError?: boolean;
 }
