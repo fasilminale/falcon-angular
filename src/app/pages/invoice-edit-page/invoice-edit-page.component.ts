@@ -58,6 +58,8 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
   public chargeLineItemOptions$ = new Subject<RateDetailResponse>();
 
+  public standardPaymentTermsOverrideValid: boolean = true;
+
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
@@ -259,14 +261,18 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
-  INVOICE_AMOUNT_FORM: string = 'invoice-amount';
+  INVOICE_AMOUNT_CL: string = 'invoice-amount-cl';
+  INVOICE_AMOUNT_PAYTERM: string = 'invoice-amount-pt';
   INVOICE_ALLOCATION_FORM: string = 'invoice-allocation';
   public costBreakdownValid: boolean = true;
   public netAllocationAmountValid: boolean = true;
 
   handleFormIfInvalid($event: any) {
-    if ($event.form === this.INVOICE_AMOUNT_FORM) {
+    if ($event.form === this.INVOICE_AMOUNT_CL) {
       this.costBreakdownValid = $event.value;
+    }
+    if ($event.form === this.INVOICE_AMOUNT_PAYTERM) {
+      this.standardPaymentTermsOverrideValid = $event.value;
     }
     if ($event.form === this.INVOICE_ALLOCATION_FORM) {
       this.netAllocationAmountValid = $event.value;
@@ -422,6 +428,10 @@ export class InvoiceEditPageComponent implements OnInit {
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress;
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress;
     const originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
+    const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value;
+    const paymentTermsOverridenValue = paymentTerms?.isPaymentOverrideSelected && paymentTerms?.isPaymentOverrideSelected.length > 0 
+        && paymentTerms?.isPaymentOverrideSelected[0] === 'override' && paymentTerms?.paymentTerms ? paymentTerms?.paymentTerms : undefined;
+
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       totalGrossWeight: this.tripInformationFormGroup.controls.totalGrossWeight.value,
@@ -454,7 +464,8 @@ export class InvoiceEditPageComponent implements OnInit {
       destinationAddress: LocationUtils.extractLocation(destinationAddressFormGroup, 'destination', this.invoice?.destination?.code),
       billToAddress: BillToLocationUtils.extractBillToLocation(billToAddressFormGroup),
       shippingPoint: originLocation.code,
-      businessUnit: this.invoice.businessUnit
+      businessUnit: this.invoice.businessUnit,
+      standardPaymentTermsOverride: paymentTermsOverridenValue
     };
   }
 

@@ -293,9 +293,16 @@ describe('InvoiceEditPageComponent', () => {
       });
 
       it('handleFormIfInvalid with invoice-amount shoud update costBreakdownValid to false', fakeAsync(() => {
-        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_FORM, value: false});
+        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_CL, value: false});
         tick();
         expect(component.costBreakdownValid).toEqual(false);
+        flush();
+      }));
+
+      it('handleFormIfInvalid with invoice-amount shoud update standardPaymentTermsOverrideValid to false', fakeAsync(() => {
+        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_PAYTERM, value: false});
+        tick();
+        expect(component.standardPaymentTermsOverrideValid).toEqual(false);
         flush();
       }));
 
@@ -951,7 +958,11 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   describe('mapTripInformationToEditAutoInvoiceModel method', () => {
-
+    const isPaymentOverrideSelected = new FormArray([]);
+    const overridePaymentTermsFormGroup = new FormGroup({
+      isPaymentOverrideSelected: isPaymentOverrideSelected,
+      paymentTerms: new FormControl('ABC')
+    });
     const setUpControls = () => {
       component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
         mode: 'TL',
@@ -971,6 +982,7 @@ describe('InvoiceEditPageComponent', () => {
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
       component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
       component.invoice.weightAdjustments = undefined as any;
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
     };
 
     it('should return EditAutoInvoiceModel object', () => {
@@ -1007,6 +1019,7 @@ describe('InvoiceEditPageComponent', () => {
         billToAddress: BillToLocationUtils.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as FormGroup),
         shippingPoint: (component.tripInformationFormGroup.controls.originAddress as FormGroup)?.controls?.shippingPoint?.value,
         businessUnit: component.invoice.businessUnit,
+        standardPaymentTermsOverride: undefined,
         hasRateEngineError: component.invoice.hasRateEngineError,
       });
     });

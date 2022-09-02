@@ -28,5 +28,6 @@ export interface EditAutoInvoiceModel {
   billToAddress?: BillToLocation;
   shippingPoint?: string;
   businessUnit?: string;
+  standardPaymentTermsOverride?: string;
   hasRateEngineError?: boolean;
 }

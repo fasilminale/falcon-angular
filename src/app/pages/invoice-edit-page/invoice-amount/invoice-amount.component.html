@@ -79,9 +79,14 @@
                    [items]="paymentTermOptions"
                    bindLabel="display"
                    bindValue="value"
+                   (change)="paymentTermSelected($event)"
                    [readonly]="readOnlyForm || isPaymentOverrideSelected.length === 0"
                    placeholder="Select One...">
         </ng-select>
+        <small class="error-text"
+                   *ngIf="isPaymentOverrideSelected.length > 0 && !paymentTermValid">
+                   Select the overriding payment terms
+        </small>
       </div>
 
     </div>
