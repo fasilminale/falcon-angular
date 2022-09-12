@@ -3,6 +3,7 @@ import {FiltersModel} from '../../models/filters/filters-model';
 import {FormArray, FormGroup} from '@angular/forms';
 import {StatusModel} from 'src/app/models/invoice/status-model';
 import {FilterService} from '../../services/filter-service';
+import { KeyedLabel } from 'src/app/models/generic/keyed-label';
 
 export interface FilterChip {
   type: string;
@@ -25,7 +26,7 @@ export class ChipComponent implements OnChanges {
   selectable = true;
   removable = true;
 
-  constructor(private filterService: FilterService) {
+  constructor(public filterService: FilterService) {
   }
 
   ngOnChanges(): void {
@@ -61,8 +62,9 @@ export class ChipComponent implements OnChanges {
 
     if (scac?.value?.length > 0) {
       this.chips.push(
-        this.formatChip('SCAC:&nbsp', scac as FormGroup, 'scac')
-      );
+        this.formatChip(
+          'Carrier:&nbsp', scac as FormGroup, 'scac')
+        );
     }
 
     if (shippingPointCode?.value?.length > 0) {
@@ -79,7 +81,7 @@ export class ChipComponent implements OnChanges {
     }
   }
 
-  formatArrayChip(type: string, formArray: FormArray, arrayOptions: Array<StatusModel>, group: string): FilterChip {
+  formatArrayChip(type: string, formArray: FormArray, arrayOptions: Array<KeyedLabel>, group: string): FilterChip {
     if (formArray.value.length === 1) {
       return {
         type,
@@ -109,8 +111,6 @@ export class ChipComponent implements OnChanges {
 
   getTooltips(formArray: FormArray, options: Array<StatusModel>): string {
     const tooltips: string[] = [];
-    console.log(formArray);
-    console.log(options);
     for (const value of formArray.value) {
       tooltips.push(this.getLabel(value, options));
     }

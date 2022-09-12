@@ -62,6 +62,11 @@ describe('InvoiceExtractionPageComponent', () => {
     direction: 'desc'
   } as Sort;
 
+  const scacs: Array<any> = [
+    {scac: "C007", name: "RENAL FLEET"},
+    {scac: "PYLE", name: "A DUIE"}
+  ];
+
   const invoiceData = {
     total: 1,
     data: [{
@@ -115,6 +120,7 @@ describe('InvoiceExtractionPageComponent', () => {
     fixture.detectChanges();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`).flush(invoiceData);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush([]);
+    http.expectOne(`${environment.baseServiceUrl}/v1/carriers`).flush(scacs);
   });
 
   afterEach(() => {

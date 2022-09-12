@@ -293,6 +293,13 @@ export class InvoiceUtils {
     };
   }
 
+  static toScacFilterOption(carrier: any): KeyedLabel {
+    return {
+      label: `${carrier.name} (${carrier.scac})`,
+      key: carrier.scac
+    };
+  }
+
   static toShippingPointCode(carrierShippingPoints: any): SelectOption<string> {
     return {
       label: `${carrierShippingPoints.shippingPointCode}`,
