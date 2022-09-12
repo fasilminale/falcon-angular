@@ -370,9 +370,11 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickSaveButton(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
+
       this.subscriptions.manage(
         this.updateInvoice().subscribe(
           (value) => {
+            debugger;
             if (!value.glLineItemsInvalid) {
               this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated.`);
               this.resetInvoiceForm();
@@ -393,8 +395,31 @@ export class InvoiceEditPageComponent implements OnInit {
     }
   }
 
+  /*uploadAttachment(): void {
+    const attachedSuccess = await this.attachmentService.saveAttachments(
+      savedInvoice.falconInvoiceNumber,
+      this.uploadFormComponent?.attachments ?? []
+    ).toPromise();
+    if (attachedSuccess) {
+      // ATTACH SUCCESS
+      this.onAttachSuccess(savedInvoice.falconInvoiceNumber);
+    } else {
+      // ATTACH FAILURE
+      shouldReset = false;
+      await this.onAttachFailure();
+    }
+  }*/
+
   updateInvoice(): Observable<InvoiceDataModel> {
-    return this.invoiceService.updateAutoInvoice(this.mapTripInformationToEditAutoInvoiceModel(), this.falconInvoiceNumber);
+    const editInvoiceModel = this.mapTripInformationToEditAutoInvoiceModel();
+
+    editInvoiceModel.costLineItems?.forEach((lineItem) => {
+        const ben = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
+        debugger;
+      }
+    );
+
+    return this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber);
   }
 
   clickSubmitForApprovalButton(): void {
@@ -429,9 +454,8 @@ export class InvoiceEditPageComponent implements OnInit {
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress;
     const originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
     const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value;
-    const paymentTermsOverridenValue = paymentTerms?.isPaymentOverrideSelected && paymentTerms?.isPaymentOverrideSelected.length > 0 
+    const paymentTermsOverridenValue = paymentTerms?.isPaymentOverrideSelected && paymentTerms?.isPaymentOverrideSelected.length > 0
         && paymentTerms?.isPaymentOverrideSelected[0] === 'override' && paymentTerms?.paymentTerms ? paymentTerms?.paymentTerms : undefined;
-
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       totalGrossWeight: this.tripInformationFormGroup.controls.totalGrossWeight.value,
@@ -525,8 +549,10 @@ export class InvoiceEditPageComponent implements OnInit {
     if (!lineItems?.controls) {
       return [];
     }
+    debugger;
     for (const control of lineItems.controls) {
       const item = control as FormGroup;
+
       results.push({
         accessorialCode: CommonUtils.handleNAValues(item.controls?.accessorialCode?.value),
         chargeCode: CommonUtils.handleNAValues(item.controls?.charge?.value),

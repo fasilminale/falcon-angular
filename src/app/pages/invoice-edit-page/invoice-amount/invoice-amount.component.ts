@@ -22,6 +22,7 @@ export class InvoiceAmountComponent implements OnInit {
   static readonly INVOICE_AMOUNT_CL = 'invoice-amount-cl';
   static readonly INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
 
+  private fileFormGroup = new FormGroup({});
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private utilService: UtilService,
               private toastService: ToastService) {
@@ -58,7 +59,6 @@ export class InvoiceAmountComponent implements OnInit {
     );
   }
 
-
   @Input() set formGroup(givenFormGroup: FormGroup) {
     this.amountOfInvoiceControl.valueChanges.subscribe(() => this.requestGlAllocation.emit(true));
     givenFormGroup.setControl('amountOfInvoice', this.amountOfInvoiceControl);
@@ -66,6 +66,7 @@ export class InvoiceAmountComponent implements OnInit {
     givenFormGroup.setControl('overridePaymentTerms', this.overridePaymentTermsFormGroup);
     givenFormGroup.setControl('paymentTerms', new FormControl(''));
     givenFormGroup.setControl('mileage', new FormControl());
+    givenFormGroup.setControl('fileFormGroup', this.fileFormGroup);
     this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls);
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems);
     this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls);
@@ -192,7 +193,7 @@ export class InvoiceAmountComponent implements OnInit {
   disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
   paymentTermValid: boolean = true;
-  
+
   @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
 
   @Output() rateEngineCall = new EventEmitter<string>();
@@ -364,6 +365,7 @@ export class InvoiceAmountComponent implements OnInit {
       newLineItemGroup.get('entrySourcePair')?.setValue({key: 'FREIGHT_PAY', label: 'FAL'});
       newLineItemGroup.get('requestStatusPair')?.setValue({key: 'ACCEPTED', label: 'Accepted'});
       newLineItemGroup.get('createdBy')?.setValue(this.userInfo?.email);
+
       if ('OTHER' === modalResponse.selected.name) {
         const variables = modalResponse.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
@@ -373,15 +375,16 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
         newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
-        this.rateEngineCall.emit(this.pendingAccessorialCode);
       } else {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
         newLineItemGroup.get('lineItemType')?.setValue('ACCESSORIAL');
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
-        this.rateEngineCall.emit(this.pendingAccessorialCode);
       }
+      this.fileFormGroup.addControl(modalResponse.selected.name, new FormControl(modalResponse.file));
+      this.rateEngineCall.emit(this.pendingAccessorialCode);
+      debugger;
     }
   }
 
@@ -414,6 +417,7 @@ export class InvoiceAmountComponent implements OnInit {
     const autoApproved = new FormControl(true);
     const responseComment = new FormControl(null);
     const variables = new FormControl([]);
+    const file = new FormControl(null);
     const group = new FormGroup({
       charge, rateSource, rateSourcePair,
       entrySource, entrySourcePair,
@@ -422,7 +426,7 @@ export class InvoiceAmountComponent implements OnInit {
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
       accessorialCode, autoApproved,
-      variables, responseComment
+      variables, responseComment, file
     });
     group.get('rateSourcePair')?.valueChanges?.subscribe(
       value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
