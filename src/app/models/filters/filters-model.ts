@@ -104,7 +104,7 @@ export class FiltersModel {
     const carrierMode = this.form.get('mode')?.value;
     return {
       invoiceStatuses, originCity, destinationCity,
-      carrierSCAC: carrierSCAC ? [carrierSCAC] : [],
+      carrierSCAC: carrierSCAC ? carrierSCAC : [],
       shippingPoints: shippingPoints ? [shippingPoints] : [],
       mode: carrierMode ? carrierMode : [],
     };

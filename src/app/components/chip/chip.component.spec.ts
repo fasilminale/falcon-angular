@@ -7,15 +7,24 @@ import {HttpClientTestingModule, HttpTestingController} from '@angular/common/ht
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {environment} from '../../../environments/environment';
+import { KeyedLabel } from 'src/app/models/generic/keyed-label';
+import { CarrierSCAC } from 'src/app/models/master-data-models/carrier-scac';
+import { FilterService } from 'src/app/services/filter-service';
 
 describe('ChipComponent', () => {
   let component: ChipComponent;
   let fixture: ComponentFixture<ChipComponent>;
   let http: HttpTestingController;
+  let filterService: FilterService;
 
   const invoiceStatuses: Array<StatusModel> = [
     {label: 'Created', key: 'CREATED'},
     {label: 'Submitted', key: 'SUBMITTED'},
+  ];
+
+  const scacs: Array<any> = [
+    {scac: "C007", name: "RENAL FLEET"},
+    {scac: "PYLE", name: "A DUIE"}
   ];
 
   beforeEach(() => {
@@ -27,10 +36,12 @@ describe('ChipComponent', () => {
       .compileComponents();
     fixture = TestBed.createComponent(ChipComponent);
     http = TestBed.inject(HttpTestingController);
+    filterService = TestBed.inject(FilterService);
     component = fixture.componentInstance;
     component.filtersModel = new FiltersModel();
     fixture.detectChanges();
     http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush(invoiceStatuses);
+    http.expectOne(`${environment.baseServiceUrl}/v1/carriers`).flush(scacs);
   });
 
   afterEach(() => {

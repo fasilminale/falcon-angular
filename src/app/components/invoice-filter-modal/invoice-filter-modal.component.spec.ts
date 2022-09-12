@@ -19,6 +19,11 @@ describe('LoadsFilterModalComponent', () => {
     }
   };
 
+  const scacs: Array<any> = [
+    {scac: "C007", name: "RENAL FLEET"},
+    {scac: "PYLE", name: "A DUIE"}
+  ];
+
   const dialogDataMock = {
     originCities: ['New York'],
     destinationCities: ['Chicago'],
@@ -47,6 +52,7 @@ describe('LoadsFilterModalComponent', () => {
     fixture = TestBed.createComponent(InvoiceFilterModalComponent);
     component = fixture.componentInstance;
     http.expectOne(`${environment.baseServiceUrl}/v1/invoiceStatuses`).flush([]);
+    http.expectOne(`${environment.baseServiceUrl}/v1/carriers`).flush(scacs);
   });
 
   afterEach(() => {

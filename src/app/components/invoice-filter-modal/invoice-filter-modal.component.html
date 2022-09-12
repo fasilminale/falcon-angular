@@ -43,9 +43,10 @@
       <h6 class="px-0">Carrier</h6>
       <ng-select id="masterDataScacs"
         [items]="sortedMasterDataScacs"
+        [multiple]="true"
         bindLabel="label"
         bindValue="value"
-        placeholder="Select One..."
+        placeholder="Select multiple..."
         formControlName="scac"
         >
       </ng-select>
