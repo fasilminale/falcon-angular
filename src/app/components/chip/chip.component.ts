@@ -63,7 +63,7 @@ export class ChipComponent implements OnChanges {
     if (scac?.value?.length > 0) {
       this.chips.push(
         this.formatChip(
-          'SCAC:&nbsp', scac as FormGroup, 'scac')
+          'Carrier:&nbsp', scac as FormGroup, 'scac')
         );
     }
 
