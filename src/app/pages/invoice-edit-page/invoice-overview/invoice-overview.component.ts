@@ -1,8 +1,9 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 import {RemitHistoryItem} from "../../../models/invoice/remit-history-item";
+import {GlLineItem} from '../../../models/line-item/line-item-model';
 
 @Component({
   selector: 'app-invoice-overview',
@@ -25,6 +26,8 @@ export class InvoiceOverviewComponent implements OnInit {
   vendorIds: string[] = [];
   amountOfPayments: string[] = [];
   dateOfPayments: string[] = [];
+
+  @Output() viewHistoryLog = new EventEmitter<any>();
 
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { }
 
@@ -58,6 +61,8 @@ export class InvoiceOverviewComponent implements OnInit {
     }
   }
 
-
+  onViewHistoryLog(): void {
+    this.viewHistoryLog.emit();
+  }
 
 }

@@ -1,0 +1,33 @@
+<div mat-dialog-title class="d-flex align-items-center" xmlns="http://www.w3.org/1999/html">
+  <span class="headline2">Invoice History / Log</span>
+  <elm-close-button class="dialog-close-button" mat-dialog-close></elm-close-button>
+</div>
+<hr/>
+<div class="table-header" xmlns="http://www.w3.org/1999/html">
+  <div class="headline1">Invoice {{falconInvoiceNumber}}</div>
+  <div class="headline3">Status {{invoiceStatus}}</div>
+</div>
+<div>
+  <elm-data-table
+    tableType="clickable"
+    [data]="filteredHistoryLogs"
+    [headers]="headers"
+    (dataSelectedEvent)="toggleFullHistory($event)"
+    [showPagination]="false">
+  </elm-data-table>
+  <div mat-dialog-actions class="float-right">
+    <elm-button buttonStyle="secondary"
+                class="ms-auto"
+                mat-dialog-close
+                id="cancel"
+                aria-label="cancel">
+      Cancel
+    </elm-button>
+    <elm-button buttonStyle="dark-primary"
+                class="ms-3"
+                id="confirm"
+                aria-label="confirm">
+      Download
+    </elm-button>
+  </div>
+</div>
