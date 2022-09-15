@@ -429,7 +429,7 @@ export class InvoiceEditPageComponent implements OnInit {
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress;
     const originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
     const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value;
-    const paymentTermsOverridenValue = paymentTerms?.isPaymentOverrideSelected && paymentTerms?.isPaymentOverrideSelected.length > 0 
+    const paymentTermsOverridenValue = paymentTerms?.isPaymentOverrideSelected && paymentTerms?.isPaymentOverrideSelected.length > 0
         && paymentTerms?.isPaymentOverrideSelected[0] === 'override' && paymentTerms?.paymentTerms ? paymentTerms?.paymentTerms : undefined;
 
     return {
@@ -645,6 +645,10 @@ export class InvoiceEditPageComponent implements OnInit {
         this.loadInvoice(glAllocatedInvoice);
       }
     );
+  }
+
+  viewHistoryLog(): void {
+    this.util.openHistoryLog(this.invoice);
   }
 
   /**

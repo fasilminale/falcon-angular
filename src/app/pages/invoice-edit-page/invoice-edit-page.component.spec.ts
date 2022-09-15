@@ -1248,4 +1248,10 @@ describe('InvoiceEditPageComponent', () => {
     mockUpdateRequest$.next({});
   });
 
+  it('should open view history log', () => {
+    spyOn(utilService, 'openHistoryLog').and.callThrough();
+    component.viewHistoryLog();
+    expect(utilService.openHistoryLog).toHaveBeenCalled();
+  });
+
 });

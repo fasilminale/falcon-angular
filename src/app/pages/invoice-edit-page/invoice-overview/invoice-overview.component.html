@@ -62,11 +62,17 @@
             </div>
         </div>
         <div class="col-md-5 col-lg-5 col-xl-5">
-            <div class="d-flex align-items-center mb-3">
+            <div class="d-flex justify-content-between mb-3">
+              <div>
                 <span class="remittance-header">Remittance Information</span>
                 <app-info-icon-tooltip
                 [fontSize]="'20px'"
                 [tooltipMessage]="'Remittance information is not available until payment of invoice in ERP'"></app-info-icon-tooltip>
+              </div>
+              <div (click)="onViewHistoryLog()">
+                <span class="history-log-header col-auto">View History Log</span>
+                <mat-icon class="history-icon">history</mat-icon>
+              </div>
             </div>
             <div class="remittance-info-div">
 

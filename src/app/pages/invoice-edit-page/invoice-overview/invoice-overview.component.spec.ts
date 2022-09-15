@@ -29,6 +29,12 @@ describe('InvoiceOverviewComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should emit event for history log', () => {
+    spyOn(component.viewHistoryLog, 'emit');
+    component.onViewHistoryLog();
+    expect(component.viewHistoryLog.emit).toHaveBeenCalled();
+  });
+
   describe('when invoice overview detail is updated', () => {
     let loadInvoiceOverviewDetail$: Subject<InvoiceOverviewDetail>;
     let subscription: Subscription;

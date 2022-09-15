@@ -63,6 +63,7 @@
         <!-- Invoice Overview -->
         <app-invoice-overview
           [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
+          (viewHistoryLog)="viewHistoryLog()"
 
         >
         </app-invoice-overview>
