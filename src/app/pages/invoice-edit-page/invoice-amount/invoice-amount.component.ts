@@ -531,7 +531,8 @@ export class InvoiceAmountComponent implements OnInit {
         existingCostLineItem.markAsDirty();
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
-        this.fileFormGroup.addControl(editChargeDetails.selected.name, new FormControl(editChargeDetails.file));
+        // @ts-ignore
+        this.fileFormGroup.addControl(editChargeDetails.charge, new FormControl(editChargeDetails.file));
       }
     }
   }
