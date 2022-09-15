@@ -274,6 +274,7 @@ export type EditChargeModalInput = {
   cancelButtonText?: string,
   costLineItem?: AbstractControl,
   costBreakdownOptions?: Array<SelectOption<CalcDetail>>,
+  file?: File
 };
 
 /**

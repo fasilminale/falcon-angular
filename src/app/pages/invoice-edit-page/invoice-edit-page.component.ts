@@ -6,6 +6,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
+import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {Observable, Observer, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
@@ -72,6 +73,7 @@ export class InvoiceEditPageComponent implements OnInit {
               private invoiceService: InvoiceService,
               private toastService: ToastService,
               private rateService: RateService,
+              @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
               public router: Router) {
     this.tripInformationFormGroup = new FormGroup({});
@@ -374,7 +376,6 @@ export class InvoiceEditPageComponent implements OnInit {
       this.subscriptions.manage(
         this.updateInvoice().subscribe(
           (value) => {
-            debugger;
             if (!value.glLineItemsInvalid) {
               this.performPostUpdateActions(`Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated.`);
               this.resetInvoiceForm();
@@ -412,12 +413,17 @@ export class InvoiceEditPageComponent implements OnInit {
 
   updateInvoice(): Observable<InvoiceDataModel> {
     const editInvoiceModel = this.mapTripInformationToEditAutoInvoiceModel();
-
     editInvoiceModel.costLineItems?.forEach((lineItem) => {
-        const ben = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
-        debugger;
+      const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
+      if (file) {
+       // debugger;
+          const fileName = file?.name;
+          this.attachmentService.saveAccessorialAttachment(this.falconInvoiceNumber, file).subscribe((r) => {
+            console.log('result ' + r);
+            }
+          );
       }
-    );
+    });
 
     return this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber);
   }
@@ -549,7 +555,6 @@ export class InvoiceEditPageComponent implements OnInit {
     if (!lineItems?.controls) {
       return [];
     }
-    debugger;
     for (const control of lineItems.controls) {
       const item = control as FormGroup;
 
