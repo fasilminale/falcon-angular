@@ -8,13 +8,15 @@
   <div class="headline3">Status {{invoiceStatus}}</div>
 </div>
 <div>
-  <elm-data-table
-    tableType="clickable"
-    [data]="filteredHistoryLogs"
-    [headers]="headers"
-    (dataSelectedEvent)="toggleFullHistory($event)"
-    [showPagination]="false">
-  </elm-data-table>
+  <div class="border">
+    <elm-data-table
+      tableType="clickable"
+      [data]="filteredHistoryLogs"
+      [headers]="headers"
+      (dataSelectedEvent)="toggleFullHistory($event)"
+      [showPagination]="false">
+    </elm-data-table>
+  </div>
   <div mat-dialog-actions class="float-right">
     <elm-button buttonStyle="secondary"
                 class="ms-auto"
