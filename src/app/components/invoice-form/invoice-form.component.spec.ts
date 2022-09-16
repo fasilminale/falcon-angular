@@ -18,7 +18,7 @@ import {UploadFormComponent} from '../upload-form/upload-form.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MasterDataService} from 'src/app/services/master-data-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ToastService} from '@elm/elm-styleguide-ui';
+import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {ManualLineItem} from '../../models/line-item/line-item-model';
 
@@ -214,6 +214,7 @@ describe('InvoiceFormComponent', () => {
   let component: InvoiceFormComponent;
   let fixture: ComponentFixture<InvoiceFormComponent>;
   let util: UtilService;
+  let modal: ModalService;
   let toast: ToastService;
   let invoiceService: InvoiceService;
   let masterDataService: MasterDataService;
@@ -239,6 +240,7 @@ describe('InvoiceFormComponent', () => {
     router = TestBed.inject(Router);
     snackBar = TestBed.inject(MatSnackBar);
     util = TestBed.inject(UtilService);
+    modal = TestBed.inject(ModalService);
     toast = TestBed.inject(ToastService);
     spyOn(toast, 'openSuccessToast').and.stub();
     spyOn(toast, 'openErrorToast').and.stub();
@@ -310,7 +312,7 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should show failure snackbar on failed post', async () => {
-    spyOn(util, 'openErrorModal').and.returnValue(of());
+    spyOn(modal, 'openSystemErrorModal').and.returnValue(of());
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(
       of(new ErrorEvent('test error event'), {
@@ -320,7 +322,7 @@ describe('InvoiceFormComponent', () => {
     );
     await component.onSaveButtonClick();
     fixture.detectChanges();
-    expect(util.openErrorModal).toHaveBeenCalledTimes(1);
+    expect(modal.openSystemErrorModal).toHaveBeenCalledTimes(1);
   });
 
   it('should show success snackbar on put', async () => {
@@ -432,7 +434,7 @@ describe('InvoiceFormComponent', () => {
 
   it('should display an error modal for invalid invoice amounts', () => {
     spyOn(component, 'onInvoiceInvalidated').and.callThrough();
-    spyOn(util, 'openErrorModal').and.returnValue(of(false));
+    spyOn(modal, 'openSystemErrorModal').and.returnValue(of("false"));
     component.onInvoiceInvalidated();
     expect(component.onInvoiceInvalidated).toHaveBeenCalled();
   });
@@ -458,8 +460,8 @@ describe('InvoiceFormComponent', () => {
 
     falconInvoiceNumbers.forEach(value => {
       it('should not create or update an invoice with invalid invoice amounts FIN="' + value + '"', async () => {
-        spyOn(util, 'openErrorModal').and.returnValue(of(true));
-        spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
+        spyOn(modal, 'openSystemErrorModal').and.returnValue(of("true"));
+        spyOn(modal, 'openConfirmationModal').and.returnValue(of(true));
         spyOn(component, 'validateInvoiceAmount').and.returnValue(false);
         spyOn(component, 'gotoInvoiceList').and.stub();
         component.falconInvoiceNumber = value;
@@ -493,7 +495,7 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should not reset on failed attachments', async () => {
-    spyOn(util, 'openErrorModal').and.returnValue(of(true));
+    spyOn(modal, 'openSystemErrorModal').and.returnValue(of("true"));
     spyOn(component, 'validateInvoiceAmount').and.callThrough();
     spyOn(invoiceService, 'checkInvoiceIsDuplicate').and.returnValue(of(false));
     spyOn(invoiceService, 'saveInvoice').and.returnValue(of(invoiceResponse));

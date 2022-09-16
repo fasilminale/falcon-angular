@@ -74,20 +74,6 @@ describe('UtilService', () => {
     expect(actual).toEqual(1234);
   });
 
-  it('openConfirmationModal should confirm', async () => {
-    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
-    const result = await util.openConfirmationModal(testModalData).toPromise();
-    expect(dialog.open).toHaveBeenCalled();
-    expect(result).toBeTrue();
-  });
-
-  it('openConfirmationModal should cancel', async () => {
-    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
-    const result = await util.openConfirmationModal(testModalData).toPromise();
-    expect(dialog.open).toHaveBeenCalled();
-    expect(result).toBeFalse();
-  });
-
   it('openNewChargeModal should confirm', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     const result = await util.openNewChargeModal(testNewChargeData).toPromise();
@@ -140,13 +126,6 @@ describe('UtilService', () => {
   it('openEditGlLineItemModal should cancel', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
     const result = await util.openGlLineItemModal(testEditGlLineItemModalData as any).toPromise();
-    expect(dialog.open).toHaveBeenCalled();
-    expect(result).toBeFalse();
-  });
-
-  it('openErrorModal should close', async () => {
-    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
-    const result = await util.openErrorModal(testModalData).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeFalse();
   });

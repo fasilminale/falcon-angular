@@ -13,7 +13,7 @@ import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../
 import {SubjectValue} from '../../utils/subject-value';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-import {ConfirmationModalData, ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalData, ElmLinkInterface, ToastService, ModalService} from '@elm/elm-styleguide-ui';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse} from '../../models/rate-engine/rate-engine-request';
@@ -71,6 +71,7 @@ export class InvoiceEditPageComponent implements OnInit {
               private userService: UserService,
               private invoiceService: InvoiceService,
               private toastService: ToastService,
+              private modalService: ModalService,
               private rateService: RateService,
               @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
               public router: Router) {
@@ -193,13 +194,13 @@ export class InvoiceEditPageComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to delete this invoice?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Delete Invoice',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
     this.util.openCommentModal({
       ...modalData,
       commentSectionFieldName: 'Reason for Deletion',
-      requireField: true
+      requireField: true,
+      confirmButtonStyle: 'destructive',
     }).subscribe((result: CommentModel) => {
       if (result) {
         this.deleteInvoiceWithReason({deletedReason: result.comment}).subscribe(
@@ -280,14 +281,13 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   public askForCancelConfirmation(): Observable<boolean> {
-    return this.util.openConfirmationModal({
+    return this.modalService.openConfirmationModal({
       title: 'Cancel',
       innerHtmlMessage: `All changes to this invoice will be lost if you cancel now.
                    <br/><br/><strong>
                    Are you sure you want to cancel?
                    </strong>`,
       confirmButtonText: 'Yes, cancel',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'No, go back'
     });
   }
@@ -665,7 +665,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   private showNotYetImplementedModal(title: string): void {
-    this.subscriptions.manage(this.util.openErrorModal({
+    this.subscriptions.manage(this.modalService.openSystemErrorModal({
       title, innerHtmlMessage: 'Not Yet Implemented On This Page'
     }).subscribe());
   }

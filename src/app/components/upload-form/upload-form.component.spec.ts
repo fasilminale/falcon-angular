@@ -1,10 +1,10 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {UploadFormComponent} from './upload-form.component';
 import {of} from 'rxjs';
-import {UtilService} from '../../services/util-service';
 import {SimpleChanges} from '@angular/core';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import { ModalService } from '@elm/elm-styleguide-ui';
 
 describe('UploadFormComponent', () => {
   const TEST_FILE_1 = new File([], 'test file 1');
@@ -12,14 +12,14 @@ describe('UploadFormComponent', () => {
 
   let component: UploadFormComponent;
   let fixture: ComponentFixture<UploadFormComponent>;
-  let util: UtilService;
+  let modal: ModalService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
       declarations: [UploadFormComponent],
     }).compileComponents();
-    util = TestBed.inject(UtilService);
+    modal = TestBed.inject(ModalService);
     fixture = TestBed.createComponent(UploadFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -125,7 +125,7 @@ describe('UploadFormComponent', () => {
   it('should remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+    spyOn(modal, 'openConfirmationModal').and.returnValue(of(false));
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
     await component.removeAttachment(0);
@@ -135,7 +135,7 @@ describe('UploadFormComponent', () => {
   it('should not remove attachment', async () => {
     const testFile = new File([], 'test file');
     const testType = 'test type';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+    spyOn(modal, 'openConfirmationModal').and.returnValue(of(false));
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
     component.addAttachment();
@@ -155,7 +155,7 @@ describe('UploadFormComponent', () => {
   it('should fail external attachment validation', async () => {
     const testFile = new File([], 'test file');
     const testType = 'External Invoice';
-    spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
+    spyOn(modal, 'openConfirmationModal').and.returnValue(of(true));
     component.file.setValue(testFile);
     component.attachmentType.setValue(testType);
     component.addAttachment();
@@ -172,7 +172,7 @@ describe('UploadFormComponent', () => {
       url: 'url'
     };
     component.attachments.push(attachment);
-    spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
+    spyOn(modal, 'openConfirmationModal').and.returnValue(of(true));
     await component.removeAttachment(0);
     expect(component.attachments).toHaveSize(1);
   });
@@ -195,7 +195,7 @@ describe('UploadFormComponent', () => {
       url: 'url'
     };
     component.attachments.push(attachment);
-    spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
+    spyOn(modal, 'openConfirmationModal').and.returnValue(of(true));
     await component.removeAttachment(0);
     expect(component.pristine).toBeFalse();
   });
@@ -224,9 +224,9 @@ describe('UploadFormComponent', () => {
       action: 'NONE',
       url: 'url'
     });
-    spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+    spyOn(modal, 'openConfirmationModal').and.returnValue(of(false));
     component.uploadButtonClick();
-    expect(util.openConfirmationModal).not.toHaveBeenCalled();
+    expect(modal.openConfirmationModal).not.toHaveBeenCalled();
     expect(component.attachments).toEqual([{
       file: TEST_FILE_1,
       type: 'test type 1',
@@ -252,9 +252,9 @@ describe('UploadFormComponent', () => {
       action: 'NONE',
       url: 'url'
     });
-    spyOn(util, 'openConfirmationModal').and.returnValue(of(false));
+    spyOn(modal, 'openConfirmationModal').and.returnValue(of(false));
     await component.uploadButtonClick();
-    expect(util.openConfirmationModal).toHaveBeenCalled();
+    expect(modal.openConfirmationModal).toHaveBeenCalled();
     expect(component.attachments).toEqual([{
       file: TEST_FILE_1,
       type: 'test type 1',
@@ -274,9 +274,9 @@ describe('UploadFormComponent', () => {
       action: 'NONE',
       url: 'url'
     });
-    spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
+    spyOn(modal, 'openConfirmationModal').and.returnValue(of(true));
     await component.uploadButtonClick();
-    expect(util.openConfirmationModal).toHaveBeenCalled();
+    expect(modal.openConfirmationModal).toHaveBeenCalled();
     expect(component.attachments).toEqual([{
       file: TEST_FILE_1,
       type: 'test type 1',

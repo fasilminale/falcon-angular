@@ -15,6 +15,7 @@
                       buttonType="button"
                       buttonStyle="text"
                       class="flex-shrink-1"
+                      buttonColor="black"
                       (buttonClick)="routeToExtractPage()">
             <u>Extract Approved Invoices for Remittance</u>
           </elm-button>
@@ -24,17 +25,17 @@
         <elm-button id="download-invoice-button"
                     buttonType="button"
                     buttonStyle="text"
+                    prependIcon="download"
                     class="flex-shrink-1"
+                    buttonColor="black"
                     (buttonClick)="downloadCsv()">
-          <span class="material-icons  me-2">download</span>
           Download List
         </elm-button>
       </div>
       <div class="ms-auto ml-col-6">
         <elm-button buttonStyle="primary"
                     (buttonClick)="openFilter()"
-                    class="me-1">
-          <span class="material-icons  me-2">filter_list</span>
+                    prependIcon="filter_list">
           Filter
         </elm-button>
       </div>

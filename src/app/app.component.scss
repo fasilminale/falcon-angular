@@ -1,9 +1,10 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
+@use "@elm/elm-styleguide-ui/src/styles/styles";
 
 .app {
   min-height: 100vh;
   height: 100%;
-  background-color: $bkg-grey;
+  background-color: colors.$gray-bkg;
   display: flex;
   flex-direction: column;
 }
@@ -23,7 +24,7 @@
   transform: translate(-50%, -50%);
   z-index: 10000;
   border-radius: 6px;
-  background-color: $cardinal-white;
+  background-color: colors.$white;
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.16);
   padding: 15px;
 }

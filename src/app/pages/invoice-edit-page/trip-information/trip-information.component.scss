@@ -1,5 +1,5 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-fonts";
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-fonts";
 
 .cardLabel {
   @extend .headline3;
@@ -17,23 +17,23 @@
 }
 
 .error-text {
-  color: $cardinal-red;
+  color: colors.$red;
 }
 
 ::ng-deep .error {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 ::ng-deep .form-control.error {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 .app-fal-date-input.error ::ng-deep .form-control {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 .ng-select.error ::ng-deep .ng-select-container {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 .ng-select.ng-select-disabled ::ng-deep .ng-select-container, ::ng-deep .form-control:disabled, ::ng-deep .form-control[readonly] {
@@ -52,7 +52,7 @@
 
 .accordion-header {
   display: flex;
-  color: $elm-blue-dark;
+  color: colors.$gray-darker2;
 
   .accordian-link-text {
     text-transform: uppercase;

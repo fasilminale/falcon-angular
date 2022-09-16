@@ -68,7 +68,7 @@
                              formControlName="erpType"
                              [options]="form.erpTypeOptions"
                              [disabled]="readOnly"
-                             [errorSpacing]="false"
+                             [addSpacing]="false"
                              [ngClass]="{'form-control': true, 'radio-dev-disabled': readOnly}"
                              (focus)="form.forceValueChangeEvent(form.erpType)">
             </elm-radio-input>
@@ -231,7 +231,7 @@
                              formControlName="currency"
                              [options]="form.currencyOptions"
                              [disabled]="readOnly"
-                             [errorSpacing]="true"
+                             [addSpacing]="true"
                              [ngClass]="{'radio-dev-disabled': readOnly}"
                              (focus)="form.forceValueChangeEvent(form.currency)">
             </elm-radio-input>
@@ -250,7 +250,7 @@
                                 orientation="horizontal"
                                 formArrayName="isPaymentOverrideSelected"
                                 checkboxStyle="checkbox"
-                                [errorSpacing]="false"
+                                [addSpacing]="false"
                                 [options]="form.overridePaymentTermsOptions"
                                 [attr.disabled]="readOnly ? true : null"
                                 (focus)="form.forceValueChangeEvent(form.osptFormGroup)">

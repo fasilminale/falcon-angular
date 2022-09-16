@@ -7,7 +7,7 @@ import {of, Subject, throwError} from 'rxjs';
 import {InvoiceService} from '../../services/invoice-service';
 import {MockParamMap} from '../../testing/test-utils';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ToastService, UserInfo} from '@elm/elm-styleguide-ui';
+import {ModalService, ToastService, UserInfo} from '@elm/elm-styleguide-ui';
 import {UserService} from '../../services/user-service';
 import {asSpy} from '../../testing/test-utils.spec';
 import {CommentModel, UtilService} from '../../services/util-service';
@@ -113,6 +113,7 @@ describe('InvoiceEditPageComponent', () => {
   let invoiceService: InvoiceService;
   let userService: UserService;
   let utilService: UtilService;
+  let modalService: ModalService;
   let toastService: ToastService;
   let rateService: RateService;
 
@@ -144,8 +145,9 @@ describe('InvoiceEditPageComponent', () => {
 
     // Mock Util Service
     utilService = TestBed.inject(UtilService);
-    spyOn(utilService, 'openErrorModal').and.returnValue(of());
-    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
+    modalService = TestBed.inject(ModalService);
+    spyOn(modalService, 'openSystemErrorModal').and.returnValue(of());
+    spyOn(modalService, 'openConfirmationModal').and.returnValue(of(true));
     spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: 'deleteReason'}));
     spyOn(utilService, 'openWeightAdjustmentModal').and.returnValue(of({adjustedWeight: 1.0}));
     spyOn(utilService, 'openGlLineItemModal').and.returnValue(of());
@@ -655,11 +657,11 @@ describe('InvoiceEditPageComponent', () => {
       return (done: DoneFn) => {
         // Setup
         const errorModal$ = new Subject<boolean>();
-        asSpy(utilService.openErrorModal).and.returnValue(errorModal$.asObservable());
+        asSpy(modalService.openSystemErrorModal).and.returnValue(errorModal$.asObservable());
         fnToTest();
         // Assertions
         errorModal$.subscribe(() => {
-          expect(utilService.openErrorModal).toHaveBeenCalledWith({
+          expect(modalService.openSystemErrorModal).toHaveBeenCalledWith({
             title,
             innerHtmlMessage: 'Not Yet Implemented On This Page'
           });

@@ -449,10 +449,9 @@ export class InvoiceAmountComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to accept this charge?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Accept Charge',
-      confirmButtonStyle: 'primary',
       cancelButtonText: 'Cancel'
     };
-    const modalResult = this.displayPendingChargeModal(modalData);
+    const modalResult = this.displayPendingChargeModal(modalData, 'primary');
     this.handlePendingChargeResult(modalResult, costLineItem, 'Accepted');
   }
 
@@ -462,10 +461,9 @@ export class InvoiceAmountComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to deny this charge?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Deny Charge',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
-    const modalResult = this.displayPendingChargeModal(modalData);
+    const modalResult = this.displayPendingChargeModal(modalData, 'destructive');
     this.handlePendingChargeResult(modalResult, costLineItem, 'Denied');
   }
 
@@ -507,11 +505,12 @@ export class InvoiceAmountComponent implements OnInit {
     pendingLineItem.get('closedBy')?.setValue(this.userInfo?.email);
   }
 
-  displayPendingChargeModal(modalData: ConfirmationModalData): Observable<CommentModel | boolean> {
+  displayPendingChargeModal(modalData: ConfirmationModalData, confirmButtonStyle: string): Observable<CommentModel | boolean> {
     return this.utilService.openCommentModal({
       ...modalData,
       commentSectionFieldName: 'Response Comment',
-      requireField: modalData.title === 'Deny Charge'
+      requireField: modalData.title === 'Deny Charge',
+      confirmButtonStyle: confirmButtonStyle
     });
   }
 

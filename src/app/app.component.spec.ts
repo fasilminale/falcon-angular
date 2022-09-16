@@ -4,12 +4,11 @@ import {AppModule} from './app.module';
 import {Router} from '@angular/router';
 import {OktaAuthService} from '@okta/okta-angular';
 import {ErrorService} from './services/error-service';
-import {UtilService} from './services/util-service';
 import {of} from 'rxjs';
 import {FalconTestingModule} from './testing/falcon-testing.module';
 import {UserService} from './services/user-service';
 import {UserInfoModel} from './models/user-info/user-info-model';
-import {FeedbackCollectorService} from '@elm/elm-styleguide-ui';
+import {FeedbackCollectorService, ModalService} from '@elm/elm-styleguide-ui';
 import {BuildInfoService} from './services/build-info-service';
 
 describe('AppComponent', () => {
@@ -42,7 +41,7 @@ describe('AppComponent', () => {
   let component: AppComponent;
   let oktaService: OktaAuthService;
   let errorService: ErrorService;
-  let util: UtilService;
+  let modal: ModalService;
   let userService: UserService;
   let buildInfoService: BuildInfoService;
 
@@ -66,7 +65,7 @@ describe('AppComponent', () => {
     router = TestBed.inject(Router);
     oktaService = TestBed.inject(OktaAuthService);
     errorService = TestBed.inject(ErrorService);
-    util = TestBed.inject(UtilService);
+    modal = TestBed.inject(ModalService);
     userService = TestBed.inject(UserService);
     buildInfoService = TestBed.inject(BuildInfoService);
     spyOn(buildInfoService, 'openBuildInfoModal').and.returnValue(of(false));
@@ -174,7 +173,7 @@ describe('AppComponent', () => {
   describe('with initialization errors', () => {
     beforeEach(() => {
       // Common Spies
-      spyOn(util, 'openErrorModal').and.returnValue(of(true));
+      spyOn(modal, 'openSystemErrorModal').and.returnValue(of("true"));
       spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
       // Create Component
       const fixture = TestBed.createComponent(AppComponent);
@@ -188,7 +187,7 @@ describe('AppComponent', () => {
     });
 
     it('should show error modal', () => {
-      expect(util.openErrorModal).toHaveBeenCalledOnceWith({
+      expect(modal.openSystemErrorModal).toHaveBeenCalledOnceWith({
         title: 'Error',
         innerHtmlMessage: '<strong>Status:</strong> 401<br>test message'
       });
@@ -202,7 +201,7 @@ describe('AppComponent', () => {
   describe('with forbidden errors', () => {
     beforeEach(() => {
       // Common Spies
-      spyOn(util, 'openErrorModal').and.stub();
+      spyOn(modal, 'openSystemErrorModal').and.stub();
       spyOn(router, 'navigate').and.returnValue(of(true).toPromise());
       // Create Component
       const fixture = TestBed.createComponent(AppComponent);
@@ -216,7 +215,7 @@ describe('AppComponent', () => {
     });
 
     it('should not show error modal', () => {
-      expect(util.openErrorModal).not.toHaveBeenCalled();
+      expect(modal.openSystemErrorModal).not.toHaveBeenCalled();
     });
 
     it('should navigate to newUserForbidden', () => {

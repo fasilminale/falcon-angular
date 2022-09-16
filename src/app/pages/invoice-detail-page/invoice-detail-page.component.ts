@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ConfirmationModalComponent, ConfirmationModalData, ElmLinkInterface} from '@elm/elm-styleguide-ui';
+import { ConfirmationModalData, ElmLinkInterface, ModalService} from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
@@ -54,7 +54,8 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
                      private timeService: TimeService,
                      public router: Router,
                      public userService: UserService,
-                     public util: UtilService) {
+                     public util: UtilService,
+                     public modal: ModalService) {
   }
 
   public ngOnInit(): void {
@@ -99,7 +100,6 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
       innerHtmlMessage: `Are you sure you want to delete this invoice?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Delete Invoice',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
     const dialogResult: Observable<CommentModel | boolean> =
@@ -107,9 +107,10 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
         ? this.util.openCommentModal({
           ...modalData,
           commentSectionFieldName: 'Reason for Deletion',
-          requireField: true
+          requireField: true,
+          confirmButtonStyle: 'destructive'
         })
-        : this.util.openConfirmationModal(modalData);
+        : this.modal.openConfirmationModal(modalData);
     dialogResult.subscribe(result => {
         if (result) {
           const request = this.requireDeleteReason()

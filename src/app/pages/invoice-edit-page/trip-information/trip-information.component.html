@@ -22,7 +22,7 @@
       </label>
       <elm-text-input id="tripIdInput"
                       formControlName="tripId"
-                      [errorSpacing]="false">
+                      [addSpacing]="false">
       </elm-text-input>
     </div>
     <div class="col-4">
@@ -32,7 +32,7 @@
       </label>
       <elm-text-input id="vendorNumberInput"
                       formControlName="vendorNumber"
-                      [errorSpacing]="true"
+                      [addSpacing]="true"
                       [ngClass]="{'field-invalid': !vendorNumberControl.value}">>
       </elm-text-input>
       <elm-input-subtext *ngIf="!vendorNumberControl.value"
@@ -112,7 +112,7 @@
       </label>
       <elm-text-input id="proTrackingNumberInput"
                       formControlName="proTrackingNumber"
-                      [errorSpacing]="false">
+                      [addSpacing]="false">
       </elm-text-input>
     </div>
     <div class="col-4">
@@ -122,7 +122,7 @@
       </label>
       <elm-text-input id="bolNumberInput"
                       formControlName="bolNumber"
-                      [errorSpacing]="false">
+                      [addSpacing]="false">
       </elm-text-input>
     </div>
     <div class="col-4">

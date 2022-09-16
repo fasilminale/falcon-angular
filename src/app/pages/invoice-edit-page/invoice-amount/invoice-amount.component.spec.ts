@@ -62,7 +62,6 @@ describe('InvoiceAmountComponent', () => {
     title: 'title',
     innerHtmlMessage: '',
     confirmButtonText: 'Confirm',
-    confirmButtonStyle: 'primary',
     cancelButtonText: 'Cancel'
   };
 
@@ -609,7 +608,7 @@ describe('InvoiceAmountComponent', () => {
 
     it('should call openCommentModal and return result', async () => {
       spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: ''}));
-      component.displayPendingChargeModal(TEST_MODAL_DATA);
+      component.displayPendingChargeModal(TEST_MODAL_DATA, 'primary');
       expect(utilService.openCommentModal).toHaveBeenCalled();
     });
 

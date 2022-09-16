@@ -1,13 +1,13 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-fonts";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-fonts";
 
 .chips-container {
-  background-color: $bkg-grey;
+  background-color: colors.$gray-bkg;
 }
 
 .mat-chip-trailing-icon {
   margin-top: 1px;
-  color: $elm-blue !important;
+  color: colors.$gray-darker !important;
   font-size: 16px;
 }
 

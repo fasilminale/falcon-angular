@@ -1,12 +1,12 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .fal-container-body {
   display: flex;
   border-style: solid;
   border-width: thin;
-  background-color: $elm-blue-super-light;
-  color: $elm-blue;
-  border-color: $elm-blue;
+  background-color: colors.$gray-lighter;
+  color: colors.$gray-darker;
+  border-color: colors.$gray-darker;
   border-radius: 0.25rem;
 
   .material-icons {
@@ -15,7 +15,7 @@
   }
 
   .fal-container-content {
-    color: $cardinal-black;
+    color: colors.$black;
     margin: 1rem;
     width: auto;
   }
@@ -23,7 +23,7 @@
 
 .fal-container-rejected {
   @extend .fal-container-body;
-  background-color: $error-red-bkg;
-  color: $error-red;
-  border-color: $error-red;
+  background-color: colors.$error-red-bkg;
+  color: colors.$error-red;
+  border-color: colors.$error-red;
 }

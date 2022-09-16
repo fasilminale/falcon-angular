@@ -1,8 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {UtilService} from '../../services/util-service';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
-import {ToastService} from '@elm/elm-styleguide-ui';
+import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'app-upload-form',
@@ -30,8 +29,8 @@ export class UploadFormComponent implements OnInit, OnChanges {
   public externalAttachment = false;
   public attachments: Array<StagedAttachment> = [];
 
-  constructor(private util: UtilService,
-              private toast: ToastService) {
+  constructor(private toast: ToastService,
+              private modal: ModalService) {
     this.attachmentType = new FormControl(null, [Validators.required]);
     this.file = new FormControl(null, [Validators.required]);
     this.formGroup = new FormGroup({
@@ -113,7 +112,7 @@ export class UploadFormComponent implements OnInit, OnChanges {
   }
 
   private async confirmReplaceAttachment(): Promise<boolean> {
-    return this.util.openConfirmationModal({
+    return this.modal.openConfirmationModal({
       title: `File Name Already Exists`,
       innerHtmlMessage: `You may replace exising file OR rename the file on local drive and upload again.`,
       confirmButtonText: 'Replace',
@@ -167,12 +166,11 @@ export class UploadFormComponent implements OnInit, OnChanges {
   }
 
   private async confirmRemoveAttachment(): Promise<boolean> {
-    return this.util.openConfirmationModal({
+    return this.modal.openConfirmationModal({
       title: 'Remove Attachment',
       innerHtmlMessage: `Are you sure you want to remove this attachment?
             <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Remove Attachment',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     }).toPromise();
   }
