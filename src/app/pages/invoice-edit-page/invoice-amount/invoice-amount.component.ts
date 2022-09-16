@@ -382,7 +382,9 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
       }
+      this.fileFormGroup.removeControl(modalResponse.selected.name);
       this.fileFormGroup.addControl(modalResponse.selected.name, new FormControl(modalResponse.file));
+      debugger;
       this.rateEngineCall.emit(this.pendingAccessorialCode);
     }
   }
@@ -532,7 +534,10 @@ export class InvoiceAmountComponent implements OnInit {
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
         // @ts-ignore
+        this.fileFormGroup.removeControl(editChargeDetails.charge);
+        // @ts-ignore
         this.fileFormGroup.addControl(editChargeDetails.charge, new FormControl(editChargeDetails.file));
+        debugger;
       }
     }
   }

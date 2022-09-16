@@ -416,7 +416,6 @@ export class InvoiceEditPageComponent implements OnInit {
     editInvoiceModel.costLineItems?.forEach((lineItem) => {
       const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
       if (file) {
-       // debugger;
           const fileName = file?.name;
           this.attachmentService.saveAccessorialAttachment(this.falconInvoiceNumber, file).subscribe((r) => {
             console.log('result ' + r);

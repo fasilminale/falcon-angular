@@ -39,8 +39,8 @@ export class RealAttachmentService implements AttachmentService {
 
 
   public saveAccessorialAttachment(invoiceNumber: string,  file: File): Observable<string>{
-    debugger;
     const formData = new FormData();
+    debugger;
     formData.append('file', file, file.name);
 
     return this.web.httpPost(
