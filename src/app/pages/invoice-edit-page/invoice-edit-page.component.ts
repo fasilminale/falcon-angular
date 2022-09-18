@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
@@ -24,7 +24,6 @@ import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
-import {EditGlLineItemModal} from '../../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 
 
 @Component({
@@ -33,6 +32,25 @@ import {EditGlLineItemModal} from '../../components/fal-edit-gl-modal/fal-edit-g
   styleUrls: ['./invoice-edit-page.component.scss']
 })
 export class InvoiceEditPageComponent implements OnInit {
+
+  constructor(private util: UtilService,
+              private route: ActivatedRoute,
+              private userService: UserService,
+              private invoiceService: InvoiceService,
+              private toastService: ToastService,
+              private rateService: RateService,
+              @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
+              @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
+              public router: Router) {
+    this.tripInformationFormGroup = new FormGroup({});
+    this.invoiceAmountFormGroup = new FormGroup({});
+    this.invoiceAllocationFormGroup = new FormGroup({});
+    this.invoiceFormGroup = new FormGroup({
+      tripInformation: this.tripInformationFormGroup,
+      invoiceAmount: this.invoiceAmountFormGroup,
+      invoiceAllocation: this.invoiceAllocationFormGroup
+    });
+  }
 
   breadcrumbs: Array<ElmLinkInterface> = [{label: 'All Invoices', path: `/invoices`}];
   public falconInvoiceNumber = '';
@@ -59,32 +77,19 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
   public chargeLineItemOptions$ = new Subject<RateDetailResponse>();
 
-  public standardPaymentTermsOverrideValid: boolean = true;
+  public standardPaymentTermsOverrideValid = true;
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
-  public showEditInfoBanner: boolean = false;
+  public showEditInfoBanner = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
 
-  constructor(private util: UtilService,
-              private route: ActivatedRoute,
-              private userService: UserService,
-              private invoiceService: InvoiceService,
-              private toastService: ToastService,
-              private rateService: RateService,
-              @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
-              @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
-              public router: Router) {
-    this.tripInformationFormGroup = new FormGroup({});
-    this.invoiceAmountFormGroup = new FormGroup({});
-    this.invoiceAllocationFormGroup = new FormGroup({});
-    this.invoiceFormGroup = new FormGroup({
-      tripInformation: this.tripInformationFormGroup,
-      invoiceAmount: this.invoiceAmountFormGroup,
-      invoiceAllocation: this.invoiceAllocationFormGroup
-    });
-  }
+  INVOICE_AMOUNT_CL = 'invoice-amount-cl';
+  INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
+  INVOICE_ALLOCATION_FORM = 'invoice-allocation';
+  public costBreakdownValid = true;
+  public netAllocationAmountValid = true;
 
   ngOnInit(): void {
     this.subscriptions.manage(
@@ -263,12 +268,6 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
-  INVOICE_AMOUNT_CL: string = 'invoice-amount-cl';
-  INVOICE_AMOUNT_PAYTERM: string = 'invoice-amount-pt';
-  INVOICE_ALLOCATION_FORM: string = 'invoice-allocation';
-  public costBreakdownValid: boolean = true;
-  public netAllocationAmountValid: boolean = true;
-
   handleFormIfInvalid($event: any) {
     if ($event.form === this.INVOICE_AMOUNT_CL) {
       this.costBreakdownValid = $event.value;
@@ -413,19 +412,26 @@ export class InvoiceEditPageComponent implements OnInit {
 
   updateInvoice(): Observable<InvoiceDataModel> {
     const editInvoiceModel = this.mapTripInformationToEditAutoInvoiceModel();
-    editInvoiceModel.costLineItems?.forEach((lineItem) => {
+    editInvoiceModel.costLineItems?.forEach(async (lineItem) => {
       const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
       if (file) {
-          const fileName = file?.name;
-          this.attachmentService.saveAccessorialAttachment(this.falconInvoiceNumber, file).subscribe((r) => {
-            console.log('result ' + r);
-            }
-          );
+          const returnedFileName = await this.attachmentService.saveAccessorialAttachment(this.falconInvoiceNumber, file);
+          const attachment =    {
+            fileName: returnedFileName,
+            url: 'returnedFileName',
+            type: 'Documentation',
+            deleted: false,
+            uploaded: true
+          };
+
+          lineItem.attachment = attachment;
+
       }
     });
 
     return this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber);
   }
+
 
   clickSubmitForApprovalButton(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
@@ -639,7 +645,7 @@ export class InvoiceEditPageComponent implements OnInit {
           this.loadInvoice(invoice);
       }, (error) => {
         const errorMessage = error.error.error.message;
-          this.toastService.openErrorToast(errorMessage);
+        this.toastService.openErrorToast(errorMessage);
       });
     }
   }
