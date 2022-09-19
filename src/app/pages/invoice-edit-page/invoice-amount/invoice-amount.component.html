@@ -406,16 +406,15 @@
                      (click)="onEditCostLineItem(_, pendingChargeLineItemControls)">edit
                 </div>
                 <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
-                <div *ngIf= "_.value.totalAmount !== 0">
-                  <elm-button buttonType="button"
-                              buttonStyle="text"
-                              [padding]="'10px'"
-                              id="pending-accept-button"
-                              [isDisabled]="readOnlyForm || _.dirty"
-                              (buttonClick)="acceptCharge(_.value)">
-                    <span>Accept</span>
-                  </elm-button>
-               </div>
+                <elm-button buttonType="button"
+                            buttonStyle="text"
+                            *ngIf= "_.value.totalAmount !== 0"
+                            [padding]="'10px'"
+                            id="pending-accept-button"
+                            [isDisabled]="readOnlyForm || _.dirty"
+                            (buttonClick)="acceptCharge(_.value)">
+                  <span>Accept</span>
+                </elm-button>
                 <elm-button buttonType="button"
                             buttonStyle="text"
                             [padding]="'10px'"
