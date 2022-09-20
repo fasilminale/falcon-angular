@@ -33,6 +33,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     {header: 'statusLabel', label: 'Status'},
     {header: 'falconInvoiceNumber', label: 'Falcon Invoice Number'},
     {header: 'invoiceReference', label: 'Invoice Reference'},
+    {header: 'billOfLadingNumber', label: 'BOL Number'},
     {header: 'carrierDisplay', label: 'Carrier'},
     {header: 'carrierModeDisplay', label: 'Carrier Mode'},
     {header: 'businessUnit', label: 'Business Unit'},
