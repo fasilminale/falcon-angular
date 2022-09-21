@@ -10,7 +10,7 @@ import {PaginationModel} from '../../models/PaginationModel';
 })
 export class SearchComponent implements OnInit {
   paginationModel: PaginationModel = new PaginationModel();
-  @Input() label = 'Enter all or partial Falcon Invoice or Invoice Reference or BOL Number';
+  @Input() label = 'Enter all or partial Falcon Invoice or Invoice Reference or BOL #';
   @Input() invalidIdMessage = 'No invoices found';
   @Input() requiredMessage = 'Falcon Invoice Number is required';
   @Input() patternMessage = 'Falcon Invoice Number is invalid';
