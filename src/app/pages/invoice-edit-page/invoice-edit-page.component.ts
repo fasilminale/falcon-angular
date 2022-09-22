@@ -7,7 +7,7 @@ import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscrip
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
-import {Observable, Observer, Subject} from 'rxjs';
+import {EMPTY, forkJoin, Observable, Observer, OperatorFunction, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
@@ -20,7 +20,7 @@ import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
-import {first, switchMap} from 'rxjs/operators';
+import {defaultIfEmpty, first, map, mergeMap, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
@@ -412,24 +412,37 @@ export class InvoiceEditPageComponent implements OnInit {
 
   updateInvoice(): Observable<InvoiceDataModel> {
     const editInvoiceModel = this.mapTripInformationToEditAutoInvoiceModel();
-    editInvoiceModel.costLineItems?.forEach(async (lineItem) => {
+
+    debugger;
+
+    const fileNameObservables = editInvoiceModel.costLineItems?.map((lineItem) => {
       const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
       if (file) {
-          const returnedFileName = await this.attachmentService.saveAccessorialAttachment(this.falconInvoiceNumber, file);
-          const attachment =    {
-            fileName: returnedFileName,
-            url: 'returnedFileName',
-            type: 'Documentation',
-            deleted: false,
-            uploaded: true
-          };
+        return this.attachmentService.saveAccessorialAttachment(this.falconInvoiceNumber, file).pipe(
+          map((returnedFileName: string) => {
+            const attachment =    {
+              fileName: returnedFileName,
+              url: 'returnedFileName',
+              type: 'Documentation',
+              deleted: false,
+              uploaded: true
+            };
 
-          lineItem.attachment = attachment;
+            lineItem.attachment = attachment;
 
+            return returnedFileName;
+          })
+        );
       }
+      return EMPTY;
     });
 
-    return this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber);
+    debugger;
+
+    return forkJoin(fileNameObservables).pipe(defaultIfEmpty([]) as any).pipe(
+      mergeMap(() => this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber))
+    );
+
   }
 
 
