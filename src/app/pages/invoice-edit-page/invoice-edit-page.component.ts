@@ -287,8 +287,8 @@ export class InvoiceEditPageComponent implements OnInit {
                    <br/><br/><strong>
                    Are you sure you want to cancel?
                    </strong>`,
-      confirmButtonText: 'Yes, cancel',
-      cancelButtonText: 'No, go back'
+      confirmButtonText: 'Yes cancel',
+      cancelButtonText: 'No go back'
     });
   }
 
