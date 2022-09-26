@@ -18,6 +18,7 @@ import { ServiceLevel } from '../master-data-models/service-level-model';
 import { SelectOption } from '../select-option-model/select-option-model';
 import {RemitHistoryItem} from "./remit-history-item";
 import {WeightAdjustment} from './trip-information-model';
+import {HistoryLog} from './history-log';
 
 export class InvoiceDataModel {
 
@@ -93,6 +94,7 @@ export class InvoiceDataModel {
   originalTotalGrossWeight: number;
   weightAdjustments: Array<WeightAdjustment>;
   refreshMasterDataStatus: string;
+  historyLogs: Array<HistoryLog>;
 
   /* --- AUTOMATED INVOICE: COST BREAKDOWN FIELDS --- */
   deliveryInstructions: Array<string>;
@@ -199,6 +201,7 @@ export class InvoiceDataModel {
     this.originalTotalGrossWeight = json?.totalGrossWeight ?? 0;
     this.weightAdjustments = json?.weightAdjustmentst ?? [];
     this.refreshMasterDataStatus = json?.refreshMasterDataStatus  ?? 'NOT_REFRESHED';
+    this.historyLogs = json?.historyLogs ?? [];
 
     // AUTOMATED INVOICE: COST BREAKDOWN
     this.deliveryInstructions = json?.deliveryInstructions ?? [];
@@ -290,6 +293,13 @@ export class InvoiceUtils {
     return {
       label: `${carrier.name} (${carrier.scac})`,
       value: carrier.scac
+    };
+  }
+
+  static toScacFilterOption(carrier: any): KeyedLabel {
+    return {
+      label: `${carrier.name} (${carrier.scac})`,
+      key: carrier.scac
     };
   }
 

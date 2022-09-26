@@ -38,7 +38,7 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.removeControl('invoiceStatuses');
     testingFiltersModel.form.removeControl('originCity');
     testingFiltersModel.form.removeControl('destinationCity');
-    testingFiltersModel.form.get('scac')?.setValue('ODFL');
+    testingFiltersModel.form.get('scac')?.setValue(['ODFL']);
     testingFiltersModel.form.get('shippingPoints')?.setValue('D46');
     testingFiltersModel.form.get('mode')?.setValue('LTL');
     const result = testingFiltersModel.formatForSearch();

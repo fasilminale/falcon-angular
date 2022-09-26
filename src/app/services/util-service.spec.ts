@@ -4,6 +4,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {of} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 import {FormControl} from '@angular/forms';
+import {InvoiceDataModel} from '../models/invoice/invoice-model';
 
 describe('UtilService', () => {
 
@@ -135,6 +136,12 @@ describe('UtilService', () => {
     const result = await util.openGlLineItemModal(testEditGlLineItemModalData as any).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeTrue();
+  });
+
+  it('openHistoryLog should confirm', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    util.openHistoryLog(InvoiceDataModel as any);
+    expect(dialog.open).toHaveBeenCalled();
   });
 
   it('openEditGlLineItemModal should cancel', async () => {

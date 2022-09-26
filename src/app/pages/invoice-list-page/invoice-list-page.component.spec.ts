@@ -87,6 +87,14 @@ describe('InvoiceListPageComponent', () => {
     }
   ];
 
+  const scacs: Array<any> = [{
+    scac: 'ABCD',
+    name: 'Vandalay Industries'
+  },{
+    scac: 'EFGH',
+    name: 'Kramerica'
+  }];
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -140,13 +148,14 @@ describe('InvoiceListPageComponent', () => {
       originCities: ['New York'],
       destinationCities: ['Chicago']
     }]);
-    http.expectOne(`${environment.baseServiceUrl}/v1/carriers`).flush([{
-      scac: 'ABCD',
-      name: 'Vandalay Industries'
-    },{
-      scac: 'EFGH',
-      name: 'Kramerica'
-    }]);
+    const carriersCall  = http.match((request) => {
+      return request.url == `${environment.baseServiceUrl}/v1/carriers`;
+    });
+    expect(carriersCall.length === 2);
+    
+    carriersCall[0].flush(scacs);
+    carriersCall[1].flush(scacs);
+
   });
 
   afterEach(() => {

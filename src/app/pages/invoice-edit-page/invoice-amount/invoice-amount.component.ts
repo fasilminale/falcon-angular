@@ -120,7 +120,10 @@ export class InvoiceAmountComponent implements OnInit {
     const invoiceNetAmount = this._formGroup.get('amountOfInvoice')?.value;
     this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
-    this.invoiceAmountFormInvalid.emit({'form': InvoiceAmountComponent.INVOICE_AMOUNT_CL, 'value': (this.isValidCostBreakdownAmount && this.paymentTermValid)});
+    this.invoiceAmountFormInvalid.emit({
+      'form': InvoiceAmountComponent.INVOICE_AMOUNT_CL,
+      'value': (this.isValidCostBreakdownAmount && this.paymentTermValid)
+    });
     return totalAmount;
   }
 
@@ -246,7 +249,10 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   emitOverrideStandardPaymentTermsValidity() {
-    this.invoiceAmountFormInvalid.emit({'form': InvoiceAmountComponent.INVOICE_AMOUNT_PAYTERM, 'value': (this.isValidCostBreakdownAmount && this.paymentTermValid)});
+    this.invoiceAmountFormInvalid.emit({
+      'form': InvoiceAmountComponent.INVOICE_AMOUNT_PAYTERM,
+      'value': (this.isValidCostBreakdownAmount && this.paymentTermValid)
+    });
   }
 
   paymentTermSelected(payTerm: any) {
@@ -482,10 +488,10 @@ export class InvoiceAmountComponent implements OnInit {
             this.costBreakdownItemsControls.sort((a, b) => {
               return a.get('step')?.value < b.get('step')?.value ? -1 : 1;
             });
-            this.rateEngineCall.emit(this.pendingAccessorialCode);
           } else {
             this.deniedChargeLineItemControls.push(pendingLineItem);
           }
+          this.rateEngineCall.emit(this.pendingAccessorialCode);
           this.amountOfInvoiceControl.setValue(this.costBreakdownTotal, {emitEvent: false});
           this.toastService.openSuccessToast(`Success. Charge was ${action.toLowerCase()}.`);
         }

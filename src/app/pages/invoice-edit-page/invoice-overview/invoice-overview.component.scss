@@ -4,6 +4,12 @@
 
 }
 
+.history-icon {
+  vertical-align: text-top;
+  font-size: 20px;
+  cursor: pointer;
+}
+
 .remittance-info-div > div{
    border-bottom: 1px solid #ccc;
 }
@@ -25,6 +31,12 @@
 .remittance-header{
    font-weight: 700;
    margin-right: 5px
+}
+
+.history-log-header{
+  cursor: pointer;
+  font-weight: 700;
+  margin-right: 5px
 }
 
 :host ::ng-deep #backrgound-grey .elm-card {

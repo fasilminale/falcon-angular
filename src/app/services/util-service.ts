@@ -24,6 +24,8 @@ import {
 import {EditGlLineItemModal, FalEditGlModalComponent} from '../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 import {AbstractControl} from '@angular/forms';
 import {GlLineItem, GlLineItemError} from '../models/line-item/line-item-model';
+import {FalHistoryLogModalComponent} from '../components/fal-history-log-modal/fal-history-log-modal.component';
+import {InvoiceDataModel} from '../models/invoice/invoice-model';
 
 @Injectable()
 export class UtilService {
@@ -92,6 +94,10 @@ export class UtilService {
     return this.dialog.open(FalEditGlModalComponent, {minWidth: '1000px', autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<Array<GlLineItem>>>(result => of(result)));
+  }
+
+  public openHistoryLog(data: InvoiceDataModel): void {
+    this.dialog.open(FalHistoryLogModalComponent, {minWidth: '80%', autoFocus: false, data});
   }
 
   public openTemplateInputModal(isPaymentOverrideSelected?: boolean): Observable<Template> {

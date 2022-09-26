@@ -690,6 +690,10 @@ export class InvoiceEditPageComponent implements OnInit {
     );
   }
 
+  viewHistoryLog(): void {
+    this.util.openHistoryLog(this.invoice);
+  }
+
   /**
    *  Checks for the required accessorial data.
    *    Carrier Mode
