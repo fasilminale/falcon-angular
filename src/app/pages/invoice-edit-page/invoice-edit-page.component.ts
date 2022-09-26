@@ -413,35 +413,29 @@ export class InvoiceEditPageComponent implements OnInit {
   updateInvoice(): Observable<InvoiceDataModel> {
     const editInvoiceModel = this.mapTripInformationToEditAutoInvoiceModel();
 
-    debugger;
+    const files: Array<File> = [];
+    const chargeCodes: Array<string> = [];
 
+    debugger;
     const fileNameObservables = editInvoiceModel.costLineItems?.map((lineItem) => {
       const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
       if (file) {
-        return this.attachmentService.saveAccessorialAttachment(this.falconInvoiceNumber, file).pipe(
-          map((returnedFileName: string) => {
-            const attachment =    {
-              fileName: returnedFileName,
-              url: 'returnedFileName',
-              type: 'Documentation',
-              deleted: false,
-              uploaded: true
-            };
-
-            lineItem.attachment = attachment;
-
-            return returnedFileName;
-          })
-        );
+        files.push(file);
+        chargeCodes.push(lineItem.chargeCode);
       }
-      return EMPTY;
     });
 
-    debugger;
+    const returnedInvoice = this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber);
 
-    return forkJoin(fileNameObservables).pipe(defaultIfEmpty([]) as any).pipe(
-      mergeMap(() => this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber))
-    );
+    // tslint:disable-next-line:max-line-length
+    returnedInvoice.subscribe(() => {
+      this.attachmentService.saveAccessorialAttachments(this.falconInvoiceNumber, chargeCodes, files).subscribe(
+      );
+    });
+
+    return returnedInvoice;
+
+
 
   }
 
