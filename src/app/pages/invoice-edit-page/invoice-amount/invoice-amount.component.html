@@ -142,15 +142,19 @@
                         buttonType="button"
                         buttonStyle="text"
                         class="flex-shrink-1"
-                        *ngIf="_.get('attachment')?.value?.url"
+                        *ngIf="_.get('attachment')?.value?.url && _.get('attachment')?.value?.url !== 'pending'"
                         (click)="downloadAttachment(_.get('attachment')?.value?.url)">
               <div class="material-icons download-icon"
                    (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download
               </div>
               Download
             </elm-button>
-          </div>
 
+            <div  *ngIf=" _.get('attachment')?.value?.url === 'pending'"
+              class=".pending_upload_text">
+              Pending Upload
+            </div>
+          </div>
           <div class="col-1">
             <input id="cost-line-item-rate-source"
                    type="text"

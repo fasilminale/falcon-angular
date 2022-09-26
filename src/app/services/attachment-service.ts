@@ -53,12 +53,12 @@ export class RealAttachmentService implements AttachmentService {
   }
 
   public saveAccessorialAttachments(invoiceNumber: string, chargeCodes: Array<string>, files: Array<File>): Observable<boolean> {
-    debugger;
     const formData = new FormData();
 
     formData.append('chargeCodes', JSON.stringify(chargeCodes));
     files.forEach(f => formData.append('files', f, f.name));
 
+    debugger;
     return this.web.httpPost(
       `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}/accessorialBatch`,
       formData

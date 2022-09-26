@@ -386,11 +386,12 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
         newLineItemGroup.get('lineItemType')?.setValue('ACCESSORIAL');
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
+        const attachment = {url: 'pending'};
+        newLineItemGroup.get('attachment')?.setValue(attachment);
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
       }
       this.fileFormGroup.removeControl(modalResponse.selected.name);
       this.fileFormGroup.addControl(modalResponse.selected.name, new FormControl(modalResponse.file));
-      debugger;
       this.rateEngineCall.emit(this.pendingAccessorialCode);
     }
   }
@@ -403,6 +404,8 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   createEmptyLineItemGroup(): FormGroup {
+    const attachmentString = {url: 'test'};
+    const attachment = new FormControl(attachmentString);
     const charge = new FormControl(null);
     const rateSource = new FormControl('');
     const rateSourcePair = new FormControl(null);
@@ -426,7 +429,7 @@ export class InvoiceAmountComponent implements OnInit {
     const variables = new FormControl([]);
     const file = new FormControl(null);
     const group = new FormGroup({
-      charge, rateSource, rateSourcePair,
+      attachment, charge, rateSource, rateSourcePair,
       entrySource, entrySourcePair,
       requestStatus, requestStatusPair,
       createdDate, createdBy,

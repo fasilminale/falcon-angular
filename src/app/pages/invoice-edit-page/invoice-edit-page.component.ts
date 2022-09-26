@@ -312,6 +312,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.showEditInfoBanner = this.isGlobalEditMode$.value;
     this.isTripEditMode$.value = false;
     this.otherSectionEditMode$.value = false;
+    this.invoiceAmountFormGroup.get('fileFormGroup')?.reset();
   }
 
   handleTripEditModeEvent($event: any): void {
@@ -371,7 +372,6 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickSaveButton(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
-
       this.subscriptions.manage(
         this.updateInvoice().subscribe(
           (value) => {
@@ -395,29 +395,13 @@ export class InvoiceEditPageComponent implements OnInit {
     }
   }
 
-  /*uploadAttachment(): void {
-    const attachedSuccess = await this.attachmentService.saveAttachments(
-      savedInvoice.falconInvoiceNumber,
-      this.uploadFormComponent?.attachments ?? []
-    ).toPromise();
-    if (attachedSuccess) {
-      // ATTACH SUCCESS
-      this.onAttachSuccess(savedInvoice.falconInvoiceNumber);
-    } else {
-      // ATTACH FAILURE
-      shouldReset = false;
-      await this.onAttachFailure();
-    }
-  }*/
-
   updateInvoice(): Observable<InvoiceDataModel> {
     const editInvoiceModel = this.mapTripInformationToEditAutoInvoiceModel();
 
     const files: Array<File> = [];
     const chargeCodes: Array<string> = [];
 
-    debugger;
-    const fileNameObservables = editInvoiceModel.costLineItems?.map((lineItem) => {
+    editInvoiceModel.costLineItems?.map((lineItem) => {
       const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
       if (file) {
         files.push(file);
@@ -427,18 +411,23 @@ export class InvoiceEditPageComponent implements OnInit {
 
     const returnedInvoice = this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber);
 
-    // tslint:disable-next-line:max-line-length
-    returnedInvoice.subscribe(() => {
-      this.attachmentService.saveAccessorialAttachments(this.falconInvoiceNumber, chargeCodes, files).subscribe(
-      );
-    });
+    if (files.length && chargeCodes.length) {
+      returnedInvoice.subscribe((updatedInvoice) => {
+        this.attachmentService.saveAccessorialAttachments(this.falconInvoiceNumber, chargeCodes, files).subscribe((success) => {
+            if (!success) {
+              this.toastService.openErrorToast('Attachments failed to upload');
+            }
+            // Need page refreshed with new attachment links.
+            this.invoiceService.getInvoice(this.falconInvoiceNumber).subscribe((invoice) => {
+              this.loadInvoice(invoice);
+            });
 
-    return returnedInvoice;
-
-
-
+          }
+        );
+      });
   }
-
+    return returnedInvoice;
+  }
 
   clickSubmitForApprovalButton(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
