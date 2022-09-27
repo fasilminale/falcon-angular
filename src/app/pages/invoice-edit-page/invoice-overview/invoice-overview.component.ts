@@ -64,7 +64,7 @@ export class InvoiceOverviewComponent implements OnInit {
   }
 
   get showHistoryLog(): boolean {
-    return this.environmentService.showFeature('historyLog');
+    return this.environmentService.showFeature('historylog');
   }
 
   onViewHistoryLog(): void {
