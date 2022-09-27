@@ -4,6 +4,7 @@ import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-d
 import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
 import {RemitHistoryItem} from "../../../models/invoice/remit-history-item";
 import {GlLineItem} from '../../../models/line-item/line-item-model';
+import {EnvironmentService} from '../../../services/environment-service/environment-service';
 
 @Component({
   selector: 'app-invoice-overview',
@@ -29,7 +30,8 @@ export class InvoiceOverviewComponent implements OnInit {
 
   @Output() viewHistoryLog = new EventEmitter<any>();
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { }
+  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
+              private environmentService: EnvironmentService) { }
 
   ngOnInit(): void {
   }
@@ -59,6 +61,10 @@ export class InvoiceOverviewComponent implements OnInit {
         this.dateOfPayments.push(item.dateOfPayment ?? 'N/A')
       })
     }
+  }
+
+  get showHistoryLog(): boolean {
+    return this.environmentService.showFeature('historyLog');
   }
 
   onViewHistoryLog(): void {
