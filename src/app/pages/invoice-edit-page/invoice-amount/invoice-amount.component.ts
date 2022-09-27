@@ -560,7 +560,8 @@ export class InvoiceAmountComponent implements OnInit {
         existingCostLineItem.patchValue({
           responseComment: dialogResult.comment,
           requestStatus: 'Deleted',
-          requestStatusPair: {key: 'DELETED', label: 'Deleted'}
+          requestStatusPair: {key: 'DELETED', label: 'Deleted'},
+          deletedDate: new Date().toISOString()
         });
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);
