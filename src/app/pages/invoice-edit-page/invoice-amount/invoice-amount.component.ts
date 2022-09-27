@@ -404,7 +404,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   createEmptyLineItemGroup(): FormGroup {
-    const attachmentString = {url: 'test'};
+    const attachmentString = {url: 'pending'};
     const attachment = new FormControl(attachmentString);
     const charge = new FormControl(null);
     const rateSource = new FormControl('');
@@ -546,7 +546,7 @@ export class InvoiceAmountComponent implements OnInit {
         this.fileFormGroup.removeControl(editChargeDetails.charge);
         // @ts-ignore
         this.fileFormGroup.addControl(editChargeDetails.charge, new FormControl(editChargeDetails.file));
-        debugger;
+
       }
     }
   }
