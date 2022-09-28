@@ -1,11 +1,28 @@
 import {ENV, EnvironmentService} from './environment-service';
+import {WebServices} from '../web-services';
+import {TestBed} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {AppModule} from '../../app.module';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {Router} from '@angular/router';
 
 describe('EnvironmentService', () => {
 
   let service: EnvironmentService;
+  let router: Router;
+  let webServices: WebServices;
+  let http: HttpTestingController;
 
-  beforeEach(() => {
-    service = new EnvironmentService();
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [RouterTestingModule, AppModule, HttpClientTestingModule]
+    });
+    await TestBed.compileComponents();
+    webServices = TestBed.inject(WebServices);
+    router = TestBed.inject(Router);
+    http = TestBed.inject(HttpTestingController);
+    service = new EnvironmentService(webServices);
   });
 
 
@@ -60,6 +77,26 @@ describe('EnvironmentService', () => {
 
     it('should return /chile when origin is dev', () => {
       expect(service.getContextRoot('https://elm-dev.cardinalhealth.net')).toEqual('/falcon');
+    });
+  });
+
+  describe('get featureFlags', () => {
+    it('should pull from local storage', () => {
+      spyOn(localStorage, 'getItem').and.returnValue('{"flag":true}');
+      expect(service.featureFlags).toEqual({flag: true});
+    });
+
+    it('should return an empty object if feature flags are not found', () => {
+      spyOn(localStorage, 'getItem').and.returnValue(null);
+      expect(service.featureFlags).toEqual({});
+    });
+  });
+
+  describe('set featureFlags', () => {
+    it('should store in local storage', () => {
+      const setItemSpy = spyOn(localStorage, 'setItem').and.stub();
+      service.featureFlags = {flag: true};
+      expect(setItemSpy).toHaveBeenCalled();
     });
   });
 
