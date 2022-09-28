@@ -555,10 +555,10 @@ export class InvoiceEditPageComponent implements OnInit {
     const lineItems = items as FormArray;
     if (!lineItems?.controls) {
       return [];
+
     }
     for (const control of lineItems.controls) {
       const item = control as FormGroup;
-
       results.push({
         accessorialCode: CommonUtils.handleNAValues(item.controls?.accessorialCode?.value),
         chargeCode: CommonUtils.handleNAValues(item.controls?.charge?.value),

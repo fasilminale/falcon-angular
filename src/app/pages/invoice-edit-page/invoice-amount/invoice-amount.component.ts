@@ -22,7 +22,7 @@ export class InvoiceAmountComponent implements OnInit {
   static readonly INVOICE_AMOUNT_CL = 'invoice-amount-cl';
   static readonly INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
 
-  private fileFormGroup = new FormGroup({});
+  fileFormGroup = new FormGroup({});
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private utilService: UtilService,
               private toastService: ToastService) {
@@ -386,10 +386,11 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
         newLineItemGroup.get('lineItemType')?.setValue('ACCESSORIAL');
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
-        const attachment = {url: 'pending'};
-        newLineItemGroup.get('attachment')?.setValue(attachment);
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
       }
+
+      const attachment = {url: 'pending'};
+      newLineItemGroup.get('attachment')?.setValue(attachment);
       this.fileFormGroup.removeControl(modalResponse.selected.name);
       this.fileFormGroup.addControl(modalResponse.selected.name, new FormControl(modalResponse.file));
       this.rateEngineCall.emit(this.pendingAccessorialCode);
