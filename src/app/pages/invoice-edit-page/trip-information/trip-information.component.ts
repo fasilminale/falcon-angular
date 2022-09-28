@@ -28,6 +28,7 @@ import {CarrierDetailModel} from '../../../models/master-data-models/carrier-det
 import {SubjectValue} from 'src/app/utils/subject-value';
 import {InvoiceService} from 'src/app/services/invoice-service';
 import {InvoiceUtils} from 'src/app/models/invoice/invoice-model';
+import {EnvironmentService} from '../../../services/environment-service/environment-service';
 
 const {required} = Validators;
 
@@ -481,6 +482,5 @@ export class TripInformationComponent implements OnInit {
       ?.map(fo => !!fo.hasWeightError)
       ?.some(err => err);
   }
-
-}
+  }
 
