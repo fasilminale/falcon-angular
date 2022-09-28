@@ -23,8 +23,6 @@ import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
-import {EditGlLineItemModal} from '../../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 @Component({
@@ -467,7 +465,8 @@ export class InvoiceEditPageComponent implements OnInit {
       billToAddress: BillToLocationUtils.extractBillToLocation(billToAddressFormGroup),
       shippingPoint: originLocation.code,
       businessUnit: this.invoice.businessUnit,
-      standardPaymentTermsOverride: paymentTermsOverridenValue
+      standardPaymentTermsOverride: paymentTermsOverridenValue,
+      billOfLadingNumber: this.invoice.billOfLadingNumber,
     };
   }
 
@@ -479,6 +478,7 @@ export class InvoiceEditPageComponent implements OnInit {
       this.tripInformationFormGroup.controls.serviceLevel?.value;
     this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode?.value;
     this.invoice.carrier = this.tripInformationFormGroup.controls.carrier?.value;
+    this.invoice.billOfLadingNumber = this.tripInformationFormGroup.controls.bolNumber?.value;
     const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
     this.invoice.origin = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
