@@ -38,6 +38,10 @@ export class RealAttachmentService implements AttachmentService {
   }
 
   public saveAccessorialAttachments(invoiceNumber: string, chargeCodes: Array<string>, files: Array<File>): Observable<boolean> {
+    if (files.length <= 0 || chargeCodes.length <= 0) {
+      return of(true);
+    }
+
     const formData = new FormData();
 
     formData.append('chargeCodes', JSON.stringify(chargeCodes));
