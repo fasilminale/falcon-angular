@@ -52,7 +52,7 @@
     <div>
       <!-- FILE CHOOSER -->
       <label for="file-chooser-input"
-             class="fal-label file-label ">
+             class="fal-label">
         File
       </label>
       <app-fal-file-input id="file-chooser-input"
@@ -61,6 +61,11 @@
       </app-fal-file-input>
     </div>
 
+    <div *ngIf="!!fileName">
+      <label class="fal-label">Uploaded Attachment</label>
+      <div class="form-control">{{fileName}}</div>
+    </div>
+    <br>
     <div *ngIf="chargeControl.valid && commentControl.enabled">
       <label for="commentInput"
              class="fal-label">

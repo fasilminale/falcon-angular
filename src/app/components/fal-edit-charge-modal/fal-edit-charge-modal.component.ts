@@ -17,6 +17,7 @@ export class FalEditChargeModalComponent {
   public readonly variableControls = new FormGroup({});
   public readonly commentControl: FormControl = new FormControl('');
   public readonly file: FormControl = new FormControl('');
+  public fileName: string;
   public readonly form = new FormGroup({
     charge: this.chargeControl,
     variables: this.variableControls
@@ -46,10 +47,19 @@ export class FalEditChargeModalComponent {
       this.commentControl.disable();
 
     }
-
+    const fullFileName = data?.costLineItem?.value?.attachment?.fileName;
+    if (data?.costLineItem?.value?.attachment?.fileName) {
+     const splitFileNameArray = fullFileName.split('~', 2);
+     if (splitFileNameArray.length === 2) {
+       this.fileName = data?.costLineItem?.value?.attachment.fileName.split('~', 2)[1];
+     } else {
+       this.fileName = fullFileName;
+     }
+    } else {
+      this.fileName = '';
+    }
     this.form.addControl('file', this.file);
     this.commentControl.enable();
-
   }
 
   /**

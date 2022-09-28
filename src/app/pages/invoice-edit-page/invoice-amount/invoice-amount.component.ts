@@ -526,7 +526,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
     const editChargeDetails = await this.utilService.openEditChargeModal({
-      costLineItem
+            costLineItem
     }).pipe(first()).toPromise();
     if (editChargeDetails) {
       const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.charge === lineItem.value?.charge);
@@ -542,6 +542,8 @@ export class InvoiceAmountComponent implements OnInit {
         });
         existingCostLineItem.markAsDirty();
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
+        const attachment = {url: 'pending'};
+        existingCostLineItem.get('attachment')?.setValue(attachment);
         this.rateEngineCall.emit(this.pendingAccessorialCode);
         // @ts-ignore
         this.fileFormGroup.removeControl(editChargeDetails.charge);
