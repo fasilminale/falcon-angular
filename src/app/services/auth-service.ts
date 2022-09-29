@@ -4,6 +4,7 @@ import {WebServices} from './web-services';
 import {environment} from '../../environments/environment';
 import {UserInfo} from '@elm/elm-styleguide-ui';
 import {NeedSpyError} from '../testing/test-utils';
+import {EnvironmentService} from './environment-service/environment-service';
 
 // INTERFACE
 export const AUTH_SERVICE = new InjectionToken<AuthService>('AuthService');
@@ -45,7 +46,8 @@ export class RealAuthService implements AuthService {
   private _userInfo = DEFAULT_USER_INFO;
 
   constructor(private oktaAuth: OktaAuthService,
-              private webServices: WebServices) {
+              private webServices: WebServices,
+              private environmentService: EnvironmentService) {
     this.init();
   }
 
@@ -58,6 +60,7 @@ export class RealAuthService implements AuthService {
             .subscribe((userInfo: any) => {
               this._userInfo = userInfo;
             });
+          this.environmentService.getFeatures();
         }
       });
   }

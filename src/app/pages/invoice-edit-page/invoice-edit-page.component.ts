@@ -24,6 +24,8 @@ import {defaultIfEmpty, first, map, mergeMap, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
+import {EditGlLineItemModal} from '../../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 @Component({
@@ -77,12 +79,12 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
   public chargeLineItemOptions$ = new Subject<RateDetailResponse>();
 
-  public standardPaymentTermsOverrideValid = true;
+  public standardPaymentTermsOverrideValid: boolean = true;
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
-  public showEditInfoBanner = false;
+  public showEditInfoBanner: boolean = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
 
   INVOICE_AMOUNT_CL = 'invoice-amount-cl';
@@ -269,11 +271,12 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   handleFormIfInvalid($event: any) {
-    if ($event.form === this.INVOICE_AMOUNT_CL) {
+    if (($event.form === this.INVOICE_AMOUNT_CL || $event.form === this.INVOICE_AMOUNT_PAYTERM) && $event?.value) {
       this.costBreakdownValid = $event.value;
-    }
-    if ($event.form === this.INVOICE_AMOUNT_PAYTERM) {
       this.standardPaymentTermsOverrideValid = $event.value;
+    } else {
+      this.costBreakdownValid = false;
+      this.standardPaymentTermsOverrideValid = false;
     }
     if ($event.form === this.INVOICE_ALLOCATION_FORM) {
       this.netAllocationAmountValid = $event.value;
@@ -460,9 +463,10 @@ export class InvoiceEditPageComponent implements OnInit {
     const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress;
     const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress;
     const originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
-    const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value;
-    const paymentTermsOverridenValue = paymentTerms?.isPaymentOverrideSelected && paymentTerms?.isPaymentOverrideSelected.length > 0
-        && paymentTerms?.isPaymentOverrideSelected[0] === 'override' && paymentTerms?.paymentTerms ? paymentTerms?.paymentTerms : undefined;
+    const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value ?? {};
+    const paymentTermsOverridenValue = paymentTerms.isPaymentOverrideSelected && paymentTerms.isPaymentOverrideSelected.length > 0
+        && paymentTerms.isPaymentOverrideSelected[0] === 'override' && paymentTerms.paymentTerms ? paymentTerms.paymentTerms : undefined;
+
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
       totalGrossWeight: this.tripInformationFormGroup.controls.totalGrossWeight.value,
@@ -521,6 +525,9 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoice.deletedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deletedChargeLineItems);
     this.invoice.deniedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deniedChargeLineItems);
     this.invoice.glLineItems = this.invoiceAllocationFormGroup.controls.invoiceAllocations.value;
+    const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value ?? {};
+    this.invoice.standardPaymentTermsOverride = paymentTerms.isPaymentOverrideSelected && paymentTerms.isPaymentOverrideSelected.length > 0
+        && paymentTerms.isPaymentOverrideSelected[0] === 'override' && paymentTerms.paymentTerms ? paymentTerms.paymentTerms : undefined;
   }
 
   getDisputeLineItems(items: AbstractControl): Array<DisputeLineItem> {

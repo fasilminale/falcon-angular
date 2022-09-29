@@ -50,7 +50,7 @@ describe('AttachmentService', () => {
   });
 
   // REAL ATTACHMENT SERVICE TESTS
-  fdescribe('> REAL >', () => {
+  describe('> REAL >', () => {
     let web: WebServices;
     let invoice: any;
     let files: Array<File>;

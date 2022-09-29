@@ -1103,11 +1103,18 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   describe('with populated sub forms', () => {
+    const isPaymentOverrideSelected = new FormArray([]);
+    isPaymentOverrideSelected.push(new FormControl('override'));
+    let overridePaymentTermsFormGroup = new FormGroup({
+      isPaymentOverrideSelected: isPaymentOverrideSelected,
+      paymentTerms: new FormControl('ABC')
+    });
     beforeEach(() => {
       component.tripInformationFormGroup.controls.carrierMode = new FormControl(TEST_MODE);
       component.tripInformationFormGroup.controls.carrier = new FormControl(TEST_CARRIER);
       component.tripInformationFormGroup.controls.billToAddress = billToAddressFormGroup;
       component.invoiceAllocationFormGroup.controls.invoiceAllocations = new FormArray([]);
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
       const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
       costBreakdownItems.push(new FormGroup({
         accessorial: new FormControl(false),
@@ -1151,6 +1158,13 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
       component.updateInvoiceFromForms();
       expect(component.invoice.origin).toEqual(MOCK_LOCATION);
+    });
+    it('should not have override payment terms', () => {
+      component.invoiceAmountFormGroup.removeControl('overridePaymentTerms');
+
+      component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
+      component.updateInvoiceFromForms();
+      expect(component.invoice.standardPaymentTermsOverride).toBeUndefined();
     });
     it('should have origin with no shipping control', () => {
       component.tripInformationFormGroup.controls.originAddress = new FormGroup({});

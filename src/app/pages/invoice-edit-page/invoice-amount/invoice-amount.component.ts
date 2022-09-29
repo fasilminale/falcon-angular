@@ -122,7 +122,7 @@ export class InvoiceAmountComponent implements OnInit {
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
     this.invoiceAmountFormInvalid.emit({
       'form': InvoiceAmountComponent.INVOICE_AMOUNT_CL,
-      'value': (this.isValidCostBreakdownAmount && this.paymentTermValid)
+      'value': (this.paymentTermValid)
     });
     return totalAmount;
   }
@@ -251,7 +251,7 @@ export class InvoiceAmountComponent implements OnInit {
   emitOverrideStandardPaymentTermsValidity() {
     this.invoiceAmountFormInvalid.emit({
       'form': InvoiceAmountComponent.INVOICE_AMOUNT_PAYTERM,
-      'value': (this.isValidCostBreakdownAmount && this.paymentTermValid)
+      'value': (this.paymentTermValid)
     });
   }
 
@@ -576,7 +576,8 @@ export class InvoiceAmountComponent implements OnInit {
         existingCostLineItem.patchValue({
           responseComment: dialogResult.comment,
           requestStatus: 'Deleted',
-          requestStatusPair: {key: 'DELETED', label: 'Deleted'}
+          requestStatusPair: {key: 'DELETED', label: 'Deleted'},
+          deletedDate: new Date().toISOString()
         });
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
         this.rateEngineCall.emit(this.pendingAccessorialCode);

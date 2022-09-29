@@ -13,6 +13,8 @@
       tableType="clickable"
       [data]="filteredHistoryLogs"
       [headers]="headers"
+      [noResultsMessage]="'No Invoice History / Log Found'"
+      [noResultsHeight]="100"
       (dataSelectedEvent)="toggleFullHistory($event)"
       [showPagination]="false">
     </elm-data-table>
