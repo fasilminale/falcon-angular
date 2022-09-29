@@ -1346,4 +1346,10 @@ describe('TripInformationComponent', () => {
     expect(messages).toEqual(['Maximum characters 35']);
   });
 
+  it('should test errors is null', () => {
+    component.bolNumberControl = {} as FormControl;
+    const messages = component.bolNumberControlErrorMessages;
+    expect(messages).toEqual([]);
+  });
+
 });
