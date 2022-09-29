@@ -1098,6 +1098,7 @@ describe('InvoiceEditPageComponent', () => {
         businessUnit: component.invoice.businessUnit,
         standardPaymentTermsOverride: 'ABC',
         hasRateEngineError: component.invoice.hasRateEngineError,
+        billOfLadingNumber: ''
       });
     });
   });

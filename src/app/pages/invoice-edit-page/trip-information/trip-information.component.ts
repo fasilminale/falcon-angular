@@ -28,9 +28,10 @@ import {CarrierDetailModel} from '../../../models/master-data-models/carrier-det
 import {SubjectValue} from 'src/app/utils/subject-value';
 import {InvoiceService} from 'src/app/services/invoice-service';
 import {InvoiceUtils} from 'src/app/models/invoice/invoice-model';
+import {validateAlphanumeric} from '../../../utils/falcon-validators';
 import {EnvironmentService} from '../../../services/environment-service/environment-service';
 
-const {required} = Validators;
+const {required, maxLength} = Validators;
 
 export function validateDate(control: AbstractControl): ValidationErrors | null {
   const dateString = control.value;
@@ -59,6 +60,8 @@ export class TripInformationComponent implements OnInit {
   @Output() openWeightAdjustmentModalEvent = new EventEmitter<any>();
   @Output() refreshMasterDataEvent = new EventEmitter<any>();
 
+  public readonly MAX_BOL_NUMBER_LENGTH = 35;
+
   public freightPaymentTermOptions = FREIGHT_PAYMENT_TERM_OPTIONS;
   public carrierOptions: Array<SelectOption<CarrierReference>> = [];
   public carrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
@@ -85,7 +88,7 @@ export class TripInformationComponent implements OnInit {
   public pickUpDateControl = new FormControl({}, [required, validateDate]);
   public deliveryDateControl = new FormControl({}, [required]);
   public proTrackingNumberControl = new FormControl({}, [required]);
-  public bolNumberControl = new FormControl({}, [required]);
+  public bolNumberControl = new FormControl({}, [required, validateAlphanumeric, maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
   public freightPaymentTermsControl = new FormControl({}, [required]);
   public carrierControl = new FormControl({}, [required]);
   public carrierModeControl = new FormControl({}, [required]);
@@ -99,7 +102,8 @@ export class TripInformationComponent implements OnInit {
     this.pickUpDateControl,
     this.carrierControl,
     this.carrierModeControl,
-    this.serviceLevelControl
+    this.serviceLevelControl,
+    this.bolNumberControl,
   ]);
   public tripInformation: TripInformation = {} as TripInformation;
   public localPeristentTripInformation: TripInformation = {} as TripInformation;
@@ -482,5 +486,20 @@ export class TripInformationComponent implements OnInit {
       ?.map(fo => !!fo.hasWeightError)
       ?.some(err => err);
   }
+
+  get bolNumberControlErrorMessages(): Array<string> {
+    const messages = [];
+    if (this.bolNumberControl.errors?.required) {
+      messages.push('BOL Number is missing');
+    }
+    if (this.bolNumberControl.errors?.pattern) {
+      messages.push('Contains invalid characters');
+    }
+    if (this.bolNumberControl.errors?.maxlength) {
+      messages.push('Maximum characters' + this.MAX_BOL_NUMBER_LENGTH);
+    }
+    return messages;
   }
+
+}
 

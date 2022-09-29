@@ -2,14 +2,14 @@
   <div class="row">
     <div class="headline2 col-4">
       <span>Trip Information</span>
-          <span *ngIf="enableTripEditButton" role="button" class="material-icons material-icons-outlined valign-middle"
+      <span *ngIf="enableTripEditButton" role="button" class="material-icons material-icons-outlined valign-middle"
             (click)="clickEditButton()">
         edit
       </span>
     </div>
     <div class="col-7 text-end">
       Master Data
-      <elm-button [isDisabled]="!isTripEditMode$.value" buttonColor="black" (buttonClick)="refreshMasterData()" >
+      <elm-button [isDisabled]="!isTripEditMode$.value" buttonColor="black" (buttonClick)="refreshMasterData()">
         <div class="material-icons">change_circle</div>
       </elm-button>
     </div>
@@ -22,7 +22,7 @@
       </label>
       <elm-text-input id="tripIdInput"
                       formControlName="tripId"
-                      [errorSpacing]="false">
+                      [errorSpacing]="true">
       </elm-text-input>
     </div>
     <div class="col-4">
@@ -112,7 +112,7 @@
       </label>
       <elm-text-input id="proTrackingNumberInput"
                       formControlName="proTrackingNumber"
-                      [errorSpacing]="false">
+                      [errorSpacing]="true">
       </elm-text-input>
     </div>
     <div class="col-4">
@@ -122,8 +122,15 @@
       </label>
       <elm-text-input id="bolNumberInput"
                       formControlName="bolNumber"
-                      [errorSpacing]="false">
+                      [errorSpacing]="true"
+                      [maxLength]="MAX_BOL_NUMBER_LENGTH">
       </elm-text-input>
+      <elm-input-subtext *ngIf="bolNumberControl.invalid"
+                         [isError]="true">
+        <span *ngFor="let message of bolNumberControlErrorMessages">
+          {{message}}<br/>
+        </span>
+      </elm-input-subtext>
     </div>
     <div class="col-4">
       <label for="freightPaymentTermsInput"
@@ -414,7 +421,8 @@
         <span class="accordian-link-text">Hide Freight Order Details</span>
       </span>
       <div *ngIf="hasAnyWeightToleranceError" class="error-text">
-        Calculated Freight order total weight not within tolerance of Chile provided weight. Please contact Falcon IT support.
+        Calculated Freight order total weight not within tolerance of Chile provided weight. Please contact Falcon IT
+        support.
       </div>
     </div>
 
