@@ -1328,4 +1328,22 @@ describe('TripInformationComponent', () => {
     expect(component.showWeightAdjustmentSection).toBeTrue();
   });
 
+  it('should require BOL Number', () => {
+    component.bolNumberControl.setValue(null);
+    const messages = component.bolNumberControlErrorMessages;
+    expect(messages).toEqual(['BOL Number is missing']);
+  });
+
+  it('should require alphanumeric', () => {
+    component.bolNumberControl.setValue('#$%');
+    const messages = component.bolNumberControlErrorMessages;
+    expect(messages).toEqual(['Contains invalid characters']);
+  });
+
+  it('should require less than 35 characters', () => {
+    component.bolNumberControl.setValue('123456789012345678901234567890123456');
+    const messages = component.bolNumberControlErrorMessages;
+    expect(messages).toEqual(['Maximum characters 35']);
+  });
+
 });
