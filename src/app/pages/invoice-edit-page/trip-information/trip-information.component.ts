@@ -496,7 +496,7 @@ export class TripInformationComponent implements OnInit {
       messages.push('Contains invalid characters');
     }
     if (this.bolNumberControl.errors?.maxlength) {
-      messages.push('Maximum characters' + this.MAX_BOL_NUMBER_LENGTH);
+      messages.push('Maximum characters ' + this.MAX_BOL_NUMBER_LENGTH);
     }
     return messages;
   }
