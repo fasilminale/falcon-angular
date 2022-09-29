@@ -47,19 +47,25 @@ export class FalEditChargeModalComponent {
       this.commentControl.disable();
 
     }
-    const fullFileName = data?.costLineItem?.value?.attachment?.fileName;
-    if (data?.costLineItem?.value?.attachment?.fileName) {
-     const splitFileNameArray = fullFileName.split('~', 2);
-     if (splitFileNameArray.length === 2) {
-       this.fileName = data?.costLineItem?.value?.attachment.fileName.split('~', 2)[1];
-     } else {
-       this.fileName = fullFileName;
-     }
-    } else {
-      this.fileName = '';
-    }
+
+    this.fileName = this.parseAttachmentFileName(data);
+
     this.form.addControl('file', this.file);
     this.commentControl.enable();
+  }
+
+  parseAttachmentFileName(data: EditChargeModalInput): string{
+    let tempFileName = '';
+    const fullFileName = data?.costLineItem?.value?.attachment?.fileName;
+    if (fullFileName) {
+      const splitFileNameArray = fullFileName.split('~', 2);
+      if (splitFileNameArray.length === 2) {
+        tempFileName = data?.costLineItem?.value?.attachment.fileName.split('~', 2)[1];
+      } else {
+        tempFileName = fullFileName;
+      }
+    }
+    return tempFileName;
   }
 
   /**
