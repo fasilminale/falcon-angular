@@ -69,6 +69,7 @@ export interface CalcDetail {
   carrierEligible?: boolean;
   fuel?: boolean;
   variables?: Array<CalcDetailVariable>;
+
 }
 
 export interface CalcDetailVariable {

@@ -16,6 +16,8 @@ export class FalEditChargeModalComponent {
   public readonly chargeControl = new FormControl('', Validators.required);
   public readonly variableControls = new FormGroup({});
   public readonly commentControl: FormControl = new FormControl('');
+  public readonly file: FormControl = new FormControl('');
+  public fileName: string;
   public readonly form = new FormGroup({
     charge: this.chargeControl,
     variables: this.variableControls
@@ -43,7 +45,21 @@ export class FalEditChargeModalComponent {
       ));
       this.form.addControl('comment', this.commentControl);
       this.commentControl.disable();
+
     }
+    const fullFileName = data?.costLineItem?.value?.attachment?.fileName;
+    if (data?.costLineItem?.value?.attachment?.fileName) {
+     const splitFileNameArray = fullFileName.split('~', 2);
+     if (splitFileNameArray.length === 2) {
+       this.fileName = data?.costLineItem?.value?.attachment.fileName.split('~', 2)[1];
+     } else {
+       this.fileName = fullFileName;
+     }
+    } else {
+      this.fileName = '';
+    }
+    this.form.addControl('file', this.file);
+    this.commentControl.enable();
   }
 
   /**
@@ -190,14 +206,16 @@ export class FalEditChargeModalComponent {
         // CONFIRM EDIT
         output = {
           charge: this.chargeControl.value,
-          variables: this.selectedVariables
+          variables: this.selectedVariables,
+          file: this.file.value
         };
       } else {
         // CONFIRM ADD
         output = {
           selected: this.selectedCalcDetail,
           variables: [],
-          comment: this.commentValue
+          comment: this.commentValue,
+          file: this.file.value
         };
       }
     }
@@ -266,6 +284,7 @@ export type EditChargeModalInput = {
   cancelButtonText?: string,
   costLineItem?: AbstractControl,
   costBreakdownOptions?: Array<SelectOption<CalcDetail>>,
+  file?: File
 };
 
 /**
@@ -275,7 +294,8 @@ export type EditChargeModalOutput = undefined | {
   charge?: string,
   variables: Array<CalcDetailVariable>,
   selected?: CalcDetail,
-  comment?: string
+  comment?: string,
+  file?: File
 };
 
 /**
@@ -283,7 +303,8 @@ export type EditChargeModalOutput = undefined | {
  */
 export type NewChargeModalOutput = undefined | {
   selected: CalcDetail,
-  comment?: string
+  comment?: string,
+  file?: File
 };
 
 /**

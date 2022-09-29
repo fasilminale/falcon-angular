@@ -110,7 +110,8 @@ describe('FalEditChargeModalComponent', () => {
       component.onConfirmButtonClick();
       expect(MOCK_DIALOG.close).toHaveBeenCalledOnceWith({
         charge: 'TEST CHARGE NAME',
-        variables: TEST_CALC_DETAIL.variables
+        variables: TEST_CALC_DETAIL.variables,
+        file: ''
       });
     });
   });
