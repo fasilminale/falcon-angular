@@ -70,6 +70,36 @@ describe('FalEditChargeModalComponent', () => {
     fixture.detectChanges();
   }
 
+  describe('#Set File Name for Display', () => {
+    beforeEach(() => {
+      // set mock data for edit scenario
+      MOCK_MODAL_INPUT.costLineItem = new FormControl({
+        charge: 'TEST CHARGE NAME',
+        variables: TEST_CALC_DETAIL.variables
+      });
+      MOCK_MODAL_INPUT.costBreakdownOptions = undefined;
+      createComponent();
+    });
+
+    it('should parse uuid off of name', () => {
+      MOCK_MODAL_INPUT.costLineItem?.setValue({attachment: {fileName: '07fefbca-8659-44c1-a9f2-32b90974c3ed~test2.pdf'}});
+      const fileName = component.parseAttachmentFileName(MOCK_MODAL_INPUT);
+      expect(fileName).toEqual('test2.pdf');
+    });
+
+    it('should return name if no uuid', () => {
+      MOCK_MODAL_INPUT.costLineItem?.setValue({attachment: {fileName: 'test3.pdf'}});
+      const fileName = component.parseAttachmentFileName(MOCK_MODAL_INPUT);
+      expect(fileName).toEqual('test3.pdf');
+    });
+
+    it('should return empty if not name passed', () => {
+      const fileName = component.parseAttachmentFileName(MOCK_MODAL_INPUT);
+      expect(fileName).toEqual('');
+    });
+  });
+
+
   describe('#EditCharge', () => {
     beforeEach(() => {
       // set mock data for edit scenario
