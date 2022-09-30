@@ -6,6 +6,7 @@ import { WebServices } from './web-services';
 import { UserInfoModel } from '../models/user-info/user-info-model';
 import {map, share} from 'rxjs/operators';
 import {PaginationModel} from '../models/PaginationModel';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +15,9 @@ export class UserService {
   private observableCache: Observable<UserInfoModel> | undefined;
   private userInfoCache: UserInfoModel | undefined;
   private paginationModel: PaginationModel | undefined;
+  private controlGroup: FormGroup | undefined;
 
-  constructor(private http: HttpClient, private web: WebServices) {
+  constructor(private http: HttpClient, private web: WebServices, private fb: FormBuilder) {
 
   }
 
@@ -25,6 +27,17 @@ export class UserService {
 
   set searchState(lastSearch: PaginationModel) {
     this.paginationModel = lastSearch;
+  }
+
+  get controlGroupState(): FormGroup {
+    return this.controlGroup ?? this.fb.group({
+        control: [null, [Validators.pattern('^[a-zA-Z0-9_-]*$'), Validators.required]]
+      }, {updateOn: 'submit'}
+    );
+  }
+
+  set controlGroupState(formGroup: FormGroup) {
+    this.controlGroup = formGroup;
   }
 
   private userInfoUrl = `${environment.baseServiceUrl}/v1/user/info`;

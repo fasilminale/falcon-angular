@@ -1,40 +1,28 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import { isExpressionWithTypeArguments } from 'typescript';
-import {PaginationModel} from '../../models/PaginationModel';
+import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
-  paginationModel: PaginationModel = new PaginationModel();
+export class SearchComponent implements OnChanges {
   @Input() label = 'Enter all or partial Falcon Invoice or Invoice Reference or BOL #';
   @Input() invalidIdMessage = 'No invoices found';
   @Input() requiredMessage = 'Falcon Invoice Number is required';
   @Input() patternMessage = 'Falcon Invoice Number is invalid';
   @Input() totalResults = 0;
+  @Input() controlGroup!: FormGroup;
 
   @Output() submitEvent: EventEmitter<string> = new EventEmitter<string>();
 
-  controlGroup = new FormGroup({
-    control: new FormControl()
-  });
+  submitted = false;
 
-  submitted: boolean = false;
-
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit(): void {
-    this.controlGroup = this.fb.group({
-        control: [null, [Validators.pattern('^[a-zA-Z0-9_-]*$'), Validators.required]]
-      }, {updateOn: 'submit'}
-    );
+  constructor() {
   }
 
   ngOnChanges(): void {
-    if(this.submitted && this.totalResults === 0) {
+    if (this.submitted && this.totalResults === 0) {
       this.controlGroup.controls.control.setErrors({badID: true});
     }
   }

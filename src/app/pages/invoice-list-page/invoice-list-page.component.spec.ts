@@ -18,10 +18,11 @@ import {Sort} from '@angular/material/sort';
 import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
 import * as saveAsFunctions from 'file-saver';
-import {FormArray, FormBuilder, FormControl} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SearchComponent} from '../../components/search/search.component';
 import {UtilService} from '../../services/util-service';
 import {asSpy} from '../../testing/test-utils.spec';
+import {PaginationModel} from '../../models/PaginationModel';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -152,7 +153,7 @@ describe('InvoiceListPageComponent', () => {
       return request.url == `${environment.baseServiceUrl}/v1/carriers`;
     });
     expect(carriersCall.length === 2);
-    
+
     carriersCall[0].flush(scacs);
     carriersCall[1].flush(scacs);
 
@@ -273,6 +274,7 @@ describe('InvoiceListPageComponent', () => {
     fixture.detectChanges();
     expect(navigateSpy).toHaveBeenCalledWith(['/invoice/1']);
     expect(component.searchInvoices).toHaveBeenCalled();
+    expect(component.controlGroup.controls.control.value).toEqual('');
   }));
 
   it('should Search Invoices with multiple result', fakeAsync(() => {
@@ -419,6 +421,20 @@ describe('InvoiceListPageComponent', () => {
     component.callCSVApi({});
     fixture.detectChanges();
     expect(utilService.openErrorModal).toHaveBeenCalled();
+  });
+
+  it('should destroy when ngOnDestory is called', () => {
+    const sub = component.subscription;
+    const service = component.userService;
+    const paginationModel = new PaginationModel();
+    const controlGroup = new FormGroup({});
+    component.paginationModel = paginationModel;
+    component.controlGroup = controlGroup;
+    spyOn(sub, 'unsubscribe').and.callThrough();
+    component.ngOnDestroy();
+    expect(sub.unsubscribe).toHaveBeenCalled();
+    expect(service.searchState).toBe(paginationModel);
+    expect(service.controlGroupState).toBe(controlGroup);
   });
 
   describe('saveCSVFile', () => {
