@@ -32,7 +32,7 @@ import {Observable, of, Subscription} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ElmCheckboxRadioOptionInterface, ElmFormHelper, ModalService, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, ConfirmationModalData, ElmCheckboxRadioOptionInterface, ElmFormHelper, ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 
 @Component({
@@ -360,15 +360,15 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
       line1Message = 'All changes to this invoice will be lost if you cancel now.';
       line2Message = 'Are you sure you want to cancel?';
     }
-    return this.modal.openConfirmationModal({
-      title: 'Cancel',
-      innerHtmlMessage: `${line1Message}
-                   <br/><br/><strong>
-                   ${line2Message}
-                   </strong>`,
-      confirmButtonText: 'Yes, cancel',
-      cancelButtonText: 'No, go back'
-    });
+    const data: ConfirmationModalData= { title: 'Cancel',
+    innerHtmlMessage: `${line1Message}
+                 <br/><br/><strong>
+                 ${line2Message}
+                 </strong>`,
+    confirmButtonText: 'Yes, cancel',
+    cancelButtonText: 'No, go back'
+  };
+    return this.util.openConfirmationModal(data);
   }
 
   public async gotoInvoiceList(): Promise<boolean> {
@@ -633,7 +633,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
     const companyCode = this.form.companyCode.value;
 
     if (companyCode !== this.invoice.companyCode || this.checkFormArrayCompanyCode()) {
-      const dialogRef = this.modal.openConfirmationModal({
+      const dialogRef = this.util.openConfirmationModal({
         title: `Review Changes`,
         innerHtmlMessage: `You've made changes to the company code(s)<br/><br/>
                 <strong>Are you sure you want to continue with the changes?</strong>`,

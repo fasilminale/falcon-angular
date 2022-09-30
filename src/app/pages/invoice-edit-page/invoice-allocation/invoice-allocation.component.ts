@@ -66,7 +66,7 @@ export class InvoiceAllocationComponent implements OnInit {
         const glCostCenter = glLineItem.glCostCenter ? glLineItem.glCostCenter : glLineItem.glProfitCenter ? 'N/A' : undefined;
         const glProfitCenter = glLineItem.glProfitCenter ? glLineItem.glProfitCenter : glLineItem.glCostCenter ? 'N/A' : undefined;
 
-        this.invoiceAllocations.push(new FormGroup({
+        const invoiceAllocationFormGroup = new FormGroup({
           allocationPercent: new FormControl(glLineItem.allocationPercent ?? undefined),
           customerCategory: new FormControl(glLineItem.customerCategory ?? undefined),
           glProfitCenter: new FormControl(glProfitCenter),
@@ -75,8 +75,10 @@ export class InvoiceAllocationComponent implements OnInit {
           glCompanyCode: new FormControl(glLineItem.glCompanyCode ?? undefined),
           allocationAmount: new FormControl(glLineItem.glAmount ?? 0),
           glAmount: new FormControl(glLineItem.glAmount ?? 0)
-        }));
+        });
+        this.invoiceAllocations.push(invoiceAllocationFormGroup);
       }
+      this.invoiceAllocations.disable();
       this.updateTotalAllocationAmount();
       this.validateInvoiceAmount();
     }));
@@ -113,7 +115,9 @@ export class InvoiceAllocationComponent implements OnInit {
   }
 
   onEditGlLineItem(glLineItem: GlLineItem): void {
+    this.invoiceAllocations.enable();
     this.editGlLineItemEvent.emit(glLineItem);
+    this.invoiceAllocations.disable();
   }
 
 }

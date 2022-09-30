@@ -461,7 +461,7 @@ describe('InvoiceFormComponent', () => {
     falconInvoiceNumbers.forEach(value => {
       it('should not create or update an invoice with invalid invoice amounts FIN="' + value + '"', async () => {
         spyOn(modal, 'openSystemErrorModal').and.returnValue(of("true"));
-        spyOn(modal, 'openConfirmationModal').and.returnValue(of(true));
+        spyOn(util, 'openConfirmationModal').and.returnValue(of(true));
         spyOn(component, 'validateInvoiceAmount').and.returnValue(false);
         spyOn(component, 'gotoInvoiceList').and.stub();
         component.falconInvoiceNumber = value;

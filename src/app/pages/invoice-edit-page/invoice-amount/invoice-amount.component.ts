@@ -269,6 +269,7 @@ export class InvoiceAmountComponent implements OnInit {
     }
     this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ?? '');
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
+    givenFormGroup.get('mileage')?.disable();
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     (givenFormGroup.get('pendingChargeLineItems') as FormArray).clear();
     (givenFormGroup.get('disputeLineItems') as FormArray)?.clear();
@@ -293,7 +294,7 @@ export class InvoiceAmountComponent implements OnInit {
           attachment: new FormControl(lineItem.attachment ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
           accessorialCode: new FormControl(lineItem.accessorialCode),
-          charge: new FormControl(lineItem.chargeCode),
+          charge: new FormControl({value: lineItem.chargeCode, disabled: true}),
           rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
           rateSourcePair: new FormControl(lineItem.rateSource),
           entrySource: new FormControl(lineItem.entrySource?.label ?? 'N/A'),

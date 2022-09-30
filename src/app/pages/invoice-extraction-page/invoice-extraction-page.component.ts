@@ -9,8 +9,7 @@ import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {
   ButtonClickedEvent,
   DataTableComponent,
-  ElmDataTableHeader,
-  ModalService
+  ElmDataTableHeader
 } from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog} from '@angular/material/dialog';
@@ -59,7 +58,6 @@ export class InvoiceExtractionPageComponent implements OnInit {
     public filterService: FilterService,
     private invoiceService: InvoiceService,
     private utilService: UtilService,
-    private modalService: ModalService,
     private windowService: WindowService
   ) {
   }
@@ -129,7 +127,7 @@ export class InvoiceExtractionPageComponent implements OnInit {
     if(this.selectedInvoicesToExtract.length < 1){
       return;
     }
-    const dialogResult = await this.modalService.openConfirmationModal(
+    const dialogResult = await this.utilService.openConfirmationModal(
         {
           title: 'Extract Invoice(s)',
           innerHtmlMessage: `You are about to extract ${this.selectedInvoicesToExtract.length} Invoice(s) for remittance.

@@ -65,11 +65,11 @@ export class TripInformationComponent implements OnInit {
   public carrierSCACs: Array<CarrierSCAC> = [];
   public carrierDetails: Array<CarrierDetailModel> = [];
 
-  public totalGrossWeight = new FormControl(0);
+  public totalGrossWeight = new FormControl({value: 0, disabled: true});
   public originalTotalGrossWeight = new FormControl(0);
   public weightAdjustments = new FormArray([]);
-  public totalVolume = new FormControl(0);
-  public totalPalletCount = new FormControl(0);
+  public totalVolume = new FormControl({value: 0, disabled: true});
+  public totalPalletCount = new FormControl({value: 0, disabled: true});
 
   public filteredCarrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
   public filteredServiceLevels: Array<SelectOption<ServiceLevel>> = [];

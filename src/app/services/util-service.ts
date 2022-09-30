@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {
+  ConfirmationModalComponent,
   ConfirmationModalData,
   ElmGenericModalData,
   GenericModalComponent,
@@ -47,6 +48,19 @@ export class UtilService {
       return 'Rejection';
     }
     return 'General';
+  }
+
+  public openConfirmationModal(data: ConfirmationModalData): Observable<boolean> {
+    return this.dialog.open(
+      ConfirmationModalComponent,
+      {autoFocus: false, data}
+    )
+      .afterClosed()
+      .pipe(mergeMap<any, Observable<boolean>>(
+        result => result
+          ? of(true)
+          : of(false)
+      ));
   }
 
   public openCommentModal(data: CommentModalData): Observable<CommentModel> {

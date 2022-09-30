@@ -281,12 +281,12 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   public askForCancelConfirmation(): Observable<boolean> {
-    return this.modalService.openConfirmationModal({
+    return this.util.openConfirmationModal({
       title: 'Cancel',
       innerHtmlMessage: `All changes to this invoice will be lost if you cancel now.
-                   <br/><br/><strong>
+                   
                    Are you sure you want to cancel?
-                   </strong>`,
+                  `,
       confirmButtonText: 'Yes cancel',
       cancelButtonText: 'No go back'
     });

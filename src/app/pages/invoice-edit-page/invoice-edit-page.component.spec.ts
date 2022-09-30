@@ -147,7 +147,7 @@ describe('InvoiceEditPageComponent', () => {
     utilService = TestBed.inject(UtilService);
     modalService = TestBed.inject(ModalService);
     spyOn(modalService, 'openSystemErrorModal').and.returnValue(of());
-    spyOn(modalService, 'openConfirmationModal').and.returnValue(of(true));
+    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
     spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: 'deleteReason'}));
     spyOn(utilService, 'openWeightAdjustmentModal').and.returnValue(of({adjustedWeight: 1.0}));
     spyOn(utilService, 'openGlLineItemModal').and.returnValue(of());

@@ -22,7 +22,7 @@
     "@angular/platform-browser": "12.2.16",
     "@angular/platform-browser-dynamic": "12.2.16",
     "@angular/router": "12.2.16",
-    "@elm/elm-styleguide-ui": "6.0.7",
+    "@elm/elm-styleguide-ui": "6.0.2",
     "@okta/okta-angular": "^3.1.0",
     "@types/file-saver": "^2.0.3",
     "file-saver": "^2.0.5",

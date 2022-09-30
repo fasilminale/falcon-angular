@@ -232,6 +232,7 @@ describe('InvoiceAmountComponent', () => {
       component.costBreakdownItemsControls.push(control);
 
       loadInvoiceAmountDetail$.subscribe(() => {
+        component._formGroup.controls.mileage.enable();
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('USD');
         expect(formGroupValue.amountOfInvoice).toBe(1000);
@@ -349,6 +350,7 @@ describe('InvoiceAmountComponent', () => {
 
     it('should not populate form when no invoice amount details', done => {
       loadInvoiceAmountDetail$.subscribe(() => {
+        component._formGroup.controls.mileage.enable();
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe(0);
@@ -419,6 +421,7 @@ describe('InvoiceAmountComponent', () => {
 
     it('should not populate form when no invoice amount details', done => {
       loadInvoiceAmountDetail$.subscribe(() => {
+        component._formGroup.controls.mileage.enable();
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe(0);

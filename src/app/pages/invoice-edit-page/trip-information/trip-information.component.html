@@ -338,16 +338,13 @@
       </div>
       <div class="row mb-3">
         <div class="col">
-          <input type="text=" [value]="totalGrossWeight" [attr.disabled]="true" class="form-control col-1" matInput
-                 formControlName="totalGrossWeight">
+          <elm-text-input formControlName="totalGrossWeight"></elm-text-input>
         </div>
         <div class="col">
-          <input type="text=" [value]="totalVolume" [attr.disabled]="true" class="form-control col-1" matInput
-                 formControlName="totalVolume">
+          <elm-text-input formControlName="totalVolume"></elm-text-input>
         </div>
         <div class="col">
-          <input type="text=" [value]="totalPalletCount" [attr.disabled]="true" class="form-control col-1" matInput
-                 formControlName="totalPalletCount">
+          <elm-text-input formControlName="totalPalletCount"></elm-text-input>
         </div>
       </div>
       <div *ngIf="hasWeightAdjustments" class="row mb-3 ms-5">

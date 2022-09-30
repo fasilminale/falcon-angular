@@ -110,7 +110,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
           requireField: true,
           confirmButtonStyle: 'destructive'
         })
-        : this.modal.openConfirmationModal(modalData);
+        : this.util.openConfirmationModal(modalData);
     dialogResult.subscribe(result => {
         if (result) {
           const request = this.requireDeleteReason()
