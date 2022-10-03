@@ -773,6 +773,8 @@ describe('InvoiceAmountComponent', () => {
       selected: OTHER_CALC_DETAIL,
       comment: 'some comment'
     }));
+    spyOn(component.fileFormGroup, 'removeControl').and.stub();
+    spyOn(component.fileFormGroup, 'addControl').and.stub();
     spyOn(component.rateEngineCall, 'emit').and.stub();
     const originalCostLineItemCount = component.costBreakdownItems.length;
     const promise = component.onAddChargeButtonClick();
@@ -782,6 +784,8 @@ describe('InvoiceAmountComponent', () => {
     expect(component.getAccessorialDetails.emit).toHaveBeenCalledTimes(1);
     expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
     expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
+    expect(component.fileFormGroup.removeControl).toHaveBeenCalledTimes(1);
+    expect(component.fileFormGroup.addControl).toHaveBeenCalledTimes(1);
   });
 
   it('should call onAddChargeButtonClick and select accessorial charge', async () => {
@@ -868,6 +872,8 @@ describe('InvoiceAmountComponent', () => {
     });
     const costLineItem = component.pendingChargeLineItemControls[0];
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(component.fileFormGroup, 'removeControl').and.stub();
+    spyOn(component.fileFormGroup, 'addControl').and.stub();
     spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
       charge: 'OTHER',
       variables: [{
@@ -880,6 +886,8 @@ describe('InvoiceAmountComponent', () => {
     await promise;
     expect(utilService.openEditChargeModal).toHaveBeenCalledTimes(1);
     expect(component.rateEngineCall.emit).toHaveBeenCalled();
+    expect(component.fileFormGroup.removeControl).toHaveBeenCalledTimes(1);
+    expect(component.fileFormGroup.addControl).toHaveBeenCalledTimes(1);
   });
 
   describe('should remove line item', () => {

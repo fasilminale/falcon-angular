@@ -7,6 +7,7 @@ import {FalHttpInterceptor} from './fal-http-interceptor';
 import {of} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 import {NeedSpyError} from '../testing/test-utils';
+import {EnvironmentService} from './environment-service/environment-service';
 
 describe('AuthService', () => {
   const TEST_USER_INFO = {
@@ -53,10 +54,12 @@ describe('AuthService', () => {
   describe('> REAL >', () => {
     let oktaAuth: OktaAuthService;
     let webServices: WebServices;
+    let environmentService: EnvironmentService;
     beforeEach(() => {
       oktaAuth = TestBed.inject(OktaAuthService);
       webServices = TestBed.inject(WebServices);
-      authService = new RealAuthService(oktaAuth, webServices);
+      environmentService = TestBed.inject(EnvironmentService);
+      authService = new RealAuthService(oktaAuth, webServices, environmentService);
     });
     it('should create', () => {
       expect(authService).toBeTruthy();
@@ -64,7 +67,7 @@ describe('AuthService', () => {
     it('openConfirmationModal should confirm', async () => {
       oktaAuth.$authenticationState = of(true);
       spyOn(webServices, 'httpGet').and.returnValue(of(TEST_USER_INFO));
-      authService = new RealAuthService(oktaAuth, webServices);
+      authService = new RealAuthService(oktaAuth, webServices, environmentService);
       expect(authService.isAuthenticated()).toBeTrue();
     });
   });

@@ -16,6 +16,7 @@ import {RateService} from '../../services/rate-service';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {BillToLocationUtils, Location, LocationUtils} from '../../models/location/location-model';
+import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -116,6 +117,7 @@ describe('InvoiceEditPageComponent', () => {
   let modalService: ModalService;
   let toastService: ToastService;
   let rateService: RateService;
+  let attachmentService: AttachmentService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -166,7 +168,9 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(rateService, 'updateInvoice').and.returnValue(of());
     spyOn(rateService, 'adjustWeightOnInvoice').and.returnValue(of());
 
-    // Create Component
+    attachmentService = TestBed.inject(ATTACHMENT_SERVICE);
+
+      // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -175,6 +179,57 @@ describe('InvoiceEditPageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should handle attachments', () => {
+    const fileValue =  new File([], 'TestFileBlobName');
+    const createEmptyLineItemGroup = () => {
+      const charge = new FormControl('testCharge');
+      const file = new FormControl(fileValue);
+      const group = new FormGroup({
+         charge, file
+      });
+      return group;
+    };
+
+    const setUpControls = () => {
+      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+        mode: 'TL',
+        reportKeyMode: 'TL',
+        reportModeDescription: 'TRUCKLOAD'
+      }));
+      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+        scac: 'ABCD',
+        name: 'The ABCD Group',
+      }));
+      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+        level: 'GRD',
+        name: 'GROUND',
+      }));
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('costBreakdownItems', new FormArray([createEmptyLineItemGroup()]));
+    };
+
+
+
+    setUpControls();
+
+    const testInvoice: InvoiceDataModel = new InvoiceDataModel();
+    const fileFormGroup = new FormGroup({});
+    component.invoiceAmountFormGroup.setControl('fileFormGroup', fileFormGroup);
+
+    fileFormGroup.addControl('testCharge',  new FormControl(fileValue));
+
+    spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(testInvoice));
+    spyOn(attachmentService, 'saveAccessorialAttachments').and.returnValue(of(true));
+
+    component.updateInvoice();
+
+    expect(invoiceService.updateAutoInvoice).toHaveBeenCalled();
+    expect(attachmentService.saveAccessorialAttachments).toHaveBeenCalled();
+    }
+  );
 
   describe('given falcon invoice number in route params', () => {
     let mockParams: MockParamMap;
@@ -983,7 +1038,7 @@ describe('InvoiceEditPageComponent', () => {
   describe('mapTripInformationToEditAutoInvoiceModel method', () => {
     const isPaymentOverrideSelected = new FormArray([]);
     const overridePaymentTermsFormGroup = new FormGroup({
-      isPaymentOverrideSelected: isPaymentOverrideSelected,
+      isPaymentOverrideSelected,
       paymentTerms: new FormControl('ABC')
     });
     const setUpControls = () => {
@@ -1012,7 +1067,6 @@ describe('InvoiceEditPageComponent', () => {
       isPaymentOverrideSelected.push(new FormControl('override'));
       setUpControls();
       const result = component.mapTripInformationToEditAutoInvoiceModel();
-      console.log('result - ', result);
       expect(result).toEqual({
         amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
         totalGrossWeight: component.tripInformationFormGroup.controls.totalGrossWeight.value,
@@ -1046,16 +1100,24 @@ describe('InvoiceEditPageComponent', () => {
         businessUnit: component.invoice.businessUnit,
         standardPaymentTermsOverride: 'ABC',
         hasRateEngineError: component.invoice.hasRateEngineError,
+        billOfLadingNumber: ''
       });
     });
   });
 
   describe('with populated sub forms', () => {
+    const isPaymentOverrideSelected = new FormArray([]);
+    isPaymentOverrideSelected.push(new FormControl('override'));
+    let overridePaymentTermsFormGroup = new FormGroup({
+      isPaymentOverrideSelected: isPaymentOverrideSelected,
+      paymentTerms: new FormControl('ABC')
+    });
     beforeEach(() => {
       component.tripInformationFormGroup.controls.carrierMode = new FormControl(TEST_MODE);
       component.tripInformationFormGroup.controls.carrier = new FormControl(TEST_CARRIER);
       component.tripInformationFormGroup.controls.billToAddress = billToAddressFormGroup;
       component.invoiceAllocationFormGroup.controls.invoiceAllocations = new FormArray([]);
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
       const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
       costBreakdownItems.push(new FormGroup({
         accessorial: new FormControl(false),
@@ -1099,6 +1161,13 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
       component.updateInvoiceFromForms();
       expect(component.invoice.origin).toEqual(MOCK_LOCATION);
+    });
+    it('should not have override payment terms', () => {
+      component.invoiceAmountFormGroup.removeControl('overridePaymentTerms');
+
+      component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
+      component.updateInvoiceFromForms();
+      expect(component.invoice.standardPaymentTermsOverride).toBeUndefined();
     });
     it('should have origin with no shipping control', () => {
       component.tripInformationFormGroup.controls.originAddress = new FormGroup({});
@@ -1248,6 +1317,12 @@ describe('InvoiceEditPageComponent', () => {
       done();
     });
     mockUpdateRequest$.next({});
+  });
+
+  it('should open view history log', () => {
+    spyOn(utilService, 'openHistoryLog').and.callThrough();
+    component.viewHistoryLog();
+    expect(utilService.openHistoryLog).toHaveBeenCalled();
   });
 
 });
