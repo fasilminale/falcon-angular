@@ -1,7 +1,6 @@
 import {ActivatedRouteSnapshot, CanDeactivate, RouterStateSnapshot} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {InvoiceEditPageComponent} from '../pages/invoice-edit-page/invoice-edit-page.component';
 import {InvoiceDetailPageComponent} from '../pages/invoice-detail-page/invoice-detail-page.component';
 import {tap} from "rxjs/operators";
 

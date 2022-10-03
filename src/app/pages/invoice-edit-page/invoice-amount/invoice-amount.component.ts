@@ -473,7 +473,7 @@ export class InvoiceAmountComponent implements OnInit {
       confirmButtonText: 'Deny Charge',
       cancelButtonText: 'Cancel'
     };
-    const modalResult = this.displayPendingChargeModal(modalData, 'destructive');
+    const modalResult = this.displayPendingChargeModal(modalData, 'primary');
     this.handlePendingChargeResult(modalResult, costLineItem, 'Denied');
   }
 
@@ -560,7 +560,7 @@ export class InvoiceAmountComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to delete this charge?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Delete Charge',
-      confirmButtonStyle: 'destructive',
+      confirmButtonStyle: 'primary',
       cancelButtonText: 'Cancel',
       commentSectionFieldName: 'Reason for Deletion',
       requireField: true
