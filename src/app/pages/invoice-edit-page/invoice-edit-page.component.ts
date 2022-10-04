@@ -1,13 +1,12 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
-import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
-import {EMPTY, forkJoin, Observable, Observer, OperatorFunction, Subject} from 'rxjs';
+import {Observable, Observer, Subject} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
@@ -20,7 +19,7 @@ import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
-import {defaultIfEmpty, first, map, mergeMap, switchMap} from 'rxjs/operators';
+import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
@@ -32,25 +31,6 @@ import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/
   styleUrls: ['./invoice-edit-page.component.scss']
 })
 export class InvoiceEditPageComponent implements OnInit {
-
-  constructor(private util: UtilService,
-              private route: ActivatedRoute,
-              private userService: UserService,
-              private invoiceService: InvoiceService,
-              private toastService: ToastService,
-              private rateService: RateService,
-              @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
-              @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
-              public router: Router) {
-    this.tripInformationFormGroup = new FormGroup({});
-    this.invoiceAmountFormGroup = new FormGroup({});
-    this.invoiceAllocationFormGroup = new FormGroup({});
-    this.invoiceFormGroup = new FormGroup({
-      tripInformation: this.tripInformationFormGroup,
-      invoiceAmount: this.invoiceAmountFormGroup,
-      invoiceAllocation: this.invoiceAllocationFormGroup
-    });
-  }
 
   breadcrumbs: Array<ElmLinkInterface> = [{label: 'All Invoices', path: `/invoices`}];
   public falconInvoiceNumber = '';
@@ -85,11 +65,23 @@ export class InvoiceEditPageComponent implements OnInit {
   public showEditInfoBanner: boolean = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
 
-  INVOICE_AMOUNT_CL = 'invoice-amount-cl';
-  INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
-  INVOICE_ALLOCATION_FORM = 'invoice-allocation';
-  public costBreakdownValid = true;
-  public netAllocationAmountValid = true;
+  constructor(private util: UtilService,
+              private route: ActivatedRoute,
+              private userService: UserService,
+              private invoiceService: InvoiceService,
+              private toastService: ToastService,
+              private rateService: RateService,
+              @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
+              public router: Router) {
+    this.tripInformationFormGroup = new FormGroup({});
+    this.invoiceAmountFormGroup = new FormGroup({});
+    this.invoiceAllocationFormGroup = new FormGroup({});
+    this.invoiceFormGroup = new FormGroup({
+      tripInformation: this.tripInformationFormGroup,
+      invoiceAmount: this.invoiceAmountFormGroup,
+      invoiceAllocation: this.invoiceAllocationFormGroup
+    });
+  }
 
   ngOnInit(): void {
     this.subscriptions.manage(
@@ -268,6 +260,12 @@ export class InvoiceEditPageComponent implements OnInit {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
+  INVOICE_AMOUNT_CL: string = 'invoice-amount-cl';
+  INVOICE_AMOUNT_PAYTERM: string = 'invoice-amount-pt';
+  INVOICE_ALLOCATION_FORM: string = 'invoice-allocation';
+  public costBreakdownValid: boolean = true;
+  public netAllocationAmountValid: boolean = true;
+
   handleFormIfInvalid($event: any) {
     if (($event.form === this.INVOICE_AMOUNT_CL || $event.form === this.INVOICE_AMOUNT_PAYTERM) && $event?.value) {
       this.costBreakdownValid = $event.value;
@@ -313,7 +311,6 @@ export class InvoiceEditPageComponent implements OnInit {
     this.showEditInfoBanner = this.isGlobalEditMode$.value;
     this.isTripEditMode$.value = false;
     this.otherSectionEditMode$.value = false;
-    this.invoiceAmountFormGroup.get('fileFormGroup')?.reset();
   }
 
   handleTripEditModeEvent($event: any): void {
@@ -397,37 +394,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   updateInvoice(): Observable<InvoiceDataModel> {
-    const editInvoiceModel = this.mapTripInformationToEditAutoInvoiceModel();
-
-    const files: Array<File> = [];
-    const chargeCodes: Array<string> = [];
-
-    editInvoiceModel.costLineItems?.map((lineItem) => {
-      const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
-      if (file) {
-        files.push(file);
-        chargeCodes.push(lineItem.chargeCode);
-      }
-    });
-
-    const returnedInvoice = this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber);
-
-    if (files.length && chargeCodes.length) {
-      returnedInvoice.subscribe((updatedInvoice) => {
-        this.attachmentService.saveAccessorialAttachments(this.falconInvoiceNumber, chargeCodes, files).subscribe((success) => {
-            if (!success) {
-              this.toastService.openErrorToast('Attachments failed to upload');
-            }
-            // Need page refreshed with new attachment links.
-            this.invoiceService.getInvoice(this.falconInvoiceNumber).subscribe((invoice) => {
-              this.loadInvoice(invoice);
-            });
-
-          }
-        );
-      });
-  }
-    return returnedInvoice;
+    return this.invoiceService.updateAutoInvoice(this.mapTripInformationToEditAutoInvoiceModel(), this.falconInvoiceNumber);
   }
 
   clickSubmitForApprovalButton(): void {
@@ -562,7 +529,6 @@ export class InvoiceEditPageComponent implements OnInit {
     const lineItems = items as FormArray;
     if (!lineItems?.controls) {
       return [];
-
     }
     for (const control of lineItems.controls) {
       const item = control as FormGroup;
@@ -648,7 +614,7 @@ export class InvoiceEditPageComponent implements OnInit {
           this.loadInvoice(invoice);
       }, (error) => {
         const errorMessage = error.error.error.message;
-        this.toastService.openErrorToast(errorMessage);
+          this.toastService.openErrorToast(errorMessage);
       });
     }
   }
