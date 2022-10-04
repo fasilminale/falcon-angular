@@ -48,24 +48,6 @@
         </elm-input-subtext>
       </div>
     </form>
-
-    <div>
-      <!-- FILE CHOOSER -->
-      <label for="file-chooser-input"
-             class="fal-label">
-        File
-      </label>
-      <app-fal-file-input id="file-chooser-input"
-                          formControlName="file"
-                          accept=".eml, .doc, .jpg, .pdf, .xlsx">
-      </app-fal-file-input>
-    </div>
-
-    <div *ngIf="!!fileName">
-      <label class="fal-label">Uploaded Attachment</label>
-      <div class="form-control">{{fileName}}</div>
-    </div>
-    <br>
     <div *ngIf="chargeControl.valid && commentControl.enabled">
       <label for="commentInput"
              class="fal-label">
@@ -82,9 +64,7 @@
         Comment is missing
       </elm-input-subtext>
     </div>
-
   </div>
-
   <div mat-dialog-actions class="float-right">
     <elm-button buttonStyle="secondary"
                 class="ms-auto"
@@ -102,5 +82,4 @@
       {{confirmButtonText}}
     </elm-button>
   </div>
-
 </form>
