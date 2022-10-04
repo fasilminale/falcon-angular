@@ -36,10 +36,6 @@ export class FalEditGlModalComponent {
     this.glCompanyCodeControl.patchValue(glLineItem.glCompanyCode);
     this.glAmountControl.patchValue(glLineItem.glAmount);
 
-    // Disable controls
-    this.allocationPercentControl.disable();
-    this.customerCategoryControl.disable();
-
     this.glLineItems = data.glLineItems;
 
     this.form = new FormGroup({
