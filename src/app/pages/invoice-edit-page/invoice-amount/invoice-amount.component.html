@@ -217,9 +217,7 @@
 
             <div class="col-6" *ngIf="!readOnlyForm">
               <div
-                *ngIf="_.value.entrySource === 'FAL'
-                || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')
-                || (_.value.entrySource === 'AUTO' && _.value.lineItemType === 'ACCESSORIAL' && (_.value.message === 'NOT FOUND' || _.value.totalAmount === 0))">
+                *ngIf="_.value.lineItemType === 'ACCESSORIAL' && _.value.accessorialCode !== 'FUE' && _.value.accessorialCode !== '405'">
                 <div *ngIf="_.value.variables?.length > 0 || _.value.charge === 'OTHER'" class="material-icons edit-icon"
                      (click)="onEditCostLineItem(_, costBreakdownItemsControls)">edit
                 </div>
