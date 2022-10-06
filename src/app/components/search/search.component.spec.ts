@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {SearchComponent} from './search.component';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('SearchComponent', () => {
@@ -19,8 +19,10 @@ describe('SearchComponent', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
+    component.controlGroup = new FormBuilder().group({
+      control: [null, [Validators.pattern('^[a-zA-Z0-9_-]*$'), Validators.required]]
+    }, {updateOn: 'submit'});
     fixture.detectChanges();
-    component.ngOnInit();
   });
 
   it('should create', () => {

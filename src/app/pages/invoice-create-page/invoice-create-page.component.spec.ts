@@ -6,6 +6,7 @@ import {TimeService} from '../../services/time-service';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {UserService} from '../../services/user-service';
 import {of} from 'rxjs';
+import {FormBuilder} from '@angular/forms';
 
 describe('InvoiceCreatePageComponent', () => {
   let component: InvoiceCreatePageComponent;
@@ -28,6 +29,7 @@ describe('InvoiceCreatePageComponent', () => {
         FalconTestingModule,
         RouterTestingModule,
       ],
+      providers: [FormBuilder],
       declarations: [InvoiceCreatePageComponent],
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
