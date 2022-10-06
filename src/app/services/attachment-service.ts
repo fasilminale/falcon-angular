@@ -10,6 +10,7 @@ export const ATTACHMENT_SERVICE = new InjectionToken<AttachmentService>('Attachm
 
 export interface AttachmentService {
   saveAttachments(invoiceNumber: string, attachments: Array<any>): Observable<boolean>;
+  saveAccessorialAttachments(invoiceNumber: string, chargeCodes: Array<string>, files: Array<File>): Observable<boolean>;
 }
 
 
@@ -17,6 +18,10 @@ export interface AttachmentService {
 @Injectable()
 export class FakeAttachmentService implements AttachmentService {
   static PROVIDER = {provide: ATTACHMENT_SERVICE, useClass: FakeAttachmentService};
+
+  saveAccessorialAttachments(invoiceNumber: string, chargeCodes: Array<string>, files: Array<File>): Observable<boolean>{
+    throw new NeedSpyError('AttachmentService', 'saveAccessorialAttachments');
+  }
 
   saveAttachments(invoiceNumber: string, attachments: Array<any>): Observable<boolean> {
     throw new NeedSpyError('AttachmentService', 'saveAttachments');
@@ -30,6 +35,25 @@ export class RealAttachmentService implements AttachmentService {
   static PROVIDER = {provide: ATTACHMENT_SERVICE, useClass: RealAttachmentService};
 
   constructor(private web: WebServices) {
+  }
+
+  public saveAccessorialAttachments(invoiceNumber: string, chargeCodes: Array<string>, files: Array<File>): Observable<boolean> {
+    if (files.length <= 0 || chargeCodes.length <= 0) {
+      return of(true);
+    }
+
+    const formData = new FormData();
+
+    formData.append('chargeCodes', JSON.stringify(chargeCodes));
+    files.forEach(f => formData.append('files', f, f.name));
+
+    return this.web.httpPost(
+      `${environment.baseServiceUrl}/v1/attachment/${invoiceNumber}/accessorialBatch`,
+      formData
+    ).pipe(
+      mergeMap(result => of(result === 'ACCEPTED')),
+      catchError(() => of(false))
+    );
   }
 
   public saveAttachments(invoiceNumber: string, attachments: Array<any>): Observable<boolean> {
