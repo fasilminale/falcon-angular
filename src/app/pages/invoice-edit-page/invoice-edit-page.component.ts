@@ -661,10 +661,7 @@ export class InvoiceEditPageComponent implements OnInit {
   getRates(accessorialCode: string): void {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
-      this.rateService.rateInvoice({
-        ...this.invoice,
-        deliveryInstructions: this.invoice.hasRateEngineError ? this.invoice.deliveryInstructions : []
-      }).subscribe(
+      this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => {
           this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
           this.loadInvoice(ratedInvoiced);
