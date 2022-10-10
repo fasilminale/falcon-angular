@@ -288,7 +288,7 @@ export class InvoiceEditPageComponent implements OnInit {
     return this.util.openConfirmationModal({
       title: 'Cancel',
       innerHtmlMessage: `All changes to this invoice will be lost if you cancel now.
-                   
+
                    Are you sure you want to cancel?
                   `,
       confirmButtonText: 'Yes cancel',
@@ -662,10 +662,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
       this.rateCallCounter++;
-      this.rateService.rateInvoice({
-        ...this.invoice,
-        deliveryInstructions: this.invoice.hasRateEngineError ? this.invoice.deliveryInstructions : []
-      }).subscribe(
+      this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => this.loadReRate(ratedInvoiced),
         error => this.showErrorReRate(error)
       );
