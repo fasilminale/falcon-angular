@@ -108,12 +108,17 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.falconInvoiceNumber) {
       this.subscriptions.manage(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
-          .subscribe(i => this.loadInvoice(i))
+          .subscribe(i => this.loadInvoice(i, true))
       );
     }
   }
 
-  public loadInvoice(invoice: InvoiceDataModel): void {
+  public loadInvoice(invoice: InvoiceDataModel, freshData = false): void {
+    if (!freshData) {
+      debugger;
+      this.invoice.costLineItems.forEach((item, index) => invoice.costLineItems[index].persisted = item.persisted);
+    }
+
     this.invoice = invoice;
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
@@ -286,7 +291,7 @@ export class InvoiceEditPageComponent implements OnInit {
     return this.util.openConfirmationModal({
       title: 'Cancel',
       innerHtmlMessage: `All changes to this invoice will be lost if you cancel now.
-                   
+
                    Are you sure you want to cancel?
                   `,
       confirmButtonText: 'Yes cancel',
@@ -594,7 +599,8 @@ export class InvoiceEditPageComponent implements OnInit {
         responseComment: CommonUtils.handleNAValues(item.controls?.responseComment?.value),
         lineItemType: CommonUtils.handleNAValues(item.controls?.lineItemType?.value),
         variables: item.controls?.variables?.value ?? [],
-        deletedDate: item.controls?.deletedDate?.value
+        deletedDate: item.controls?.deletedDate?.value,
+        persisted: item.controls?.persisted?.value,
       });
     }
     return results;

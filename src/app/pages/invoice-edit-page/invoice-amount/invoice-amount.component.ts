@@ -321,7 +321,8 @@ export class InvoiceAmountComponent implements OnInit {
           manual: new FormControl(false),
           lineItemType: new FormControl(lineItem.lineItemType ?? null),
           variables: new FormControl(lineItem.variables ?? []),
-          deletedDate: new FormControl(lineItem.deletedDate)
+          deletedDate: new FormControl(lineItem.deletedDate),
+          persisted: new FormControl(lineItem.persisted),
         });
         group.get('rateSourcePair')?.valueChanges?.subscribe(
           value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
@@ -427,6 +428,7 @@ export class InvoiceAmountComponent implements OnInit {
     const lineItemType = new FormControl(null);
     const accessorialCode = new FormControl(null);
     const autoApproved = new FormControl(true);
+    const persisted = new FormControl(false);
     const responseComment = new FormControl(null);
     const variables = new FormControl([]);
     const file = new FormControl(null);
@@ -438,7 +440,7 @@ export class InvoiceAmountComponent implements OnInit {
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
       accessorialCode, autoApproved,
-      variables, responseComment, file
+      variables, responseComment, file, persisted
     });
     group.get('rateSourcePair')?.valueChanges?.subscribe(
       value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
@@ -555,33 +557,39 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   async onDeleteCostLineItem(costLineItem: any, index: number): Promise<void> {
-    const dialogResult = await this.utilService.openCommentModal({
-      title: 'Delete Charge',
-      innerHtmlMessage: `Are you sure you want to delete this charge?
+    if (costLineItem.value.persisted) {
+      const dialogResult = await this.utilService.openCommentModal({
+        title: 'Delete Charge',
+        innerHtmlMessage: `Are you sure you want to delete this charge?
                <br/><br/><strong>This action cannot be undone.</strong>`,
-      confirmButtonText: 'Delete Charge',
-      confirmButtonStyle: 'primary',
-      cancelButtonText: 'Cancel',
-      commentSectionFieldName: 'Reason for Deletion',
-      requireField: true
-    }).pipe(first()).toPromise();
-    if (dialogResult) {
-      const existingCostLineItem: AbstractControl | null = this.costBreakdownItems.get(index.toString());
+        confirmButtonText: 'Delete Charge',
+        confirmButtonStyle: 'primary',
+        cancelButtonText: 'Cancel',
+        commentSectionFieldName: 'Reason for Deletion',
+        requireField: true
+      }).pipe(first()).toPromise();
+      if (dialogResult) {
+        const existingCostLineItem: AbstractControl | null = this.costBreakdownItems.get(index.toString());
 
-      if (existingCostLineItem) {
-        this.costBreakdownItems.removeAt(index);
-        this.deletedChargeLineItemControls.push(existingCostLineItem);
+        if (existingCostLineItem) {
+          this.costBreakdownItems.removeAt(index);
+          this.deletedChargeLineItemControls.push(existingCostLineItem);
 
-        this.toastService.openSuccessToast(`Success. Line item has been deleted.`);
-        existingCostLineItem.patchValue({
-          responseComment: dialogResult.comment,
-          requestStatus: 'Deleted',
-          requestStatusPair: {key: 'DELETED', label: 'Deleted'},
-          deletedDate: new Date().toISOString()
-        });
-        this.pendingAccessorialCode = costLineItem.value.accessorialCode;
-        this.rateEngineCall.emit(this.pendingAccessorialCode);
+          this.toastService.openSuccessToast(`Success. Line item has been deleted.`);
+          existingCostLineItem.patchValue({
+            responseComment: dialogResult.comment,
+            requestStatus: 'Deleted',
+            requestStatusPair: {key: 'DELETED', label: 'Deleted'},
+            deletedDate: new Date().toISOString()
+          });
+          this.pendingAccessorialCode = costLineItem.value.accessorialCode;
+          this.rateEngineCall.emit(this.pendingAccessorialCode);
+        }
       }
+    } else {
+      this.costBreakdownItems.removeAt(index);
+      this.pendingAccessorialCode = costLineItem.value.accessorialCode;
+      this.rateEngineCall.emit(this.pendingAccessorialCode);
     }
   }
 

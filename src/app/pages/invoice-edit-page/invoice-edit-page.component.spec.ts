@@ -1211,6 +1211,46 @@ describe('InvoiceEditPageComponent', () => {
     // no error means we pass
   });
 
+  it('should overwrite persisted', () => {
+    const invoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          persisted: true,
+        }
+      ],
+    });
+
+    const newInvoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          persisted: false,
+        }
+      ],
+    });
+    component.invoice = invoice;
+    component.loadInvoice(newInvoice, true);
+    expect(component.invoice.costLineItems[0].persisted).toEqual(false);
+  });
+
+  it('should use existing persisted', () => {
+    const invoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          persisted: true,
+        }
+      ],
+    });
+
+    const newInvoice = new InvoiceDataModel({
+      costLineItems: [
+        {}
+      ],
+    });
+    component.invoice = invoice;
+    component.loadInvoice(newInvoice);
+    expect(component.invoice.costLineItems[0].persisted).toEqual(true);
+  });
+
   it('should get bad cost line item data', () => {
     const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
     costBreakdownItems.clear();

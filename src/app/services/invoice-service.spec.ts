@@ -25,7 +25,8 @@ describe('InvoiceService', () => {
       companyCode: '1234',
       vendorNumber: '2345',
       externalInvoiceNumber: '3456',
-      invoiceDate: new Date()
+      invoiceDate: new Date(),
+      costLineItems: [{}],
     };
     subscription = new Subscription();
   });
@@ -178,4 +179,57 @@ describe('InvoiceService', () => {
     ));
   });
 
+  it('should return Observable with persisted true when getInvoice invoked', (done) => {
+    const returnInvoice = {
+      falconInvoiceNumber: 'F0000000001',
+      companyCode: '1234',
+      vendorNumber: '2345',
+      externalInvoiceNumber: '3456',
+      invoiceDate: new Date(),
+      costLineItems: [{ persisted: true }],
+    };
+    const env = environment;
+    env.baseServiceUrl = 'https://somedomain.com';
+    spyOn(web, 'httpGet').and.returnValue(of(invoice));
+    subscription.add(invoiceService.getInvoice('foo').subscribe(
+      (result) => {
+        // @ts-ignore
+        expect(result).toEqual(returnInvoice);
+        expect(web.httpGet).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/foo`);
+        done();
+      },
+      () => fail(`Subscription should have succeeded`)
+    ));
+  });
+
+  it('should return Observable with undefined costLineItems when getInvoice invoked and no costLineItems', (done) => {
+    const initialInvoice = {
+      falconInvoiceNumber: 'F0000000001',
+      companyCode: '1234',
+      vendorNumber: '2345',
+      externalInvoiceNumber: '3456',
+      invoiceDate: new Date(),
+    };
+
+    const returnInvoice = {
+      falconInvoiceNumber: 'F0000000001',
+      companyCode: '1234',
+      vendorNumber: '2345',
+      externalInvoiceNumber: '3456',
+      invoiceDate: new Date(),
+      costLineItems: undefined,
+    };
+    const env = environment;
+    env.baseServiceUrl = 'https://somedomain.com';
+    spyOn(web, 'httpGet').and.returnValue(of(initialInvoice));
+    subscription.add(invoiceService.getInvoice('foo').subscribe(
+      (result) => {
+        // @ts-ignore
+        expect(result).toEqual(returnInvoice);
+        expect(web.httpGet).toHaveBeenCalledOnceWith(`${env.baseServiceUrl}/v1/invoice/foo`);
+        done();
+      },
+      () => fail(`Subscription should have succeeded`)
+    ));
+  });
 });
