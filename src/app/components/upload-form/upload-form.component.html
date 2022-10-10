@@ -69,11 +69,7 @@
               </div>
 
               <!-- ATTACHMENT - REMOVE -->
-              <input *ngIf="!isDisabled" type="button"
-                     value="close"
-                     class="material-icons btn btn-remove-attachment"
-                     (click)="removeAttachment(i)"
-              />
+              <elm-close-button *ngIf="!isDisabled" (closeButtonClick)="removeAttachment(i)"></elm-close-button>
             </div>
           </div>
         </div>

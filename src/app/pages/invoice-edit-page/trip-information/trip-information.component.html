@@ -22,7 +22,7 @@
       </label>
       <elm-text-input id="tripIdInput"
                       formControlName="tripId"
-                      [errorSpacing]="true">
+                      [addSpacing]="false">
       </elm-text-input>
     </div>
     <div class="col-4">
@@ -32,7 +32,7 @@
       </label>
       <elm-text-input id="vendorNumberInput"
                       formControlName="vendorNumber"
-                      [errorSpacing]="true"
+                      [addSpacing]="true"
                       [ngClass]="{'field-invalid': !vendorNumberControl.value}">>
       </elm-text-input>
       <elm-input-subtext *ngIf="!vendorNumberControl.value"
@@ -112,7 +112,7 @@
       </label>
       <elm-text-input id="proTrackingNumberInput"
                       formControlName="proTrackingNumber"
-                      [errorSpacing]="true">
+                      [addSpacing]="false">
       </elm-text-input>
     </div>
     <div class="col-4">
@@ -122,8 +122,7 @@
       </label>
       <elm-text-input id="bolNumberInput"
                       formControlName="bolNumber"
-                      [errorSpacing]="true"
-                      [maxLength]="MAX_BOL_NUMBER_LENGTH">
+                      [addSpacing]="false">
       </elm-text-input>
       <elm-input-subtext *ngIf="bolNumberControl.invalid"
                          [isError]="true">
@@ -289,7 +288,7 @@
 
   <br/>
   <div class="row">
-    <div *ngIf="isTripEditMode$.value" class="col-12 d-flex justify-content-end">
+    <div *ngIf="isTripEditMode$.value" class="col-12 d-flex justify-content-end mt-3">
       <elm-button id="cancel-button"
                   buttonType="button"
                   buttonStyle="secondary"
@@ -345,16 +344,13 @@
       </div>
       <div class="row mb-3">
         <div class="col">
-          <input type="text=" [value]="totalGrossWeight" [attr.disabled]="true" class="form-control col-1" matInput
-                 formControlName="totalGrossWeight">
+          <elm-text-input formControlName="totalGrossWeight"></elm-text-input>
         </div>
         <div class="col">
-          <input type="text=" [value]="totalVolume" [attr.disabled]="true" class="form-control col-1" matInput
-                 formControlName="totalVolume">
+          <elm-text-input formControlName="totalVolume"></elm-text-input>
         </div>
         <div class="col">
-          <input type="text=" [value]="totalPalletCount" [attr.disabled]="true" class="form-control col-1" matInput
-                 formControlName="totalPalletCount">
+          <elm-text-input formControlName="totalPalletCount"></elm-text-input>
         </div>
       </div>
       <div *ngIf="hasWeightAdjustments" class="row mb-3 ms-5">

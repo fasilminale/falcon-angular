@@ -1,7 +1,7 @@
-@import "node_modules/@elm/elm-styleguide-ui/src/styles/cardinal-colors";
-@import "node_modules/@elm/elm-styleguide-ui/src/styles/elm-modals";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
+
 .inputError {
-  color: $error-red;
+  color: colors.$error-red;
   text-align: center;
   margin-top: -32px;
 }

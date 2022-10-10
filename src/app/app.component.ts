@@ -1,11 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {LoadingService} from './services/loading-service';
 import {Router} from '@angular/router';
-import {ErrorModalData, FeedbackCollectorService, NavbarItem} from '@elm/elm-styleguide-ui';
+import { ModalService, FeedbackCollectorService, NavbarItem, ElmSystemErrorModalData} from '@elm/elm-styleguide-ui';
 import {ErrorService} from './services/error-service';
 import {OktaAuthService} from '@okta/okta-angular';
 import {AUTH_SERVICE, AuthService} from './services/auth-service';
-import {UtilService} from './services/util-service';
 import {filter, mergeMap, repeatWhen, take, tap} from 'rxjs/operators';
 import {UserInfoModel} from './models/user-info/user-info-model';
 import {UserService} from './services/user-service';
@@ -37,7 +36,7 @@ export class AppComponent implements OnInit {
               @Inject(AUTH_SERVICE) public authService: AuthService,
               private errorService: ErrorService,
               private oktaService: OktaAuthService,
-              private util: UtilService,
+              private modal: ModalService,
               private userService: UserService,
               public feedbackService: FeedbackCollectorService,
               private buildInfoService: BuildInfoService) {
@@ -68,7 +67,7 @@ export class AppComponent implements OnInit {
 
   public initializeErrors(): void {
     this.errorService.getErrors().subscribe(error => {
-      const modalData: ErrorModalData = {
+      const modalData: ElmSystemErrorModalData = {
         title: 'Error',
         innerHtmlMessage: `<strong>Status:</strong> ${error.status}<br>` +
           `${error.message}`
@@ -77,7 +76,7 @@ export class AppComponent implements OnInit {
       if (error.status == '403' && error.message.includes('User not Found')) {
         this.router.navigate(['/newUserForbidden']).then();
       } else {
-        this.util.openErrorModal(modalData)
+        this.modal.openSystemErrorModal(modalData)
           .subscribe(() => {
             // tslint:disable-next-line:triple-equals
             if (error.status == '401') {

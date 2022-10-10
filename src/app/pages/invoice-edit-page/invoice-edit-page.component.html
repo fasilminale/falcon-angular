@@ -88,9 +88,10 @@
          [chargeLineItemOptions$]="chargeLineItemOptions$.asObservable()"
          (invoiceAmountFormInvalid)="handleFormIfInvalid($event)"
          (getAccessorialDetails)="getAccessorialList()"
-         (rateEngineCall)="getRates($event)"
+         (rateEngineCall)="getRates()"
          (requestGlAllocation)="onGlAllocationRequestEvent($event)"
          (resolveDisputeCall)="disputeAction($event)"
+         [isMakingRateCall]="isMakingRateCall"
          >
         </app-invoice-amount>
         <hr>

@@ -8,7 +8,6 @@ import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {
   ButtonClickedEvent,
-  ConfirmationModalComponent,
   DataTableComponent,
   ElmDataTableHeader
 } from '@elm/elm-styleguide-ui';
@@ -134,7 +133,6 @@ export class InvoiceExtractionPageComponent implements OnInit {
           innerHtmlMessage: `You are about to extract ${this.selectedInvoicesToExtract.length} Invoice(s) for remittance.
                    <br/><br/><strong>This action cannot be undone.</strong>`,
           confirmButtonText: 'Extract Invoice(s)',
-          confirmButtonStyle: 'primary',
           cancelButtonText: 'Cancel'
         }
       ).toPromise();

@@ -1,7 +1,7 @@
-@import "node_modules/@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .response-error {
-  background-color: $error-red-bkg;
+  background-color: colors.$error-red-bkg;
   padding: 14px 16px;
   border-radius: 5px;
   display: flex;
@@ -13,7 +13,7 @@
   }
 
   .error-icon {
-    color: $error-red;
+    color: colors.$error-red;
     padding-right: 16px;
   }
 }

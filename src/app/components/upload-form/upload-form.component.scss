@@ -1,4 +1,4 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 #upload-button-container {
   padding-top: 4em;
@@ -20,9 +20,9 @@
 }
 
 .attachment-container {
-  background-color: $grey1;
+  background-color: colors.$gray-lightest;
   border-radius: 0.25rem;
-  border: 1px dashed $grey2;
+  border: 1px dashed colors.$gray-light;
   padding: 1em;
   height: 260px;
   overflow: auto;
@@ -33,7 +33,7 @@
 }
 
 .btn-remove-attachment:hover {
-  background-color: $cardinal-white;
+  background-color: colors.$white;
 }
 
 .spacing {
@@ -49,7 +49,7 @@
 }
 
 .error {
-  border: 1px solid $cardinal-red !important;
+  border: 1px solid colors.$red !important;
 }
 
 label.form-label {

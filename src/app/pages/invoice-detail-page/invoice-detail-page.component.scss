@@ -1,7 +1,7 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .page-header {
-  background-color: $cardinal-white;
+  background-color: colors.$white;
   padding: 0 24px 16px;
   min-height: 120px;
 }
@@ -26,16 +26,16 @@
 }
 
 .side-nav {
-  border-color: $cardinal-blue;
-  border-top: solid 1px $cardinal-blue;
+  border-color: colors.$gray-light;
+  border-top: solid 1px colors.$gray-light;
   border-top-left-radius: 0.25rem;
   width: 25%;
 }
 
 .milestone-label {
-  color: $cardinal-black;
+  color: colors.$black;
 }
 
 .milestone-sub {
-  color: $grey3;
+  color: colors.$gray-text;
 }

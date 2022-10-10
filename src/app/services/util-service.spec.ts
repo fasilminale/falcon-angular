@@ -151,13 +151,6 @@ describe('UtilService', () => {
     expect(result).toBeFalse();
   });
 
-  it('openErrorModal should close', async () => {
-    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
-    const result = await util.openErrorModal(testModalData).toPromise();
-    expect(dialog.open).toHaveBeenCalled();
-    expect(result).toBeFalse();
-  });
-
   it('openGenericModal should close', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
     const result = await util.openGenericModal(testModalData).toPromise();

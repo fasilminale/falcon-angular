@@ -14,10 +14,9 @@ import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
-import { UtilService } from 'src/app/services/util-service';
 import {InvoiceService} from "../../services/invoice-service";
 import {EnvironmentService} from "../../services/environment-service/environment-service";
-import {ButtonClickedEvent} from "@elm/elm-styleguide-ui";
+import {ButtonClickedEvent, ModalService} from "@elm/elm-styleguide-ui";
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { WindowService } from 'src/app/services/window-service/window-service';
 import {Sort} from '@angular/material/sort';
@@ -48,7 +47,7 @@ describe('InvoiceExtractionPageComponent', () => {
   let snackBar: MatSnackBar;
   let dialog: MatDialog;
   let filterService: FilterService;
-  let utilService: UtilService;
+  let modalService: ModalService;
   let invoiceService: InvoiceService;
   let windowService: WindowService;
   let environmentService: EnvironmentService;
@@ -108,7 +107,7 @@ describe('InvoiceExtractionPageComponent', () => {
     router = TestBed.inject(Router);
     dialog = TestBed.inject(MatDialog);
     filterService = TestBed.inject(FilterService);
-    utilService = TestBed.inject(UtilService);
+    modalService = TestBed.inject(ModalService);
     invoiceService = TestBed.inject(InvoiceService);
     windowService = TestBed.inject(WindowService);
     environmentService = TestBed.inject(EnvironmentService);
@@ -154,7 +153,7 @@ describe('InvoiceExtractionPageComponent', () => {
   }));
 
   it('should Extract', async () => {
-      spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
+      spyOn(modalService, 'openConfirmationModal').and.returnValue(of(true));
       spyOn(invoiceService, 'extract').and.returnValue(of({}));
       spyOn(component, 'getTableData').and.stub();
       component.selectedInvoicesToExtract = [{'falconInvoiceNumber': 'F0000000001'} as InvoiceDataModel];

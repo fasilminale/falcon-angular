@@ -16,30 +16,33 @@ export class SearchComponent implements OnChanges {
 
   @Output() submitEvent: EventEmitter<string> = new EventEmitter<string>();
 
-  submitted = false;
+  submitted: boolean = false;
+
+  ngOnInit(): void {
+  }
 
   constructor() {
   }
 
   ngOnChanges(): void {
     if (this.submitted && this.totalResults === 0) {
-      this.controlGroup.controls.control.setErrors({badID: true});
+      this.controlGroup.controls['control'].setErrors({badID: true});
     }
   }
 
   showHelperText(): boolean {
-    return (!this.controlGroup.controls.control.errors ||
-      (this.controlGroup.controls.control.hasError('required') && !this.submitted));
+    return (!this.controlGroup.controls['control'].errors ||
+      (this.controlGroup.controls['control'].hasError('required') && !this.submitted));
   }
 
   getErrorMessage(): string | null {
-    if (this.controlGroup.controls.control.hasError('badID')) {
+    if (this.controlGroup.controls['control'].hasError('badID')) {
       return this.invalidIdMessage;
     }
-    if (this.controlGroup.controls.control.hasError('required') && this.submitted) {
+    if (this.controlGroup.controls['control'].hasError('required') && this.submitted) {
       return this.requiredMessage;
     }
-    if (this.controlGroup.controls.control.hasError('pattern')) {
+    if (this.controlGroup.controls['control'].hasError('pattern')) {
       return this.patternMessage;
     }
     return null;
@@ -48,12 +51,12 @@ export class SearchComponent implements OnChanges {
   submit(): void {
     this.submitted = true;
     if (this.controlGroup.valid && this.controlGroup.dirty) {
-      this.submitEvent.emit(this.controlGroup.controls.control.value);
+      this.submitEvent.emit(this.controlGroup.controls['control'].value);
     }
   }
 
   clear(): void {
-    this.controlGroup.controls.control.setValue('');
+    this.controlGroup.controls['control'].setValue('');
     this.submitted = false;
   }
 }

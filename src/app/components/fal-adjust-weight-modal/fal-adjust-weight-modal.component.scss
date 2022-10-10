@@ -1,4 +1,4 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .dialog-close-button {
   margin-left: auto;
@@ -19,7 +19,7 @@
   line-height: 1 !important;
   letter-spacing: 0;
   text-align: left;
-  color: $cardinal-black;
+  color: colors.$black;
 }
 
 .scrollable {
@@ -27,17 +27,17 @@
 }
 
 .add-dialog-border {
-  border-top: $grey1 solid 1px;
-  border-bottom: $grey1 solid 1px;
+  border-top: colors.$gray-lightest solid 1px;
+  border-bottom: colors.$gray-lightest solid 1px;
 }
 
 .mat-dialog-content {
   overflow: auto;
   margin: 0 -24px;
   padding: 20px 32px 0;
-  color: $cardinal-black;
-  border-top: $grey1 solid 1px;
-  border-bottom: $grey1 solid 1px;
+  color: colors.$black;
+  border-top: colors.$gray-lightest solid 1px;
+  border-bottom: colors.$gray-lightest solid 1px;
 }
 
 .mat-dialog-actions {
@@ -50,7 +50,7 @@
 
 .modal-error-icon {
   font-size: 28px;
-  color: $cardinal-red;
+  color: colors.$red;
 }
 
 .modal-height {
@@ -58,11 +58,11 @@
 }
 
 .error-text {
-  color: $cardinal-red;
+  color: colors.$red;
 }
 
 .error {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 input[type=number]::-webkit-inner-spin-button,

@@ -1,7 +1,7 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .form-control.error {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 .disabled {

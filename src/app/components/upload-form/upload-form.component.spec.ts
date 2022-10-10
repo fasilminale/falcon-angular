@@ -1,10 +1,11 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {UploadFormComponent} from './upload-form.component';
 import {of} from 'rxjs';
-import {UtilService} from '../../services/util-service';
 import {SimpleChanges} from '@angular/core';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
+import { ModalService } from '@elm/elm-styleguide-ui';
+import { UtilService } from 'src/app/services/util-service';
 
 describe('UploadFormComponent', () => {
   const TEST_FILE_1 = new File([], 'test file 1');
@@ -12,6 +13,7 @@ describe('UploadFormComponent', () => {
 
   let component: UploadFormComponent;
   let fixture: ComponentFixture<UploadFormComponent>;
+  let modal: ModalService;
   let util: UtilService;
 
   beforeEach(async () => {
@@ -19,6 +21,7 @@ describe('UploadFormComponent', () => {
       imports: [FalconTestingModule],
       declarations: [UploadFormComponent],
     }).compileComponents();
+    modal = TestBed.inject(ModalService);
     util = TestBed.inject(UtilService);
     fixture = TestBed.createComponent(UploadFormComponent);
     component = fixture.componentInstance;

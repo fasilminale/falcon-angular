@@ -20,8 +20,8 @@ import {By} from '@angular/platform-browser';
 import * as saveAsFunctions from 'file-saver';
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SearchComponent} from '../../components/search/search.component';
-import {UtilService} from '../../services/util-service';
 import {asSpy} from '../../testing/test-utils.spec';
+import { ModalService } from '@elm/elm-styleguide-ui';
 import {PaginationModel} from '../../models/PaginationModel';
 
 class MockActivatedRoute extends ActivatedRoute {
@@ -51,7 +51,7 @@ describe('InvoiceListPageComponent', () => {
   let dialog: MatDialog;
   let filterService: FilterService;
   let userService: UserService;
-  let utilService: UtilService;
+  let modalService: ModalService;
 
   const userInfo = {
     firstName: 'test',
@@ -123,7 +123,7 @@ describe('InvoiceListPageComponent', () => {
     dialog = TestBed.inject(MatDialog);
     userService = TestBed.inject(UserService);
     filterService = TestBed.inject(FilterService);
-    utilService = TestBed.inject(UtilService);
+    modalService = TestBed.inject(ModalService);
   });
 
   beforeEach(() => {
@@ -417,10 +417,10 @@ describe('InvoiceListPageComponent', () => {
     spyOn(webservice, 'httpPost').and.callFake(() => {
       return throwError({error: JSON.stringify({error: { error: 'Test Exception', message: 'Test Exception'}})});
     });
-    spyOn(utilService, 'openErrorModal').and.returnValue(of());
+    spyOn(modalService, 'openSystemErrorModal').and.returnValue(of());
     component.callCSVApi({});
     fixture.detectChanges();
-    expect(utilService.openErrorModal).toHaveBeenCalled();
+    expect(modalService.openSystemErrorModal).toHaveBeenCalled();
   });
 
   it('should destroy when ngOnDestory is called', () => {

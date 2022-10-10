@@ -1,18 +1,18 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .page-header {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-end;
-  background-color: $cardinal-white;
+  background-color: colors.$white;
   margin: 0 -24px 24px;
   padding: 0 24px 16px;
   min-height: 130px;
 }
 
 ::ng-deep.master-data-download .material-icons {
-  color: $cardinal-black;
+  color: colors.$black;
   border-radius: 50%;
   padding: 5px;
 }

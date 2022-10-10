@@ -14,7 +14,7 @@ import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../
 import {SubjectValue} from '../../utils/subject-value';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-import {ConfirmationModalData, ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalData, ElmLinkInterface, ToastService, ModalService} from '@elm/elm-styleguide-ui';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse} from '../../models/rate-engine/rate-engine-request';
@@ -34,6 +34,7 @@ import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/
 export class InvoiceEditPageComponent implements OnInit {
 
   constructor(private util: UtilService,
+              private modalService: ModalService,
               private route: ActivatedRoute,
               private userService: UserService,
               private invoiceService: InvoiceService,
@@ -77,12 +78,12 @@ export class InvoiceEditPageComponent implements OnInit {
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
   public chargeLineItemOptions$ = new Subject<RateDetailResponse>();
 
-  public standardPaymentTermsOverrideValid: boolean = true;
+  public standardPaymentTermsOverrideValid = true;
 
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
-  public showEditInfoBanner: boolean = false;
+  public showEditInfoBanner = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
 
   INVOICE_AMOUNT_CL = 'invoice-amount-cl';
@@ -90,6 +91,8 @@ export class InvoiceEditPageComponent implements OnInit {
   INVOICE_ALLOCATION_FORM = 'invoice-allocation';
   public costBreakdownValid = true;
   public netAllocationAmountValid = true;
+
+  private rateCallCounter = 0;
 
   ngOnInit(): void {
     this.subscriptions.manage(
@@ -200,13 +203,13 @@ export class InvoiceEditPageComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to delete this invoice?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Delete Invoice',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
     this.util.openCommentModal({
       ...modalData,
       commentSectionFieldName: 'Reason for Deletion',
-      requireField: true
+      requireField: true,
+      confirmButtonStyle: 'primary',
     }).subscribe((result: CommentModel) => {
       if (result) {
         this.deleteInvoiceWithReason({deletedReason: result.comment}).subscribe(
@@ -229,7 +232,7 @@ export class InvoiceEditPageComponent implements OnInit {
         innerHtmlMessage: `Are you sure you want to ${action.toLowerCase()} this dispute?
                <br/><br/><strong>This action cannot be undone.</strong>`,
         confirmButtonText: `${action} Dispute`,
-        confirmButtonStyle: action === 'Deny' ? 'destructive' : 'primary',
+        confirmButtonStyle: 'primary',
         cancelButtonText: 'Cancel',
         commentSectionFieldName: 'Response Comment',
         requireField: action === 'Deny'
@@ -285,12 +288,11 @@ export class InvoiceEditPageComponent implements OnInit {
     return this.util.openConfirmationModal({
       title: 'Cancel',
       innerHtmlMessage: `All changes to this invoice will be lost if you cancel now.
-                   <br/><br/><strong>
+
                    Are you sure you want to cancel?
-                   </strong>`,
-      confirmButtonText: 'Yes, cancel',
-      confirmButtonStyle: 'destructive',
-      cancelButtonText: 'No, go back'
+                  `,
+      confirmButtonText: 'Yes cancel',
+      cancelButtonText: 'No go back'
     });
   }
 
@@ -332,9 +334,9 @@ export class InvoiceEditPageComponent implements OnInit {
     if (refreshedInvoice.refreshMasterDataStatus === 'REFRESHED') {
       this.toastService.openSuccessToast('Success. Master data has successfully been updated.');
       this.loadInvoice(refreshedInvoice);
-    } else if (refreshedInvoice.refreshMasterDataStatus === 'LOOKUP_ERROR'){
+    } else if (refreshedInvoice.refreshMasterDataStatus === 'LOOKUP_ERROR') {
       this.toastService.openErrorToast('Master data update failed due to invoice field not found in master data.');
-    } else if ((refreshedInvoice.refreshMasterDataStatus === 'NOT_REFRESHED')){
+    } else if ((refreshedInvoice.refreshMasterDataStatus === 'NOT_REFRESHED')) {
       this.toastService.openWarningToast('No master data updates needed for vendor number, business unit, customer category.');
     } else {
       this.toastService.openErrorToast('Unknown master data update status. ');
@@ -426,7 +428,7 @@ export class InvoiceEditPageComponent implements OnInit {
           }
         );
       });
-  }
+    }
     return returnedInvoice;
   }
 
@@ -463,7 +465,7 @@ export class InvoiceEditPageComponent implements OnInit {
     const originLocation = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
     const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value ?? {};
     const paymentTermsOverridenValue = paymentTerms.isPaymentOverrideSelected && paymentTerms.isPaymentOverrideSelected.length > 0
-        && paymentTerms.isPaymentOverrideSelected[0] === 'override' && paymentTerms.paymentTerms ? paymentTerms.paymentTerms : undefined;
+    && paymentTerms.isPaymentOverrideSelected[0] === 'override' && paymentTerms.paymentTerms ? paymentTerms.paymentTerms : undefined;
 
     return {
       amountOfInvoice: this.invoiceAmountFormGroup.controls.amountOfInvoice.value,
@@ -527,7 +529,7 @@ export class InvoiceEditPageComponent implements OnInit {
     this.invoice.glLineItems = this.invoiceAllocationFormGroup.controls.invoiceAllocations.value;
     const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value ?? {};
     this.invoice.standardPaymentTermsOverride = paymentTerms.isPaymentOverrideSelected && paymentTerms.isPaymentOverrideSelected.length > 0
-        && paymentTerms.isPaymentOverrideSelected[0] === 'override' && paymentTerms.paymentTerms ? paymentTerms.paymentTerms : undefined;
+    && paymentTerms.isPaymentOverrideSelected[0] === 'override' && paymentTerms.paymentTerms ? paymentTerms.paymentTerms : undefined;
   }
 
   getDisputeLineItems(items: AbstractControl): Array<DisputeLineItem> {
@@ -643,13 +645,11 @@ export class InvoiceEditPageComponent implements OnInit {
   updateAndGetRates(): void {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
-      this.rateService.updateInvoice(this.invoice).subscribe((invoice: any) => {
-          this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
-          this.loadInvoice(invoice);
-      }, (error) => {
-        const errorMessage = error.error.error.message;
-        this.toastService.openErrorToast(errorMessage);
-      });
+      this.rateCallCounter++;
+      this.rateService.updateInvoice(this.invoice).subscribe(
+        (invoice: any) => this.loadReRate(invoice),
+        (error) => this.showErrorReRate(error)
+      );
     }
   }
 
@@ -658,16 +658,35 @@ export class InvoiceEditPageComponent implements OnInit {
    *  Populates the line item information for the selected accessorial code.
    *  Rate management is not called if checkAccessorialData() returns false,indicating required data is missing.
    */
-  getRates(accessorialCode: string): void {
+  getRates(): void {
     this.updateInvoiceFromForms();
     if (this.checkAccessorialData(this.invoice)) {
+      this.rateCallCounter++;
       this.rateService.rateInvoice(this.invoice).subscribe(
-        ratedInvoiced => {
-          this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
-          this.loadInvoice(ratedInvoiced);
-        }
+        ratedInvoiced => this.loadReRate(ratedInvoiced),
+        error => this.showErrorReRate(error)
       );
     }
+  }
+
+  loadReRate(invoice: InvoiceDataModel): void {
+    this.loadInvoice(invoice);
+    if (invoice.hasRateEngineError) {
+      this.toastService.openErrorToast('There were errors while attempting to re-rate.');
+    } else {
+      this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
+    }
+    this.rateCallCounter--;
+  }
+
+  showErrorReRate(error: any): void {
+    const errorMessage = error.error.error.message;
+    this.toastService.openErrorToast(errorMessage);
+    this.rateCallCounter--;
+  }
+
+  public get isMakingRateCall(): boolean {
+    return this.rateCallCounter > 0;
   }
 
   onGlAllocationRequestEvent(request: boolean): void {
@@ -705,7 +724,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   private showNotYetImplementedModal(title: string): void {
-    this.subscriptions.manage(this.util.openErrorModal({
+    this.subscriptions.manage(this.modalService.openSystemErrorModal({
       title, innerHtmlMessage: 'Not Yet Implemented On This Page'
     }).subscribe());
   }

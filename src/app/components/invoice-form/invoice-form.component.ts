@@ -32,7 +32,7 @@ import {Observable, of, Subscription} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ElmCheckboxRadioOptionInterface, ElmFormHelper, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, ConfirmationModalData, ElmCheckboxRadioOptionInterface, ElmFormHelper, ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 
 @Component({
@@ -91,6 +91,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
     private templateService: TemplateService,
     private util: UtilService,
     private toast: ToastService,
+    private modal: ModalService,
     private router: Router,
     public form: InvoiceFormManager,
     @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
@@ -359,16 +360,15 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
       line1Message = 'All changes to this invoice will be lost if you cancel now.';
       line2Message = 'Are you sure you want to cancel?';
     }
-    return this.util.openConfirmationModal({
-      title: 'Cancel',
-      innerHtmlMessage: `${line1Message}
-                   <br/><br/><strong>
-                   ${line2Message}
-                   </strong>`,
-      confirmButtonText: 'Yes, cancel',
-      confirmButtonStyle: 'destructive',
-      cancelButtonText: 'No, go back'
-    });
+    const data: ConfirmationModalData= { title: 'Cancel',
+    innerHtmlMessage: `${line1Message}
+                 <br/><br/><strong>
+                 ${line2Message}
+                 </strong>`,
+    confirmButtonText: 'Yes, cancel',
+    cancelButtonText: 'No, go back'
+  };
+    return this.util.openConfirmationModal(data);
   }
 
   public async gotoInvoiceList(): Promise<boolean> {
@@ -538,7 +538,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public onInvoiceInvalidated(): void {
-    this.util.openErrorModal({
+    this.modal.openSystemErrorModal({
       title: 'Invalid Invoice Amount',
       innerHtmlMessage: `Line Item Net Amount must equal Invoice Net Amount.`
     });
@@ -546,7 +546,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private onInvoiceIsDuplicate(): void {
-    this.util.openErrorModal({
+    this.modal.openSystemErrorModal({
       title: 'Duplicate Invoice',
       innerHtmlMessage: `An invoice with the same vendor number, external invoice number, invoice date, and company code already exists.
             <br/><br/><strong>Please update these fields and try again.</strong>`
@@ -595,7 +595,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private async showSystemErrorModal(): Promise<void> {
-    await this.util.openErrorModal({
+    await this.modal.openSystemErrorModal({
       title: 'System Error',
       innerHtmlMessage: `Invoice creation failed.<br/><br/>
          <strong>Please contact your administrator.</strong>`,

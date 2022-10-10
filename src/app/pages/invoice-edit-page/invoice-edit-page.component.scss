@@ -1,4 +1,4 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .header-button {
   flex-grow: 0;
@@ -18,8 +18,8 @@
 
 .side-nav {
   top: -1px;
-  border-color: $cardinal-blue;
-  border-top: solid 1px $cardinal-blue;
+  border-color: colors.$gray-light;
+  border-top: solid 1px colors.$gray-light;
   border-top-left-radius: 0.25rem;
   width: 25%;
 }
