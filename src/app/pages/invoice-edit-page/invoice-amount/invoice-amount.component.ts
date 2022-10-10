@@ -270,6 +270,7 @@ export class InvoiceAmountComponent implements OnInit {
     }
     this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ?? '');
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
+    givenFormGroup.get('mileage')?.disable();
     (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
     (givenFormGroup.get('pendingChargeLineItems') as FormArray).clear();
     (givenFormGroup.get('disputeLineItems') as FormArray)?.clear();
@@ -294,7 +295,7 @@ export class InvoiceAmountComponent implements OnInit {
           attachment: new FormControl(lineItem.attachment ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
           accessorialCode: new FormControl(lineItem.accessorialCode),
-          charge: new FormControl(lineItem.chargeCode),
+          charge: new FormControl({value: lineItem.chargeCode, disabled: true}),
           rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
           rateSourcePair: new FormControl(lineItem.rateSource),
           entrySource: new FormControl(lineItem.entrySource?.label ?? 'N/A'),
@@ -458,10 +459,9 @@ export class InvoiceAmountComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to accept this charge?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Accept Charge',
-      confirmButtonStyle: 'primary',
       cancelButtonText: 'Cancel'
     };
-    const modalResult = this.displayPendingChargeModal(modalData);
+    const modalResult = this.displayPendingChargeModal(modalData, 'primary');
     this.handlePendingChargeResult(modalResult, costLineItem, 'Accepted');
   }
 
@@ -471,10 +471,9 @@ export class InvoiceAmountComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to deny this charge?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Deny Charge',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
-    const modalResult = this.displayPendingChargeModal(modalData);
+    const modalResult = this.displayPendingChargeModal(modalData, 'primary');
     this.handlePendingChargeResult(modalResult, costLineItem, 'Denied');
   }
 
@@ -516,11 +515,12 @@ export class InvoiceAmountComponent implements OnInit {
     pendingLineItem.get('closedBy')?.setValue(this.userInfo?.email);
   }
 
-  displayPendingChargeModal(modalData: ConfirmationModalData): Observable<CommentModel | boolean> {
+  displayPendingChargeModal(modalData: ConfirmationModalData, confirmButtonStyle: string): Observable<CommentModel | boolean> {
     return this.utilService.openCommentModal({
       ...modalData,
       commentSectionFieldName: 'Response Comment',
-      requireField: modalData.title === 'Deny Charge'
+      requireField: modalData.title === 'Deny Charge',
+      confirmButtonStyle: confirmButtonStyle
     });
   }
 
@@ -560,7 +560,7 @@ export class InvoiceAmountComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to delete this charge?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Delete Charge',
-      confirmButtonStyle: 'destructive',
+      confirmButtonStyle: 'primary',
       cancelButtonText: 'Cancel',
       commentSectionFieldName: 'Reason for Deletion',
       requireField: true

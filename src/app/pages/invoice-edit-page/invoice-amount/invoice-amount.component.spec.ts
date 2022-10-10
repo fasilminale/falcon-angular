@@ -62,7 +62,6 @@ describe('InvoiceAmountComponent', () => {
     title: 'title',
     innerHtmlMessage: '',
     confirmButtonText: 'Confirm',
-    confirmButtonStyle: 'primary',
     cancelButtonText: 'Cancel'
   };
 
@@ -233,6 +232,7 @@ describe('InvoiceAmountComponent', () => {
       component.costBreakdownItemsControls.push(control);
 
       loadInvoiceAmountDetail$.subscribe(() => {
+        component._formGroup.controls.mileage.enable();
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('USD');
         expect(formGroupValue.amountOfInvoice).toBe(1000);
@@ -350,6 +350,7 @@ describe('InvoiceAmountComponent', () => {
 
     it('should not populate form when no invoice amount details', done => {
       loadInvoiceAmountDetail$.subscribe(() => {
+        component._formGroup.controls.mileage.enable();
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe(0);
@@ -420,6 +421,7 @@ describe('InvoiceAmountComponent', () => {
 
     it('should not populate form when no invoice amount details', done => {
       loadInvoiceAmountDetail$.subscribe(() => {
+        component._formGroup.controls.mileage.enable();
         const formGroupValue = component._formGroup.value;
         expect(formGroupValue.currency).toBe('');
         expect(formGroupValue.amountOfInvoice).toBe(0);
@@ -609,7 +611,7 @@ describe('InvoiceAmountComponent', () => {
 
     it('should call openCommentModal and return result', async () => {
       spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: ''}));
-      component.displayPendingChargeModal(TEST_MODAL_DATA);
+      component.displayPendingChargeModal(TEST_MODAL_DATA, 'primary');
       expect(utilService.openCommentModal).toHaveBeenCalled();
     });
 

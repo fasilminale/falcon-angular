@@ -3,7 +3,6 @@ import {
   ConfirmationModalComponent,
   ConfirmationModalData,
   ElmGenericModalData,
-  ErrorModalComponent,
   GenericModalComponent,
 } from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
@@ -114,13 +113,6 @@ export class UtilService {
       ));
   }
 
-  public openErrorModal(data: ErrorModalData): Observable<any> {
-    return this.dialog.open(
-      ErrorModalComponent,
-      {autoFocus: false, data})
-      .afterClosed();
-  }
-
   public openGenericModal(data: ElmGenericModalData): Observable<any> {
     return this.dialog.open(
       GenericModalComponent,
@@ -133,6 +125,7 @@ export class UtilService {
 export type CommentModalData = ConfirmationModalData & {
   commentSectionFieldName: string;
   requireField: boolean;
+  confirmButtonStyle: string;
 };
 
 export type CommentModel = {

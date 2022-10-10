@@ -1,11 +1,11 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .error-div{
-  border: 1px solid $cardinal-red;
+  border: 1px solid colors.$red;
 }
 
 .error-text {
-  color: $cardinal-red;
+  color: colors.$red;
 }
 
 .dialog-close-button {

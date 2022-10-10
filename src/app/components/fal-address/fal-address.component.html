@@ -24,7 +24,7 @@
         </label>
        <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
         <elm-text-input id="country" 
-                        formControlName="country" [errorSpacing]="!_formGroup.get('country')?.value && validateField">
+                        formControlName="country" [addSpacing]="!_formGroup.get('country')?.value && validateField">
         </elm-text-input>
         <elm-input-subtext *ngIf="!_formGroup.get('country')?.value && validateField"
                            class="input-error"
@@ -38,7 +38,7 @@
           Name
         </label>
         <elm-text-input id="name"
-                        formControlName="name" [errorSpacing]="false">
+                        formControlName="name" [addSpacing]="false">
         </elm-text-input>
       </div>
 
@@ -48,7 +48,7 @@
             Street Address
         </label>
         <elm-text-input id="streetAddress"
-                        formControlName="streetAddress" [errorSpacing]="false">
+                        formControlName="streetAddress" [addSpacing]="false">
         </elm-text-input>
       </div>
       <div class="col-md-12">
@@ -57,8 +57,8 @@
             Street Address 2(optional)
         </label>
         <elm-text-input id="streetAddress2"
-                        formControlName="streetAddress2" [errorSpacing]="false">
-        </elm-text-input >
+                        formControlName="streetAddress2" [addSpacing]="false">
+        </elm-text-input>
       </div>
 
       <div class="col">
@@ -67,7 +67,7 @@
             City
         </label>
         <elm-text-input id="city"
-                        formControlName="city" [errorSpacing]="false">
+                        formControlName="city" [addSpacing]="false">
         </elm-text-input>
       </div>
       <div class="col">
@@ -76,7 +76,7 @@
             State/Province
         </label>
         <elm-text-input id="state"
-                        formControlName="state" [errorSpacing]="false">
+                        formControlName="state" [addSpacing]="false">
         </elm-text-input>
       </div>
 
@@ -87,7 +87,7 @@
         </label>
         <!-- TODO: Temporary for FAL-750. Replace when edit capability is implemented -->
         <elm-text-input id="zipCode" formControlName="zipCode"
-          [errorSpacing]="!_formGroup.get('zipCode')?.value && validateField">
+          [addSpacing]="!_formGroup.get('zipCode')?.value && validateField">
         </elm-text-input>
         <elm-input-subtext *ngIf="!_formGroup.get('zipCode')?.value && validateField"
                            class="input-error"

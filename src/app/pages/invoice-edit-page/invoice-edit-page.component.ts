@@ -14,7 +14,7 @@ import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../
 import {SubjectValue} from '../../utils/subject-value';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
-import {ConfirmationModalData, ElmLinkInterface, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalData, ElmLinkInterface, ToastService, ModalService} from '@elm/elm-styleguide-ui';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {RateEngineRequest, RateDetailResponse} from '../../models/rate-engine/rate-engine-request';
@@ -34,6 +34,7 @@ import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/
 export class InvoiceEditPageComponent implements OnInit {
 
   constructor(private util: UtilService,
+              private modalService: ModalService,
               private route: ActivatedRoute,
               private userService: UserService,
               private invoiceService: InvoiceService,
@@ -200,13 +201,13 @@ export class InvoiceEditPageComponent implements OnInit {
       innerHtmlMessage: `Are you sure you want to delete this invoice?
                <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Delete Invoice',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     };
     this.util.openCommentModal({
       ...modalData,
       commentSectionFieldName: 'Reason for Deletion',
-      requireField: true
+      requireField: true,
+      confirmButtonStyle: 'primary',
     }).subscribe((result: CommentModel) => {
       if (result) {
         this.deleteInvoiceWithReason({deletedReason: result.comment}).subscribe(
@@ -229,7 +230,7 @@ export class InvoiceEditPageComponent implements OnInit {
         innerHtmlMessage: `Are you sure you want to ${action.toLowerCase()} this dispute?
                <br/><br/><strong>This action cannot be undone.</strong>`,
         confirmButtonText: `${action} Dispute`,
-        confirmButtonStyle: action === 'Deny' ? 'destructive' : 'primary',
+        confirmButtonStyle: 'primary',
         cancelButtonText: 'Cancel',
         commentSectionFieldName: 'Response Comment',
         requireField: action === 'Deny'
@@ -285,12 +286,11 @@ export class InvoiceEditPageComponent implements OnInit {
     return this.util.openConfirmationModal({
       title: 'Cancel',
       innerHtmlMessage: `All changes to this invoice will be lost if you cancel now.
-                   <br/><br/><strong>
+                   
                    Are you sure you want to cancel?
-                   </strong>`,
-      confirmButtonText: 'Yes, cancel',
-      confirmButtonStyle: 'destructive',
-      cancelButtonText: 'No, go back'
+                  `,
+      confirmButtonText: 'Yes cancel',
+      cancelButtonText: 'No go back'
     });
   }
 
@@ -708,7 +708,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   private showNotYetImplementedModal(title: string): void {
-    this.subscriptions.manage(this.util.openErrorModal({
+    this.subscriptions.manage(this.modalService.openSystemErrorModal({
       title, innerHtmlMessage: 'Not Yet Implemented On This Page'
     }).subscribe());
   }

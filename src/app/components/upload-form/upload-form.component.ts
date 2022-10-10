@@ -1,8 +1,8 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {UtilService} from '../../services/util-service';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {ToastService} from '@elm/elm-styleguide-ui';
+import { UtilService } from 'src/app/services/util-service';
 
 @Component({
   selector: 'app-upload-form',
@@ -30,8 +30,8 @@ export class UploadFormComponent implements OnInit, OnChanges {
   public externalAttachment = false;
   public attachments: Array<StagedAttachment> = [];
 
-  constructor(private util: UtilService,
-              private toast: ToastService) {
+  constructor(private toast: ToastService,
+              private util: UtilService) {
     this.attachmentType = new FormControl(null, [Validators.required]);
     this.file = new FormControl(null, [Validators.required]);
     this.formGroup = new FormGroup({
@@ -172,7 +172,6 @@ export class UploadFormComponent implements OnInit, OnChanges {
       innerHtmlMessage: `Are you sure you want to remove this attachment?
             <br/><br/><strong>This action cannot be undone.</strong>`,
       confirmButtonText: 'Remove Attachment',
-      confirmButtonStyle: 'destructive',
       cancelButtonText: 'Cancel'
     }).toPromise();
   }

@@ -47,7 +47,7 @@
                        formControlName="currency"
                        [options]="currencyOptions"
                        [ngClass]="{'radio-dev-disabled': true}"
-                       [errorSpacing]="true">
+                       [addSpacing]="true">
       </elm-radio-input>
     </div>
 
@@ -55,11 +55,7 @@
       <label for="mileage" class="fal-label">
         Mileage
       </label>
-      <input id="mileage"
-             class="form-control"
-             formControlName="mileage"
-             [attr.disabled]="true"
-      />
+      <elm-text-input id="mileage" formControlName="mileage"></elm-text-input>
 
     </div>
 
@@ -69,7 +65,7 @@
                           orientation="horizontal"
                           formArrayName="isPaymentOverrideSelected"
                           checkboxStyle="checkbox"
-                          [errorSpacing]="false"
+                          [addSpacing]="false"
                           [options]="overridePaymentTermsOptions"
                           [attr.disabled]="true"></elm-checkbox-input>
       <div class="payment-terms-div">

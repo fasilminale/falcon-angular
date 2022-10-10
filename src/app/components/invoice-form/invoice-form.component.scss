@@ -1,4 +1,4 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 #container {
   padding-bottom: 1em;
@@ -70,7 +70,7 @@
 }
 
 ::ng-deep .error {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 #erp-type-input ::ng-deep label.error {
@@ -78,23 +78,23 @@
 }
 
 .error-div{
-  border: 1px solid $cardinal-red;
+  border: 1px solid colors.$red;
 }
 
 ::ng-deep .form-control.error {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 .app-fal-date-input.error ::ng-deep .form-control {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 ::ng-deep .error-text {
-  color: $cardinal-red;
+  color: colors.$red;
 }
 
 .ng-select.error ::ng-deep .ng-select-container {
-  border-color: $cardinal-red;
+  border-color: colors.$red;
 }
 
 .ng-select.ng-select-disabled .ng-arrow-wrapper {
@@ -102,7 +102,7 @@
 }
 
 .line-item-remove-button:enabled {
-  color: $cardinal-red;
+  color: colors.$red;
 }
 
 .content {
@@ -157,7 +157,7 @@
 }
 
 .amount-summary-div  {
-  background-color: $bkg-grey;
+  background-color: colors.$gray-bkg;
   padding-left: 10px !important;
   &>div {
     text-align: right;

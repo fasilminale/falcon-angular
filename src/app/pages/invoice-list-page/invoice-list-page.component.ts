@@ -5,7 +5,7 @@ import {WebServices} from '../../services/web-services';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel, InvoiceUtils} from '../../models/invoice/invoice-model';
-import {ConfirmationModalComponent, DataTableComponent, ElmDataTableHeader, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, DataTableComponent, ElmDataTableHeader, ToastService, ModalService} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
@@ -19,7 +19,6 @@ import { SelectOption } from 'src/app/models/select-option-model/select-option-m
 import { InvoiceService } from 'src/app/services/invoice-service';
 import {Subscription} from 'rxjs';
 import {SearchComponent} from '../../components/search/search.component';
-import {UtilService} from '../../services/util-service';
 import {FormGroup} from '@angular/forms';
 
 @Component({
@@ -76,7 +75,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     public filterService: FilterService,
     public userService: UserService,
-    private utilService: UtilService,
+    private modalService: ModalService,
     private toastService: ToastService,
     private invoiceService: InvoiceService
   ) {
@@ -291,7 +290,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         this.saveCSVFile(data, filename);
         this.toastService.openSuccessToast('<strong>File Generated:</strong> Invoice list has been successfully downloaded.', 5 * 1000);
       }, () => {
-        this.utilService.openErrorModal({
+        this.modalService.openSystemErrorModal({
           title: 'Error', innerHtmlMessage:
             `An error has occurred.  Please add filters and retry.`
         }).subscribe();

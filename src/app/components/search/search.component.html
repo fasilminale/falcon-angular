@@ -2,12 +2,9 @@
   <form class="needs-validation" [formGroup]="controlGroup" (submit)="submit()" novalidate>
     <label for="searchInput">Find an Invoice (search all invoices)</label>
     <div class="input-group has-validation" style="width: 387px">
-      <input [ngClass]="{'is-invalid': submitted && controlGroup.controls.control.errors}" id="searchInput"
-             type="text"
-             formControlName="control"
-             class="form-control"
-             [maxLength]="16"
-             autocomplete="off">
+      <elm-text-input id="searchInput" class="form-control"
+            formControlName="control" [maxLength]="16" [autocomplete]="false">
+      </elm-text-input>
       <button type="submit"
               class="input-group-button">
         <span class="material-icons" [attr.aria-label]="label">search</span>

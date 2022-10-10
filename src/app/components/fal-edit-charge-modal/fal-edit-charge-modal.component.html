@@ -11,7 +11,7 @@
     <ng-template [ngIf]="isEditModal">
       <elm-text-input id="cost-line-item-charge"
                       formControlName="charge"
-                      [errorSpacing]="false">
+                      [addSpacing]="false">
       </elm-text-input>
     </ng-template>
     <ng-template [ngIf]="!isEditModal">
@@ -39,7 +39,7 @@
         <elm-text-input *ngIf="vcName !== 'Amount'"
                         [id]="vcName + 'Input'"
                         [formControlName]="vcName"
-                        [errorSpacing]="true">
+                        [addSpacing]="true">
         </elm-text-input>
         <elm-input-subtext *ngIf="variableControls.get(vcName)?.invalid ?? false"
                            class="input-error"
@@ -73,7 +73,7 @@
       </label>
       <elm-textarea-input id="commentInput"
                           formControlName="comment"
-                          [errorSpacing]="true"
+                          [addSpacing]="true"
                           type>
       </elm-textarea-input>
       <elm-input-subtext *ngIf="commentControl.invalid ?? false"

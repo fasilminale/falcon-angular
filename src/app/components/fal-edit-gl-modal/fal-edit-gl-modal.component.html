@@ -44,8 +44,8 @@
       <!-- Invoice allocation - glCostCenter -->
       <div class="col">
         <input type="text" class="form-control" formControlName="glCostCenter"
-               [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glCostCenter ||
-                !form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value}"/>
+                [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glCostCenter ||
+                 !form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value}"/>
         <small class="error-text col-2"
                *ngIf="!form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value"
                [ngClass]="{ 'mt-3' : true }">
@@ -62,8 +62,8 @@
       <!-- Invoice allocation - glProfitCenter -->
       <div class="col">
         <input type="text" class="form-control" formControlName="glProfitCenter"
-               [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glProfitCenter ||
-                !form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value}"/>
+                [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glProfitCenter ||
+                 !form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value}"/>
         <small class="error-text col-2"
                *ngIf="!form.get('glCostCenter')?.value && !form.get('glProfitCenter')?.value"
                [ngClass]="{ 'mt-3' : true }">
@@ -79,8 +79,8 @@
       <!-- Invoice allocation - glAccount -->
       <div class="col">
         <input type="text" class="form-control" formControlName="glAccount"
-               [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glAccount ||
-                !form.get('glAccount')?.value}"/>
+                [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glAccount ||
+                 !form.get('glAccount')?.value}"/>
         <small class="error-text col-2" *ngIf="!form.get('glAccount')?.value"
                [ngClass]="{ 'mt-3' : true }">
           GL Account is missing
@@ -95,8 +95,8 @@
       <!-- Invoice allocation - glCompanyCode -->
       <div class="col">
         <input type="text" class="form-control" formControlName="glCompanyCode"
-               [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glCompanyCode ||
-                !form.get('glCompanyCode')?.value}"/>
+                [ngClass]="{ 'error-div' : invoiceAllocationErrors?.glCompanyCode ||
+                 !form.get('glCompanyCode')?.value}"/>
         <small class="error-text col-2"
                *ngIf="!form.get('glCompanyCode')?.value"
                [ngClass]="{ 'mt-3' : true }">
