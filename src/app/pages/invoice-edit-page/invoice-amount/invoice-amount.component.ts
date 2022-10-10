@@ -41,6 +41,8 @@ export class InvoiceAmountComponent implements OnInit {
     );
   }
 
+  @Input() isMakingRateCall = false;
+
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.updateIsEditModeSubscription.unsubscribe();
     this.updateIsEditModeSubscription = observable.subscribe(

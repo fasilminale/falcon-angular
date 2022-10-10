@@ -340,13 +340,13 @@ describe('InvoiceEditPageComponent', () => {
           state: 'TS',
           zipCode: '12345'
         };
-        component.getRates('testAccessorialCode');
+        component.getRates();
         expect(rateService.rateInvoice).toHaveBeenCalled();
       });
       it('getRates should not call rate engine', () => {
         testInvoice.carrier = null;
         component.invoice = testInvoice;
-        component.getRates('testAccessorialCode');
+        component.getRates();
         expect(rateService.rateInvoice).not.toHaveBeenCalled();
       });
 
@@ -437,7 +437,7 @@ describe('InvoiceEditPageComponent', () => {
         const ratesResponse$ = new Subject<any>();
         asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
         component.invoice = new InvoiceDataModel();
-        component.getRates('testAccessorialCode');
+        component.getRates();
 
         // Assertions
         ratesResponse$.subscribe(() => {
@@ -455,7 +455,7 @@ describe('InvoiceEditPageComponent', () => {
         asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
         component.invoice = new InvoiceDataModel();
         component.invoice.hasRateEngineError = true;
-        component.getRates('testAccessorialCode');
+        component.getRates();
 
         // Assertions
         ratesResponse$.subscribe(() => {

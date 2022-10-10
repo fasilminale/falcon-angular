@@ -11,9 +11,9 @@
                   buttonType="button"
                   buttonStyle="primary"
                   class="flex-shrink-1"
-                  [isDisabled]="readOnlyForm"
+                  [isDisabled]="readOnlyForm || isMakingRateCall"
                   (buttonClick)="rateEngineCall.emit('')">
-        Re-Rate
+        {{isMakingRateCall ? 'Rating...' : 'Re-Rate'}}
       </elm-button>
     </div>
   </div>
