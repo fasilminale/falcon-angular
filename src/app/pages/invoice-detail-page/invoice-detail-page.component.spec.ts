@@ -17,6 +17,7 @@ import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-manager';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {UserService} from '../../services/user-service';
+import {FormBuilder} from '@angular/forms';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -93,6 +94,9 @@ describe('InvoiceDetailPageComponent', () => {
         FalconTestingModule,
         RouterTestingModule,
         ButtonModule,
+      ],
+      providers: [
+        FormBuilder
       ],
       declarations: [
         InvoiceDetailPageComponent,

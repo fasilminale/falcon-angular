@@ -17,8 +17,9 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {saveAs} from 'file-saver';
 import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
 import { InvoiceService } from 'src/app/services/invoice-service';
-import {Subscription} from "rxjs";
-import {SearchComponent} from "../../components/search/search.component";
+import {Subscription} from 'rxjs';
+import {SearchComponent} from '../../components/search/search.component';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -64,6 +65,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
 
+  controlGroup: FormGroup;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -76,11 +79,14 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private invoiceService: InvoiceService
   ) {
+    this.controlGroup = userService.controlGroupState;
   }
 
   ngOnInit(): void {
     this.paginationModel = this.userService.searchState;
-    this.getTableData(this.paginationModel.numberPerPage);
+    this.searchValue = this.userService.controlGroupState.controls.control.value ?? '';
+    const search = this.searchValue.length > 0;
+    this.getTableData(this.paginationModel.numberPerPage, search);
     this.route.queryParamMap.subscribe(queryParams => {
       const falconInvoiceNumber = queryParams.get('falconInvoiceNumber');
       if (falconInvoiceNumber) {
@@ -123,6 +129,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userService.searchState = this.paginationModel;
+    this.userService.controlGroupState = this.controlGroup;
     this.subscription.unsubscribe();
   }
 
@@ -139,6 +146,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       numberPerPage
     }).subscribe((invoiceData: any) => {
       if(invoiceData?.data?.length === 1 && this.searchValue !== '') {
+          this.controlGroup.controls.control.setValue('');
           this.rowClicked(invoiceData.data[0]);
       } else  {
         this.paginationModel.total = invoiceData.total;

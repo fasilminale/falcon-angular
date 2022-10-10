@@ -14,7 +14,7 @@ import {CommentModel, UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
 import {TripInformationComponent} from './trip-information/trip-information.component';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {BillToLocationUtils, Location, LocationUtils} from '../../models/location/location-model';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 
@@ -122,6 +122,7 @@ describe('InvoiceEditPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
+      providers: [FormBuilder],
       declarations: [InvoiceEditPageComponent, TripInformationComponent]
     }).compileComponents();
     // Mock Router
