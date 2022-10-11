@@ -9,7 +9,7 @@ import {LoadingService} from '../../services/loading-service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {of, Subject, throwError} from 'rxjs';
+import {of} from 'rxjs';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MatDialog} from '@angular/material/dialog';
@@ -17,12 +17,11 @@ import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
 import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
-import * as saveAsFunctions from 'file-saver';
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SearchComponent} from '../../components/search/search.component';
-import {asSpy} from '../../testing/test-utils.spec';
 import { ModalService } from '@elm/elm-styleguide-ui';
 import {PaginationModel} from '../../models/PaginationModel';
+import {UtilService} from '../../services/util-service';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -52,6 +51,7 @@ describe('InvoiceListPageComponent', () => {
   let filterService: FilterService;
   let userService: UserService;
   let modalService: ModalService;
+  let utilService: UtilService;
 
   const userInfo = {
     firstName: 'test',
@@ -116,6 +116,7 @@ describe('InvoiceListPageComponent', () => {
       ]
     }).compileComponents();
     webservice = TestBed.inject(WebServices);
+    utilService = TestBed.inject(UtilService);
     loadingService = TestBed.inject(LoadingService);
     http = TestBed.inject(HttpTestingController);
     snackBar = TestBed.inject(MatSnackBar);
@@ -392,13 +393,12 @@ describe('InvoiceListPageComponent', () => {
   });
 
   it('should prompt user before downloading a list of invoices', fakeAsync(() => {
-    spyOn(webservice, 'httpPost').and.returnValue(of('csvData'));
-    spyOn(component, 'saveCSVFile').and.stub();
+    spyOn(utilService, 'downloadCsv').and.stub();
     spyOn(component, 'callCSVApi').and.callThrough();
     component.downloadCsv();
     fixture.whenStable().then(() => {
       expect(component.callCSVApi).toHaveBeenCalled();
-      expect(component.saveCSVFile).toHaveBeenCalled();
+      expect(utilService.downloadCsv).toHaveBeenCalled();
     });
   }));
 
@@ -406,22 +406,10 @@ describe('InvoiceListPageComponent', () => {
     component.filterService.invoiceFilterModel.fb.group({ invoiceStatuses: new FormArray([]) });
     const formArray: any = component.filterService.invoiceFilterModel.form.get('invoiceStatuses');
     formArray.push(new FormControl('APPROVED'));
-    spyOn(webservice, 'httpPost').and.returnValue(of('csvData'));
-    spyOn(component, 'saveCSVFile').and.stub();
-    spyOn(component, 'callCSVApi').and.callThrough();
+    spyOn(utilService, 'downloadCsv').and.stub();
     component.downloadCsv();
-    expect(component.saveCSVFile).toHaveBeenCalled();
+    expect(utilService.downloadCsv).toHaveBeenCalled();
   }));
-
-  it('should display an error if callCSVApi fails', () => {
-    spyOn(webservice, 'httpPost').and.callFake(() => {
-      return throwError({error: JSON.stringify({error: { error: 'Test Exception', message: 'Test Exception'}})});
-    });
-    spyOn(modalService, 'openSystemErrorModal').and.returnValue(of());
-    component.callCSVApi({});
-    fixture.detectChanges();
-    expect(modalService.openSystemErrorModal).toHaveBeenCalled();
-  });
 
   it('should destroy when ngOnDestory is called', () => {
     const sub = component.subscription;
@@ -437,13 +425,6 @@ describe('InvoiceListPageComponent', () => {
     expect(service.controlGroupState).toBe(controlGroup);
   });
 
-  describe('saveCSVFile', () => {
-    it('should call saveAs', () => {
-      const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.callFake(saveAs);
-      component.saveCSVFile('test data', 'test filename');
-      fixture.detectChanges();
-      expect(saveAsSpy).toHaveBeenCalled();
-    });
-  });
+
 });
 
