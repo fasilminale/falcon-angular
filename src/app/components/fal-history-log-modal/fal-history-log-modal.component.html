@@ -8,6 +8,20 @@
   <div class="headline3">Status {{invoiceStatus}}</div>
 </div>
 <div>
+  <div class="download-button">
+    <elm-button id="link-button-pending"
+                buttonType="button"
+                buttonStyle="text"
+                class="flex-shrink-1"
+                [isDisabled]="filteredHistoryLogs.length === 0"
+                (click)="downloadCsv()">
+      <div class="material-icons download-icon"
+           (click)="downloadCsv()">file_download
+      </div>
+      Download Invoice History Log
+    </elm-button>
+    <span class="download-text">(.csv)</span>
+  </div>
   <div class="border">
     <elm-data-table
       tableType="clickable"
@@ -30,6 +44,8 @@
     <elm-button buttonStyle="dark-primary"
                 class="ms-3"
                 id="confirm"
+                [isDisabled]="filteredHistoryLogs.length === 0"
+                (buttonClick)="downloadCsv()"
                 aria-label="confirm">
       Download
     </elm-button>
