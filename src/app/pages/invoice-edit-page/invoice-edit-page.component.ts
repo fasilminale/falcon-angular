@@ -110,12 +110,34 @@ export class InvoiceEditPageComponent implements OnInit {
     if (this.falconInvoiceNumber) {
       this.subscriptions.manage(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
-          .subscribe(i => this.loadInvoice(i))
+          .subscribe(i => this.loadInvoice(i, true))
       );
     }
   }
 
-  public loadInvoice(invoice: InvoiceDataModel): void {
+  public loadInvoice(invoice: InvoiceDataModel, freshData = false): void {
+    if (!freshData) {
+      invoice.costLineItems?.forEach((item, index) => {
+        let found;
+        if (item.chargeCode === 'OTHER') {
+          found = this.invoice.costLineItems.filter((i) => (
+            i.chargeCode === item.chargeCode &&
+              i.responseComment === item.responseComment &&
+              i.chargeLineTotal === item.chargeLineTotal
+          ));
+        } else {
+          found = this.invoice.costLineItems.filter((i) => i.chargeCode === item.chargeCode);
+        }
+
+        if (found.length > 0) {
+          item.persisted = found[0].persisted;
+        } else {
+          // If for some reason an existing CostLineItem isn't found set it to persisted so that the delete modal pops up
+          item.persisted = true;
+        }
+      });
+    }
+
     this.invoice = invoice;
     this.milestones = invoice.milestones;
     this.isDeletedInvoice = StatusUtil.isDeleted(invoice.status);
@@ -596,7 +618,8 @@ export class InvoiceEditPageComponent implements OnInit {
         responseComment: CommonUtils.handleNAValues(item.controls?.responseComment?.value),
         lineItemType: CommonUtils.handleNAValues(item.controls?.lineItemType?.value),
         variables: item.controls?.variables?.value ?? [],
-        deletedDate: item.controls?.deletedDate?.value
+        deletedDate: item.controls?.deletedDate?.value,
+        persisted: item.controls?.persisted?.value,
       });
     }
     return results;

@@ -285,7 +285,8 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false
+            expanded: false,
+            persisted: true,
           }
         ],
         pendingChargeLineItems: [{
@@ -324,7 +325,8 @@ describe('InvoiceAmountComponent', () => {
           message: '',
           manual: false,
           expanded: false,
-          variables: []
+          variables: [],
+          persisted: true,
         }],
         deniedChargeLineItems: [],
         disputeLineItems: [
@@ -478,7 +480,8 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false
+            expanded: false,
+            persisted: true,
           }
         ],
         pendingChargeLineItems: [],
@@ -539,7 +542,8 @@ describe('InvoiceAmountComponent', () => {
             fuel: false,
             message: '',
             manual: false,
-            expanded: false
+            expanded: false,
+            persisted: true,
           }
         ],
         pendingChargeLineItems: [],
@@ -901,7 +905,8 @@ describe('InvoiceAmountComponent', () => {
 
     it('should call onDeleteCostLineItem and remove the line item', async () => {
       component.costBreakdownItems.push(new FormGroup({
-        accessorialCode: new FormControl('TST')
+        accessorialCode: new FormControl('TST'),
+        persisted: new FormControl(true),
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
       await component.onDeleteCostLineItem(costLineItem, 0);
@@ -912,11 +917,24 @@ describe('InvoiceAmountComponent', () => {
     it('should call onDeleteCostLineItem and remove the OTHER line item', async () => {
       component.costBreakdownItems.push(new FormGroup({
         accessorialCode: new FormControl(''),
-        charge: new FormControl('OTHER')
+        charge: new FormControl('OTHER'),
+        persisted: new FormControl(true),
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
       await component.onDeleteCostLineItem(costLineItem, 0);
       expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
+      expect(component.rateEngineCall.emit).toHaveBeenCalled();
+    });
+
+    it('should call onDeleteCostLineItem and remove the line item without modal', async () => {
+      component.costBreakdownItems.push(new FormGroup({
+        accessorialCode: new FormControl('TST'),
+        persisted: new FormControl(false),
+        entrySource: new FormControl('FAL')
+      }));
+      const costLineItem = component.costBreakdownItemsControls[0];
+      await component.onDeleteCostLineItem(costLineItem, 0);
+      expect(utilService.openCommentModal).toHaveBeenCalledTimes(0);
       expect(component.rateEngineCall.emit).toHaveBeenCalled();
     });
   });

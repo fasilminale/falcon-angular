@@ -1,11 +1,11 @@
 import {WebServices} from './web-services';
-import {mergeMap} from 'rxjs/operators';
+import {map, mergeMap, tap} from 'rxjs/operators';
 import {Observable, of, Subject} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
 import {Invoice, InvoiceDataModel} from '../models/invoice/invoice-model';
 import { FreightOrder } from '../models/invoice/freight-model';
-import {EditAutoInvoiceModel} from "../models/invoice/edit-auto-invoice.model";
+import {EditAutoInvoiceModel} from '../models/invoice/edit-auto-invoice.model';
 
 @Injectable()
 export class InvoiceService {
@@ -76,7 +76,21 @@ export class InvoiceService {
   }
 
   public getInvoice(invoiceNumber: string): Observable<InvoiceDataModel> {
-    return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}`);
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${invoiceNumber}`).pipe(
+      map(invoice => (
+        {
+          ...invoice,
+          // @ts-ignore
+          costLineItems: invoice.costLineItems?.map((item) => {
+            const container = {...item};
+
+            container.persisted = true;
+
+            return container;
+          })
+        }
+      ))
+    );
   }
 
   public updateInvoice(invoice: any): Observable<any> {

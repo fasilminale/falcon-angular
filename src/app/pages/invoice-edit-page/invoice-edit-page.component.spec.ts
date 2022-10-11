@@ -1211,6 +1211,106 @@ describe('InvoiceEditPageComponent', () => {
     // no error means we pass
   });
 
+  it('should overwrite persisted', () => {
+    const invoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          chargeCode: 'Redelivery',
+          persisted: true,
+        }
+      ],
+    });
+
+    const newInvoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          chargeCode: 'Redelivery',
+          persisted: false,
+        }
+      ],
+    });
+    component.invoice = invoice;
+    component.loadInvoice(newInvoice, true);
+    expect(component.invoice.costLineItems[0].persisted).toEqual(false);
+  });
+
+  it('should use existing persisted', () => {
+    const invoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          chargeCode: 'Redelivery',
+          persisted: true,
+        }
+      ],
+    });
+
+    const newInvoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          chargeCode: 'Redelivery',
+        }
+      ],
+    });
+    component.invoice = invoice;
+    component.loadInvoice(newInvoice);
+    expect(component.invoice.costLineItems[0].persisted).toEqual(true);
+  });
+
+  it('OTHER should use existing persisted', () => {
+    const invoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          chargeCode: 'OTHER',
+          responseComment: 'test',
+          chargeLineTotal: 30,
+          persisted: true,
+        },
+        {
+          chargeCode: 'OTHER',
+          responseComment: 'test2',
+          chargeLineTotal: 300,
+          persisted: false,
+        }
+      ],
+    });
+
+    const newInvoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          chargeCode: 'OTHER',
+          responseComment: 'test2',
+          chargeLineTotal: 300,
+        },
+        {
+          chargeCode: 'OTHER',
+          responseComment: 'test',
+          chargeLineTotal: 30,
+        }
+      ],
+    });
+    component.invoice = invoice;
+    component.loadInvoice(newInvoice);
+    expect(component.invoice.costLineItems[0].persisted).toEqual(false);
+    expect(component.invoice.costLineItems[1].persisted).toEqual(true);
+  });
+
+  it('when new charge, mark as persisted', () => {
+    const invoice = new InvoiceDataModel({
+      costLineItems: [],
+    });
+
+    const newInvoice = new InvoiceDataModel({
+      costLineItems: [
+        {
+          chargeCode: 'Redelivery',
+        }
+      ],
+    });
+    component.invoice = invoice;
+    component.loadInvoice(newInvoice);
+    expect(component.invoice.costLineItems[0].persisted).toEqual(true);
+  });
+
   it('should get bad cost line item data', () => {
     const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
     costBreakdownItems.clear();
