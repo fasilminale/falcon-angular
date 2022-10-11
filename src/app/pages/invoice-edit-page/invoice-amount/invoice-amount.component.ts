@@ -557,7 +557,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   async onDeleteCostLineItem(costLineItem: any, index: number): Promise<void> {
-    if (costLineItem.value.persisted) {
+    if (costLineItem.value.persisted || costLineItem.value.entrySource !== 'FAL') {
       const dialogResult = await this.utilService.openCommentModal({
         title: 'Delete Charge',
         innerHtmlMessage: `Are you sure you want to delete this charge?

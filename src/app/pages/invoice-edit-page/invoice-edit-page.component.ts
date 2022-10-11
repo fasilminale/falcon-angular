@@ -115,8 +115,25 @@ export class InvoiceEditPageComponent implements OnInit {
 
   public loadInvoice(invoice: InvoiceDataModel, freshData = false): void {
     if (!freshData) {
-      debugger;
-      this.invoice.costLineItems.forEach((item, index) => invoice.costLineItems[index].persisted = item.persisted);
+      invoice.costLineItems?.forEach((item, index) => {
+        let found;
+        if (item.chargeCode === 'OTHER') {
+          found = this.invoice.costLineItems.filter((i) => (
+            i.chargeCode === item.chargeCode &&
+              i.responseComment === item.responseComment &&
+              i.chargeLineTotal === item.chargeLineTotal
+          ));
+        } else {
+          found = this.invoice.costLineItems.filter((i) => i.chargeCode === item.chargeCode);
+        }
+
+        if (found.length > 0) {
+          item.persisted = found[0].persisted;
+        } else {
+          // If for some reason an existing CostLineItem isn't found set it to persisted so that the delete modal pops up
+          item.persisted = true;
+        }
+      });
     }
 
     this.invoice = invoice;

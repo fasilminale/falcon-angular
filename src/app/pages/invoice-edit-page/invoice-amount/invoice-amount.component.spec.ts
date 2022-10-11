@@ -930,6 +930,7 @@ describe('InvoiceAmountComponent', () => {
       component.costBreakdownItems.push(new FormGroup({
         accessorialCode: new FormControl('TST'),
         persisted: new FormControl(false),
+        entrySource: new FormControl('FAL')
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
       await component.onDeleteCostLineItem(costLineItem, 0);
