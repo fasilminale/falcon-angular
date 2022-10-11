@@ -3,7 +3,7 @@ import {
   ConfirmationModalComponent,
   ConfirmationModalData,
   ElmGenericModalData,
-  GenericModalComponent,
+  GenericModalComponent, ModalService, ToastService,
 } from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
@@ -21,15 +21,19 @@ import {
   WeightAdjustmentModalOutput
 } from '../components/fal-adjust-weight-modal/fal-adjust-weight-modal.component';
 import {EditGlLineItemModal, FalEditGlModalComponent} from '../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
-import {AbstractControl} from '@angular/forms';
 import {GlLineItem, GlLineItemError} from '../models/line-item/line-item-model';
 import {FalHistoryLogModalComponent} from '../components/fal-history-log-modal/fal-history-log-modal.component';
 import {InvoiceDataModel} from '../models/invoice/invoice-model';
+import {saveAs} from 'file-saver';
+import {WebServices} from './web-services';
 
 @Injectable()
 export class UtilService {
 
-  constructor(private dialog: MatDialog) {
+  constructor(private dialog: MatDialog,
+              private webService: WebServices,
+              private toastService: ToastService,
+              private modalService: ModalService) {
   }
 
   public toNumber(value: any): number {
@@ -118,6 +122,26 @@ export class UtilService {
       GenericModalComponent,
       {autoFocus: false, data})
       .afterClosed();
+  }
+
+  public downloadCsv(filename: string, url: string, body: any): void {
+    console.log(url);
+    this.webService.httpPost(url, body, {responseType: 'text'}).subscribe(
+      (data: any) => {
+        this.saveCSVFile(data, filename);
+        this.toastService.openSuccessToast('<strong>File Generated:</strong> CSV has been successfully downloaded.', 5 * 1000);
+      }, () => {
+        this.modalService.openSystemErrorModal({
+          title: 'Error', innerHtmlMessage:
+            `An error has occurred generating the CSV.`
+        }).subscribe();
+      }
+    );
+  }
+
+  saveCSVFile(data: any, filename: string): void {
+    const blob = new Blob([data], {type: 'application/csv'});
+    saveAs(blob, filename);
   }
 
 }

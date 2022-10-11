@@ -1,14 +1,20 @@
 import {TestBed} from '@angular/core/testing';
 import {UtilService} from './util-service';
 import {MatDialog} from '@angular/material/dialog';
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 import {FormControl} from '@angular/forms';
 import {InvoiceDataModel} from '../models/invoice/invoice-model';
+import * as saveAsFunctions from 'file-saver';
+import {WebServices} from './web-services';
+import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 
 describe('UtilService', () => {
 
   let util: UtilService;
+  let webService: WebServices;
+  let toastService: ToastService;
+  let modalService: ModalService;
   let dialog: MatDialog;
 
   const testModalData = {
@@ -53,7 +59,10 @@ describe('UtilService', () => {
       imports: [FalconTestingModule],
     });
     dialog = TestBed.inject(MatDialog);
-    util = new UtilService(dialog);
+    webService = TestBed.inject(WebServices);
+    modalService = TestBed.inject(ModalService);
+    toastService = TestBed.inject(ToastService);
+    util = new UtilService(dialog, webService, toastService, modalService);
   });
 
   it('should create', () => {
@@ -156,6 +165,28 @@ describe('UtilService', () => {
     const result = await util.openGenericModal(testModalData).toPromise();
     expect(dialog.open).toHaveBeenCalled();
     expect(result).toBeFalse();
+  });
+
+  it('should download a list of history logs', () => {
+    spyOn(webService, 'httpPost').and.returnValue(of('csvData'));
+    spyOn(util, 'downloadCsv').and.callThrough();
+    util.downloadCsv('filename', 'url', {});
+    expect(util.downloadCsv).toHaveBeenCalled();
+  });
+
+  it('should display an error if downloading csv fails', () => {
+    spyOn(webService, 'httpPost').and.callFake(() => {
+      return throwError({error: JSON.stringify({error: { error: 'Test Exception', message: 'Test Exception'}})});
+    });
+    spyOn(modalService, 'openSystemErrorModal').and.returnValue(of());
+    util.downloadCsv('filename', 'url', {});
+    expect(modalService.openSystemErrorModal).toHaveBeenCalled();
+  });
+
+  it('should call saveAs', () => {
+    const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.callFake(saveAs);
+    util.saveCSVFile('test data', 'test filename');
+    expect(saveAsSpy).toHaveBeenCalled();
   });
 
 });

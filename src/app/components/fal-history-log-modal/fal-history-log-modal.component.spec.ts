@@ -3,11 +3,8 @@ import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing'
 import { FalHistoryLogModalComponent } from './fal-history-log-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {ModalService, SubjectValue} from '@elm/elm-styleguide-ui';
-import {FormArray, FormControl} from '@angular/forms';
-import {of, throwError} from 'rxjs';
-import {WebServices} from '../../services/web-services';
-import * as saveAsFunctions from 'file-saver';
+import {SubjectValue} from '@elm/elm-styleguide-ui';
+import {UtilService} from '../../services/util-service';
 
 describe('FalHistoryLogModalComponent', () => {
 
@@ -36,8 +33,7 @@ describe('FalHistoryLogModalComponent', () => {
   };
 
   let component: FalHistoryLogModalComponent;
-  let webService: WebServices;
-  let modalService: ModalService;
+  let utilService: UtilService;
   let fixture: ComponentFixture<FalHistoryLogModalComponent>;
   let afterClosed$: SubjectValue<any>;
   let MOCK_DIALOG: any;
@@ -62,8 +58,7 @@ describe('FalHistoryLogModalComponent', () => {
   });
 
   beforeEach(() => {
-    webService = TestBed.inject(WebServices);
-    modalService = TestBed.inject(ModalService);
+    utilService = TestBed.inject(UtilService);
     fixture = TestBed.createComponent(FalHistoryLogModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -100,26 +95,8 @@ describe('FalHistoryLogModalComponent', () => {
   });
 
   it('should download a list of history logs', () => {
-    spyOn(webService, 'httpPost').and.returnValue(of('csvData'));
-    spyOn(component, 'saveCSVFile').and.stub();
+    spyOn(utilService, 'downloadCsv').and.stub();
     component.downloadCsv();
-    expect(component.saveCSVFile).toHaveBeenCalled();
-  });
-
-  it('should call saveAs', () => {
-    const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.callFake(saveAs);
-    component.saveCSVFile('test data', 'test filename');
-    fixture.detectChanges();
-    expect(saveAsSpy).toHaveBeenCalled();
-  });
-
-  it('should display an error if downloading csv fails', () => {
-    spyOn(webService, 'httpPost').and.callFake(() => {
-      return throwError({error: JSON.stringify({error: { error: 'Test Exception', message: 'Test Exception'}})});
-    });
-    spyOn(modalService, 'openSystemErrorModal').and.returnValue(of());
-    component.downloadCsv();
-    fixture.detectChanges();
-    expect(modalService.openSystemErrorModal).toHaveBeenCalled();
+    expect(utilService.downloadCsv).toHaveBeenCalled();
   });
 });

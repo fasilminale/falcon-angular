@@ -1,11 +1,10 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {DataTableComponent, ElmDataTableHeader, ModalService, ToastService} from '@elm/elm-styleguide-ui';
+import {DataTableComponent, ElmDataTableHeader} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {HistoryLog} from '../../models/invoice/history-log';
-import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
-import {saveAs} from 'file-saver';
+import {UtilService} from '../../services/util-service';
 
 @Component({
   selector: 'app-fal-history-log-modal',
@@ -29,9 +28,7 @@ export class FalHistoryLogModalComponent implements OnInit {
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: InvoiceDataModel,
-              private webservice: WebServices,
-              private toastService: ToastService,
-              private modalService: ModalService) {
+              private utilService: UtilService) {
     this.falconInvoiceNumber = data.falconInvoiceNumber;
     this.invoiceStatus = data.status?.label;
 
@@ -84,24 +81,9 @@ export class FalHistoryLogModalComponent implements OnInit {
   }
 
   downloadCsv(): void {
-    this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}/historyLog/csvData`, {},
-      {responseType: 'text'}).subscribe(
-      (data: any) => {
-        const filename = 'Falcon.Invoice.HistoryLog.csv';
-        this.saveCSVFile(data, filename);
-        this.toastService.openSuccessToast('<strong>File Generated:</strong> History logs have been successfully downloaded.', 5 * 1000);
-      }, () => {
-        this.modalService.openSystemErrorModal({
-          title: 'Error', innerHtmlMessage:
-            `An error has occurred generating the CSV.`
-        }).subscribe();
-      }
-    );
-  }
-
-  saveCSVFile(data: any, filename: string): void {
-    const blob = new Blob([data], {type: 'application/csv'});
-    saveAs(blob, filename);
+    this.utilService.downloadCsv('Falcon.Invoice.HistoryLog.csv',
+      `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}/historyLog/csvData`,
+      {});
   }
 
 }

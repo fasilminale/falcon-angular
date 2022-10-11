@@ -14,12 +14,12 @@ import {Sort} from '@angular/material/sort';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {saveAs} from 'file-saver';
 import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
 import { InvoiceService } from 'src/app/services/invoice-service';
 import {Subscription} from 'rxjs';
 import {SearchComponent} from '../../components/search/search.component';
 import {FormGroup} from '@angular/forms';
+import {UtilService} from '../../services/util-service';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -77,7 +77,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     public userService: UserService,
     private modalService: ModalService,
     private toastService: ToastService,
-    private invoiceService: InvoiceService
+    private invoiceService: InvoiceService,
+    private utilService: UtilService
   ) {
     this.controlGroup = userService.controlGroupState;
   }
@@ -277,30 +278,14 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   }
 
   callCSVApi(pageData: object): void {
-    this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices/csvData`, {
+    this.utilService.downloadCsv('Falcon.Invoice.List.csv', `${environment.baseServiceUrl}/v1/invoices/csvData`, {
       ...pageData,
       sortField: this.paginationModel.sortField ? this.paginationModel.sortField : 'falconInvoiceNumber',
       sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
       searchValue: this.searchValue,
       createdByUser: this.createdByUser,
       ...this.filterService.invoiceFilterModel.formatForSearch()
-    }, {responseType: 'text'}).subscribe(
-      (data: any) => {
-        const filename = 'Falcon.Invoice.List.csv';
-        this.saveCSVFile(data, filename);
-        this.toastService.openSuccessToast('<strong>File Generated:</strong> Invoice list has been successfully downloaded.', 5 * 1000);
-      }, () => {
-        this.modalService.openSystemErrorModal({
-          title: 'Error', innerHtmlMessage:
-            `An error has occurred.  Please add filters and retry.`
-        }).subscribe();
-      }
-    );
-  }
-
-  saveCSVFile(data: any, filename: string): void {
-    const blob = new Blob([data], {type: 'application/csv'});
-    saveAs(blob, filename);
+    });
   }
 
   checkSortFields(field: string): string {
