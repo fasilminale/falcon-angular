@@ -400,10 +400,10 @@
           <ng-template [ngIf]="!readOnlyForm">
             <div class="col-6">
               <!-- OPEN-->
+              <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon"
+                   (click)="onEditCostLineItem(_, pendingChargeLineItemControls)">edit
+              </div>
               <ng-template [ngIf]="_.value.requestStatus === 'Open'">
-                <div *ngIf="_.value.variables?.length > 0" class="material-icons edit-icon"
-                     (click)="onEditCostLineItem(_, pendingChargeLineItemControls)">edit
-                </div>
                 <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
                 <elm-button buttonType="button"
                             buttonStyle="text"
