@@ -180,17 +180,28 @@ describe('InvoiceService', () => {
   });
 
   it('should return Observable with persisted true when getInvoice invoked', (done) => {
+    const date = new Date();
+
+    const initialInvoice = {
+      falconInvoiceNumber: 'F0000000001',
+      companyCode: '1234',
+      vendorNumber: '2345',
+      externalInvoiceNumber: '3456',
+      invoiceDate: date,
+      costLineItems: [{}],
+    };
+
     const returnInvoice = {
       falconInvoiceNumber: 'F0000000001',
       companyCode: '1234',
       vendorNumber: '2345',
       externalInvoiceNumber: '3456',
-      invoiceDate: new Date(),
+      invoiceDate: date,
       costLineItems: [{ persisted: true }],
     };
     const env = environment;
     env.baseServiceUrl = 'https://somedomain.com';
-    spyOn(web, 'httpGet').and.returnValue(of(invoice));
+    spyOn(web, 'httpGet').and.returnValue(of(initialInvoice));
     subscription.add(invoiceService.getInvoice('foo').subscribe(
       (result) => {
         // @ts-ignore
@@ -203,12 +214,14 @@ describe('InvoiceService', () => {
   });
 
   it('should return Observable with undefined costLineItems when getInvoice invoked and no costLineItems', (done) => {
+    const date = new Date();
+
     const initialInvoice = {
       falconInvoiceNumber: 'F0000000001',
       companyCode: '1234',
       vendorNumber: '2345',
       externalInvoiceNumber: '3456',
-      invoiceDate: new Date(),
+      invoiceDate: date,
     };
 
     const returnInvoice = {
@@ -216,7 +229,7 @@ describe('InvoiceService', () => {
       companyCode: '1234',
       vendorNumber: '2345',
       externalInvoiceNumber: '3456',
-      invoiceDate: new Date(),
+      invoiceDate: date,
       costLineItems: undefined,
     };
     const env = environment;
