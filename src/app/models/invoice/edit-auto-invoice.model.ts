@@ -31,4 +31,5 @@ export interface EditAutoInvoiceModel {
   standardPaymentTermsOverride?: string;
   hasRateEngineError?: boolean;
   billOfLadingNumber: string;
+  currency: string;
 }
