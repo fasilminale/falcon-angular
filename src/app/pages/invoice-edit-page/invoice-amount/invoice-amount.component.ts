@@ -293,6 +293,7 @@ export class InvoiceAmountComponent implements OnInit {
   insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
     if (lineItems && lineItems.length > 0) {
       lineItems.forEach((lineItem) => {
+        const quantityAssertion = lineItem.quantity !== null && lineItem.quantity !== undefined;
         const group = new FormGroup({
           attachment: new FormControl(lineItem.attachment ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
@@ -304,7 +305,7 @@ export class InvoiceAmountComponent implements OnInit {
           entrySourcePair: new FormControl(lineItem.entrySource),
           rate: new FormControl(lineItem.rateAmount ? `${lineItem.rateAmount}` : 'N/A'),
           type: new FormControl(lineItem.rateType ? lineItem.rateType : ''),
-          quantity: new FormControl(lineItem.quantity ? lineItem.quantity : 'N/A'),
+          quantity: new FormControl(quantityAssertion ? lineItem.quantity : 'N/A'),
           totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
           requestStatus: new FormControl(lineItem.requestStatus?.label ?? 'N/A'),
           requestStatusPair: new FormControl(lineItem.requestStatus),
@@ -535,6 +536,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
+    console.log(costLineItem, costLineItems);
     const editChargeDetails = await this.utilService.openEditChargeModal({
             costLineItem
     }).pipe(first()).toPromise();
