@@ -297,7 +297,7 @@ export class InvoiceAmountComponent implements OnInit {
           attachment: new FormControl(lineItem.attachment ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
           accessorialCode: new FormControl(lineItem.accessorialCode),
-          charge: new FormControl({value: lineItem.chargeCode, disabled: true}),
+          charge: new FormControl(lineItem.chargeCode),
           rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
           rateSourcePair: new FormControl(lineItem.rateSource),
           entrySource: new FormControl(lineItem.entrySource?.label ?? 'N/A'),
@@ -359,6 +359,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   async onAddChargeButtonClick(): Promise<void> {
+    let attachment;
     if (this.costBreakdownOptions$.value.length === 0) {
       this.getAccessorialDetails.emit();
       // if we need to get the details, then we should wait until they are populated
@@ -393,7 +394,12 @@ export class InvoiceAmountComponent implements OnInit {
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
       }
 
-      const attachment = {url: 'pending'};
+      if (modalResponse.file){
+         attachment = {url: 'pending'};
+      }  else {
+         attachment = {url: 'no-file'};
+      }
+
       newLineItemGroup.get('attachment')?.setValue(attachment);
       this.fileFormGroup.removeControl(modalResponse.selected.name);
       this.fileFormGroup.addControl(modalResponse.selected.name, new FormControl(modalResponse.file));
@@ -409,7 +415,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   createEmptyLineItemGroup(): FormGroup {
-    const attachmentString = {url: 'pending'};
+    const attachmentString = {url: 'no-file'};
     const attachment = new FormControl(attachmentString);
     const charge = new FormControl(null);
     const rateSource = new FormControl('');
