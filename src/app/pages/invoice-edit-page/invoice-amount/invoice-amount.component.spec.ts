@@ -808,6 +808,38 @@ describe('InvoiceAmountComponent', () => {
     expect(utilService.openNewChargeModal).toHaveBeenCalledTimes(1);
     expect(component.rateEngineCall.emit).toHaveBeenCalledTimes(1);
     expect(component.costBreakdownItems.length).toEqual(originalCostLineItemCount + 1);
+    // @ts-ignore
+    expect(component.costBreakdownItemsControls[0].get('attachment').value.url).toEqual('no-file');
+
+  });
+
+  it('should call onAddChargeButtonClick and have attachment with pending when file is uploaded', async () => {
+    spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      selected: TEST_CALC_DETAIL,
+      comment: 'some comment',
+      file: new File([], '', undefined)
+    }));
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    const promise = component.onAddChargeButtonClick();
+    // simulate returning empty accessorial details
+    component.costBreakdownOptions$.value = [];
+    await promise;
+    // @ts-ignore
+    expect(component.costBreakdownItemsControls[0].get('attachment').value.url).toEqual('pending');
+  });
+
+  it('should call onAddChargeButtonClick and have attachment with no-file when NO file is uploaded', async () => {
+    spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      selected: TEST_CALC_DETAIL,
+      comment: 'some comment'
+    }));
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    const promise = component.onAddChargeButtonClick();
+    // simulate returning empty accessorial details
+    component.costBreakdownOptions$.value = [];
+    await promise;
+    // @ts-ignore
+    expect(component.costBreakdownItemsControls[0].get('attachment').value.url).toEqual('no-file');
   });
 
   it('should download attachment', () => {
