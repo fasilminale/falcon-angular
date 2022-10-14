@@ -310,7 +310,8 @@ describe('InvoiceEditPageComponent', () => {
           overriddenDeliveryDateTime: new Date().toISOString(),
           assumedDeliveryDateTime: new Date().toISOString(),
           tripTenderTime: new Date().toISOString(),
-          totalGrossWeight: 1000
+          totalGrossWeight: 1000,
+          payable: true
         };
         spyOn(component, 'updateInvoiceFromForms').and.stub();
         spyOn(rateService, 'rateInvoice').and.returnValue(of(testInvoice));
@@ -328,6 +329,7 @@ describe('InvoiceEditPageComponent', () => {
       });
       it('getRates should call rate engine', () => {
         component.invoice = new InvoiceDataModel();
+        component.invoice.payable = true;
         component.invoice.mode = {mode: 'TEST', reportKeyMode: 'TST', reportModeDescription: 'Test'};
         component.invoice.carrier = {name: 'TEST', scac: 'TST'};
         component.invoice.pickupDateTime = '2022-05-12T15:35:32Z';
@@ -393,6 +395,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
 
       it('handleTripEditModeEvent should call getRates', fakeAsync(() => {
+        component.invoice.payable = true;
         component.handleTripEditModeEvent({event: 'update', value: true});
         tick();
         expect(rateService.updateInvoice).toHaveBeenCalled();
@@ -437,6 +440,7 @@ describe('InvoiceEditPageComponent', () => {
         const ratesResponse$ = new Subject<any>();
         asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
         component.invoice = new InvoiceDataModel();
+        component.invoice.payable = true;
         component.getRates();
 
         // Assertions
@@ -455,11 +459,29 @@ describe('InvoiceEditPageComponent', () => {
         asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
         component.invoice = new InvoiceDataModel();
         component.invoice.hasRateEngineError = true;
+        component.invoice.payable = true;
         component.getRates();
 
         // Assertions
         ratesResponse$.subscribe(() => {
           expect(rateService.rateInvoice).toHaveBeenCalled();
+          done();
+        });
+
+        // Run Test
+        ratesResponse$.next(true);
+      });
+
+      it('should not call getRates', done => {
+        // Setup
+        const ratesResponse$ = new Subject<any>();
+        asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
+        component.invoice = new InvoiceDataModel();
+        component.getRates();
+
+        // Assertions
+        ratesResponse$.subscribe(() => {
+          expect(rateService.rateInvoice).not.toHaveBeenCalled();
           done();
         });
 
@@ -1395,6 +1417,7 @@ describe('InvoiceEditPageComponent', () => {
 
   it('updateAndGetRates should call backend api', done => {
     const mockUpdateRequest$ = new Subject();
+    component.invoice.payable = true;
     spyOn(component, 'updateInvoiceFromForms').and.stub();
     spyOn(component, 'loadInvoice').and.stub();
     asSpy(rateService.updateInvoice).and.returnValue(mockUpdateRequest$.asObservable());
