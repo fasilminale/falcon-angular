@@ -210,6 +210,7 @@ describe('InvoiceEditPageComponent', () => {
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
       component.invoiceAmountFormGroup.addControl('costBreakdownItems', new FormArray([createEmptyLineItemGroup()]));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
     };
 
 
@@ -860,6 +861,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
     };
 
     const setUpControlsForInvalidGlLineItems = () => {
@@ -879,6 +881,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', invalidGlLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
     };
 
     it('should call performPostUpdateActions when update succeeds', () => {
@@ -954,6 +957,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
     };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
@@ -1059,6 +1063,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
       component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
       component.invoice.weightAdjustments = undefined as any;
       component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
@@ -1101,7 +1106,8 @@ describe('InvoiceEditPageComponent', () => {
         businessUnit: component.invoice.businessUnit,
         standardPaymentTermsOverride: 'ABC',
         hasRateEngineError: component.invoice.hasRateEngineError,
-        billOfLadingNumber: ''
+        billOfLadingNumber: '',
+        currency: 'USD',
       });
     });
   });
@@ -1119,6 +1125,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.controls.billToAddress = billToAddressFormGroup;
       component.invoiceAllocationFormGroup.controls.invoiceAllocations = new FormArray([]);
       component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
       const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
       costBreakdownItems.push(new FormGroup({
         accessorial: new FormControl(false),

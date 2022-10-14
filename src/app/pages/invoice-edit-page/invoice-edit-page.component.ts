@@ -524,6 +524,7 @@ export class InvoiceEditPageComponent implements OnInit {
       businessUnit: this.invoice.businessUnit,
       standardPaymentTermsOverride: paymentTermsOverridenValue,
       billOfLadingNumber: this.invoice.billOfLadingNumber,
+      currency: this.invoiceAmountFormGroup.controls.currency.value,
     };
   }
 
