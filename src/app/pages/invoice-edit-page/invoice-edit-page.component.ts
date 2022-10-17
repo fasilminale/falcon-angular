@@ -524,6 +524,7 @@ export class InvoiceEditPageComponent implements OnInit {
       businessUnit: this.invoice.businessUnit,
       standardPaymentTermsOverride: paymentTermsOverridenValue,
       billOfLadingNumber: this.invoice.billOfLadingNumber,
+      currency: this.invoiceAmountFormGroup.controls.currency.value,
     };
   }
 
@@ -667,7 +668,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
   updateAndGetRates(): void {
     this.updateInvoiceFromForms();
-    if (this.checkAccessorialData(this.invoice)) {
+    if (this.checkAccessorialData(this.invoice) && this.invoice.payable) {
       this.rateCallCounter++;
       this.rateService.updateInvoice(this.invoice).subscribe(
         (invoice: any) => this.loadReRate(invoice),
@@ -683,7 +684,7 @@ export class InvoiceEditPageComponent implements OnInit {
    */
   getRates(): void {
     this.updateInvoiceFromForms();
-    if (this.checkAccessorialData(this.invoice)) {
+    if (this.checkAccessorialData(this.invoice) && this.invoice.payable) {
       this.rateCallCounter++;
       this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => this.loadReRate(ratedInvoiced),
