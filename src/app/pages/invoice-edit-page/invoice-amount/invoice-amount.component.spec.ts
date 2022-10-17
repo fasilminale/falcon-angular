@@ -897,7 +897,6 @@ describe('InvoiceAmountComponent', () => {
     expect(result).toBe(0);
   });
 
-
   it('should call onEditCostLineItem and emit to rate engine', async () => {
     component._formGroup = new FormGroup({
       pendingChargeLineItems: new FormArray([
@@ -924,6 +923,45 @@ describe('InvoiceAmountComponent', () => {
     expect(component.rateEngineCall.emit).toHaveBeenCalled();
     expect(component.fileFormGroup.removeControl).toHaveBeenCalledTimes(1);
     expect(component.fileFormGroup.addControl).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call onEditCostLineItem with file being passed.', async () => {
+    component.costBreakdownItems.push(  new FormGroup({
+      charge: new FormControl('OTHER'),
+      attachment: new FormControl()
+    }));
+    const costLineItem = component.costBreakdownItemsControls[0];
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      charge: 'OTHER',
+      variables: [{
+        variable: 'test',
+        quantity: 1
+      }],
+      file: new File([], '', undefined)
+    }));
+    const promise = component.onEditCostLineItem(costLineItem, component.costBreakdownItemsControls);
+    await promise;
+    expect(component.costBreakdownItemsControls[0].get('attachment')?.value.url).toEqual('pending');
+  });
+
+  it('should call onEditCostLineItem with NO file being passed.', async () => {
+    component.costBreakdownItems.push(  new FormGroup({
+      charge: new FormControl('OTHER'),
+      attachment: new FormControl()
+    }));
+    const costLineItem = component.costBreakdownItemsControls[0];
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      charge: 'OTHER',
+      variables: [{
+        variable: 'test',
+        quantity: 1
+      }]
+    }));
+    const promise = component.onEditCostLineItem(costLineItem, component.costBreakdownItemsControls);
+    await promise;
+    expect(component.costBreakdownItemsControls[0].get('attachment')?.value.url).toEqual('no-file');
   });
 
   describe('should remove line item', () => {

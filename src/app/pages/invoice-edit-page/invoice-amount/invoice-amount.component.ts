@@ -123,8 +123,8 @@ export class InvoiceAmountComponent implements OnInit {
     this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
     this.invoiceAmountFormInvalid.emit({
-      'form': InvoiceAmountComponent.INVOICE_AMOUNT_CL,
-      'value': (this.paymentTermValid)
+      form: InvoiceAmountComponent.INVOICE_AMOUNT_CL,
+      value: (this.paymentTermValid)
     });
     return totalAmount;
   }
@@ -197,7 +197,7 @@ export class InvoiceAmountComponent implements OnInit {
   deletedChargeLineItems = new FormArray([]);
   disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
-  paymentTermValid: boolean = true;
+  paymentTermValid = true;
 
   @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
 
@@ -252,8 +252,8 @@ export class InvoiceAmountComponent implements OnInit {
 
   emitOverrideStandardPaymentTermsValidity() {
     this.invoiceAmountFormInvalid.emit({
-      'form': InvoiceAmountComponent.INVOICE_AMOUNT_PAYTERM,
-      'value': (this.paymentTermValid)
+      form: InvoiceAmountComponent.INVOICE_AMOUNT_PAYTERM,
+      value: (this.paymentTermValid)
     });
   }
 
@@ -396,8 +396,10 @@ export class InvoiceAmountComponent implements OnInit {
       }
 
       if (modalResponse.file){
+        // The pending url is updated to the real once the invoice saved and the backend generates a filename with UUID.
          attachment = {url: 'pending'};
       }  else {
+        // no-file causes the html not to display a link.
          attachment = {url: 'no-file'};
       }
 
@@ -531,12 +533,11 @@ export class InvoiceAmountComponent implements OnInit {
       ...modalData,
       commentSectionFieldName: 'Response Comment',
       requireField: modalData.title === 'Deny Charge',
-      confirmButtonStyle: confirmButtonStyle
+      confirmButtonStyle
     });
   }
 
   async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
-    console.log(costLineItem, costLineItems);
     const editChargeDetails = await this.utilService.openEditChargeModal({
             costLineItem
     }).pipe(first()).toPromise();
@@ -554,7 +555,16 @@ export class InvoiceAmountComponent implements OnInit {
         });
         existingCostLineItem.markAsDirty();
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
-        const attachment = {url: 'pending'};
+        let attachment;
+
+        if (editChargeDetails.file){
+          // The pending url is updated to the real once the invoice saved and the backend generates a filename with UUID.
+          attachment = {url: 'pending'};
+        }  else {
+          // no-file causes the html not to display a link.
+          attachment = {url: 'no-file'};
+        }
+
         existingCostLineItem.get('attachment')?.setValue(attachment);
         this.rateEngineCall.emit(this.pendingAccessorialCode);
         // @ts-ignore
