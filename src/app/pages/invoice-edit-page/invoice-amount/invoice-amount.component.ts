@@ -123,8 +123,8 @@ export class InvoiceAmountComponent implements OnInit {
     this.isValidCostBreakdownAmount = parseFloat(invoiceNetAmount) > 0
       && totalAmount.toFixed(2) === parseFloat(invoiceNetAmount).toFixed(2);
     this.invoiceAmountFormInvalid.emit({
-      form: InvoiceAmountComponent.INVOICE_AMOUNT_CL,
-      value: (this.paymentTermValid)
+      'form': InvoiceAmountComponent.INVOICE_AMOUNT_CL,
+      'value': (this.paymentTermValid)
     });
     return totalAmount;
   }
@@ -197,7 +197,7 @@ export class InvoiceAmountComponent implements OnInit {
   deletedChargeLineItems = new FormArray([]);
   disputeLineItems = new FormArray([]);
   pendingAccessorialCode = '';
-  paymentTermValid = true;
+  paymentTermValid: boolean = true;
 
   @Input() userInfo: UserInfoModel | undefined = new UserInfoModel();
 
@@ -252,8 +252,8 @@ export class InvoiceAmountComponent implements OnInit {
 
   emitOverrideStandardPaymentTermsValidity() {
     this.invoiceAmountFormInvalid.emit({
-      form: InvoiceAmountComponent.INVOICE_AMOUNT_PAYTERM,
-      value: (this.paymentTermValid)
+      'form': InvoiceAmountComponent.INVOICE_AMOUNT_PAYTERM,
+      'value': (this.paymentTermValid)
     });
   }
 
@@ -533,11 +533,12 @@ export class InvoiceAmountComponent implements OnInit {
       ...modalData,
       commentSectionFieldName: 'Response Comment',
       requireField: modalData.title === 'Deny Charge',
-      confirmButtonStyle
+      confirmButtonStyle: confirmButtonStyle
     });
   }
 
   async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
+    console.log(costLineItem, costLineItems);
     const editChargeDetails = await this.utilService.openEditChargeModal({
             costLineItem
     }).pipe(first()).toPromise();
