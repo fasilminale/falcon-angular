@@ -1,5 +1,5 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {DataTableComponent, ElmDataTableHeader} from '@elm/elm-styleguide-ui';
+import {Component, Inject} from '@angular/core';
+import {ElmDataTableHeader} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {HistoryLog} from '../../models/invoice/history-log';
@@ -11,7 +11,7 @@ import {UtilService} from '../../services/util-service';
   templateUrl: './fal-history-log-modal.component.html',
   styleUrls: ['./fal-history-log-modal.component.scss']
 })
-export class FalHistoryLogModalComponent implements OnInit {
+export class FalHistoryLogModalComponent {
   headers: Array<ElmDataTableHeader> = [
     {header: 'field', label: 'Field'},
     {header: 'oldValue', label: 'Old Value'},
@@ -24,67 +24,70 @@ export class FalHistoryLogModalComponent implements OnInit {
   falconInvoiceNumber = '';
   invoiceStatus = '';
   historyLogs: Array<HistoryLog> = [];
-  filteredHistoryLogs: Array<HistoryLog> = [];
-  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
+  filteredHistoryLogs: Array<any> = [];
+  expandedFields: { [key: string]: boolean } = {};
+  fieldUpdateCount: { [key: string]: number } = {};
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: InvoiceDataModel,
               private utilService: UtilService) {
     this.falconInvoiceNumber = data.falconInvoiceNumber;
     this.invoiceStatus = data.status?.label;
+    this.historyLogs = data.historyLogs;
 
-    // Setup logs
-    const historyLogSet = new Set();
-    this.historyLogs = data.historyLogs.map(log => {
-      if (historyLogSet.has(log.field)) {
-        log.current = false;
-      } else {
-        log.current = true;
-        historyLogSet.add(log.field);
-      }
-      log.fullHistory = false;
-      return new HistoryLog(log);
+    // this only needs calculated once and saved in the map, yay!
+    this.historyLogs.forEach(historyLog => {
+      const currentBest = this.fieldUpdateCount[historyLog.field] ?? 0;
+      const valueToTest = historyLog.updatedTimes;
+      // the largest updateTimes value for any field will be from the latest update to that field
+      // we store it so we can use it later to identify the log that is from the latest update per field
+      this.fieldUpdateCount[historyLog.field] = Math.max(currentBest, valueToTest);
     });
 
-    // Filter logs to display
-    historyLogSet.clear();
-    this.filteredHistoryLogs = this.historyLogs.filter((log, index) => {
-      if (historyLogSet.has(log.field)) {
-        return false;
-      }
-
-      if (log.updatedTimes > 1) {
-        // @ts-ignore
-        log.updatedTimes = `<a class="updatedTimeClickable">${log.updatedTimes}</a>`;
-        this.historyLogs[index] = log;
-      }
-
-      historyLogSet.add(log.field);
-      return true;
-    });
+    // this should be the first time the filtered logs are calculated
+    this.reCalculateFilteredLogs();
   }
 
-  ngOnInit(): void {
+  reCalculateFilteredLogs(): void {
+    this.filteredHistoryLogs = this.historyLogs
+      .filter((historyLog: HistoryLog) => {
+        // history logs that belong to an expanded field are allowed through the filter
+        return this.expandedFields[historyLog.field]
+          // history logs that are the last update for that field are allowed through the filter
+          || this.fieldUpdateCount[historyLog.field] === historyLog.updatedTimes;
+      })
+      .map(historyLog => {
+        // map to apply the hyperlink styling to specific history log objects
+        // doing this only to the filtered list so the updateTimes can stay a number
+        // for the filter call above
+        if (historyLog.updatedTimes > 1
+          && this.fieldUpdateCount[historyLog.field] === historyLog.updatedTimes) {
+          // add the hyperlink styling to the latest update of the field
+          // but only add it if there are other collapsed updates
+          return {
+            ...historyLog,
+            updatedTimes: `<a class="updatedTimeClickable">${historyLog.updatedTimes}</a>`
+          };
+        }
+        // otherwise keep the history log as is
+        return historyLog;
+      });
   }
 
-  toggleFullHistory(event: any): void {
-    const value = event[0];
-    const hl = this.filteredHistoryLogs.find(l => l.field === value.field);
-    const historyLog = hl !== undefined ? hl : new HistoryLog();
-
-    if (!historyLog.current) {
-      return;
+  onDataTableRowSelect(selectionEvent: Array<HistoryLog>): void {
+    // pull the selected history log from the selection array
+    // in our scenario there is always either one value in the array or none
+    const selectedHistoryLog = selectionEvent.length > 0 ? selectionEvent[0] : undefined;
+    if (selectedHistoryLog) {
+      // if selected value exists, toggle the expand/collapse status for that field
+      this.toggleFieldExpandCollapse(selectedHistoryLog.field);
     }
+    // regardless of what happens, recalculate the filter for posterity
+    this.reCalculateFilteredLogs();
+  }
 
-    historyLog.fullHistory = !historyLog.fullHistory;
-
-    const fields = new Set();
-    this.filteredHistoryLogs = this.historyLogs.filter(log => {
-      if ((!historyLog.fullHistory && historyLog.field === log.field) && fields.has(log.field)) {
-        return false;
-      }
-      fields.add(log.field);
-      return true;
-    });
+  toggleFieldExpandCollapse(field: string): void {
+    // will coerce undefined into boolean without extra work, yay!
+    this.expandedFields[field] = !this.expandedFields[field];
   }
 
   downloadCsv(): void {

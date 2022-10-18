@@ -27,7 +27,7 @@
       [headers]="headers"
       [noResultsMessage]="'No Invoice History / Log Found'"
       [noResultsHeight]="100"
-      (dataSelectedEvent)="toggleFullHistory($event)"
+      (dataSelectedEvent)="onDataTableRowSelect($event)"
       [showPagination]="false"
       [maxHeight]="'500px'">
     </elm-data-table>
