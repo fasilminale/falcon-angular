@@ -30,7 +30,8 @@
       [noResultsMessage]="'No Invoice History / Log Found'"
       [noResultsHeight]="100"
       (dataSelectedEvent)="toggleFullHistory($event)"
-      [showPagination]="false">
+      [showPagination]="false"
+      [maxHeight]="'500px'">
     </elm-data-table>
   </div>
   <div mat-dialog-actions class="float-right">

@@ -40,8 +40,8 @@ export class HistoryLog {
   }
 
   private static isDate(value?: any): boolean {
-    const date = moment(value);
-    return date.isValid();
+    const date = moment(value).format(InvoiceDataModel.dateFormat);
+    return moment(date, InvoiceDataModel.dateFormat, true).isValid();
   }
 }
 
