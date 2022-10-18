@@ -176,8 +176,8 @@ export class InvoiceAmountComponent implements OnInit {
     {value: 'ZN14', display: 'Pay in 14 days'}
   ];
   public currencyOptions = [
-    {label: 'USD', value: 'USD', disabled: false},
-    {label: 'CAD', value: 'CAD', disabled: false}
+    {label: 'USD', value: 'USD', disabled: true},
+    {label: 'CAD', value: 'CAD', disabled: true}
   ];
   public overridePaymentTermsOptions = [
     {label: 'Override Standard Payment Terms', value: 'override', disabled: false}

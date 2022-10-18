@@ -29,12 +29,16 @@ app-fal-radio-input ::ng-deep .background-disabled,
 }
 
 ::ng-deep #currency-input {
-  div[role="radiogroup"].form-control {
-    border: none;
-    padding: 0px;
+  div[role="radiogroup"] {
+    height: 38px;
 
-    & > div {
-      display: flex;
+    .form-control {
+      border: none;
+      padding: 0px;
+
+      & > div {
+        display: flex;
+      }
     }
   }
 }
