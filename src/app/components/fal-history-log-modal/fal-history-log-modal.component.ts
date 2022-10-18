@@ -47,10 +47,17 @@ export class FalHistoryLogModalComponent implements OnInit {
 
     // Filter logs to display
     historyLogSet.clear();
-    this.filteredHistoryLogs = this.historyLogs.filter(log => {
+    this.filteredHistoryLogs = this.historyLogs.filter((log, index) => {
       if (historyLogSet.has(log.field)) {
         return false;
       }
+
+      if (log.updatedTimes > 1) {
+        // @ts-ignore
+        log.updatedTimes = `<a class="updatedTimeClickable">${log.updatedTimes}</a>`;
+        this.historyLogs[index] = log;
+      }
+
       historyLogSet.add(log.field);
       return true;
     });
