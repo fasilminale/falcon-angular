@@ -47,7 +47,7 @@
                        formControlName="currency"
                        [options]="currencyOptions"
                        [ngClass]="{'radio-dev-disabled': true}"
-                       [addSpacing]="true">
+                       [addSpacing]="false">
       </elm-radio-input>
     </div>
 
@@ -138,7 +138,7 @@
                         buttonType="button"
                         buttonStyle="text"
                         class="flex-shrink-1"
-                        *ngIf="_.get('attachment')?.value?.url && _.get('attachment')?.value?.url !== 'pending'"
+                        *ngIf="_.get('attachment')?.value?.url && _.get('attachment')?.value?.url !== 'pending' && _.get('attachment')?.value?.url !== 'no-file'"
                         (click)="downloadAttachment(_.get('attachment')?.value?.url)">
               <div class="material-icons download-icon"
                    (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download

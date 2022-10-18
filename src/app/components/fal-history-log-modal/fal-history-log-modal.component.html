@@ -14,10 +14,8 @@
                 buttonStyle="text"
                 class="flex-shrink-1"
                 [isDisabled]="filteredHistoryLogs.length === 0"
-                (click)="downloadCsv()">
-      <div class="material-icons download-icon"
-           (click)="downloadCsv()">file_download
-      </div>
+                (buttonClick)="downloadCsv()">
+      <div class="material-icons download-icon" >file_download</div>
       Download Invoice History Log
     </elm-button>
     <span class="download-text">(.csv)</span>

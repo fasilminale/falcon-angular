@@ -210,6 +210,7 @@ describe('InvoiceEditPageComponent', () => {
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
       component.invoiceAmountFormGroup.addControl('costBreakdownItems', new FormArray([createEmptyLineItemGroup()]));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
     };
 
 
@@ -310,7 +311,8 @@ describe('InvoiceEditPageComponent', () => {
           overriddenDeliveryDateTime: new Date().toISOString(),
           assumedDeliveryDateTime: new Date().toISOString(),
           tripTenderTime: new Date().toISOString(),
-          totalGrossWeight: 1000
+          totalGrossWeight: 1000,
+          payable: true
         };
         spyOn(component, 'updateInvoiceFromForms').and.stub();
         spyOn(rateService, 'rateInvoice').and.returnValue(of(testInvoice));
@@ -328,6 +330,7 @@ describe('InvoiceEditPageComponent', () => {
       });
       it('getRates should call rate engine', () => {
         component.invoice = new InvoiceDataModel();
+        component.invoice.payable = true;
         component.invoice.mode = {mode: 'TEST', reportKeyMode: 'TST', reportModeDescription: 'Test'};
         component.invoice.carrier = {name: 'TEST', scac: 'TST'};
         component.invoice.pickupDateTime = '2022-05-12T15:35:32Z';
@@ -393,6 +396,7 @@ describe('InvoiceEditPageComponent', () => {
       }));
 
       it('handleTripEditModeEvent should call getRates', fakeAsync(() => {
+        component.invoice.payable = true;
         component.handleTripEditModeEvent({event: 'update', value: true});
         tick();
         expect(rateService.updateInvoice).toHaveBeenCalled();
@@ -437,6 +441,7 @@ describe('InvoiceEditPageComponent', () => {
         const ratesResponse$ = new Subject<any>();
         asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
         component.invoice = new InvoiceDataModel();
+        component.invoice.payable = true;
         component.getRates();
 
         // Assertions
@@ -455,11 +460,29 @@ describe('InvoiceEditPageComponent', () => {
         asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
         component.invoice = new InvoiceDataModel();
         component.invoice.hasRateEngineError = true;
+        component.invoice.payable = true;
         component.getRates();
 
         // Assertions
         ratesResponse$.subscribe(() => {
           expect(rateService.rateInvoice).toHaveBeenCalled();
+          done();
+        });
+
+        // Run Test
+        ratesResponse$.next(true);
+      });
+
+      it('should not call getRates', done => {
+        // Setup
+        const ratesResponse$ = new Subject<any>();
+        asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
+        component.invoice = new InvoiceDataModel();
+        component.getRates();
+
+        // Assertions
+        ratesResponse$.subscribe(() => {
+          expect(rateService.rateInvoice).not.toHaveBeenCalled();
           done();
         });
 
@@ -860,6 +883,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
     };
 
     const setUpControlsForInvalidGlLineItems = () => {
@@ -879,6 +903,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', invalidGlLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
     };
 
     it('should call performPostUpdateActions when update succeeds', () => {
@@ -954,6 +979,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
     };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
@@ -1059,6 +1085,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
       component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
       component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
       component.invoice.weightAdjustments = undefined as any;
       component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
@@ -1101,7 +1128,8 @@ describe('InvoiceEditPageComponent', () => {
         businessUnit: component.invoice.businessUnit,
         standardPaymentTermsOverride: 'ABC',
         hasRateEngineError: component.invoice.hasRateEngineError,
-        billOfLadingNumber: ''
+        billOfLadingNumber: '',
+        currency: 'USD',
       });
     });
   });
@@ -1119,6 +1147,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.controls.billToAddress = billToAddressFormGroup;
       component.invoiceAllocationFormGroup.controls.invoiceAllocations = new FormArray([]);
       component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
       const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
       costBreakdownItems.push(new FormGroup({
         accessorial: new FormControl(false),
@@ -1395,6 +1424,7 @@ describe('InvoiceEditPageComponent', () => {
 
   it('updateAndGetRates should call backend api', done => {
     const mockUpdateRequest$ = new Subject();
+    component.invoice.payable = true;
     spyOn(component, 'updateInvoiceFromForms').and.stub();
     spyOn(component, 'loadInvoice').and.stub();
     asSpy(rateService.updateInvoice).and.returnValue(mockUpdateRequest$.asObservable());

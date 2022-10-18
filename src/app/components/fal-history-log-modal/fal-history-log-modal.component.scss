@@ -28,3 +28,7 @@
 .border {
   border: 1px solid $grey4;
 }
+
+::ng-deep .updatedTimeClickable {
+  padding: 0;
+}
