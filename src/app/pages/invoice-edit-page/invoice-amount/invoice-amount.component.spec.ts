@@ -945,11 +945,12 @@ describe('InvoiceAmountComponent', () => {
     expect(component.costBreakdownItemsControls[0].get('attachment')?.value.url).toEqual('pending');
   });
 
-  it('should call onEditCostLineItem with NO file being passed.', async () => {
+  it('should call onEditCostLineItem with NO new file being passed and no existing file', async () => {
     component.costBreakdownItems.push(  new FormGroup({
       charge: new FormControl('OTHER'),
       attachment: new FormControl()
     }));
+
     const costLineItem = component.costBreakdownItemsControls[0];
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
     spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
@@ -962,6 +963,28 @@ describe('InvoiceAmountComponent', () => {
     const promise = component.onEditCostLineItem(costLineItem, component.costBreakdownItemsControls);
     await promise;
     expect(component.costBreakdownItemsControls[0].get('attachment')?.value.url).toEqual('no-file');
+  });
+
+  it('should call onEditCostLineItem with NO new file being passed and an existing file.', async () => {
+    component.costBreakdownItems.push(  new FormGroup({
+      charge: new FormControl('OTHER'),
+      attachment: new FormControl()
+    }));
+    const attachment = {fileName: 'test'};
+    component.costBreakdownItemsControls[0].get('attachment')?.setValue(attachment);
+
+    const costLineItem = component.costBreakdownItemsControls[0];
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      charge: 'OTHER',
+      variables: [{
+        variable: 'test',
+        quantity: 1
+      }]
+    }));
+    const promise = component.onEditCostLineItem(costLineItem, component.costBreakdownItemsControls);
+    await promise;
+    expect(component.costBreakdownItemsControls[0].get('attachment')?.value.url).toBeUndefined();
   });
 
   describe('should remove line item', () => {
