@@ -100,7 +100,7 @@ describe('MasterDataPageComponent', () => {
 
   describe('saveCSVFile', () => {
     it('should call saveAs', () => {
-      const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.callFake(saveAs);
+      const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.stub();
       component.saveCSVFile('test data', 'test filename');
       fixture.detectChanges();
       expect(saveAsSpy).toHaveBeenCalled();

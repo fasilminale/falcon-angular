@@ -184,7 +184,7 @@ describe('UtilService', () => {
   });
 
   it('should call saveAs', () => {
-    const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.callFake(saveAs);
+    const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.stub();
     util.saveCSVFile('test data', 'test filename');
     expect(saveAsSpy).toHaveBeenCalled();
   });
