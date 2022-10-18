@@ -561,12 +561,13 @@ export class InvoiceAmountComponent implements OnInit {
         if (editChargeDetails.file){
           // The pending url is updated to the real once the invoice saved and the backend generates a filename with UUID.
           attachment = {url: 'pending'};
-        }  else {
+          existingCostLineItem.get('attachment')?.setValue(attachment);
+        }  else if (!editChargeDetails.file && !existingCostLineItem?.value?.attachment?.fileName) {
           // no-file causes the html not to display a link.
           attachment = {url: 'no-file'};
+          existingCostLineItem.get('attachment')?.setValue(attachment);
         }
 
-        existingCostLineItem.get('attachment')?.setValue(attachment);
         this.rateEngineCall.emit(this.pendingAccessorialCode);
         // @ts-ignore
         this.fileFormGroup.removeControl(editChargeDetails.charge);
