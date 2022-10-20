@@ -4,7 +4,7 @@ export class FalControlValueAccessorComponent<T> implements ControlValueAccessor
 
 
   /** Hidden value, do access directly */
-    // tslint:disable-next-line:variable-name
+    // eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle, id-blacklist, id-match
   private _value?: T;
 
   constructor() {

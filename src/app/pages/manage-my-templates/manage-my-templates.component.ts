@@ -64,7 +64,7 @@ export class ManageMyTemplatesComponent implements OnInit {
       return;
     }
     if (!template.isDisable) {
-      // tslint:disable-next-line:radix
+      // eslint-disable-next-line radix
       this.apiService.updateTemplate(parseInt(template.templateId), template).subscribe(
         (data) => {
           template.createdDate = data.createdDate;
@@ -101,7 +101,7 @@ export class ManageMyTemplatesComponent implements OnInit {
       .afterClosed()
       .subscribe(result => {
         if (result) {
-          // tslint:disable-next-line:radix
+          // eslint-disable-next-line radix
           this.apiService.deleteTemplate(parseInt(template.templateId))
             .subscribe(
               () => {

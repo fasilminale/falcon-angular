@@ -72,13 +72,13 @@ export class AppComponent implements OnInit {
         innerHtmlMessage: `<strong>Status:</strong> ${error.status}<br>` +
           `${error.message}`
       };
-      // tslint:disable-next-line:triple-equals
+      // eslint-disable-next-line eqeqeq
       if (error.status == '403' && error.message.includes('User not Found')) {
         this.router.navigate(['/newUserForbidden']).then();
       } else {
         this.modal.openSystemErrorModal(modalData)
           .subscribe(() => {
-            // tslint:disable-next-line:triple-equals
+            // eslint-disable-next-line eqeqeq
             if (error.status == '401') {
               this.router.navigate(['/logged-out']).then();
             }

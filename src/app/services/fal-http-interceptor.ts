@@ -23,7 +23,7 @@ export class FalHttpInterceptor implements HttpInterceptor {
     });
     return next.handle(modifiedReq).pipe(
       catchError(errResponse => {
-        // tslint:disable-next-line:triple-equals
+        // eslint-disable-next-line eqeqeq
         if (errResponse.status != 422 && errResponse.status != 502) {
           console.log(errResponse);
           const status = errResponse.status;

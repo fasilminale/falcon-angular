@@ -133,9 +133,21 @@
               "devServerTarget": "elm-falcon-ui:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "elm-falcon-ui"
+  "defaultProject": "elm-falcon-ui",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }
