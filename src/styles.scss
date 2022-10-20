@@ -1,6 +1,6 @@
-@use "~@elm/elm-styleguide-ui/src/styles/styles";
-@import "~@ng-select/ng-select/themes/default.theme.css";
-@import "~bootstrap/scss/bootstrap";
+@use "@elm/elm-styleguide-ui/src/styles/styles";
+@use "@ng-select/ng-select/themes/default.theme.css";
+@use "bootstrap/scss/bootstrap";
 
 .fal-label {
   @extend .form-label;

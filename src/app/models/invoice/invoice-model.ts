@@ -1,5 +1,5 @@
 import {StatusModel} from './status-model';
-import * as moment from 'moment';
+import moment from 'moment';
 import {CostLineItem, DisputeLineItem, GlLineItem, GlLineItemError, ManualLineItem} from '../line-item/line-item-model';
 import {formatCurrency} from '@angular/common';
 import {Milestone} from '../milestone/milestone-model';
