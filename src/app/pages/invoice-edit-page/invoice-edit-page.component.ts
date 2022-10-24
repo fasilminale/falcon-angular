@@ -424,21 +424,21 @@ export class InvoiceEditPageComponent implements OnInit {
     const editInvoiceModel = this.mapTripInformationToEditAutoInvoiceModel();
 
     const files: Array<File> = [];
-    const chargeCodes: Array<string> = [];
+    const uids: Array<string> = [];
 
     editInvoiceModel.costLineItems?.map((lineItem) => {
-      const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.chargeCode)?.value;
+      const file = this.invoiceAmountFormGroup.get('fileFormGroup')?.get(lineItem.uid)?.value;
       if (file) {
         files.push(file);
-        chargeCodes.push(lineItem.chargeCode);
+        uids.push(lineItem.uid);
       }
     });
 
     const returnedInvoice = this.invoiceService.updateAutoInvoice(editInvoiceModel, this.falconInvoiceNumber);
 
-    if (files.length && chargeCodes.length) {
+    if (files.length && uids.length) {
       returnedInvoice.subscribe((updatedInvoice) => {
-        this.attachmentService.saveAccessorialAttachments(this.falconInvoiceNumber, chargeCodes, files).subscribe((success) => {
+        this.attachmentService.saveAccessorialAttachments(this.falconInvoiceNumber, uids, files).subscribe((success) => {
             if (!success) {
               this.toastService.openErrorToast('Attachments failed to upload');
             }
@@ -592,6 +592,7 @@ export class InvoiceEditPageComponent implements OnInit {
     for (const control of lineItems.controls) {
       const item = control as FormGroup;
       results.push({
+        uid: CommonUtils.handleNAValues(item.controls?.uid?.value),
         accessorialCode: CommonUtils.handleNAValues(item.controls?.accessorialCode?.value),
         chargeCode: CommonUtils.handleNAValues(item.controls?.charge?.value),
         attachment: CommonUtils.handleNAValues(item.controls?.attachment?.value),

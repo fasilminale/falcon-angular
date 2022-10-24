@@ -45,6 +45,7 @@ export interface CostLineItem {
   variables: Array<CalcDetailVariable>;
   deletedDate?: string;
   persisted: boolean;
+  uid: string;
 }
 
 export interface DisputeLineItem {
