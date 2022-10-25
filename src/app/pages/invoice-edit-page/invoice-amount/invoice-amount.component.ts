@@ -296,6 +296,7 @@ export class InvoiceAmountComponent implements OnInit {
         const quantityAssertion = lineItem.quantity !== null && lineItem.quantity !== undefined;
         const group = new FormGroup({
           attachment: new FormControl(lineItem.attachment ?? null),
+          attachmentLink: new FormControl(lineItem.attachmentLink ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
           accessorialCode: new FormControl(lineItem.accessorialCode),
           uid: new FormControl(lineItem.uid),

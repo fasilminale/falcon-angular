@@ -597,6 +597,7 @@ export class InvoiceEditPageComponent implements OnInit {
         chargeCode: CommonUtils.handleNAValues(item.controls?.charge?.value),
         attachment: CommonUtils.handleNAValues(item.controls?.attachment?.value),
         attachmentRequired: CommonUtils.handleNAValues(item.controls?.attachmentRequired?.value),
+        attachmentLink: CommonUtils.handleNAValues(item.controls?.attachmentLink?.value),
         autoApproved: CommonUtils.handleNAValues(item.controls?.autoApproved?.value),
         carrierComment: CommonUtils.handleNAValues(item.controls?.carrierComment?.value),
         chargeLineTotal: CommonUtils.handleNAValues(item.controls?.totalAmount?.value),
