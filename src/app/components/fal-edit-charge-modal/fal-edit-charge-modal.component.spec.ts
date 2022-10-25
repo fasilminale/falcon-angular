@@ -74,6 +74,7 @@ describe('FalEditChargeModalComponent', () => {
     beforeEach(() => {
       // set mock data for edit scenario
       MOCK_MODAL_INPUT.costLineItem = new FormControl({
+        accessorialCode: 'TEST',
         charge: 'TEST CHARGE NAME',
         variables: TEST_CALC_DETAIL.variables
       });
@@ -104,6 +105,7 @@ describe('FalEditChargeModalComponent', () => {
     beforeEach(() => {
       // set mock data for edit scenario
       MOCK_MODAL_INPUT.costLineItem = new FormControl({
+        accessorialCode: 'TEST',
         charge: 'TEST CHARGE NAME',
         variables: TEST_CALC_DETAIL.variables
       });
@@ -139,6 +141,7 @@ describe('FalEditChargeModalComponent', () => {
       spyOn(MOCK_DIALOG, 'close').and.callThrough();
       component.onConfirmButtonClick();
       expect(MOCK_DIALOG.close).toHaveBeenCalledOnceWith({
+        uid: 'TEST',
         charge: 'TEST CHARGE NAME',
         variables: TEST_CALC_DETAIL.variables,
         file: ''
