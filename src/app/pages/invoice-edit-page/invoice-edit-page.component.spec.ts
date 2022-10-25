@@ -150,7 +150,6 @@ describe('InvoiceEditPageComponent', () => {
     utilService = TestBed.inject(UtilService);
     modalService = TestBed.inject(ModalService);
     spyOn(modalService, 'openSystemErrorModal').and.returnValue(of());
-    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
     spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: 'deleteReason'}));
     spyOn(utilService, 'openWeightAdjustmentModal').and.returnValue(of({adjustedWeight: 1.0}));
     spyOn(utilService, 'openGlLineItemModal').and.returnValue(of());
@@ -590,6 +589,7 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   it('#clickCancelButton should call router to navigate to invoice list', () => {
+    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
     component.clickCancelButton();
     expect(component.isGlobalEditMode$.value).toEqual(false);
     expect(component.otherSectionEditMode$.value).toEqual(false);
@@ -599,6 +599,7 @@ describe('InvoiceEditPageComponent', () => {
   it('#clickCancelButton should ask the user to confirm canceling changes', async (done) => {
     component.isGlobalEditMode$.value = true;
     component.invoiceFormGroup.markAsDirty();
+    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
     spyOn(component, 'askForCancelConfirmation').and.callThrough();
     component.clickCancelButton();
     fixture.detectChanges();
@@ -960,7 +961,7 @@ describe('InvoiceEditPageComponent', () => {
     });
   });
 
-  describe('clickSubmitForApprovalButton method', () => {
+  describe('performSubmitAction method', () => {
 
     const setUpControls = () => {
       component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
@@ -990,7 +991,7 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
-      component.clickSubmitForApprovalButton();
+      component.performSubmitAction();
       expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(
         `Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated and submitted for approval.`
       );
@@ -1006,7 +1007,7 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
-      component.clickSubmitForApprovalButton();
+      component.performSubmitAction();
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
@@ -1022,7 +1023,7 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(component, 'performPostUpdateActions');
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       spyOn(invoiceService, 'submitForApproval').and.returnValue(throwError(new Error('Bad')));
-      component.clickSubmitForApprovalButton();
+      component.performSubmitAction();
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
@@ -1040,12 +1041,104 @@ describe('InvoiceEditPageComponent', () => {
         spyOn(component, 'performPostUpdateActions');
         spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
         spyOn(invoiceService, 'submitForApproval').and.returnValue(of({}));
-        component.clickSubmitForApprovalButton();
+        component.performSubmitAction();
         expect(component.performPostUpdateActions).not.toHaveBeenCalled();
         expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
         expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
       });
+  });
 
+  describe('clickSubmitForApprovalButton method', () => {
+
+    const setUpControls = () => {
+      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+        mode: 'TL',
+        reportKeyMode: 'TL',
+        reportModeDescription: 'TRUCKLOAD'
+      }));
+      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+        scac: 'ABCD',
+        name: 'The ABCD Group',
+      }));
+      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+        level: 'GRD',
+        name: 'GROUND',
+      }));
+      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
+    };
+
+    it('should not pop up the modal if overridePaymentTerms is selected', () => {
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678';
+      setUpControls();
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({ isPaymentOverrideSelected: ['override']}));
+      spyOn(component, 'performSubmitAction');
+      spyOn(utilService, 'openConfirmationModal');
+      component.clickSubmitForApprovalButton();
+      expect(component.performSubmitAction).toHaveBeenCalledTimes(1);
+      expect(utilService.openConfirmationModal).toHaveBeenCalledTimes(0);
+    });
+
+    it('should pop up the modal if no overridePaymentTerms', () => {
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678';
+      setUpControls();
+      spyOn(utilService, 'openConfirmationModal').and.returnValue(of(false));
+      component.clickSubmitForApprovalButton();
+      expect(utilService.openConfirmationModal).toHaveBeenCalledOnceWith(
+        {
+          title: 'OOPS!',
+          innerHtmlMessage: 'Override Standard Payment Terms has not been checked. Would you like to continue?',
+          confirmButtonText: 'Yes, Continue',
+          cancelButtonText: 'Cancel'
+        }
+      );
+    });
+
+    it('should pop up the modal if overridePaymentTerms is not selected, not submit if cancelled', () => {
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678';
+      setUpControls();
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({ isPaymentOverrideSelected: []}));
+      spyOn(component, 'performSubmitAction');
+      spyOn(utilService, 'openConfirmationModal').and.returnValue(of(false));
+      component.clickSubmitForApprovalButton();
+      expect(component.performSubmitAction).toHaveBeenCalledTimes(0);
+      expect(utilService.openConfirmationModal).toHaveBeenCalledOnceWith(
+        {
+          title: 'OOPS!',
+          innerHtmlMessage: 'Override Standard Payment Terms has not been checked. Would you like to continue?',
+          confirmButtonText: 'Yes, Continue',
+          cancelButtonText: 'Cancel'
+        }
+      );
+    });
+
+    it('should pop up the modal if overridePaymentTerms is not selected, submit if confirmed', () => {
+      component.falconInvoiceNumber = 'F0000001234';
+      const invoiceDataModel = new InvoiceDataModel();
+      invoiceDataModel.falconInvoiceNumber = 'F0000005678';
+      setUpControls();
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({ isPaymentOverrideSelected: []}));
+      spyOn(component, 'performSubmitAction');
+      spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
+      component.clickSubmitForApprovalButton();
+      expect(component.performSubmitAction).toHaveBeenCalledTimes(1);
+      expect(utilService.openConfirmationModal).toHaveBeenCalledOnceWith(
+        {
+          title: 'OOPS!',
+          innerHtmlMessage: 'Override Standard Payment Terms has not been checked. Would you like to continue?',
+          confirmButtonText: 'Yes, Continue',
+          cancelButtonText: 'Cancel'
+        }
+      );
+    });
   });
 
   describe('performPostUpdateActions method', () => {

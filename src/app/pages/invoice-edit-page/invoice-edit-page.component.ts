@@ -455,6 +455,25 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   clickSubmitForApprovalButton(): void {
+    const paymentTermsOverridenValue = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value?.isPaymentOverrideSelected ?? [];
+
+    if (paymentTermsOverridenValue.length > 0) {
+      this.performSubmitAction();
+    } else {
+      this.util.openConfirmationModal({
+        title: 'OOPS!',
+        innerHtmlMessage: 'Override Standard Payment Terms has not been checked. Would you like to continue?',
+        confirmButtonText: 'Yes, Continue',
+        cancelButtonText: 'Cancel'
+      }).subscribe((result: boolean) => {
+        if (result) {
+          this.performSubmitAction();
+        }
+      });
+    }
+  }
+
+  performSubmitAction(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
       this.subscriptions.manage(
         this.updateInvoice().pipe(
