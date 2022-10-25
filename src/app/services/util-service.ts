@@ -3,7 +3,9 @@ import {
   ConfirmationModalComponent,
   ConfirmationModalData,
   ElmGenericModalData,
-  GenericModalComponent, ModalService, ToastService,
+  GenericModalComponent,
+  ModalService,
+  ToastService,
 } from '@elm/elm-styleguide-ui';
 import {MatDialog} from '@angular/material/dialog';
 import {mergeMap} from 'rxjs/operators';
@@ -14,14 +16,16 @@ import {FalCommentModalComponent} from '../components/fal-comment-modal/fal-comm
 import {
   EditChargeModalInput,
   EditChargeModalOutput,
-  FalEditChargeModalComponent, NewChargeModalOutput
+  FalEditChargeModalComponent,
+  NewChargeModalOutput
 } from '../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
 import {
-  FalAdjustWeightModalComponent, WeightAdjustmentModalInput,
+  FalAdjustWeightModalComponent,
+  WeightAdjustmentModalInput,
   WeightAdjustmentModalOutput
 } from '../components/fal-adjust-weight-modal/fal-adjust-weight-modal.component';
 import {EditGlLineItemModal, FalEditGlModalComponent} from '../components/fal-edit-gl-modal/fal-edit-gl-modal.component';
-import {GlLineItem, GlLineItemError} from '../models/line-item/line-item-model';
+import {GlLineItem} from '../models/line-item/line-item-model';
 import {FalHistoryLogModalComponent} from '../components/fal-history-log-modal/fal-history-log-modal.component';
 import {InvoiceDataModel} from '../models/invoice/invoice-model';
 import {saveAs} from 'file-saver';

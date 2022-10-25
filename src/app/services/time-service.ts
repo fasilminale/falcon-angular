@@ -1,5 +1,5 @@
 import {Inject, Injectable, Optional} from '@angular/core';
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import {Moment} from 'moment/moment';
 
 export type formatType = 'imperial' | 'metric' | 'iso' | 'stopPage';
