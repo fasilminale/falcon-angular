@@ -215,10 +215,6 @@ export class InvoiceEditPageComponent implements OnInit {
     this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
   }
 
-  clickSaveAsTemplateButton(): void {
-    this.showNotYetImplementedModal('Save As Template');
-  }
-
   clickDeleteButton(): void {
     const modalData: ConfirmationModalData = {
       title: 'Delete Invoice',
