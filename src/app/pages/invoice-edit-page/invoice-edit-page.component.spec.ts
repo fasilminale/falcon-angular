@@ -750,9 +750,6 @@ describe('InvoiceEditPageComponent', () => {
         errorModal$.next(false);
       };
     };
-    it('#clickSaveAsTemplateButton', createHasNotBeenImplementedTest(
-      'Save As Template', () => component.clickSaveAsTemplateButton()
-    ));
   });
 
   it('should handle the weight adjustment modal', async () => {
