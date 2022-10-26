@@ -7,11 +7,13 @@ import {HttpClientModule} from '@angular/common/http';
 import {
   ButtonModule,
   ContainersModule,
-  DataTableModule, FeedbackCollectorService,
+  DataTableModule,
+  FeedbackCollectorService,
   InputsModule,
   ModalsModule,
   NavigationModule,
-  ProgressModule, ServicesModule
+  ProgressModule,
+  ServicesModule
 } from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {InvoiceExtractionPageComponent} from './pages/invoice-extraction-page/invoice-extraction-page.component';

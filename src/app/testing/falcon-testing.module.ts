@@ -19,7 +19,7 @@ import {TimeService} from '../services/time-service';
 import {FilterService} from '../services/filter-service';
 import {MasterDataService} from '../services/master-data-service';
 import {UserService} from '../services/user-service';
-import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
+import {ServicesModule, SnackbarModule, ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {RateService} from '../services/rate-service';
 import {NgSelectModule} from '@ng-select/ng-select';
 
@@ -28,11 +28,13 @@ import {NgSelectModule} from '@ng-select/ng-select';
   imports: [
     RouterTestingModule,
     HttpClientTestingModule,
+    SnackbarModule,
     MatSnackBarModule,
     NoopAnimationsModule,
     MatDialogModule,
     OktaAuthModule,
     NgSelectModule,
+    ServicesModule,
   ],
   providers: [
     // PROVIDE EXTERNAL
