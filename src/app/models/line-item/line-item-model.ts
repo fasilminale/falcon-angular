@@ -32,6 +32,7 @@ export interface CostLineItem {
   responseComment: string;
   rateResponse: string;
   attachment: Attachment;
+  attachmentLink: string;
   autoApproved: boolean;
   attachmentRequired: boolean;
   planned: boolean;
@@ -45,6 +46,7 @@ export interface CostLineItem {
   variables: Array<CalcDetailVariable>;
   deletedDate?: string;
   persisted: boolean;
+  uid: string;
 }
 
 export interface DisputeLineItem {

@@ -246,6 +246,7 @@ describe('InvoiceAmountComponent', () => {
         amountOfInvoice: '1000',
         costLineItems: [
           {
+            uid: 'TST',
             accessorialCode: 'TST',
             chargeCode: 'TestChargeCode',
             rateSource: {key: 'CONTRACT', label: 'Contract'},
@@ -281,6 +282,7 @@ describe('InvoiceAmountComponent', () => {
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
+            attachmentLink: '',
             planned: false,
             fuel: false,
             message: '',
@@ -290,6 +292,7 @@ describe('InvoiceAmountComponent', () => {
           }
         ],
         pendingChargeLineItems: [{
+          uid: '',
           chargeCode: 'TestCharge',
           rateSource: {key: 'CONTRACT', label: 'Contract'},
           entrySource: {key: 'AUTO', label: 'AUTO'},
@@ -320,6 +323,7 @@ describe('InvoiceAmountComponent', () => {
           accessorial: true,
           autoApproved: false,
           attachmentRequired: false,
+          attachmentLink: '',
           planned: false,
           fuel: false,
           message: '',
@@ -441,6 +445,7 @@ describe('InvoiceAmountComponent', () => {
         amountOfInvoice: '1000',
         costLineItems: [
           {
+            uid: 'TST',
             accessorialCode: 'TST',
             chargeCode: 'TestChargeCode',
             rateSource: {key: 'CONTRACT', label: 'Contract'},
@@ -476,6 +481,7 @@ describe('InvoiceAmountComponent', () => {
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
+            attachmentLink: '',
             planned: false,
             fuel: false,
             message: '',
@@ -503,6 +509,7 @@ describe('InvoiceAmountComponent', () => {
         amountOfInvoice: '1000',
         costLineItems: [
           {
+            uid: 'TST',
             accessorialCode: 'TST',
             chargeCode: 'TestChargeCode',
             rateSource: {key: 'CONTRACT', label: 'Contract'},
@@ -538,6 +545,7 @@ describe('InvoiceAmountComponent', () => {
             accessorial: true,
             autoApproved: false,
             attachmentRequired: false,
+            attachmentLink: '',
             planned: false,
             fuel: false,
             message: '',
@@ -774,6 +782,7 @@ describe('InvoiceAmountComponent', () => {
   it('should call onAddChargeButtonClick and select other charge', async () => {
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
     spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      uid: 'OTHER1',
       selected: OTHER_CALC_DETAIL,
       comment: 'some comment'
     }));
@@ -795,6 +804,7 @@ describe('InvoiceAmountComponent', () => {
   it('should call onAddChargeButtonClick and select accessorial charge', async () => {
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
     spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      uid: 'TEST',
       selected: TEST_CALC_DETAIL,
       comment: 'some comment'
     }));
@@ -815,6 +825,7 @@ describe('InvoiceAmountComponent', () => {
 
   it('should call onAddChargeButtonClick and have attachment with pending when file is uploaded', async () => {
     spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      uid: 'TEST',
       selected: TEST_CALC_DETAIL,
       comment: 'some comment',
       file: new File([], '', undefined)
@@ -830,6 +841,7 @@ describe('InvoiceAmountComponent', () => {
 
   it('should call onAddChargeButtonClick and have attachment with no-file when NO file is uploaded', async () => {
     spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      uid: 'TEST',
       selected: TEST_CALC_DETAIL,
       comment: 'some comment'
     }));
@@ -901,6 +913,7 @@ describe('InvoiceAmountComponent', () => {
     component._formGroup = new FormGroup({
       pendingChargeLineItems: new FormArray([
         new FormGroup({
+          uid: new FormControl('OTHER1'),
           charge: new FormControl('OTHER')
         })
       ])
@@ -910,6 +923,7 @@ describe('InvoiceAmountComponent', () => {
     spyOn(component.fileFormGroup, 'removeControl').and.stub();
     spyOn(component.fileFormGroup, 'addControl').and.stub();
     spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      uid: 'OTHER1',
       charge: 'OTHER',
       variables: [{
         variable: 'test',
@@ -926,13 +940,15 @@ describe('InvoiceAmountComponent', () => {
   });
 
   it('should call onEditCostLineItem with file being passed.', async () => {
-    component.costBreakdownItems.push(  new FormGroup({
+    component.costBreakdownItems.push(new FormGroup({
+      uid: new FormControl('OTHER1'),
       charge: new FormControl('OTHER'),
       attachment: new FormControl()
     }));
     const costLineItem = component.costBreakdownItemsControls[0];
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
     spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      uid: 'OTHER1',
       charge: 'OTHER',
       variables: [{
         variable: 'test',
@@ -947,6 +963,7 @@ describe('InvoiceAmountComponent', () => {
 
   it('should call onEditCostLineItem with NO new file being passed and no existing file', async () => {
     component.costBreakdownItems.push(  new FormGroup({
+      uid: new FormControl('OTHER1'),
       charge: new FormControl('OTHER'),
       attachment: new FormControl()
     }));
@@ -954,6 +971,7 @@ describe('InvoiceAmountComponent', () => {
     const costLineItem = component.costBreakdownItemsControls[0];
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
     spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      uid: 'OTHER1',
       charge: 'OTHER',
       variables: [{
         variable: 'test',
@@ -976,6 +994,7 @@ describe('InvoiceAmountComponent', () => {
     const costLineItem = component.costBreakdownItemsControls[0];
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
     spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      uid: 'OTHER1',
       charge: 'OTHER',
       variables: [{
         variable: 'test',
@@ -1016,6 +1035,28 @@ describe('InvoiceAmountComponent', () => {
       const costLineItem = component.costBreakdownItemsControls[0];
       await component.onDeleteCostLineItem(costLineItem, 0);
       expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
+      expect(component.rateEngineCall.emit).toHaveBeenCalled();
+    });
+
+    it('should call onDeleteCostLineItem and remove the OTHER line item', async () => {
+      component.costBreakdownItems.push(new FormGroup({
+        uid: new FormControl('OTHER1'),
+        accessorialCode: new FormControl(''),
+        charge: new FormControl('OTHER'),
+        persisted: new FormControl(true),
+      }));
+      component.costBreakdownItems.push(new FormGroup({
+        uid: new FormControl('OTHER2'),
+        accessorialCode: new FormControl(''),
+        charge: new FormControl('OTHER'),
+        persisted: new FormControl(true),
+      }));
+      const costLineItem = component.costBreakdownItemsControls[0];
+      await component.onDeleteCostLineItem(costLineItem, 0);
+      expect(utilService.openCommentModal).toHaveBeenCalledTimes(1);
+      expect(component.costBreakdownItemsControls.length).toEqual(1);
+
+      expect(component.costBreakdownItemsControls[0].get('uid')?.value).toEqual('OTHER1');
       expect(component.rateEngineCall.emit).toHaveBeenCalled();
     });
 

@@ -91,7 +91,7 @@ export class FalHistoryLogModalComponent {
   }
 
   downloadCsv(): void {
-    this.utilService.downloadCsv('Falcon.Invoice.HistoryLog.csv',
+    this.utilService.downloadCsv(`${this.falconInvoiceNumber}.HistoryLog.csv`,
       `${environment.baseServiceUrl}/v1/invoice/${this.falconInvoiceNumber}/historyLog/csvData`,
       {});
   }

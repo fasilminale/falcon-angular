@@ -184,10 +184,10 @@ describe('InvoiceEditPageComponent', () => {
   it('should handle attachments', () => {
     const fileValue =  new File([], 'TestFileBlobName');
     const createEmptyLineItemGroup = () => {
-      const charge = new FormControl('testCharge');
+      const uid = new FormControl('test');
       const file = new FormControl(fileValue);
       const group = new FormGroup({
-         charge, file
+        uid, file
       });
       return group;
     };
@@ -221,7 +221,7 @@ describe('InvoiceEditPageComponent', () => {
     const fileFormGroup = new FormGroup({});
     component.invoiceAmountFormGroup.setControl('fileFormGroup', fileFormGroup);
 
-    fileFormGroup.addControl('testCharge',  new FormControl(fileValue));
+    fileFormGroup.addControl('test',  new FormControl(fileValue));
 
     spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(testInvoice));
     spyOn(attachmentService, 'saveAccessorialAttachments').and.returnValue(of(true));
@@ -750,9 +750,6 @@ describe('InvoiceEditPageComponent', () => {
         errorModal$.next(false);
       };
     };
-    it('#clickSaveAsTemplateButton', createHasNotBeenImplementedTest(
-      'Save As Template', () => component.clickSaveAsTemplateButton()
-    ));
   });
 
   it('should handle the weight adjustment modal', async () => {

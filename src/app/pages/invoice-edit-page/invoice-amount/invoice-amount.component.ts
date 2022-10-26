@@ -296,8 +296,10 @@ export class InvoiceAmountComponent implements OnInit {
         const quantityAssertion = lineItem.quantity !== null && lineItem.quantity !== undefined;
         const group = new FormGroup({
           attachment: new FormControl(lineItem.attachment ?? null),
+          attachmentLink: new FormControl(lineItem.attachmentLink ?? null),
           accessorial: new FormControl(lineItem.accessorial ?? false),
           accessorialCode: new FormControl(lineItem.accessorialCode),
+          uid: new FormControl(lineItem.uid),
           charge: new FormControl(lineItem.chargeCode),
           rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
           rateSourcePair: new FormControl(lineItem.rateSource),
@@ -378,6 +380,7 @@ export class InvoiceAmountComponent implements OnInit {
       newLineItemGroup.get('requestStatusPair')?.setValue({key: 'ACCEPTED', label: 'Accepted'});
       newLineItemGroup.get('createdBy')?.setValue(this.userInfo?.email);
 
+      console.log(this.costBreakdownItemsControls);
       if ('OTHER' === modalResponse.selected.name) {
         const variables = modalResponse.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
@@ -387,9 +390,12 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'MANUAL', label: 'Manual'});
         newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
+        const otherCharges = this.costBreakdownItemsControls.filter(x => x.value.charge === 'OTHER');
+        newLineItemGroup.get('uid')?.setValue(`OTHER${otherCharges.length }`);
       } else {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
+        newLineItemGroup.get('uid')?.setValue(modalResponse.selected.accessorialCode);
         newLineItemGroup.get('lineItemType')?.setValue('ACCESSORIAL');
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
@@ -404,8 +410,8 @@ export class InvoiceAmountComponent implements OnInit {
       }
 
       newLineItemGroup.get('attachment')?.setValue(attachment);
-      this.fileFormGroup.removeControl(modalResponse.selected.name);
-      this.fileFormGroup.addControl(modalResponse.selected.name, new FormControl(modalResponse.file));
+      this.fileFormGroup.removeControl(newLineItemGroup.get('uid')?.value);
+      this.fileFormGroup.addControl(newLineItemGroup.get('uid')?.value, new FormControl(modalResponse.file));
       this.rateEngineCall.emit(this.pendingAccessorialCode);
     }
   }
@@ -438,6 +444,7 @@ export class InvoiceAmountComponent implements OnInit {
     const expanded = new FormControl(false);
     const lineItemType = new FormControl(null);
     const accessorialCode = new FormControl(null);
+    const uid = new FormControl(null);
     const autoApproved = new FormControl(true);
     const persisted = new FormControl(false);
     const responseComment = new FormControl(null);
@@ -450,7 +457,7 @@ export class InvoiceAmountComponent implements OnInit {
       createdDate, createdBy,
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
-      accessorialCode, autoApproved,
+      accessorialCode, uid, autoApproved,
       variables, responseComment, file, persisted
     });
     group.get('rateSourcePair')?.valueChanges?.subscribe(
@@ -493,7 +500,7 @@ export class InvoiceAmountComponent implements OnInit {
   handlePendingChargeResult(modalResult: Observable<boolean | CommentModel>, costLineItem: any, action: string): void {
     modalResult.subscribe(result => {
       if (result) {
-        const index = this.pendingChargeLineItemControls.findIndex(lineItem => lineItem.value.charge === costLineItem.charge);
+        const index = this.pendingChargeLineItemControls.findIndex(lineItem => lineItem.value.id === costLineItem.id);
         const pendingLineItem: AbstractControl | null = this.pendingChargeLineItems.get(index.toString());
 
         if (pendingLineItem !== null) {
@@ -538,12 +545,11 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
-    console.log(costLineItem, costLineItems);
     const editChargeDetails = await this.utilService.openEditChargeModal({
             costLineItem
     }).pipe(first()).toPromise();
     if (editChargeDetails) {
-      const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.charge === lineItem.value?.charge);
+      const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.uid === lineItem.value?.uid);
       if (existingCostLineItem) {
         if (existingCostLineItem.value.charge === 'OTHER') {
           existingCostLineItem.patchValue({
@@ -570,9 +576,9 @@ export class InvoiceAmountComponent implements OnInit {
 
         this.rateEngineCall.emit(this.pendingAccessorialCode);
         // @ts-ignore
-        this.fileFormGroup.removeControl(editChargeDetails.charge);
+        this.fileFormGroup.removeControl(editChargeDetails.uid);
         // @ts-ignore
-        this.fileFormGroup.addControl(editChargeDetails.charge, new FormControl(editChargeDetails.file));
+        this.fileFormGroup.addControl(editChargeDetails.uid, new FormControl(editChargeDetails.file));
 
       }
     }
@@ -597,6 +603,8 @@ export class InvoiceAmountComponent implements OnInit {
           this.costBreakdownItems.removeAt(index);
           this.deletedChargeLineItemControls.push(existingCostLineItem);
 
+          this.reorderOtherCharges();
+
           this.toastService.openSuccessToast(`Success. Line item has been deleted.`);
           existingCostLineItem.patchValue({
             responseComment: dialogResult.comment,
@@ -610,9 +618,11 @@ export class InvoiceAmountComponent implements OnInit {
       }
     } else {
       this.costBreakdownItems.removeAt(index);
+      this.reorderOtherCharges();
       this.pendingAccessorialCode = costLineItem.value.accessorialCode;
       this.rateEngineCall.emit(this.pendingAccessorialCode);
     }
+    console.log(this.costBreakdownItemsControls);
   }
 
   /**
@@ -657,6 +667,15 @@ export class InvoiceAmountComponent implements OnInit {
   public editableField(lineItem: any): boolean {
     return lineItem.quantity !== 'N/A'
       && lineItem.entrySource !== 'AUTO';
+  }
+
+  private reorderOtherCharges(): void {
+    const otherCharges = this.costBreakdownItemsControls.filter(x => x.value.charge === 'OTHER');
+    if (otherCharges.length > 0) {
+      otherCharges.forEach((charge, i) => {
+        charge.get('uid')?.setValue(`OTHER${i+1}`);
+      });
+    }
   }
 
 }

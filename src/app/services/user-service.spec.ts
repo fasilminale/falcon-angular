@@ -34,6 +34,12 @@ describe('UserService', () => {
     expect(userService.controlGroupState).toBeTruthy();
   });
 
+  it('controlGroupState should accept commas and spaces', async () => {
+    const controlGroupState = userService.controlGroupState;
+    controlGroupState.controls.control.setValue('foo, bar');
+    expect(controlGroupState.valid).toEqual(true);
+  });
+
   it('should set controlGroupState', async () => {
     const cg = new FormGroup({});
     userService.controlGroupState = cg;

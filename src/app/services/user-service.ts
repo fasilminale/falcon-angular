@@ -31,7 +31,7 @@ export class UserService {
 
   get controlGroupState(): FormGroup {
     return this.controlGroup ?? this.fb.group({
-        control: [null, [Validators.pattern('^[a-zA-Z0-9_-]*$'), Validators.required]]
+        control: [null, [Validators.pattern('^[a-zA-Z0-9_, -]*$'), Validators.required]]
       }, {updateOn: 'submit'}
     );
   }
