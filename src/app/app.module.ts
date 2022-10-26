@@ -45,7 +45,6 @@ import {UploadFormComponent} from './components/upload-form/upload-form.componen
 import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
 import {RealAttachmentService} from './services/attachment-service';
-import {InputMaskModule} from 'racoon-mask-raw';
 import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
 import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
 import {RealAuthService} from './services/auth-service';
@@ -215,7 +214,6 @@ const oktaConfig = {
     NgbModule,
     NgbTooltipModule,
     NgxCurrencyModule,
-    InputMaskModule,
     InputsModule,
     ModalsModule,
     ServicesModule,
