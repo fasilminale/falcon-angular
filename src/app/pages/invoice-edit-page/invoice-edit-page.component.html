@@ -3,13 +3,6 @@
                  headerSubtitle="Status: {{invoiceStatus}}">
   <div class="d-flex justify-content-end header-button">
     <div *ngIf="hasInvoiceWrite" class="col-12 d-flex justify-content-end">
-      <elm-button id="save-as-template-button"
-                  buttonType="button"
-                  buttonStyle="text"
-                  class="flex-shrink-1"
-                  (buttonClick)="clickSaveAsTemplateButton()">
-        <u>Save as Template</u>
-      </elm-button>
       <elm-button id="delete-button"
                   buttonType="button"
                   buttonStyle="secondary"

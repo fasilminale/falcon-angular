@@ -14,6 +14,7 @@ import {SelectOption} from '../../models/select-option-model/select-option-model
 export class FalEditChargeModalComponent {
 
   public readonly chargeControl = new FormControl('', Validators.required);
+  public readonly accessorialControl = new FormControl('');
   public readonly variableControls = new FormGroup({});
   public readonly commentControl: FormControl = new FormControl('');
   public readonly file: FormControl = new FormControl('');
@@ -38,6 +39,7 @@ export class FalEditChargeModalComponent {
       this.chargeControl.disable();
       this.setVariables(this.data.costLineItem?.value?.variables);
       this.chargeControl.patchValue(this.data.costLineItem?.value?.charge);
+      this.accessorialControl.patchValue(this.data.costLineItem?.value?.accessorialCode);
     } else {
       // ADD MODE INIT
       this.subscriptions.add(this.chargeControl.valueChanges.subscribe(
@@ -211,6 +213,7 @@ export class FalEditChargeModalComponent {
       if (this.isEditModal) {
         // CONFIRM EDIT
         output = {
+          uid: this.accessorialControl.value,
           charge: this.chargeControl.value,
           variables: this.selectedVariables,
           file: this.file.value
@@ -218,6 +221,7 @@ export class FalEditChargeModalComponent {
       } else {
         // CONFIRM ADD
         output = {
+          uid: this.accessorialControl.value,
           selected: this.selectedCalcDetail,
           variables: [],
           comment: this.commentValue,
@@ -298,6 +302,7 @@ export type EditChargeModalInput = {
  */
 export type EditChargeModalOutput = undefined | {
   charge?: string,
+  uid: string,
   variables: Array<CalcDetailVariable>,
   selected?: CalcDetail,
   comment?: string,
@@ -309,6 +314,7 @@ export type EditChargeModalOutput = undefined | {
  */
 export type NewChargeModalOutput = undefined | {
   selected: CalcDetail,
+  uid: string,
   comment?: string,
   file?: File
 };
