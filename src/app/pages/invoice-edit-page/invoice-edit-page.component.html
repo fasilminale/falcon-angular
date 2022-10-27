@@ -107,7 +107,9 @@
         >
         </app-invoice-allocation>
         <hr/>
-
+        <div *ngIf="invoice.hasRateEngineError" class="headline3 w-100 text-center text-danger">
+          <small>There were errors while attempting to re-rate.</small>
+        </div>
         <!-- FORM FOOTER -->
         <div id="form-footer"
              class="d-flex justify-content-between">
