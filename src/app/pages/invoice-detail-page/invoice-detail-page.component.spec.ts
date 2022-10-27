@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceDetailPageComponent} from './invoice-detail-page.component';
 import {HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoadingService} from '../../services/loading-service';
 import {of} from 'rxjs';

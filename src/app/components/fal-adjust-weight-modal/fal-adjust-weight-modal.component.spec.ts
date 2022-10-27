@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FalAdjustWeightModalComponent } from './fal-adjust-weight-modal.component';
 import {FalCommentModalComponent} from '../fal-comment-modal/fal-comment-modal.component';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 
 describe('FalAdjustWeightModalComponent', () => {

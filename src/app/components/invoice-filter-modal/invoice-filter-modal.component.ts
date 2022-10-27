@@ -1,5 +1,5 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {FiltersModel} from '../../models/filters/filters-model';
 import {SelectOption} from 'src/app/models/select-option-model/select-option-model';

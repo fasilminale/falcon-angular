@@ -10,10 +10,13 @@ import {
   DataTableModule,
   FeedbackCollectorService,
   InputsModule,
+  ModalService,
   ModalsModule,
   NavigationModule,
   ProgressModule,
-  ServicesModule
+  ServicesModule,
+  SnackbarModule,
+  ToastService,
 } from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {InvoiceExtractionPageComponent} from './pages/invoice-extraction-page/invoice-extraction-page.component';
@@ -25,7 +28,7 @@ import {NgbDatepickerModule, NgbModule, NgbTooltipModule} from '@ng-bootstrap/ng
 import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.component';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatDialog, MatDialogModule} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatListModule} from '@angular/material/list';
@@ -197,10 +200,21 @@ const oktaConfig = {
     NavigationModule,
     ButtonModule,
     ProgressModule,
+    ButtonModule,
+    ContainersModule,
+    DataTableModule,
+    InputsModule,
+    ModalsModule,
+    NavigationModule,
+    ProgressModule,
+    ServicesModule,
+    SnackbarModule,
     ContainersModule,
     DataTableModule,
     NgSelectModule,
     FormsModule,
+    ModalsModule,
+    SnackbarModule,
     ReactiveFormsModule,
     NgbDatepickerModule,
     MatSnackBarModule,
@@ -215,7 +229,6 @@ const oktaConfig = {
     NgbTooltipModule,
     NgxCurrencyModule,
     InputsModule,
-    ModalsModule,
     ServicesModule,
     MatIconModule,
   ],
@@ -239,12 +252,14 @@ const oktaConfig = {
     FilterService,
     EnvironmentService,
     WindowService,
+    ModalService,
     RoleGuard,
     RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,
     FeedbackCollectorService,
     BuildInfoService,
+    ToastService,
   ],
   bootstrap: [
     AppComponent

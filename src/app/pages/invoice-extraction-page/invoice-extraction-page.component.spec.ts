@@ -12,7 +12,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {of} from 'rxjs';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {InvoiceService} from "../../services/invoice-service";
 import {EnvironmentService} from "../../services/environment-service/environment-service";

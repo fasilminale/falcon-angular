@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {FalHistoryLogModalComponent} from './fal-history-log-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {SubjectValue} from '@elm/elm-styleguide-ui';
 import {UtilService} from '../../services/util-service';
 import {HistoryLog} from '../../models/invoice/history-log';
