@@ -123,7 +123,7 @@
                         buttonType="button"
                         buttonStyle="secondary"
                         class="fake-form-control"
-                        [isDisabled]="!invoice.hasRateEngineError || otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound || ((!this.costBreakdownValid || !this.netAllocationAmountValid || !this.standardPaymentTermsOverrideValid) && invoice.payable)"
+                        [isDisabled]="invoice.hasRateEngineError || !otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound || ((!this.costBreakdownValid || !this.netAllocationAmountValid || !this.standardPaymentTermsOverrideValid) && invoice.payable)"
                         (buttonClick)="clickSaveButton()">
               Save
             </elm-button>
