@@ -358,26 +358,24 @@ export class TripInformationComponent implements OnInit {
   }
 
   deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
-    let dateToReturn: Date | undefined;
-    const foDeliveryDateTime = tripInfo.freightOrders[0]?.deliverydatetime;
+    let dateToReturn: Date | undefined = tripInfo.deliveryDate ? new Date(tripInfo.deliveryDate) : undefined ;
     const overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
     const assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
-    if (foDeliveryDateTime) {
-      dateToReturn = new Date(foDeliveryDateTime);
-      this.showArrowForDeliveryDateTime = false;
-    } else if (overriddenDeliveryDateTime) {
+    if (overriddenDeliveryDateTime && overriddenDeliveryDateTime.getTime() == dateToReturn?.getTime()) {
       dateToReturn = overriddenDeliveryDateTime;
       this.showArrowForDeliveryDateTime = true;
       this.arrowLabelForDeliveryDateTime = 'OVERRIDDEN';
-    } else if (assumedDeliveryDateTime) {
+    } else if (assumedDeliveryDateTime && assumedDeliveryDateTime.getTime() == dateToReturn?.getTime()) {
       dateToReturn = assumedDeliveryDateTime;
       this.showArrowForDeliveryDateTime = true;
       this.arrowLabelForDeliveryDateTime = 'ASSUMED';
-    } else {
+    } else if (tripInfo.createdDate && tripInfo.createdDate.getTime() == dateToReturn?.getTime()) {
       dateToReturn = tripInfo.createdDate;
       this.showArrowForDeliveryDateTime = true;
       this.arrowLabelForDeliveryDateTime = 'CREATED';
-    }
+    } else if (dateToReturn) {
+      this.showArrowForDeliveryDateTime = false;
+    } 
     return dateToReturn;
   }
 
