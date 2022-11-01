@@ -1,7 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {ElmDataTableHeader} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {HistoryLog} from '../../models/invoice/history-log';
 import {environment} from '../../../environments/environment';
 import {UtilService} from '../../services/util-service';

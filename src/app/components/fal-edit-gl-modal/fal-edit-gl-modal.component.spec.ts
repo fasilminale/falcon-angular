@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FalEditGlModalComponent } from './fal-edit-gl-modal.component';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {SubjectValue} from '@elm/elm-styleguide-ui';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';

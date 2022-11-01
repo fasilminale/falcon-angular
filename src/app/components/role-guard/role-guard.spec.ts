@@ -1,7 +1,7 @@
 import {RoleGuard} from './role-guard';
 import {of} from 'rxjs';
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatDialog, MatDialogModule} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import { Overlay } from '@angular/cdk/overlay';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserService} from '../../services/user-service';

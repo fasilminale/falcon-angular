@@ -7,7 +7,7 @@ import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel, InvoiceUtils} from '../../models/invoice/invoice-model';
 import {ConfirmationModalComponent, DataTableComponent, ElmDataTableHeader, ToastService, ModalService} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';

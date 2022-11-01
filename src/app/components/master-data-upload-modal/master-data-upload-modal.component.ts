@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef, DialogRole} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef, DialogRole} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';

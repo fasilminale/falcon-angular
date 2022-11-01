@@ -1,4 +1,4 @@
-@import "~@elm/elm-styleguide-ui/src/styles/cardinal-colors";
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
 .dialog-close-button {
   margin-left: auto;
@@ -18,7 +18,7 @@
 }
 
 .table-header {
-  background-color: $cardinal-white;
+  background-color: colors.$white;
   padding: 0 24px 16px;
   display: flex;
   flex-direction: column;
@@ -26,7 +26,7 @@
 }
 
 .border {
-  border: 1px solid $grey4;
+  border: 1px solid colors.$gray-light;
 }
 
 ::ng-deep .updatedTimeClickable {

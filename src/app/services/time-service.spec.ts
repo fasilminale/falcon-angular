@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {TimeService} from './time-service';
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 
 describe('TimeService', () => {

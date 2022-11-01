@@ -3,7 +3,7 @@ import {InvoiceFormComponent} from './invoice-form.component';
 import {of} from 'rxjs';
 import {HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBar,} from '@angular/material/snack-bar';
-import {MatDialog,} from '@angular/material/dialog';
+import {MatDialog,} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {ActivatedRoute, convertToParamMap, Router} from '@angular/router';
 import {TemplateService} from '../../services/template-service';

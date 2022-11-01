@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import {InvoiceDataModel} from './invoice-model';
 
 export class HistoryLog {

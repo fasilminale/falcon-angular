@@ -27,12 +27,12 @@ import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {Observable, of, Subscription} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ConfirmationModalComponent, ConfirmationModalData, ElmCheckboxRadioOptionInterface, ElmFormHelper, ModalService, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalData, ElmFormHelper, ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {ElmUamRoles} from '../../utils/elm-uam-roles';
 
 @Component({

@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {WebServices} from './services/web-services';
@@ -8,11 +7,16 @@ import {HttpClientModule} from '@angular/common/http';
 import {
   ButtonModule,
   ContainersModule,
-  DataTableModule, FeedbackCollectorService,
+  DataTableModule,
+  FeedbackCollectorService,
   InputsModule,
+  ModalService,
   ModalsModule,
   NavigationModule,
-  ProgressModule, ServicesModule
+  ProgressModule,
+  ServicesModule,
+  SnackbarModule,
+  ToastService,
 } from '@elm/elm-styleguide-ui';
 import {InvoiceListPageComponent} from './pages/invoice-list-page/invoice-list-page.component';
 import {InvoiceExtractionPageComponent} from './pages/invoice-extraction-page/invoice-extraction-page.component';
@@ -24,7 +28,7 @@ import {NgbDatepickerModule, NgbModule, NgbTooltipModule} from '@ng-bootstrap/ng
 import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.component';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {MatDialog, MatDialogModule} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatListModule} from '@angular/material/list';
@@ -44,7 +48,6 @@ import {UploadFormComponent} from './components/upload-form/upload-form.componen
 import {TimeService} from './services/time-service';
 import {InvoiceService} from './services/invoice-service';
 import {RealAttachmentService} from './services/attachment-service';
-import {InputMaskModule} from 'racoon-mask-raw';
 import {OktaCallbackComponent} from './components/okta-callback/okta-callback.component';
 import {OKTA_CONFIG, OktaAuthGuard, OktaAuthService} from '@okta/okta-angular';
 import {RealAuthService} from './services/auth-service';
@@ -197,10 +200,21 @@ const oktaConfig = {
     NavigationModule,
     ButtonModule,
     ProgressModule,
+    ButtonModule,
+    ContainersModule,
+    DataTableModule,
+    InputsModule,
+    ModalsModule,
+    NavigationModule,
+    ProgressModule,
+    ServicesModule,
+    SnackbarModule,
     ContainersModule,
     DataTableModule,
     NgSelectModule,
     FormsModule,
+    ModalsModule,
+    SnackbarModule,
     ReactiveFormsModule,
     NgbDatepickerModule,
     MatSnackBarModule,
@@ -214,9 +228,7 @@ const oktaConfig = {
     NgbModule,
     NgbTooltipModule,
     NgxCurrencyModule,
-    InputMaskModule,
     InputsModule,
-    ModalsModule,
     ServicesModule,
     MatIconModule,
   ],
@@ -240,12 +252,14 @@ const oktaConfig = {
     FilterService,
     EnvironmentService,
     WindowService,
+    ModalService,
     RoleGuard,
     RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,
     FeedbackCollectorService,
     BuildInfoService,
+    ToastService,
   ],
   bootstrap: [
     AppComponent
