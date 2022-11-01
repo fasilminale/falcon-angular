@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {AppModule} from '../../app.module';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {MasterDataUploadErrorModalComponent} from './master-data-upload-error-modal.component';

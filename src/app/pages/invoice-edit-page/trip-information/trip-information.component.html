@@ -177,8 +177,15 @@
         *ngIf="carrierControl.value && !!(validateIsOption(carrierOptions, compareCarrierWith)(carrierControl))"
         class="input-error"
         [isError]="true">
-        Carrier "{{carrierUtilsToDisplayLabel(carrierControl.value)}}" missing in master data<br/>
+        Carrier "{{carrierUtilsToDisplayLabel(carrierControl.value)}}" missing in master data
+        <app-info-icon-tooltip
+          style="color: black"
+          *ngIf="carrierControl.value.scac === 'UNMP'"
+          [fontSize]="'20px'"
+          [tooltipMessage]="'UNMP is not payable. Research needed to get correct scac.'"></app-info-icon-tooltip>
+        <br/>
       </elm-input-subtext>
+
     </div>
     <div class="col-4">
       <label for="carrierModeInput"

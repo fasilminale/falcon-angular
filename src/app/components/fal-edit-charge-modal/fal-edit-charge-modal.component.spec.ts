@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FalEditChargeModalComponent, EditChargeModalInput, VariableFormControl} from './fal-edit-charge-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {CalcDetail} from '../../models/rate-engine/rate-engine-request';
 import {FormControl, Validators} from '@angular/forms';
 import {Subject} from 'rxjs';

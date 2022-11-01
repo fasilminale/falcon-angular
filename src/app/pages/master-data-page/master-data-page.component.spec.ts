@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 import {MasterDataPageComponent} from './master-data-page.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpTestingController} from '@angular/common/http/testing';
@@ -9,7 +9,7 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import { EnvironmentService } from 'src/app/services/environment-service/environment-service';
 import { of } from 'rxjs';
 import { WebServices } from 'src/app/services/web-services';
-import * as saveAsFunctions from 'file-saver';
+import FilerSaver from 'file-saver';
 import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
 import {FormBuilder} from '@angular/forms';
@@ -100,7 +100,7 @@ describe('MasterDataPageComponent', () => {
 
   describe('saveCSVFile', () => {
     it('should call saveAs', () => {
-      const saveAsSpy = spyOn(saveAsFunctions, 'saveAs').and.stub();
+      const saveAsSpy = spyOn(FilerSaver, 'saveAs').and.stub();
       component.saveCSVFile('test data', 'test filename');
       fixture.detectChanges();
       expect(saveAsSpy).toHaveBeenCalled();

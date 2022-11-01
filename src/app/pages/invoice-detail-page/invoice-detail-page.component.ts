@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FalFileInputComponent} from '../../components/fal-file-input/fal-file-input.component';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfirmationModalData, ElmLinkInterface, ModalService} from '@elm/elm-styleguide-ui';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {environment} from '../../../environments/environment';
 import {WebServices} from '../../services/web-services';
 import {MatSnackBar} from '@angular/material/snack-bar';

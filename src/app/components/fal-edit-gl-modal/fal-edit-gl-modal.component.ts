@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {GlLineItem, GlLineItemError} from '../../models/line-item/line-item-model';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import {InvoiceService} from '../../services/invoice-service';
