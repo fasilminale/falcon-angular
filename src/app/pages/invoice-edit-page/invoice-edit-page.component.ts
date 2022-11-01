@@ -538,8 +538,8 @@ export class InvoiceEditPageComponent implements OnInit {
       shippingPoint: originLocation.code,
       businessUnit: this.invoice.businessUnit,
       standardPaymentTermsOverride: paymentTermsOverridenValue,
-      billOfLadingNumber: CommonUtils.handleNAValues(this.invoice.billOfLadingNumber),
-      currency: this.invoiceAmountFormGroup.controls.currency.value,
+      billOfLadingNumber: this.invoice.billOfLadingNumber,
+      currency: this.invoiceAmountFormGroup.controls.currency.value
     };
   }
 
