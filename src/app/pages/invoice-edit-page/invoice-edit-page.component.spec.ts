@@ -1179,6 +1179,7 @@ describe('InvoiceEditPageComponent', () => {
       component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
       component.invoice.weightAdjustments = undefined as any;
       component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
+      component.invoice.billOfLadingNumber = 'TESTBOL123';
     };
 
     it('should return EditAutoInvoiceModel object', () => {
@@ -1218,7 +1219,7 @@ describe('InvoiceEditPageComponent', () => {
         businessUnit: component.invoice.businessUnit,
         standardPaymentTermsOverride: 'ABC',
         hasRateEngineError: component.invoice.hasRateEngineError,
-        billOfLadingNumber: '',
+        billOfLadingNumber: 'TESTBOL123',
         currency: 'USD',
       });
     });

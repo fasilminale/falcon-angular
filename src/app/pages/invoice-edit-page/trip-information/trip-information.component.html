@@ -125,6 +125,7 @@
                       [addSpacing]="false">
       </elm-text-input>
       <elm-input-subtext *ngIf="bolNumberControl.invalid"
+                         class="input-error"
                          [isError]="true">
         <span *ngFor="let message of bolNumberControlErrorMessages">
           {{message}}<br/>
