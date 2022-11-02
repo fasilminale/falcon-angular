@@ -1,7 +1,6 @@
-import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {forkJoin, Observable, Subject, Subscription} from 'rxjs';
-import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../../services/subscription-manager';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation, WeightAdjustment} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
@@ -29,7 +28,6 @@ import {SubjectValue} from 'src/app/utils/subject-value';
 import {InvoiceService} from 'src/app/services/invoice-service';
 import {InvoiceUtils} from 'src/app/models/invoice/invoice-model';
 import {validateAlphanumeric} from '../../../utils/falcon-validators';
-import {EnvironmentService} from '../../../services/environment-service/environment-service';
 
 const {required, maxLength} = Validators;
 
@@ -55,7 +53,7 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
     {provide: NgbDateParserFormatter, useClass: DateParserFormatter}
   ]
 })
-export class TripInformationComponent implements OnInit {
+export class TripInformationComponent implements OnInit, OnDestroy{
   @Output() updateAndContinueClickEvent = new EventEmitter<any>();
   @Output() openWeightAdjustmentModalEvent = new EventEmitter<any>();
   @Output() refreshMasterDataEvent = new EventEmitter<any>();
@@ -132,9 +130,11 @@ export class TripInformationComponent implements OnInit {
   public isTripEditMode$ = new SubjectValue<boolean>(false);
 
   private loadTripInformationSubscription = new Subscription();
+  private isEditModeSubscription = new Subscription();
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-              private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
+  private readonly subscriptions = new Subscription();
+
+  constructor(private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
               private invoiceService: InvoiceService) {
   }
 
@@ -148,7 +148,7 @@ export class TripInformationComponent implements OnInit {
       this.masterData.getCarrierDetails(),
       this.invoiceService.getMasterDataShippingPointWarehouses().pipe(map(InvoiceUtils.toShippingPointWarehouseLocations)),
       this.invoiceService.getMasterDataShippingPoints().pipe(map(InvoiceUtils.toShippingPointLocations))];
-    this.subscriptionManager.manage(
+    this.subscriptions.add(
       forkJoin(observables).subscribe(
         ([carrierSCACs,
            carrierModeCodes,
@@ -180,6 +180,10 @@ export class TripInformationComponent implements OnInit {
         }
       ),
     );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   isInvalid(control: AbstractControl): boolean {
@@ -267,11 +271,12 @@ export class TripInformationComponent implements OnInit {
   }
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
-    this.subscriptionManager.manage(observable.subscribe(
+    this.isEditModeSubscription.unsubscribe();
+    this.isEditModeSubscription = observable.subscribe(
       isGlobalEditMode => {
         this.enableTripEditButton = isGlobalEditMode;
       }
-    ));
+    );
   }
 
   @Input() set loadTripInformation$(observable: Observable<TripInformation>) {

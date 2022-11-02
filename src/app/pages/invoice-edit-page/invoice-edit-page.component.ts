@@ -1,13 +1,12 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
 import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
-import {Observable, Observer, Subject} from 'rxjs';
+import {Observable, Observer, Subject, Subscription} from 'rxjs';
 import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
@@ -31,7 +30,7 @@ import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/
   templateUrl: './invoice-edit-page.component.html',
   styleUrls: ['./invoice-edit-page.component.scss']
 })
-export class InvoiceEditPageComponent implements OnInit {
+export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   constructor(private util: UtilService,
               private modalService: ModalService,
@@ -41,7 +40,6 @@ export class InvoiceEditPageComponent implements OnInit {
               private toastService: ToastService,
               private rateService: RateService,
               @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
-              @Inject(SUBSCRIPTION_MANAGER) private subscriptions: SubscriptionManager,
               public router: Router) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
@@ -94,11 +92,19 @@ export class InvoiceEditPageComponent implements OnInit {
 
   private rateCallCounter = 0;
 
+  private readonly subscriptions = new Subscription();
+
   ngOnInit(): void {
-    this.subscriptions.manage(
-      this.route.paramMap.subscribe(p => this.handleRouteParams(p)),
+    this.subscriptions.add(
+      this.route.paramMap.subscribe(p => this.handleRouteParams(p))
+    );
+    this.subscriptions.add(
       this.userService.getUserInfo().subscribe(u => this.loadUserInfo(u))
     );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   private handleRouteParams(params: ParamMap): void {
@@ -108,7 +114,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
   private fetchFalconInvoice(): void {
     if (this.falconInvoiceNumber) {
-      this.subscriptions.manage(
+      this.subscriptions.add(
         this.invoiceService.getInvoice(this.falconInvoiceNumber)
           .subscribe(i => this.loadInvoice(i, true))
       );
@@ -122,8 +128,8 @@ export class InvoiceEditPageComponent implements OnInit {
         if (item.chargeCode === 'OTHER') {
           found = this.invoice.costLineItems.filter((i) => (
             i.chargeCode === item.chargeCode &&
-              i.responseComment === item.responseComment &&
-              i.chargeLineTotal === item.chargeLineTotal
+            i.responseComment === item.responseComment &&
+            i.chargeLineTotal === item.chargeLineTotal
           ));
         } else {
           found = this.invoice.costLineItems.filter((i) => i.chargeCode === item.chargeCode);
@@ -393,7 +399,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
   clickSaveButton(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
-      this.subscriptions.manage(
+      this.subscriptions.add(
         this.updateInvoice().subscribe(
           (value) => {
             if (!value.glLineItemsInvalid) {
@@ -401,7 +407,7 @@ export class InvoiceEditPageComponent implements OnInit {
               this.resetInvoiceForm();
             } else {
               this.toastService.openErrorToast('The Invoice Allocations line items have values which do not match with master data.');
-              this.subscriptions.manage(
+              this.subscriptions.add(
                 new Observable((observer: Observer<object>) => {
                   observer.next({});
                 }).subscribe(i => this.loadInvoice(value))
@@ -471,7 +477,7 @@ export class InvoiceEditPageComponent implements OnInit {
 
   performSubmitAction(): void {
     if (this.invoiceFormGroup.valid && this.tripInformationComponent.carrierDetailFound) {
-      this.subscriptions.manage(
+      this.subscriptions.add(
         this.updateInvoice().pipe(
           switchMap((model: InvoiceDataModel) => {
             return this.invoiceService.submitForApproval(model.falconInvoiceNumber);
@@ -677,7 +683,7 @@ export class InvoiceEditPageComponent implements OnInit {
   getAccessorialList(): void {
     if (this.checkAccessorialData(this.invoice)) {
       const request: RateEngineRequest = this.createRequest('');
-      this.subscriptions.manage(
+      this.subscriptions.add(
         this.rateService.getAccessorialDetails(request).subscribe(result => this.chargeLineItemOptions$.next(result))
       );
     }
@@ -765,7 +771,7 @@ export class InvoiceEditPageComponent implements OnInit {
   }
 
   private showNotYetImplementedModal(title: string): void {
-    this.subscriptions.manage(this.modalService.openSystemErrorModal({
+    this.subscriptions.add(this.modalService.openSystemErrorModal({
       title, innerHtmlMessage: 'Not Yet Implemented On This Page'
     }).subscribe());
   }

@@ -1,10 +1,9 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable, Subscription} from 'rxjs';
 import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
-import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
 import {CalcDetail, CostBreakDownUtils, RateDetailResponse} from '../../../models/rate-engine/rate-engine-request';
 import {first, map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
@@ -23,8 +22,10 @@ export class InvoiceAmountComponent implements OnInit {
   static readonly INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
 
   fileFormGroup = new FormGroup({});
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-              private utilService: UtilService,
+
+  private readonly subscriptions = new Subscription();
+
+  constructor(private utilService: UtilService,
               private toastService: ToastService) {
   }
 
@@ -219,7 +220,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   setUpOverrideStandardPaymentTermsSubscription(): void {
-    this.subscriptionManager.manage(this.isPaymentOverrideSelected.valueChanges
+    this.subscriptions.add(this.isPaymentOverrideSelected.valueChanges
       .subscribe((selected: string) => {
         if (!selected || selected.length <= 0) {
           this.paymentTermValid = true;

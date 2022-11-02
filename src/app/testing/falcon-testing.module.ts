@@ -1,6 +1,5 @@
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {InvoiceFormManager} from '../components/invoice-form/invoice-form-manager';
-import {RealSubscriptionManager} from '../services/subscription-manager';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
@@ -63,7 +62,6 @@ import {NgSelectModule} from '@ng-select/ng-select';
     InvoiceFormManager,
     UserService,
     RateService,
-    RealSubscriptionManager.PROVIDER,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: []
