@@ -481,6 +481,7 @@ export class InvoiceEditPageComponent implements OnInit {
             this.performPostUpdateActions(
               `Success! Falcon Invoice ${this.falconInvoiceNumber} has been updated and submitted for approval.`
             );
+            this.resetInvoiceForm();
           },
           (error) => console.error(error)
         )
