@@ -375,6 +375,7 @@ export class TripInformationComponent implements OnInit {
       this.arrowLabelForDeliveryDateTime = 'CREATED';
     } else if (dateToReturn) {
       this.showArrowForDeliveryDateTime = false;
+      this.arrowLabelForDeliveryDateTime = '';
     } 
     return dateToReturn;
   }
