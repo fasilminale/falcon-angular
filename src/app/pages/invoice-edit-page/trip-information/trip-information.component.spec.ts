@@ -867,7 +867,7 @@ describe('TripInformationComponent', () => {
         reportModeDescription: 'ReportModeDescription',
         reportKeyMode: 'ReportKeyMode'
       },
-      deliveryDate: new Date(),
+      deliveryDate: new Date(firstFODeliveryDateTime),
       freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
       invoiceDate: new Date(),
       pickUpDate: new Date(),
@@ -909,7 +909,7 @@ describe('TripInformationComponent', () => {
         reportModeDescription: 'ReportModeDescription',
         reportKeyMode: 'ReportKeyMode'
       },
-      deliveryDate: new Date(),
+      deliveryDate: overriddenDeliveryDateTime,
       freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
       invoiceDate: new Date(),
       pickUpDate: new Date(),
@@ -952,7 +952,7 @@ describe('TripInformationComponent', () => {
         reportModeDescription: 'ReportModeDescription',
         reportKeyMode: 'ReportKeyMode'
       },
-      deliveryDate: new Date(),
+      deliveryDate: assumedDeliveryDateTime,
       freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
       invoiceDate: new Date(),
       pickUpDate: new Date(),
@@ -997,7 +997,7 @@ describe('TripInformationComponent', () => {
           reportModeDescription: 'ReportModeDescription',
           reportKeyMode: 'ReportKeyMode'
         },
-        deliveryDate: new Date(),
+        deliveryDate: overriddenDeliveryDateTime,
         freightPaymentTerms: FreightPaymentTerms.THIRD_PARTY,
         invoiceDate: new Date(),
         pickUpDate: new Date(),
