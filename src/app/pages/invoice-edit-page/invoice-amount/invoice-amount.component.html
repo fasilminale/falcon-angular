@@ -31,6 +31,7 @@
       ></app-fal-currency-input>
       <input *ngIf="isMakingRateCall || !isPrepaid"
              class="form-control input_na"
+             [ngClass]="{'attention-text':isMakingRateCall}"
              disabled
              type="text"
              [value]="isMakingRateCall ? 'Rating...' : 'N/A'"
@@ -280,7 +281,8 @@
       <div class="row">
         <div class="row d-flex justify-content-between">
           <span class="px-3 col-md-8 text-right">Contracted Rate Total:</span>
-          <span class="col-md-4 text-right p-0">{{
+          <span class="col-md-4 text-right p-0"
+                [ngClass]="{'attention-text':isMakingRateCall}">{{
             isMakingRateCall
               ? "Rating..."
               : contractedRateTotal | currency
@@ -288,7 +290,8 @@
         </div>
         <div class="row d-flex justify-content-between">
           <span class="px-3 col-md-8 text-right">Non-Contracted Rate Total:</span>
-          <span class="col-md-4 text-right p-0">{{
+          <span class="col-md-4 text-right p-0"
+                [ngClass]="{'attention-text':isMakingRateCall}">{{
             isMakingRateCall
               ? "Rating..."
               : nonContractedRateTotal | currency
