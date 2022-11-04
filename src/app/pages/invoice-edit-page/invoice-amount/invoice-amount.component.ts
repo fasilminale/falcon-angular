@@ -23,6 +23,7 @@ export class InvoiceAmountComponent implements OnInit {
   static readonly INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
 
   fileFormGroup = new FormGroup({});
+
   constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
               private utilService: UtilService,
               private toastService: ToastService) {
@@ -50,6 +51,10 @@ export class InvoiceAmountComponent implements OnInit {
         this.readOnlyForm = !isEditMode;
         this.enableDisableOverrideStandardPaymentTerms(this.readOnlyForm);
         this.enableDisableCurrency(this.readOnlyForm);
+        this.invoiceAmountFormInvalid.emit({
+          'form': InvoiceAmountComponent.INVOICE_AMOUNT_CL,
+          'value': (this.paymentTermValid)
+        });
       }
     );
   }
@@ -111,6 +116,8 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   get costBreakdownTotal(): number {
+    // TODO stop adding money together in UI code
+    // cannot remove this method, yet, because it is still be used
     let totalAmount = 0;
     this.costBreakdownItemsControls
       .filter(c => !!c)
@@ -385,7 +392,7 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
         const otherCharges = this.costBreakdownItemsControls.filter(x => x.value.charge === 'OTHER');
-        newLineItemGroup.get('uid')?.setValue(`OTHER${otherCharges.length }`);
+        newLineItemGroup.get('uid')?.setValue(`OTHER${otherCharges.length}`);
       } else {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
@@ -395,12 +402,12 @@ export class InvoiceAmountComponent implements OnInit {
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
       }
 
-      if (modalResponse.file){
+      if (modalResponse.file) {
         // The pending url is updated to the real once the invoice saved and the backend generates a filename with UUID.
-         attachment = {url: 'pending'};
-      }  else {
+        attachment = {url: 'pending'};
+      } else {
         // no-file causes the html not to display a link.
-         attachment = {url: 'no-file'};
+        attachment = {url: 'no-file'};
       }
 
       newLineItemGroup.get('attachment')?.setValue(attachment);
@@ -511,6 +518,7 @@ export class InvoiceAmountComponent implements OnInit {
             this.deniedChargeLineItemControls.push(pendingLineItem);
           }
           this.rateEngineCall.emit(this.pendingAccessorialCode);
+          // TODO stop using costBreakdownTotal calculated in UI, this should be a re-rate.
           this.amountOfInvoiceControl.setValue(this.costBreakdownTotal, {emitEvent: false});
           this.toastService.openSuccessToast(`Success. Charge was ${action.toLowerCase()}.`);
         }
@@ -542,7 +550,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
     const editChargeDetails = await this.utilService.openEditChargeModal({
-            costLineItem
+      costLineItem
     }).pipe(first()).toPromise();
     if (editChargeDetails) {
       const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.uid === lineItem.value?.uid);
@@ -560,11 +568,11 @@ export class InvoiceAmountComponent implements OnInit {
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
         let attachment;
 
-        if (editChargeDetails.file){
+        if (editChargeDetails.file) {
           // The pending url is updated to the real once the invoice saved and the backend generates a filename with UUID.
           attachment = {url: 'pending'};
           existingCostLineItem.get('attachment')?.setValue(attachment);
-        }  else if (!editChargeDetails.file && !existingCostLineItem?.value?.attachment?.fileName) {
+        } else if (!editChargeDetails.file && !existingCostLineItem?.value?.attachment?.fileName) {
           // no-file causes the html not to display a link.
           attachment = {url: 'no-file'};
           existingCostLineItem.get('attachment')?.setValue(attachment);
@@ -669,7 +677,7 @@ export class InvoiceAmountComponent implements OnInit {
     const otherCharges = this.costBreakdownItemsControls.filter(x => x.value.charge === 'OTHER');
     if (otherCharges.length > 0) {
       otherCharges.forEach((charge, i) => {
-        charge.get('uid')?.setValue(`OTHER${i+1}`);
+        charge.get('uid')?.setValue(`OTHER${i + 1}`);
       });
     }
   }
