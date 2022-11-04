@@ -26,7 +26,6 @@ import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {Observable, of, Subscription} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
@@ -62,6 +61,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
   /* PRIVATE FIELDS */
   private invoice = new InvoiceDataModel();
   private lineItemNumber = 0;
+  private subscriptions = new Subscription();
+  private onCancelSubscription = new Subscription();
 
   /* INPUTS */
   @Input() enableMilestones = false;
@@ -95,27 +96,22 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
     private router: Router,
     public form: InvoiceFormManager,
     @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
-    @Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
   ) {
   }
 
   ngOnDestroy(): void {
     // Bug is styleguide .... for some reason formarray supporting checkbox is not clearing out.
     (this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).clear();
+    this.form.destroy();
+    this.subscriptions.unsubscribe();
   }
 
-  private subscription?: Subscription;
   /* PROPERTY FUNCTIONS */
   @Input() set onCancel$(observable: Observable<any>) {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    this.subscription = observable.subscribe(
-      () => {
-        this.gotoInvoiceList();
-      }
-    );
-    this.subscriptionManager.manage(this.subscription);
+    this.onCancelSubscription.unsubscribe();
+    this.onCancelSubscription = observable.subscribe(() => {
+      this.gotoInvoiceList();
+    });
   }
 
   get isOnEditPage(): boolean {
@@ -206,7 +202,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
 
   public loadData(): void {
     this.loadingService.showLoading('Loading');
-    this.subscriptionManager.manage(
+    this.subscriptions.add(
       this.invoiceService.getInvoice(this.falconInvoiceNumber)
         .subscribe(
           (invoice: any) => {
@@ -319,7 +315,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
         this.form.selectedTemplate.enable();
       }
     }
-    this.subscriptionManager.manage(
+    this.subscriptions.add(
       this.form.selectedTemplate.valueChanges.subscribe((v: string) => this.loadTemplate(v))
     );
   }
@@ -360,14 +356,15 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
       line1Message = 'All changes to this invoice will be lost if you cancel now.';
       line2Message = 'Are you sure you want to cancel?';
     }
-    const data: ConfirmationModalData= { title: 'Cancel',
-    innerHtmlMessage: `${line1Message}
+    const data: ConfirmationModalData = {
+      title: 'Cancel',
+      innerHtmlMessage: `${line1Message}
                  <br/><br/><strong>
                  ${line2Message}
                  </strong>`,
-    confirmButtonText: 'Yes, cancel',
-    cancelButtonText: 'No, go back'
-  };
+      confirmButtonText: 'Yes, cancel',
+      cancelButtonText: 'No, go back'
+    };
     return this.util.openConfirmationModal(data);
   }
 
@@ -503,7 +500,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public saveTemplate(): void {
-    this.subscriptionManager.manage(
+    this.subscriptions.add(
       this.util.openTemplateInputModal(this.form.isPaymentOverrideSelected.value)
         .subscribe(
           async (result) => {

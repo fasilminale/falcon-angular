@@ -1,4 +1,4 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -12,8 +12,7 @@ import {
 import {catchError, mergeMap} from 'rxjs/operators';
 import {isFalsey} from '../../utils/predicates';
 import {FalRadioOption} from '../fal-radio-input/fal-radio-input.component';
-import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 import {MasterDataService} from 'src/app/services/master-data-service';
 
 /* VALIDATORS */
@@ -82,8 +81,9 @@ export class InvoiceFormManager {
 
   public totalLineItemNetAmount = 0;
 
+  private readonly subscriptions = new Subscription();
+
   constructor(
-    @Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
     private masterDataService: MasterDataService) {
   }
 
@@ -139,7 +139,7 @@ export class InvoiceFormManager {
     this.establishTouchLink(this.osptFormGroup, this.currency);
     this.establishTouchLink(this.lineItems, this.osptFormGroup);
     this.establishTouchLink(this.comments, this.lineItems);
-    this.subscriptionManager.manage(
+    this.subscriptions.add(
       // HANDLE PAYMENT TERMS WHEN OVERRIDE SELECTION CHANGES
       this.isPaymentOverrideSelected.valueChanges
         .subscribe((selected: string) => {
@@ -150,18 +150,27 @@ export class InvoiceFormManager {
             this.paymentTerms.reset();
             this.paymentTerms.disable();
           }
-        }),
-      // RECALCULATE LINE ITEM TOTAL WHEN LINE ITEMS CHANGE
-      this.lineItems.valueChanges.subscribe(() => this.calculateLineItemNetAmount()),
-      this.companyCode.valueChanges.subscribe(() => this.forceValueToUpperCase(this.companyCode)),
-      this.vendorNumber.valueChanges.subscribe(() => this.forceValueToUpperCase(this.vendorNumber)),
-      this.externalInvoiceNumber.valueChanges.subscribe(() => this.forceValueToUpperCase(this.externalInvoiceNumber))
+        })
+    );
+    // RECALCULATE LINE ITEM TOTAL WHEN LINE ITEMS CHANGE
+    this.subscriptions.add(this.lineItems.valueChanges.subscribe(
+      () => this.calculateLineItemNetAmount()));
+    this.subscriptions.add(this.companyCode.valueChanges.subscribe(
+      () => this.forceValueToUpperCase(this.companyCode)));
+    this.subscriptions.add(this.vendorNumber.valueChanges.subscribe(
+      () => this.forceValueToUpperCase(this.vendorNumber)));
+    this.subscriptions.add(this.externalInvoiceNumber.valueChanges.subscribe(
+      () => this.forceValueToUpperCase(this.externalInvoiceNumber))
     );
     this.isInvoiceAmountValid = true;
   }
 
+  destroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   public establishTouchLink(a: AbstractControl, b: AbstractControl): void {
-    this.subscriptionManager.manage(
+    this.subscriptions.add(
       a.valueChanges.subscribe(() => {
         if (b.untouched) {
           b.markAsTouched();
@@ -225,12 +234,14 @@ export class InvoiceFormManager {
     this.establishTouchLink(lineItemNetAmount, glAccount);
     const notes = new FormControl(null);
     this.establishTouchLink(notes, lineItemNetAmount);
-    this.subscriptionManager.manage(
-      companyCode.valueChanges.subscribe(() => this.forceValueToUpperCase(companyCode)),
-      costCenter.valueChanges.subscribe(() => this.forceValueToUpperCase(costCenter)),
-      glAccount.valueChanges.subscribe(() => this.forceValueToUpperCase(glAccount)),
-      notes.valueChanges.subscribe(() => this.forceValueToUpperCase(notes))
-    );
+    this.subscriptions.add(companyCode.valueChanges.subscribe(
+      () => this.forceValueToUpperCase(companyCode)));
+    this.subscriptions.add(costCenter.valueChanges.subscribe(
+      () => this.forceValueToUpperCase(costCenter)));
+    this.subscriptions.add(glAccount.valueChanges.subscribe(
+      () => this.forceValueToUpperCase(glAccount)));
+    this.subscriptions.add(notes.valueChanges.subscribe(
+      () => this.forceValueToUpperCase(notes)));
     return new FormGroup({companyCode, costCenter, glAccount, lineItemNetAmount, notes});
   }
 

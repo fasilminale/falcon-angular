@@ -1,17 +1,16 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { ShippingPointLocationSelectOption } from 'src/app/models/location/location-model';
-import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable, Subscription} from 'rxjs';
+import {ShippingPointLocationSelectOption} from 'src/app/models/location/location-model';
 
-const { minLength, required } = Validators;
+const {minLength, required} = Validators;
 
 @Component({
   selector: 'app-fal-address',
   templateUrl: './fal-address.component.html',
   styleUrls: ['./fal-address.component.scss']
 })
-export class FalAddressComponent implements OnInit {
+export class FalAddressComponent {
 
   shippingPointItems = [
     'Home',
@@ -36,7 +35,27 @@ export class FalAddressComponent implements OnInit {
   public name2Control = new FormControl();
   public idCodeControl = new FormControl();
 
-  @Input() set formGroup (newFormGroup: FormGroup) {
+  @Input() showShippingItemField = true;
+  @Input() validateField = true; // TODO: Temporary for FAL-750. Replace when edit capability is implemented
+
+  private isEditModeSubscription = new Subscription();
+  private loadFilteredShippingPointLocationsSubscription = new Subscription();
+  private loadAddressSubscription = new Subscription();
+
+  constructor() {
+    // empty
+  }
+
+  @Input() set updateIsEditMode$(observable: Observable<boolean>) {
+    this.isEditModeSubscription.unsubscribe();
+    this.isEditModeSubscription = observable.subscribe(
+      isEditMode => {
+        isEditMode ? this._editableFormArray.enable() : this._editableFormArray.disable();
+      }
+    );
+  }
+
+  @Input() set formGroup(newFormGroup: FormGroup) {
     newFormGroup.setControl('name', this.nameControl);
     newFormGroup.setControl('country', this.countryControl);
     newFormGroup.setControl('city', this.cityControl);
@@ -52,35 +71,37 @@ export class FalAddressComponent implements OnInit {
   }
 
   @Input() set loadFilteredShippingPointLocations$(observable: Observable<Array<ShippingPointLocationSelectOption>>) {
-    this.subscriptionManager.manage(observable.subscribe(spl => {
+    this.loadFilteredShippingPointLocationsSubscription.unsubscribe();
+    this.loadFilteredShippingPointLocationsSubscription = observable.subscribe(spl => {
       this.masterDataShippingPoints = spl;
-    }));
+    });
   }
 
   @Input() set loadAddress$(observable: Observable<any>) {
-    this.subscriptionManager.manage(observable.subscribe(l => {
-        this.nameControl.setValue(l.name ? l.name: 'N/A');
-        // Removed validateField check when l.country is not TRUE
-        this.countryControl.setValue(l.country ? l.country: 'N/A');
-        this.cityControl.setValue(l.city ? l.city: 'N/A');
-        // Removed validateField check when l.zipCode is not TRUE
-        this.zipCodeControl.setValue(l.zipCode ? l.zipCode: 'N/A');
-        this.stateControl.setValue(l.state ? l.state: 'N/A');
-        this.streetAddressControl.setValue(l.address ? l.address: 'N/A');
-        this.streetAddress2Control.setValue(l.address2 ? l.address2: 'N/A');
-        let shippingPointValue;
-        if (this.addressType === 'destination') {
-          shippingPointValue = 'N/A';
-        } else {
-          shippingPointValue = l.shippingPoint ? l.shippingPoint : 'N/A';
-        }
-        this.shippingPointControl.setValue(shippingPointValue);
-        if (this.addressType == undefined) {
-          this.name2Control.setValue(l.name2 ? l.name2: 'N/A');
-          this.idCodeControl.setValue(l.idCode ? l.idCode: 'N/A');
-        }
-        this.handleEditableFormArray();
-    }))
+    this.loadAddressSubscription.unsubscribe();
+    this.loadAddressSubscription = observable.subscribe(l => {
+      this.nameControl.setValue(l.name ? l.name : 'N/A');
+      // Removed validateField check when l.country is not TRUE
+      this.countryControl.setValue(l.country ? l.country : 'N/A');
+      this.cityControl.setValue(l.city ? l.city : 'N/A');
+      // Removed validateField check when l.zipCode is not TRUE
+      this.zipCodeControl.setValue(l.zipCode ? l.zipCode : 'N/A');
+      this.stateControl.setValue(l.state ? l.state : 'N/A');
+      this.streetAddressControl.setValue(l.address ? l.address : 'N/A');
+      this.streetAddress2Control.setValue(l.address2 ? l.address2 : 'N/A');
+      let shippingPointValue;
+      if (this.addressType === 'destination') {
+        shippingPointValue = 'N/A';
+      } else {
+        shippingPointValue = l.shippingPoint ? l.shippingPoint : 'N/A';
+      }
+      this.shippingPointControl.setValue(shippingPointValue);
+      if (this.addressType == undefined) {
+        this.name2Control.setValue(l.name2 ? l.name2 : 'N/A');
+        this.idCodeControl.setValue(l.idCode ? l.idCode : 'N/A');
+      }
+      this.handleEditableFormArray();
+    });
   }
 
   private handleEditableFormArray() {
@@ -98,32 +119,16 @@ export class FalAddressComponent implements OnInit {
       this._editableFormArray.push(this.streetAddress2Control);
     }
   }
-  
-  @Input() set updateIsEditMode$(observable: Observable<boolean>) {
-    this.subscriptionManager.manage(observable.subscribe(
-      isEditMode => {
-        isEditMode ? this._editableFormArray.enable() : this._editableFormArray.disable();
-      }
-    ));
-  }
-
-  @Input() showShippingItemField = true;
-  @Input() validateField = true; // TODO: Temporary for FAL-750. Replace when edit capability is implemented
-
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) { }
-
-  ngOnInit(): void {
-  }
 
   onShippingPointChange($event: ShippingPointLocationSelectOption): void {
     let l = $event?.location;
-    this.nameControl.setValue(l?.name ? l.name: 'N/A');
-    this.countryControl.setValue(l?.country ? l.country: 'N/A');
-    this.cityControl.setValue(l?.city ? l.city: 'N/A');
-    this.zipCodeControl.setValue(l?.zipCode ? l.zipCode: 'N/A');
-    this.stateControl.setValue(l?.state ? l.state: 'N/A');
-    this.streetAddressControl.setValue(l?.address ? l.address: 'N/A');
-    this.streetAddress2Control.setValue(l?.address2 ? l.address2: 'N/A');
+    this.nameControl.setValue(l?.name ? l.name : 'N/A');
+    this.countryControl.setValue(l?.country ? l.country : 'N/A');
+    this.cityControl.setValue(l?.city ? l.city : 'N/A');
+    this.zipCodeControl.setValue(l?.zipCode ? l.zipCode : 'N/A');
+    this.stateControl.setValue(l?.state ? l.state : 'N/A');
+    this.streetAddressControl.setValue(l?.address ? l.address : 'N/A');
+    this.streetAddress2Control.setValue(l?.address2 ? l.address2 : 'N/A');
     if (this.addressType === 'origin' && $event && $event.value) {
       this.shippingPointControl.setValue($event.value);
       this.originShippingPointChangeEvent.emit($event.value);

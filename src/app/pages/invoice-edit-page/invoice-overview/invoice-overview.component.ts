@@ -1,9 +1,7 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { InvoiceOverviewDetail } from 'src/app/models/invoice/invoice-overview-detail.model';
-import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
-import {RemitHistoryItem} from "../../../models/invoice/remit-history-item";
-import {GlLineItem} from '../../../models/line-item/line-item-model';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Observable, Subscription} from 'rxjs';
+import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
+import {RemitHistoryItem} from '../../../models/invoice/remit-history-item';
 import {EnvironmentService} from '../../../services/environment-service/environment-service';
 
 @Component({
@@ -11,16 +9,8 @@ import {EnvironmentService} from '../../../services/environment-service/environm
   templateUrl: './invoice-overview.component.html',
   styleUrls: ['./invoice-overview.component.scss']
 })
-export class InvoiceOverviewComponent implements OnInit {
+export class InvoiceOverviewComponent {
 
-  @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
-    this.subscriptionManager.manage(observable.subscribe(
-      invoiceOverviewDetail => {
-        this.invoiceOverviewDetail = invoiceOverviewDetail
-        this.formatRemitData(this.invoiceOverviewDetail.remitHistory ?? [])
-      }
-    ));
-  }
   invoiceOverviewDetail: InvoiceOverviewDetail = {};
   erpInvoiceNumbers: string[] = [];
   erpRemittanceNumbers: string[] = [];
@@ -28,12 +18,21 @@ export class InvoiceOverviewComponent implements OnInit {
   amountOfPayments: string[] = [];
   dateOfPayments: string[] = [];
 
+  private loadInvoiceOverDetailSubscription = new Subscription();
+
   @Output() viewHistoryLog = new EventEmitter<any>();
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-              private environmentService: EnvironmentService) { }
+  constructor(private environmentService: EnvironmentService) {
+  }
 
-  ngOnInit(): void {
+  @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
+    this.loadInvoiceOverDetailSubscription.unsubscribe();
+    this.loadInvoiceOverDetailSubscription = observable.subscribe(
+      invoiceOverviewDetail => {
+        this.invoiceOverviewDetail = invoiceOverviewDetail;
+        this.formatRemitData(this.invoiceOverviewDetail.remitHistory ?? []);
+      }
+    );
   }
 
   formatRemitData(remitData: RemitHistoryItem[]): void {
@@ -50,16 +49,15 @@ export class InvoiceOverviewComponent implements OnInit {
       this.vendorIds.push('N/A');
       this.amountOfPayments.push('N/A');
       this.dateOfPayments.push('N/A');
-    }
-    else {
+    } else {
       remitData.forEach((item) => {
         this.erpInvoiceNumbers.push(item.erpInvoiceNumber);
         this.erpRemittanceNumbers.push(item.erpRemittanceNumber);
-        this.vendorIds.push(item.remitVendorId)
+        this.vendorIds.push(item.remitVendorId);
         const amountOfPaymentString = item.amountOfPayment ? item.amountOfPayment + '' : undefined;
-        this.amountOfPayments.push(amountOfPaymentString ?? 'N/A')
-        this.dateOfPayments.push(item.dateOfPayment ?? 'N/A')
-      })
+        this.amountOfPayments.push(amountOfPaymentString ?? 'N/A');
+        this.dateOfPayments.push(item.dateOfPayment ?? 'N/A');
+      });
     }
   }
 
