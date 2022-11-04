@@ -55,7 +55,6 @@ import {ErrorService} from './services/error-service';
 import {FalHttpInterceptor} from './services/fal-http-interceptor';
 import {LoggedOutPageComponent} from './pages/logged-out-page/logged-out-page.component';
 import {FalContainerComponent} from './components/fal-container/fal-container.component';
-import {RealSubscriptionManager} from './services/subscription-manager';
 import {InvoiceFormManager} from './components/invoice-form/invoice-form-manager';
 import {InvoiceFilterModalComponent} from './components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from './services/filter-service';
@@ -254,7 +253,6 @@ const oktaConfig = {
     WindowService,
     ModalService,
     RoleGuard,
-    RealSubscriptionManager.PROVIDER,
     {provide: OKTA_CONFIG, useValue: oktaConfig},
     FalHttpInterceptor.PROVIDER,
     FeedbackCollectorService,

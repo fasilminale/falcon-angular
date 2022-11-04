@@ -1,7 +1,6 @@
-import {Component, EventEmitter, Inject, Input, Output} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Observable, Subscription} from 'rxjs';
 import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
-import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
 import {NumberFormatter} from 'src/app/utils/number-formatter';
 
 @Component({
@@ -34,12 +33,15 @@ export class FreightOrderDetailsComponent {
 
   @Output() totalEmitter: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
+  private loadFreightOrdersSubscription = new Subscription();
+
+  constructor() {
+    // empty
   }
 
   @Input() set loadFreightOrders$(observable: Observable<FreightOrder[]>) {
-    // TODO fix this to not use subscription manager!
-    this.subscriptionManager.manage(observable.subscribe(freightOrders => {
+    this.loadFreightOrdersSubscription.unsubscribe();
+    this.loadFreightOrdersSubscription = observable.subscribe(freightOrders => {
       this.freightOrders = freightOrders.map(freightOrder => {
         freightOrder.volumeGross.value = parseFloat(freightOrder?.volumeGross?.value.toFixed(2));
         freightOrder.isEdit = true;
@@ -54,7 +56,7 @@ export class FreightOrderDetailsComponent {
         totalVolume: this.totalVolume,
         totalPalletCount: this.totalPalletCount
       });
-    }));
+    });
   }
 
   getTotalGrossWeight(): number {
