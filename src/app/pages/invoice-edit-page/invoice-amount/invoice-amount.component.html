@@ -23,13 +23,18 @@
       <label for="invoice-amount-input" class="fal-label">
         Invoice Net Amount
       </label>
-      <app-fal-currency-input id="invoice-amount-input"
+      <app-fal-currency-input *ngIf="!isMakingRateCall && isPrepaid"
+                              id="invoice-amount-input"
                               formControlName="amountOfInvoice"
                               [isDisabled]="true"
                               [isError]="!_formGroup.get('amountOfInvoice')?.value"
-                              *ngIf="isPrepaid">
-      </app-fal-currency-input>
-      <input class="form-control input_na" disabled type="text" value="N/A" *ngIf="!isPrepaid">
+      ></app-fal-currency-input>
+      <input *ngIf="isMakingRateCall || !isPrepaid"
+             class="form-control input_na"
+             disabled
+             type="text"
+             [value]="isMakingRateCall ? 'Rating...' : 'N/A'"
+      />
 
       <small class="error-text col-2" *ngIf="!_formGroup.get('amountOfInvoice')?.value && isPrepaid"
              [ngClass]="{ 'mt-3' : true }">
@@ -80,8 +85,8 @@
                    placeholder="Select One...">
         </ng-select>
         <small class="error-text"
-                   *ngIf="isPaymentOverrideSelected.length > 0 && !paymentTermValid">
-                   Select the overriding payment terms
+               *ngIf="isPaymentOverrideSelected.length > 0 && !paymentTermValid">
+          Select the overriding payment terms
         </small>
       </div>
 
@@ -145,8 +150,8 @@
               </div>
               Download
             </elm-button>
-            <div  *ngIf=" _.get('attachment')?.value?.url === 'pending'"
-              class="fake-form-control">
+            <div *ngIf=" _.get('attachment')?.value?.url === 'pending'"
+                 class="fake-form-control">
               Pending Upload
             </div>
           </div>
@@ -195,20 +200,28 @@
             <!-- Cost breakdown item - totalAmount -->
             <div [ngClass]="{'col-11': readOnlyForm,
                            'col-5': !readOnlyForm}">
-              <app-fal-currency-input
-                [isError]="_.get('totalAmount')?.value === 0"
-                formControlName="totalAmount"
-                [ngClass]="{ 'background_color_currency': _.value.charge === 'OTHER' }"
-                [isDisabled]="true">
-              </app-fal-currency-input>
-              <small class="error-text"
-                     *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
-                Base Rate Amount is required
-              </small>
-              <small class="error-text"
-                     *ngIf="_.get('charge')?.value !== 'Base Rate' && _.get('totalAmount')?.value === 0">
-                Charge Rate not Found
-              </small>
+              <ng-template [ngIf]="!isMakingRateCall || !_.get('toBeRated')?.value">
+                <app-fal-currency-input
+                  [isError]="_.get('totalAmount')?.value === 0"
+                  formControlName="totalAmount"
+                  [ngClass]="{ 'background_color_currency': _.value.charge === 'OTHER' }"
+                  [isDisabled]="true">
+                </app-fal-currency-input>
+                <small class="error-text"
+                       *ngIf="_.get('charge')?.value === 'Base Rate' && _.get('totalAmount')?.value === 0">
+                  Base Rate Amount is required
+                </small>
+                <small class="error-text"
+                       *ngIf="_.get('charge')?.value !== 'Base Rate' && _.get('totalAmount')?.value === 0">
+                  Charge Rate not Found
+                </small>
+              </ng-template>
+              <input *ngIf="isMakingRateCall && !!_.get('toBeRated')?.value"
+                     class="form-control input_na"
+                     disabled
+                     type="text"
+                     value="Rating..."
+              />
             </div>
 
             <div class="col-6" *ngIf="!readOnlyForm">
@@ -216,10 +229,12 @@
                 *ngIf="_.value.entrySource === 'FAL'
                 || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')
                 || (_.value.lineItemType === 'ACCESSORIAL' && _.value.accessorialCode !== 'FUE' && _.value.accessorialCode !== '405')">
-                <div *ngIf="_.value.variables?.length > 0 || _.value.charge === 'OTHER'" class="material-icons edit-icon"
+                <div *ngIf="_.value.variables?.length > 0 || _.value.charge === 'OTHER'"
+                     class="material-icons edit-icon"
                      (click)="onEditCostLineItem(_, costBreakdownItemsControls)">edit
                 </div>
-                <div *ngIf="_.value.variables?.length === 0 && _.value.charge !== 'OTHER'" class="edit-icon-invisible"></div>
+                <div *ngIf="_.value.variables?.length === 0 && _.value.charge !== 'OTHER'"
+                     class="edit-icon-invisible"></div>
                 <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_, i)">delete</div>
               </div>
               <div
@@ -265,15 +280,19 @@
       <div class="row">
         <div class="row d-flex justify-content-between">
           <span class="px-3 col-md-8 text-right">Contracted Rate Total:</span>
-          <span class="col-md-4 text-right p-0">{{ contractedRateTotal | currency}}</span>
+          <span class="col-md-4 text-right p-0">{{
+            isMakingRateCall
+              ? "Rating..."
+              : contractedRateTotal | currency
+            }}</span>
         </div>
         <div class="row d-flex justify-content-between">
           <span class="px-3 col-md-8 text-right">Non-Contracted Rate Total:</span>
-          <span class="col-md-4 text-right p-0">{{ nonContractedRateTotal | currency}}</span>
-        </div>
-        <div class="row d-flex justify-content-between">
-          <span class="px-3 col-md-8 text-right text-bold">Cost Breakdown Total:</span>
-          <span class="col-md-4 text-right text-bold p-0">{{ costBreakdownTotal | currency}}</span>
+          <span class="col-md-4 text-right p-0">{{
+            isMakingRateCall
+              ? "Rating..."
+              : nonContractedRateTotal | currency
+            }}</span>
         </div>
       </div>
     </div>
@@ -407,7 +426,7 @@
                 <div *ngIf="_.value.variables?.length === 0" class="edit-icon-invisible"></div>
                 <elm-button buttonType="button"
                             buttonStyle="text"
-                            *ngIf= "_.value.totalAmount !== 0"
+                            *ngIf="_.value.totalAmount !== 0"
                             [padding]="'10px'"
                             id="pending-accept-button"
                             [isDisabled]="readOnlyForm || _.dirty"

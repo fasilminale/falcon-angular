@@ -130,14 +130,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   get contractedRateTotal(): number {
-    let totalAmount = 0;
-    this.costBreakdownItemsControls.forEach(c => {
-      if (c?.get('totalAmount')?.value
-        && c?.get('rateSource')?.value === 'Contract') {
-        totalAmount += parseFloat(c?.get('totalAmount')?.value);
-      }
-    });
-    return totalAmount;
+    return this.amountOfInvoiceControl.value - this.nonContractedRateTotal;
   }
 
   get nonContractedRateTotal(): number {
@@ -384,6 +377,7 @@ export class InvoiceAmountComponent implements OnInit {
       if ('OTHER' === modalResponse.selected.name) {
         const variables = modalResponse.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
+        newLineItemGroup.get('toBeRated')?.setValue(false);
         newLineItemGroup.get('rate')?.setValue('N/A');
         newLineItemGroup.get('type')?.setValue('N/A');
         newLineItemGroup.get('quantity')?.setValue('N/A');
@@ -450,6 +444,7 @@ export class InvoiceAmountComponent implements OnInit {
     const responseComment = new FormControl(null);
     const variables = new FormControl([]);
     const file = new FormControl(null);
+    const toBeRated = new FormControl(true);
     const group = new FormGroup({
       attachment, charge, rateSource, rateSourcePair,
       entrySource, entrySourcePair,
@@ -458,7 +453,8 @@ export class InvoiceAmountComponent implements OnInit {
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
       accessorialCode, uid, autoApproved,
-      variables, responseComment, file, persisted
+      variables, responseComment, file, persisted,
+      toBeRated
     });
     group.get('rateSourcePair')?.valueChanges?.subscribe(
       value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
