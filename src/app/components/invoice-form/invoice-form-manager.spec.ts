@@ -1,5 +1,4 @@
 import {TestBed} from '@angular/core/testing';
-import {SUBSCRIPTION_MANAGER, SubscriptionManager} from '../../services/subscription-manager';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {AbstractControl, FormArray, FormControl} from '@angular/forms';
 import Spy = jasmine.Spy;
@@ -10,17 +9,14 @@ import {MasterDataService} from 'src/app/services/master-data-service';
 describe('InvoiceFormManager', () => {
 
   let invoiceFormManager: InvoiceFormManager;
-  let subscriptionManager: SubscriptionManager;
   let masterDataService: MasterDataService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [FalconTestingModule]
     });
-    subscriptionManager = TestBed.inject(SUBSCRIPTION_MANAGER);
     masterDataService = TestBed.inject(MasterDataService);
-    spyOn(subscriptionManager, 'manage').and.callThrough();
-    invoiceFormManager = new InvoiceFormManager(subscriptionManager, masterDataService);
+    invoiceFormManager = new InvoiceFormManager(masterDataService);
     // stub these so they don't trigger cascading events during tests
     // they are tested for their functionality in isolation.
     spyOn(invoiceFormManager, 'forceValueChangeEvent').and.stub();
@@ -222,9 +218,6 @@ describe('InvoiceFormManager', () => {
     describe('when establishTouchLink is called on them', () => {
       beforeEach(() => {
         invoiceFormManager.establishTouchLink(controlA, controlB);
-      });
-      it('should use subscription manager', () => {
-        expect(subscriptionManager.manage).toHaveBeenCalled();
       });
       it('should subscribe to control A\'s valueChanges', () => {
         expect(controlA.valueChanges.subscribe).toHaveBeenCalled();

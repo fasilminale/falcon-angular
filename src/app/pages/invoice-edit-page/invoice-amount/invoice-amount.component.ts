@@ -1,10 +1,9 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable, Subscription} from 'rxjs';
 import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {CostLineItem, DisputeLineItem} from 'src/app/models/line-item/line-item-model';
-import {SubscriptionManager, SUBSCRIPTION_MANAGER} from 'src/app/services/subscription-manager';
 import {CalcDetail, CostBreakDownUtils, RateDetailResponse} from '../../../models/rate-engine/rate-engine-request';
 import {first, map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
@@ -23,8 +22,10 @@ export class InvoiceAmountComponent implements OnInit {
   static readonly INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
 
   fileFormGroup = new FormGroup({});
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager,
-              private utilService: UtilService,
+
+  private readonly subscriptions = new Subscription();
+
+  constructor(private utilService: UtilService,
               private toastService: ToastService) {
   }
 
@@ -50,6 +51,10 @@ export class InvoiceAmountComponent implements OnInit {
         this.readOnlyForm = !isEditMode;
         this.enableDisableOverrideStandardPaymentTerms(this.readOnlyForm);
         this.enableDisableCurrency(this.readOnlyForm);
+        this.invoiceAmountFormInvalid.emit({
+          'form': InvoiceAmountComponent.INVOICE_AMOUNT_CL,
+          'value': (this.paymentTermValid)
+        });
       }
     );
   }
@@ -111,6 +116,8 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   get costBreakdownTotal(): number {
+    // TODO stop adding money together in UI code
+    // cannot remove this method, yet, because it is still be used
     let totalAmount = 0;
     this.costBreakdownItemsControls
       .filter(c => !!c)
@@ -130,14 +137,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   get contractedRateTotal(): number {
-    let totalAmount = 0;
-    this.costBreakdownItemsControls.forEach(c => {
-      if (c?.get('totalAmount')?.value
-        && c?.get('rateSource')?.value === 'Contract') {
-        totalAmount += parseFloat(c?.get('totalAmount')?.value);
-      }
-    });
-    return totalAmount;
+    return this.amountOfInvoiceControl.value - this.nonContractedRateTotal;
   }
 
   get nonContractedRateTotal(): number {
@@ -219,7 +219,7 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   setUpOverrideStandardPaymentTermsSubscription(): void {
-    this.subscriptionManager.manage(this.isPaymentOverrideSelected.valueChanges
+    this.subscriptions.add(this.isPaymentOverrideSelected.valueChanges
       .subscribe((selected: string) => {
         if (!selected || selected.length <= 0) {
           this.paymentTermValid = true;
@@ -384,6 +384,7 @@ export class InvoiceAmountComponent implements OnInit {
       if ('OTHER' === modalResponse.selected.name) {
         const variables = modalResponse.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
+        newLineItemGroup.get('toBeRated')?.setValue(false);
         newLineItemGroup.get('rate')?.setValue('N/A');
         newLineItemGroup.get('type')?.setValue('N/A');
         newLineItemGroup.get('quantity')?.setValue('N/A');
@@ -391,7 +392,7 @@ export class InvoiceAmountComponent implements OnInit {
         newLineItemGroup.get('responseComment')?.setValue(modalResponse.comment);
         newLineItemGroup.get('variables')?.setValue(modalResponse.selected.variables);
         const otherCharges = this.costBreakdownItemsControls.filter(x => x.value.charge === 'OTHER');
-        newLineItemGroup.get('uid')?.setValue(`OTHER${otherCharges.length }`);
+        newLineItemGroup.get('uid')?.setValue(`OTHER${otherCharges.length}`);
       } else {
         newLineItemGroup.get('rateSourcePair')?.setValue({key: 'CONTRACT', label: 'Contract'});
         newLineItemGroup.get('accessorialCode')?.setValue(modalResponse.selected.accessorialCode);
@@ -401,12 +402,12 @@ export class InvoiceAmountComponent implements OnInit {
         this.pendingAccessorialCode = modalResponse.selected.accessorialCode;
       }
 
-      if (modalResponse.file){
+      if (modalResponse.file) {
         // The pending url is updated to the real once the invoice saved and the backend generates a filename with UUID.
-         attachment = {url: 'pending'};
-      }  else {
+        attachment = {url: 'pending'};
+      } else {
         // no-file causes the html not to display a link.
-         attachment = {url: 'no-file'};
+        attachment = {url: 'no-file'};
       }
 
       newLineItemGroup.get('attachment')?.setValue(attachment);
@@ -450,6 +451,7 @@ export class InvoiceAmountComponent implements OnInit {
     const responseComment = new FormControl(null);
     const variables = new FormControl([]);
     const file = new FormControl(null);
+    const toBeRated = new FormControl(true);
     const group = new FormGroup({
       attachment, charge, rateSource, rateSourcePair,
       entrySource, entrySourcePair,
@@ -458,7 +460,8 @@ export class InvoiceAmountComponent implements OnInit {
       rate, type, quantity, totalAmount,
       message, manual, expanded, lineItemType,
       accessorialCode, uid, autoApproved,
-      variables, responseComment, file, persisted
+      variables, responseComment, file, persisted,
+      toBeRated
     });
     group.get('rateSourcePair')?.valueChanges?.subscribe(
       value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
@@ -515,6 +518,7 @@ export class InvoiceAmountComponent implements OnInit {
             this.deniedChargeLineItemControls.push(pendingLineItem);
           }
           this.rateEngineCall.emit(this.pendingAccessorialCode);
+          // TODO stop using costBreakdownTotal calculated in UI, this should be a re-rate.
           this.amountOfInvoiceControl.setValue(this.costBreakdownTotal, {emitEvent: false});
           this.toastService.openSuccessToast(`Success. Charge was ${action.toLowerCase()}.`);
         }
@@ -546,7 +550,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   async onEditCostLineItem(costLineItem: AbstractControl, costLineItems: AbstractControl[]): Promise<void> {
     const editChargeDetails = await this.utilService.openEditChargeModal({
-            costLineItem
+      costLineItem
     }).pipe(first()).toPromise();
     if (editChargeDetails) {
       const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.uid === lineItem.value?.uid);
@@ -564,11 +568,11 @@ export class InvoiceAmountComponent implements OnInit {
         this.pendingAccessorialCode = costLineItem.value.accessorialCode;
         let attachment;
 
-        if (editChargeDetails.file){
+        if (editChargeDetails.file) {
           // The pending url is updated to the real once the invoice saved and the backend generates a filename with UUID.
           attachment = {url: 'pending'};
           existingCostLineItem.get('attachment')?.setValue(attachment);
-        }  else if (!editChargeDetails.file && !existingCostLineItem?.value?.attachment?.fileName) {
+        } else if (!editChargeDetails.file && !existingCostLineItem?.value?.attachment?.fileName) {
           // no-file causes the html not to display a link.
           attachment = {url: 'no-file'};
           existingCostLineItem.get('attachment')?.setValue(attachment);
@@ -673,7 +677,7 @@ export class InvoiceAmountComponent implements OnInit {
     const otherCharges = this.costBreakdownItemsControls.filter(x => x.value.charge === 'OTHER');
     if (otherCharges.length > 0) {
       otherCharges.forEach((charge, i) => {
-        charge.get('uid')?.setValue(`OTHER${i+1}`);
+        charge.get('uid')?.setValue(`OTHER${i + 1}`);
       });
     }
   }

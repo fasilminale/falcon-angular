@@ -1,12 +1,9 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
-import { Observable } from 'rxjs';
-import { SubscriptionManager, SUBSCRIPTION_MANAGER } from 'src/app/services/subscription-manager';
-import { InvoiceAllocationDetail } from '../../../models/invoice/trip-information-model';
-import {InvoiceOverviewDetail} from "../../../models/invoice/invoice-overview-detail.model";
+import {Observable, Subscription} from 'rxjs';
+import {InvoiceAllocationDetail} from '../../../models/invoice/trip-information-model';
+import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
 import {GlLineItem, GlLineItemError} from 'src/app/models/line-item/line-item-model';
-import {first} from 'rxjs/operators';
-import {UtilService} from '../../../services/util-service';
 
 @Component({
   selector: 'app-invoice-allocation',
@@ -28,7 +25,12 @@ export class InvoiceAllocationComponent implements OnInit {
   public invoiceAllocationErrors?: Array<GlLineItemError>;
   @Output() editGlLineItemEvent = new EventEmitter<any>();
 
-  constructor(@Inject(SUBSCRIPTION_MANAGER) private subscriptionManager: SubscriptionManager) {
+  private loadInvoiceOverviewDetailSubscription = new Subscription();
+  private loadAllocationDetailsSubscription = new Subscription();
+  private isEditModeSubscription = new Subscription();
+
+  constructor() {
+    // empty
   }
 
   ngOnInit(): void {
@@ -37,9 +39,10 @@ export class InvoiceAllocationComponent implements OnInit {
   }
 
   @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
-    this.subscriptionManager.manage(observable.subscribe(
+    this.loadInvoiceOverviewDetailSubscription.unsubscribe();
+    this.loadInvoiceOverviewDetailSubscription = observable.subscribe(
       invoiceOverviewDetail => this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID'
-    ));
+    );
   }
 
   @Input() set formGroup(givenFormGroup: FormGroup) {
@@ -54,9 +57,9 @@ export class InvoiceAllocationComponent implements OnInit {
   }
 
   @Input() set loadAllocationDetails(observable: Observable<InvoiceAllocationDetail>) {
-    this.subscriptionManager.manage(observable.subscribe(t => {
+    this.loadAllocationDetailsSubscription.unsubscribe();
+    this.loadAllocationDetailsSubscription = (observable.subscribe(t => {
       this.invoiceAllocationErrors = t.glLineItemsInvalid ? t.glLineItemsErrors : undefined;
-      const array = new FormArray([]);
       this.invoiceAllocations.clear();
       this.totalGlAmount.setValue(t.totalGlAmount ?? 0);
       this.invoiceNetAmount.setValue(t.invoiceNetAmount ?? 0);
@@ -85,12 +88,13 @@ export class InvoiceAllocationComponent implements OnInit {
   }
 
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
-    this.subscriptionManager.manage(observable.subscribe(
+    this.isEditModeSubscription.unsubscribe();
+    this.isEditModeSubscription = observable.subscribe(
       isEditMode => this.isEditMode = !isEditMode
-    ));
+    );
   }
 
-  updateTotalAllocationAmount(): void{
+  updateTotalAllocationAmount(): void {
     this.totalAllocationAmount = 0;
     this.invoiceAllocationsControls.forEach((item: any) => {
       const totalAmount = item.get('allocationAmount')?.value;
