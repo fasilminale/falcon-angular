@@ -295,7 +295,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     this.isMilestoneTabOpen = !this.isMilestoneTabOpen;
   }
 
-  handleFormIfInvalid($event: any) {
+  handleAmountComponentIfInvalid($event: any) {
     if (($event.form === this.INVOICE_AMOUNT_CL || $event.form === this.INVOICE_AMOUNT_PAYTERM) && $event?.value) {
       this.costBreakdownValid = $event.value;
       this.standardPaymentTermsOverrideValid = $event.value;
@@ -303,6 +303,9 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       this.costBreakdownValid = false;
       this.standardPaymentTermsOverrideValid = false;
     }
+  }
+
+  handleAllocationComponentIfInvalid($event: any) {
     if ($event.form === this.INVOICE_ALLOCATION_FORM) {
       this.netAllocationAmountValid = $event.value;
     }
@@ -783,5 +786,27 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   private resolveDispute(disputeParameters: any): Observable<any> {
     return this.invoiceService.resolveDispute(this.falconInvoiceNumber, disputeParameters);
+  }
+
+  get isSaveButtonDisabled(): boolean {
+    return this.invoice.hasRateEngineError
+      || !this.otherSectionEditMode$.value
+      || !this.invoiceFormGroup.valid
+      || !this.tripInformationComponent.carrierDetailFound
+      || ((!this.costBreakdownValid
+          || !this.netAllocationAmountValid
+          || !this.standardPaymentTermsOverrideValid)
+        && this.invoice.payable);
+  }
+
+  get isSubmitForApprovalButtonDisabled(): boolean {
+    return this.invoice.hasRateEngineError
+      || !this.invoice.payable
+      || !this.otherSectionEditMode$.value
+      || !this.invoiceFormGroup.valid
+      || !this.tripInformationComponent.carrierDetailFound
+      || !this.costBreakdownValid
+      || !this.netAllocationAmountValid
+      || !this.standardPaymentTermsOverrideValid;
   }
 }
