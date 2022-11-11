@@ -122,9 +122,10 @@
       </label>
       <elm-text-input id="bolNumberInput"
                       formControlName="bolNumber"
-                      [addSpacing]="false">
+                      [addSpacing]="false"
+                      [ngClass]="{'field-invalid': bolNumberControl.invalid || !isValidBolNumber}">
       </elm-text-input>
-      <elm-input-subtext *ngIf="bolNumberControl.invalid"
+      <elm-input-subtext *ngIf="bolNumberControl.invalid || !isValidBolNumber"
                          class="input-error"
                          [isError]="true">
         <span *ngFor="let message of bolNumberControlErrorMessages">
@@ -309,7 +310,7 @@
                   buttonType="button"
                   buttonStyle="primary"
                   class=""
-                  [isDisabled]="!isTripEditMode$.value"
+                  [isDisabled]="!isTripEditMode$.value || bolNumberControl.invalid"
                   (buttonClick)="clickUpdateButton()">
         Update & Continue
       </elm-button>

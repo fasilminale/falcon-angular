@@ -27,7 +27,7 @@ import {CarrierDetailModel} from '../../../models/master-data-models/carrier-det
 import {SubjectValue} from 'src/app/utils/subject-value';
 import {InvoiceService} from 'src/app/services/invoice-service';
 import {InvoiceUtils} from 'src/app/models/invoice/invoice-model';
-import {validateAlphanumeric} from '../../../utils/falcon-validators';
+import {CustomValidators, validateAlphanumeric} from '../../../utils/falcon-validators';
 
 const {required, maxLength} = Validators;
 
@@ -86,7 +86,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public pickUpDateControl = new FormControl({}, [required, validateDate]);
   public deliveryDateControl = new FormControl({}, [required]);
   public proTrackingNumberControl = new FormControl({}, [required]);
-  public bolNumberControl = new FormControl({}, [required, validateAlphanumeric, maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
+  public bolNumberControl = new FormControl({}, [CustomValidators.requiredNonNA, validateAlphanumeric,maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
   public freightPaymentTermsControl = new FormControl({}, [required]);
   public carrierControl = new FormControl({}, [required]);
   public carrierModeControl = new FormControl({}, [required]);
@@ -491,9 +491,14 @@ export class TripInformationComponent implements OnInit, OnDestroy{
       ?.some(err => err);
   }
 
+  get isValidBolNumber(): boolean {
+    let value: string = this.bolNumberControl.value ?? '';
+    return !(typeof value === 'string' && value.toLocaleLowerCase() === 'n/a');
+  }
+
   get bolNumberControlErrorMessages(): Array<string> {
     const messages = [];
-    if (this.bolNumberControl.errors?.required) {
+    if (this.bolNumberControl.errors?.required || !this.isValidBolNumber) {
       messages.push('BOL Number is missing');
     }
     if (this.bolNumberControl.errors?.pattern) {
