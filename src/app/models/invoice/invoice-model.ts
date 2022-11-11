@@ -54,6 +54,7 @@ export class InvoiceDataModel {
 
   /* --- AUTOMATED INVOICE: REMITTANCE FIELDS --- */
   remitHistory: Array<RemitHistoryItem> = [];
+  dateOfPaymentDisplay?: string;
 
   /* --- AUTOMATED INVOICE: TRIP FIELDS --- */
   tripId: string;
@@ -151,6 +152,9 @@ export class InvoiceDataModel {
     json?.remitHistory?.forEach((item: any) => {
       this.remitHistory.push(item as RemitHistoryItem);
     });
+    if (this.remitHistory.length > 0) {
+      this.dateOfPaymentDisplay = date(this.remitHistory[0]?.dateOfPayment);
+    }
 
     // AUTOMATED INVOICE: TRIP
     this.tripId = json?.tripId ?? '';
