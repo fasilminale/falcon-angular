@@ -170,7 +170,7 @@ describe('InvoiceEditPageComponent', () => {
 
     attachmentService = TestBed.inject(ATTACHMENT_SERVICE);
 
-      // Create Component
+    // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -181,54 +181,53 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   it('should handle attachments', () => {
-    const fileValue =  new File([], 'TestFileBlobName');
-    const createEmptyLineItemGroup = () => {
-      const uid = new FormControl('test');
-      const file = new FormControl(fileValue);
-      const group = new FormGroup({
-        uid, file
-      });
-      return group;
-    };
+      const fileValue = new File([], 'TestFileBlobName');
+      const createEmptyLineItemGroup = () => {
+        const uid = new FormControl('test');
+        const file = new FormControl(fileValue);
+        const group = new FormGroup({
+          uid, file
+        });
+        return group;
+      };
 
-    const setUpControls = () => {
-      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
-        mode: 'TL',
-        reportKeyMode: 'TL',
-        reportModeDescription: 'TRUCKLOAD'
-      }));
-      component.tripInformationFormGroup.addControl('carrier', new FormControl({
-        scac: 'ABCD',
-        name: 'The ABCD Group',
-      }));
-      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
-        level: 'GRD',
-        name: 'GROUND',
-      }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
-      component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
-      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
-      component.invoiceAmountFormGroup.addControl('costBreakdownItems', new FormArray([createEmptyLineItemGroup()]));
-      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
-    };
+      const setUpControls = () => {
+        component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+          mode: 'TL',
+          reportKeyMode: 'TL',
+          reportModeDescription: 'TRUCKLOAD'
+        }));
+        component.tripInformationFormGroup.addControl('carrier', new FormControl({
+          scac: 'ABCD',
+          name: 'The ABCD Group',
+        }));
+        component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+          level: 'GRD',
+          name: 'GROUND',
+        }));
+        component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+        component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
+        component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
+        component.invoiceAmountFormGroup.addControl('costBreakdownItems', new FormArray([createEmptyLineItemGroup()]));
+        component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
+      };
 
 
+      setUpControls();
 
-    setUpControls();
+      const testInvoice: InvoiceDataModel = new InvoiceDataModel();
+      const fileFormGroup = new FormGroup({});
+      component.invoiceAmountFormGroup.setControl('fileFormGroup', fileFormGroup);
 
-    const testInvoice: InvoiceDataModel = new InvoiceDataModel();
-    const fileFormGroup = new FormGroup({});
-    component.invoiceAmountFormGroup.setControl('fileFormGroup', fileFormGroup);
+      fileFormGroup.addControl('test', new FormControl(fileValue));
 
-    fileFormGroup.addControl('test',  new FormControl(fileValue));
+      spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(testInvoice));
+      spyOn(attachmentService, 'saveAccessorialAttachments').and.returnValue(of(true));
 
-    spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(testInvoice));
-    spyOn(attachmentService, 'saveAccessorialAttachments').and.returnValue(of(true));
+      component.updateInvoice();
 
-    component.updateInvoice();
-
-    expect(invoiceService.updateAutoInvoice).toHaveBeenCalled();
-    expect(attachmentService.saveAccessorialAttachments).toHaveBeenCalled();
+      expect(invoiceService.updateAutoInvoice).toHaveBeenCalled();
+      expect(attachmentService.saveAccessorialAttachments).toHaveBeenCalled();
     }
   );
 
@@ -353,42 +352,42 @@ describe('InvoiceEditPageComponent', () => {
       });
 
       it('handleFormIfInvalid with invoice-amount shoud update costBreakdownValid to false', fakeAsync(() => {
-        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_CL, value: false});
+        component.handleAmountComponentIfInvalid({form: component.INVOICE_AMOUNT_CL, value: false});
         tick();
         expect(component.costBreakdownValid).toEqual(false);
         flush();
       }));
 
       it('handleFormIfInvalid with invoice-amount shoud update costBreakdownValid to true', fakeAsync(() => {
-        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_CL, value: true});
+        component.handleAmountComponentIfInvalid({form: component.INVOICE_AMOUNT_CL, value: true});
         tick();
         expect(component.costBreakdownValid).toEqual(true);
         flush();
       }));
 
       it('handleFormIfInvalid with invoice-amount shoud update standardPaymentTermsOverrideValid to false', fakeAsync(() => {
-        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_PAYTERM, value: false});
+        component.handleAmountComponentIfInvalid({form: component.INVOICE_AMOUNT_PAYTERM, value: false});
         tick();
         expect(component.standardPaymentTermsOverrideValid).toEqual(false);
         flush();
       }));
 
       it('handleFormIfInvalid with invoice-amount shoud update standardPaymentTermsOverrideValid to true', fakeAsync(() => {
-        component.handleFormIfInvalid({form: component.INVOICE_AMOUNT_PAYTERM, value: true});
+        component.handleAmountComponentIfInvalid({form: component.INVOICE_AMOUNT_PAYTERM, value: true});
         tick();
         expect(component.standardPaymentTermsOverrideValid).toEqual(true);
         flush();
       }));
 
       it('handleFormIfInvalid with invoice-amount shoud update netAllocationAmountValid to false', fakeAsync(() => {
-        component.handleFormIfInvalid({form: component.INVOICE_ALLOCATION_FORM, value: false});
+        component.handleAllocationComponentIfInvalid({form: component.INVOICE_ALLOCATION_FORM, value: false});
         tick();
         expect(component.netAllocationAmountValid).toEqual(false);
         flush();
       }));
 
       it('handleFormIfInvalid with invoice-amount shoud update netAllocationAmountValid to true', fakeAsync(() => {
-        component.handleFormIfInvalid({form: component.INVOICE_ALLOCATION_FORM, value: true});
+        component.handleAllocationComponentIfInvalid({form: component.INVOICE_ALLOCATION_FORM, value: true});
         tick();
         expect(component.netAllocationAmountValid).toEqual(true);
         flush();
@@ -1072,7 +1071,7 @@ describe('InvoiceEditPageComponent', () => {
       const invoiceDataModel = new InvoiceDataModel();
       invoiceDataModel.falconInvoiceNumber = 'F0000005678';
       setUpControls();
-      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({ isPaymentOverrideSelected: ['override']}));
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({isPaymentOverrideSelected: ['override']}));
       spyOn(component, 'performSubmitAction');
       spyOn(utilService, 'openConfirmationModal');
       component.clickSubmitForApprovalButton();
@@ -1102,7 +1101,7 @@ describe('InvoiceEditPageComponent', () => {
       const invoiceDataModel = new InvoiceDataModel();
       invoiceDataModel.falconInvoiceNumber = 'F0000005678';
       setUpControls();
-      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({ isPaymentOverrideSelected: []}));
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({isPaymentOverrideSelected: []}));
       spyOn(component, 'performSubmitAction');
       spyOn(utilService, 'openConfirmationModal').and.returnValue(of(false));
       component.clickSubmitForApprovalButton();
@@ -1122,7 +1121,7 @@ describe('InvoiceEditPageComponent', () => {
       const invoiceDataModel = new InvoiceDataModel();
       invoiceDataModel.falconInvoiceNumber = 'F0000005678';
       setUpControls();
-      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({ isPaymentOverrideSelected: []}));
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({isPaymentOverrideSelected: []}));
       spyOn(component, 'performSubmitAction');
       spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
       component.clickSubmitForApprovalButton();
@@ -1532,7 +1531,7 @@ describe('InvoiceEditPageComponent', () => {
     const mockUpdateRequest$ = new Subject();
     spyOn(component, 'updateInvoiceFromForms').and.stub();
     spyOn(component, 'loadInvoice').and.stub();
-    asSpy(rateService.updateInvoice).and.returnValue(throwError({error: { error: { message: 'Test Error'}}}));
+    asSpy(rateService.updateInvoice).and.returnValue(throwError({error: {error: {message: 'Test Error'}}}));
     component.updateAndGetRates();
     mockUpdateRequest$.subscribe(() => {
       expect(component.updateInvoiceFromForms).toHaveBeenCalled();
@@ -1545,6 +1544,110 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(utilService, 'openHistoryLog').and.callThrough();
     component.viewHistoryLog();
     expect(utilService.openHistoryLog).toHaveBeenCalled();
+  });
+
+  describe('Save Button', () => {
+    beforeEach(() => {
+      component.invoice.hasRateEngineError = false;
+      component.otherSectionEditMode$.value = true;
+      component.tripInformationComponent.carrierDetailFound = true;
+      component.costBreakdownValid = true;
+      component.netAllocationAmountValid = true;
+      component.standardPaymentTermsOverrideValid = true;
+      component.invoice.payable = true;
+    });
+
+    it('should be disabled when there is a rate engine error', () => {
+      component.invoice.hasRateEngineError = true;
+      expect(component.isSaveButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled when specific section is being edited', () => {
+      component.otherSectionEditMode$.value = false;
+      expect(component.isSaveButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled when invoice is invalid', () => {
+      component.invoiceFormGroup.setErrors({"invalid": true});
+      expect(component.isSaveButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled when carrier details cannot be found', () => {
+      component.tripInformationComponent.carrierDetailFound = false;
+      expect(component.isSaveButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled if invoice is payable, but the allocation is invalid', () => {
+      component.invoice.payable = true;
+      component.netAllocationAmountValid = false;
+      expect(component.isSaveButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled if invoice is payable, but the cost breakdown is invalid', () => {
+      component.invoice.payable = true;
+      component.costBreakdownValid = false;
+      expect(component.isSaveButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled if invoice is payable, but the payment terms is invalid', () => {
+      component.invoice.payable = true;
+      component.standardPaymentTermsOverrideValid = false;
+      expect(component.isSaveButtonDisabled).toBeTrue();
+    });
+
+  });
+
+  describe('Submit For Approval Button', () => {
+    beforeEach(() => {
+      component.invoice.hasRateEngineError = false;
+      component.invoice.payable = true;
+      component.otherSectionEditMode$.value = true;
+      component.tripInformationComponent.carrierDetailFound = true;
+      component.costBreakdownValid = true;
+      component.netAllocationAmountValid = true;
+      component.standardPaymentTermsOverrideValid = true;
+    });
+
+    it('should be disabled when there is a rate engine error', () => {
+      component.invoice.hasRateEngineError = true;
+      expect(component.isSubmitForApprovalButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled when not payable', () => {
+      component.invoice.payable = false;
+      expect(component.isSubmitForApprovalButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled when specific section is being edited', () => {
+      component.otherSectionEditMode$.value = false;
+      expect(component.isSubmitForApprovalButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled when invoice is invalid', () => {
+      component.invoiceFormGroup.setErrors({"invalid": true});
+      expect(component.isSubmitForApprovalButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled when carrier details cannot be found', () => {
+      component.tripInformationComponent.carrierDetailFound = false;
+      expect(component.isSubmitForApprovalButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled if allocation is invalid', () => {
+      component.netAllocationAmountValid = false;
+      expect(component.isSubmitForApprovalButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled if cost breakdown is invalid', () => {
+      component.costBreakdownValid = false;
+      expect(component.isSubmitForApprovalButtonDisabled).toBeTrue();
+    });
+
+    it('should be disabled if payment terms is invalid', () => {
+      component.standardPaymentTermsOverrideValid = false;
+      expect(component.isSubmitForApprovalButtonDisabled).toBeTrue();
+    });
+
   });
 
 });

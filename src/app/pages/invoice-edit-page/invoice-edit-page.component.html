@@ -79,7 +79,7 @@
          [loadInvoiceAmountDetail$]="loadInvoiceAmountDetail$.asObservable()"
          [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
          [chargeLineItemOptions$]="chargeLineItemOptions$.asObservable()"
-         (invoiceAmountFormInvalid)="handleFormIfInvalid($event)"
+         (invoiceAmountFormInvalid)="handleAmountComponentIfInvalid($event)"
          (getAccessorialDetails)="getAccessorialList()"
          (rateEngineCall)="getRates()"
          (requestGlAllocation)="onGlAllocationRequestEvent($event)"
@@ -95,7 +95,7 @@
         [updateIsEditMode$]="otherSectionEditMode$.asObservable()"
         [loadAllocationDetails]="loadAllocationDetails$.asObservable()"
         [loadInvoiceOverviewDetail$]="loadInvoiceOverviewDetail$.asObservable()"
-        (allocationAmountInvalid)="handleFormIfInvalid($event)"
+        (allocationAmountInvalid)="handleAllocationComponentIfInvalid($event)"
         (editGlLineItemEvent)="handleEditGlLineItem($event)"
         >
         </app-invoice-allocation>
@@ -123,7 +123,7 @@
                         buttonType="button"
                         buttonStyle="secondary"
                         class="fake-form-control"
-                        [isDisabled]="invoice.hasRateEngineError || !otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound || ((!this.costBreakdownValid || !this.netAllocationAmountValid || !this.standardPaymentTermsOverrideValid) && invoice.payable)"
+                        [isDisabled]="isSaveButtonDisabled"
                         (buttonClick)="clickSaveButton()">
               Save
             </elm-button>
@@ -133,7 +133,7 @@
                         buttonType="button"
                         buttonStyle="primary"
                         class="fake-form-control"
-                        [isDisabled]="invoice.hasRateEngineError || !invoice.payable || !otherSectionEditMode$.value || !invoiceFormGroup.valid || !tripInformationComponent.carrierDetailFound || !this.costBreakdownValid || !this.netAllocationAmountValid || !this.standardPaymentTermsOverrideValid"
+                        [isDisabled]="isSubmitForApprovalButtonDisabled"
                         (buttonClick)="clickSubmitForApprovalButton()">
               Submit for Approval
             </elm-button>
