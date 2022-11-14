@@ -702,7 +702,7 @@
                         [padding]="'0 10px'"
                         id="dispute-accept-button"
                         [isDisabled]="readOnlyForm"
-                        (buttonClick)="resolveDispute('Accept')">
+                        (buttonClick)="resolveDispute('Accept', _)">
               <span>Accept</span>
             </elm-button>
             <elm-button buttonType="button"
@@ -710,7 +710,7 @@
                         [padding]="'0 10px'"
                         id="dispute-deny-button"
                         [isDisabled]="readOnlyForm"
-                        (buttonClick)="resolveDispute('Deny')">
+                        (buttonClick)="resolveDispute('Deny', _)">
               <span>Deny</span>
             </elm-button>
           </span>
