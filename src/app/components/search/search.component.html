@@ -2,7 +2,7 @@
   <form class="needs-validation" [formGroup]="controlGroup" (submit)="submit()" novalidate>
     <label for="searchInput">Find an Invoice (search all invoices)</label>
     <div class="input-group has-validation" style="width: 387px">
-      <elm-text-input id="searchInput" class="form-control"
+      <elm-text-input id="searchInput" class="form-control" [required]="false"
             formControlName="control" [maxLength]="255" [autocomplete]="false">
       </elm-text-input>
       <button type="submit"
@@ -10,7 +10,7 @@
         <span class="material-icons" [attr.aria-label]="label">search</span>
       </button>
     </div>
-    <span *ngIf="showHelperText()" class="fieldHelperText">{{label}}</span>
+    <span class="fieldHelperText">{{label}}</span>
     <span class="invalid-feedback elm-field-sub1">{{getErrorMessage()}}</span>
 
   </form>

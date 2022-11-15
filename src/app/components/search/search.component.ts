@@ -31,16 +31,12 @@ export class SearchComponent implements OnChanges {
   }
 
   showHelperText(): boolean {
-    return (!this.controlGroup.controls['control'].errors ||
-      (this.controlGroup.controls['control'].hasError('required') && !this.submitted));
+    return (!this.controlGroup.controls['control'].errors || !this.submitted);
   }
 
   getErrorMessage(): string | null {
     if (this.controlGroup.controls['control'].hasError('badID')) {
       return this.invalidIdMessage;
-    }
-    if (this.controlGroup.controls['control'].hasError('required') && this.submitted) {
-      return this.requiredMessage;
     }
     if (this.controlGroup.controls['control'].hasError('pattern')) {
       return this.patternMessage;
@@ -50,9 +46,11 @@ export class SearchComponent implements OnChanges {
 
   submit(): void {
     this.submitted = true;
-    if (this.controlGroup.valid && this.controlGroup.dirty) {
-      this.submitEvent.emit(this.controlGroup.controls['control'].value);
+    let searchInputValue = this.controlGroup.controls['control']?.value ? this.controlGroup.controls['control']?.value?.trim() : null;
+    if (!searchInputValue) {
+      this.controlGroup.controls['control'].reset();
     }
+    this.submitEvent.emit(searchInputValue);
   }
 
   clear(): void {
