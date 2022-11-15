@@ -3,7 +3,9 @@
     <!--Invoice amount div starts-->
     <div class="col-3 headline2">
       Invoice Amount
-      <span *ngIf="!readOnlyForm"> (Edit Mode)</span>
+      <span *ngIf="!readOnlyForm">(Edit Mode)</span>
+       <mat-icon *ngIf="isSpotQuote" class="error-text warning-icon">warning</mat-icon>
+       <span *ngIf="isSpotQuote"  class="error-text">(Spot Quote)</span>
     </div>
     <!-- Re-rate Invoice -->
     <div class="col-2 d-flex justify-content-end re-rate-button">
@@ -11,7 +13,7 @@
                   buttonType="button"
                   buttonStyle="primary"
                   class="flex-shrink-1"
-                  [isDisabled]="readOnlyForm || isMakingRateCall"
+                  [isDisabled]="readOnlyForm || isMakingRateCall || !!isSpotQuote"
                   (buttonClick)="rateEngineCall.emit('')">
         {{isMakingRateCall ? 'Rating...' : 'Re-Rate'}}
       </elm-button>

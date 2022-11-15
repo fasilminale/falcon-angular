@@ -192,7 +192,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       carrier: `${invoice.carrier?.scac} (${invoice.carrier?.name})`,
       carrierMode: `${invoice.mode?.reportKeyMode} (${invoice.mode?.reportModeDescription})`,
       freightPaymentTerms: invoice.freightPaymentTerms,
-      remitHistory: invoice.remitHistory
+      remitHistory: invoice.remitHistory,
+      isSpotQuote: invoice.isSpotQuotePresent
     });
 
     this.loadInvoiceAmountDetail$.next({
@@ -284,11 +285,34 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   }
 
   clickToggleEditMode(): void {
+    if(this.invoice.isSpotQuotePresent){
+      this.confirmSpotQuote().subscribe(result => {
+        if (result) {
+          this.toggleEditMode()
+        }
+      });
+    } else {
+      this.toggleEditMode()
+    }
+  }
+
+  private toggleEditMode(): void {
     this.isGlobalEditMode$.value = !this.isGlobalEditMode$.value;
     this.isTripEditMode$.value = true;
     this.showEditInfoBanner = this.isGlobalEditMode$.value;
     this.otherSectionEditMode$.value = true;
     this.invoiceFormGroup.markAsPristine();
+  }
+
+  public confirmSpotQuote(): Observable<boolean> {
+    return this.util.openConfirmationModal({
+      title: 'Warning!  Spot Quote',
+      innerHtmlMessage: `This is an invoice with Spot Quote.
+                   Are you sure you want to continue to Edit?
+                  `,
+      confirmButtonText: 'YES, CONTINUE',
+      cancelButtonText: 'CANCEL'
+    });
   }
 
   clickToggleMilestoneTab(): void {
@@ -501,7 +525,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   performPostUpdateActions(successMessage: string): void {
     window.scrollTo({top: 0, behavior: 'smooth'});
     this.ngOnInit();
-    this.clickToggleEditMode();
+    this.toggleEditMode();
     this.toastService.openSuccessToast(successMessage);
   }
 
@@ -685,7 +709,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
    *  Rate management is not called if checkAccessorialData() returns false,indicating required data is missing.
    */
   getAccessorialList(): void {
-    if (this.checkAccessorialData(this.invoice)) {
+    if (this.invoice.isSpotQuotePresent ||this.checkAccessorialData(this.invoice)) {
       const request: RateEngineRequest = this.createRequest('');
       this.subscriptions.add(
         this.rateService.getAccessorialDetails(request).subscribe(result => this.chargeLineItemOptions$.next(result))
@@ -711,13 +735,14 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
    */
   getRates(): void {
     this.updateInvoiceFromForms();
-    if (this.checkAccessorialData(this.invoice) && this.invoice.payable) {
+    if (this.invoice.isSpotQuotePresent || (this.checkAccessorialData(this.invoice) && this.invoice.payable)) {
       this.rateCallCounter++;
       this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => this.loadReRate(ratedInvoiced),
         error => this.showErrorReRate(error)
       );
     }
+
   }
 
   loadReRate(invoice: InvoiceDataModel): void {
