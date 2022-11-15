@@ -62,7 +62,10 @@ export class InvoiceAmountComponent implements OnInit {
   @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
     this.loadInvoiceOverviewDetailSubscription.unsubscribe();
     this.loadInvoiceOverviewDetailSubscription = observable.subscribe(
-      invoiceOverviewDetail => this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID'
+      invoiceOverviewDetail => {
+        this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID';
+        this.isSpotQuote = invoiceOverviewDetail.isSpotQuote;
+      }
     );
   }
 
@@ -170,6 +173,7 @@ export class InvoiceAmountComponent implements OnInit {
   @Output() invoiceAmountFormInvalid = new EventEmitter<any>();
   isValidCostBreakdownAmount = true;
   isPrepaid?: boolean;
+  isSpotQuote?: boolean;
 
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
@@ -363,7 +367,7 @@ export class InvoiceAmountComponent implements OnInit {
 
   async onAddChargeButtonClick(): Promise<void> {
     let attachment;
-    if (this.costBreakdownOptions$.value.length === 0) {
+    if (!this.isSpotQuote && this.costBreakdownOptions$.value.length === 0) {
       this.getAccessorialDetails.emit();
       // if we need to get the details, then we should wait until they are populated
       await this.costBreakdownOptions$.asObservable().pipe(first()).toPromise();

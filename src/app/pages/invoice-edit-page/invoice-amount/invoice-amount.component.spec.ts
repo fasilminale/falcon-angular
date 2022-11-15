@@ -801,6 +801,26 @@ describe('InvoiceAmountComponent', () => {
     expect(component.fileFormGroup.addControl).toHaveBeenCalledTimes(1);
   });
 
+  it('should call onAddChargeButtonClick and not call getAccessorialDetails if invoice has spot quote.', async () => {
+    component.isSpotQuote = true;
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
+      uid: 'OTHER1',
+      selected: OTHER_CALC_DETAIL,
+      comment: 'some comment'
+    }));
+    spyOn(component.fileFormGroup, 'removeControl').and.stub();
+    spyOn(component.fileFormGroup, 'addControl').and.stub();
+    spyOn(component.rateEngineCall, 'emit').and.stub();
+    const originalCostLineItemCount = component.costBreakdownItems.length;
+    const promise = component.onAddChargeButtonClick();
+    // simulate returning empty accessorial details
+    component.costBreakdownOptions$.value = [];
+    await promise;
+    expect(component.getAccessorialDetails.emit).toHaveBeenCalledTimes(0);
+
+  });
+
   it('should call onAddChargeButtonClick and select accessorial charge', async () => {
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
     spyOn(utilService, 'openNewChargeModal').and.returnValue(of({
