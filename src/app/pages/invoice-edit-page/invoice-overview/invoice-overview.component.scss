@@ -12,6 +12,13 @@
   cursor: pointer;
 }
 
+.warning-icon {
+  vertical-align: text-top;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+
 .remittance-info-div > div{
    border-bottom: 1px solid #ccc;
 }
@@ -24,6 +31,10 @@
 .value-text {
     font-size: 14px;
     color: #333333
+}
+
+.error-text {
+  color: colors.$red;
 }
 
 .return-to-domicile {

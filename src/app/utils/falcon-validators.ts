@@ -1,8 +1,8 @@
 import {AbstractControl, ValidationErrors, Validators} from '@angular/forms';
 
-export const ALPHA_NUMERIC_REGEX = /^\w*$/;
+export const ALPHA_NUMERIC_REGEX = /^[a-zA-Z0-9]*$/;
 
-export const validateAlphanumeric = Validators.pattern(ALPHA_NUMERIC_REGEX);
+export const validateAlphanumeric = Validators.pattern(ALPHA_NUMERIC_REGEX) ;
 
 export class CustomValidators {
     static requiredNonNA(control: AbstractControl): ValidationErrors | null {

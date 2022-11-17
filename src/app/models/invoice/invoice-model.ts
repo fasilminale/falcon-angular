@@ -97,6 +97,7 @@ export class InvoiceDataModel {
   refreshMasterDataStatus: string;
   historyLogs: Array<HistoryLog>;
   returnToDomicile: boolean;
+  isSpotQuotePresent: boolean;
 
   /* --- AUTOMATED INVOICE: COST BREAKDOWN FIELDS --- */
   deliveryInstructions: Array<string>;
@@ -208,6 +209,7 @@ export class InvoiceDataModel {
     this.weightAdjustments = json?.weightAdjustmentst ?? [];
     this.refreshMasterDataStatus = json?.refreshMasterDataStatus  ?? 'NOT_REFRESHED';
     this.historyLogs = json?.historyLogs ?? [];
+    this.isSpotQuotePresent = json?.isSpotQuotePresent;
 
     // AUTOMATED INVOICE: COST BREAKDOWN
     this.deliveryInstructions = json?.deliveryInstructions ?? [];
