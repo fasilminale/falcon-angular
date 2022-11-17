@@ -30,6 +30,7 @@
         <label [for]="vcName + 'Input'"
                class="fal-label">
           {{vcName}}
+          <span *ngIf="vcName !== 'Amount' && variableControls.get(vcName)?.invalid ?? false" class="input-error">Enter Total Amount / Quantity</span>
         </label>
         <app-fal-currency-input *ngIf="vcName === 'Amount'"
                                 [id]="vcName + 'Input'"
