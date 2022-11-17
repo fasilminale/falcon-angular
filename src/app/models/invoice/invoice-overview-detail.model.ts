@@ -11,6 +11,7 @@ export interface InvoiceOverviewDetail {
     carrierMode?:string;
     businessUnit?: string;
     remitHistory?: Array<RemitHistoryItem>;
+    isSpotQuote?: boolean
     returnToDomicile?: boolean;
 }
 

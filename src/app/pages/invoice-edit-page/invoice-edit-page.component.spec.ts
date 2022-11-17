@@ -321,6 +321,15 @@ describe('InvoiceEditPageComponent', () => {
         component.getAccessorialList();
         expect(rateService.getAccessorialDetails).toHaveBeenCalled();
       });
+      it('getAccessorialList should call rate engine if invoice has spot quote and bad accessorial data', () => {
+        component.invoice = testInvoice
+        // @ts-ignore
+        component.invoice.mode.mode = null;
+        component.invoice.isSpotQuotePresent = true;
+        component.getAccessorialList();
+        expect(rateService.getAccessorialDetails).toHaveBeenCalled();
+       // component.invoice = testInvoice;
+      });
       it('getAccessorialList should not call rate engine', () => {
         component.invoice = testInvoice;
         component.getAccessorialList();
@@ -349,6 +358,14 @@ describe('InvoiceEditPageComponent', () => {
         component.invoice = testInvoice;
         component.getRates();
         expect(rateService.rateInvoice).not.toHaveBeenCalled();
+      });
+
+      it('#clickToggleEditMode should toggle isGlobalEditMode when has Spot Quote and modal confirmed.$', () => {
+        spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
+        const initialValue = component.isGlobalEditMode$.value;
+        component.invoice.isSpotQuotePresent = true;
+        component.clickToggleEditMode();
+        expect(component.isGlobalEditMode$.value).toEqual(!initialValue);
       });
 
       it('handleFormIfInvalid with invoice-amount shoud update costBreakdownValid to false', fakeAsync(() => {

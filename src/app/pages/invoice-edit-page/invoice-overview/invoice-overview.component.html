@@ -48,6 +48,10 @@
                 <div class="col invoice-info">
                     <span class="label-text">Carrier</span>
                     <span class="value-text">{{invoiceOverviewDetail?.carrier ? invoiceOverviewDetail?.carrier : 'N/A'}}</span>
+                    <div *ngIf="invoiceOverviewDetail?.isSpotQuote" style="float:left;">
+                        <span class="material-icons error-text warning-icon">warning</span>
+                        <span  class="error-text">(Spot Quote)</span>
+                      </div>
                 </div>
                 <div class="col invoice-info">
                     <span class="label-text">Carrier Mode</span>
