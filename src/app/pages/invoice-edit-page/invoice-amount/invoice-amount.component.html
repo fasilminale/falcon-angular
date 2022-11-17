@@ -619,7 +619,7 @@
       <div *ngIf="!readOnlyForm" class="col-2">Actions</div>
     </div>
     <ng-container *ngIf="disputeLineItemControls && disputeLineItemControls.length > 0 && isPrepaid">
-      <div *ngFor="let _ of disputeLineItemControls; index as i"
+      <div *ngFor="let disputeLineItem of disputeLineItemControls; index as i"
            class="row dispute-item-row"
            [formGroupName]="i">
 
@@ -638,7 +638,7 @@
                       buttonType="button"
                       buttonStyle="text"
                       class="flex-shrink-1"
-                      *ngIf="_.get('attachment')?.value?.url"
+                      *ngIf="disputeLineItem.get('attachment')?.value?.url"
                       (click)="downloadAttachment(_.get('attachment')?.value?.url)">
             <div class="material-icons download-icon"
                  (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download
@@ -649,24 +649,24 @@
 
         <!-- Dispute Line Item - Created Date -->
         <div class="col-1">
-          {{_.value.createdDate | date: dateFormat}}
+          {{disputeLineItem.value.createdDate | date: dateFormat}}
         </div>
 
         <!-- Dispute Line Item - Created By -->
         <div class="col-1 dispute-item-row">
-          <span *ngIf="_.value.createdBy?.length > ellipsisPipeLimit"
+          <span *ngIf="disputeLineItem.value.createdBy?.length > ellipsisPipeLimit"
                 [matTooltipPosition]="'below'"
-                [matTooltip]="_.value.createdBy"
+                [matTooltip]="disputeLineItem.value.createdBy"
                 [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
                 matTooltipClass="newLine">{{_.value.createdBy | ellipsisPipe:ellipsisPipeLimit}}</span>
-          <span *ngIf="_.value.createdBy?.length <= ellipsisPipeLimit">
-            {{_.value.createdBy || 'N/A'}}
+          <span *ngIf="disputeLineItem.value.createdBy?.length <= ellipsisPipeLimit">
+            {{disputeLineItem.value.createdBy || 'N/A'}}
           </span>
         </div>
 
         <!-- Dispute Line Item - Response Status -->
         <div class="col-1">
-          {{_.value.disputeStatus?.label || 'N/A'}}
+          {{disputeLineItem.value.disputeStatus?.label || 'N/A'}}
         </div>
 
         <!-- Dispute Line Item - Response Comment -->
@@ -685,24 +685,24 @@
 
         <!-- Dispute Line Item - Closed By -->
         <div class="col-1">
-          <span *ngIf="_.value.closedBy?.length > ellipsisPipeLimit"
+          <span *ngIf="disputeLineItem.value.closedBy?.length > ellipsisPipeLimit"
                 [matTooltipPosition]="'below'"
-                [matTooltip]="_.value.closedBy"
+                [matTooltip]="disputeLineItem.value.closedBy"
                 [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
                 matTooltipClass="newLine">{{_.value.closedBy | ellipsisPipe:ellipsisPipeLimit}}</span>
-          <span *ngIf="_.value.closedBy?.length <= ellipsisPipeLimit">
+          <span *ngIf="disputeLineItem.value.closedBy?.length <= ellipsisPipeLimit">
             {{_.value.closedBy || 'N/A'}}
           </span>
         </div>
 
         <div *ngIf="!readOnlyForm" class="col-2">
-          <span *ngIf="_.value.disputeStatus.key === 'OPEN'">
+          <span *ngIf="disputeLineItem.value.disputeStatus.key === 'OPEN'">
             <elm-button buttonType="button"
                         buttonStyle="text"
                         [padding]="'0 10px'"
                         id="dispute-accept-button"
                         [isDisabled]="readOnlyForm"
-                        (buttonClick)="resolveDispute('Accept')">
+                        (buttonClick)="resolveDispute('Accept', disputeLineItem)">
               <span>Accept</span>
             </elm-button>
             <elm-button buttonType="button"
@@ -710,7 +710,7 @@
                         [padding]="'0 10px'"
                         id="dispute-deny-button"
                         [isDisabled]="readOnlyForm"
-                        (buttonClick)="resolveDispute('Deny')">
+                        (buttonClick)="resolveDispute('Deny', disputeLineItem)">
               <span>Deny</span>
             </elm-button>
           </span>
