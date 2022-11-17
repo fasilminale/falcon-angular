@@ -18,6 +18,7 @@ import {
   FalEditChargeModalComponent,
   NewChargeModalOutput
 } from '../../../components/fal-edit-charge-modal/fal-edit-charge-modal.component';
+import {asSpy} from '../../../testing/test-utils.spec';
 
 describe('InvoiceAmountComponent', () => {
 
@@ -698,11 +699,42 @@ describe('InvoiceAmountComponent', () => {
   });
 
   describe('resolve dispute', () => {
-    it('should emit call to resolve dispute', () => {
-      const resolveDisputeEmitter = spyOn(component.resolveDisputeCall, 'emit');
-      const action = 'Accept';
-      component.resolveDispute(action);
-      expect(resolveDisputeEmitter).toHaveBeenCalledWith(action);
+    beforeEach(() => {
+      spyOn(utilService, 'openCommentModal').and.returnValue(of({comment: 'comment'}));
+    });
+
+    it('resolve dispute accept action', done => {
+      // Setup
+      const disputeLineItem = new FormGroup({})
+      const resolveDisputeModal$ = new Subject<CommentModel>();
+      asSpy(utilService.openCommentModal).and.returnValue(resolveDisputeModal$.asObservable());
+      component.resolveDispute('Accept', disputeLineItem);
+
+      // Assertions
+      resolveDisputeModal$.subscribe(() => {
+        expect(utilService.openCommentModal).toHaveBeenCalled();
+        done();
+      });
+
+      // Run Test
+      resolveDisputeModal$.next({comment: 'comments'}, );
+    });
+
+    it('resolve dispute deny action', done => {
+      // Setup
+      const disputeLineItem = new FormGroup({})
+      const resolveDisputeModal$ = new Subject<CommentModel>();
+      asSpy(utilService.openCommentModal).and.returnValue(resolveDisputeModal$.asObservable());
+      component.resolveDispute('Deny', disputeLineItem);
+
+      // Assertions
+      resolveDisputeModal$.subscribe(() => {
+        expect(utilService.openCommentModal).toHaveBeenCalled();
+        done();
+      });
+
+      // Run Test
+      resolveDisputeModal$.next({comment: ''});
     });
   });
 

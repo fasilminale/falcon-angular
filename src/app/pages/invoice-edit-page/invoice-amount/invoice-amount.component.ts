@@ -384,7 +384,6 @@ export class InvoiceAmountComponent implements OnInit {
       newLineItemGroup.get('requestStatusPair')?.setValue({key: 'ACCEPTED', label: 'Accepted'});
       newLineItemGroup.get('createdBy')?.setValue(this.userInfo?.email);
 
-      console.log(this.costBreakdownItemsControls);
       if ('OTHER' === modalResponse.selected.name) {
         const variables = modalResponse.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);
@@ -662,8 +661,30 @@ export class InvoiceAmountComponent implements OnInit {
       || chargeValue === opt.label;
   }
 
-  resolveDispute(action: string): void {
-    this.resolveDisputeCall.emit(action);
+  resolveDispute(action: string, disputeLineItem: any): void {
+    const dialogResult: Observable<any> =
+      this.utilService.openCommentModal({
+        title: `${action} Dispute`,
+        innerHtmlMessage: `Are you sure you want to ${action.toLowerCase()} this dispute?
+               <br/><br/><strong>This action cannot be undone.</strong>`,
+        confirmButtonText: `${action} Dispute`,
+        confirmButtonStyle: 'primary',
+        cancelButtonText: 'Cancel',
+        commentSectionFieldName: 'Response Comment',
+        requireField: action === 'Deny'
+      });
+    dialogResult.subscribe(result => {
+      if (result) {
+        disputeLineItem.patchValue({
+          closedBy: this.userInfo?.email,
+          closedDate: new Date().toISOString(),
+          responseComment: result.comment || 'N/A',
+          disputeStatus: action === 'Accept' ? {key:'ACCEPTED', label: 'Accepted'}
+            : {key:'DENIED', label: 'Denied'}
+        });
+        this.toastService.openSuccessToast(`Success, dispute was closed.`);
+      }
+    });
   }
 
   public downloadAttachment(url: string): void {

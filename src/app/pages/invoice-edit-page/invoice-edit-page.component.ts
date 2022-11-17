@@ -251,36 +251,6 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  public disputeAction(action: string): void {
-    const dialogResult: Observable<any> =
-      this.util.openCommentModal({
-        title: `${action} Dispute`,
-        innerHtmlMessage: `Are you sure you want to ${action.toLowerCase()} this dispute?
-               <br/><br/><strong>This action cannot be undone.</strong>`,
-        confirmButtonText: `${action} Dispute`,
-        confirmButtonStyle: 'primary',
-        cancelButtonText: 'Cancel',
-        commentSectionFieldName: 'Response Comment',
-        requireField: action === 'Deny'
-      });
-    dialogResult.subscribe(result => {
-      if (result) {
-        const request = this.resolveDispute(
-          {action: action === 'Deny' ? 'DENIED' : 'ACCEPTED', comment: result.comment, userId: this.userInfo?.email}
-        );
-        request.subscribe(
-          (invoice: InvoiceDataModel) => {
-            this.toastService.openSuccessToast(`Success, dispute was closed.`);
-            this.loadInvoice(invoice);
-          },
-          () => this.toastService.openErrorToast(
-            `Failure, dispute was not closed.`
-          )
-        );
-      }
-    });
-  }
-
   clickCloseBanner(): void {
     this.showEditInfoBanner = false;
   }
@@ -784,10 +754,6 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   private deleteInvoiceWithReason(deletedReasonParameters: any): Observable<any> {
     return this.invoiceService.deleteInvoiceWithReason(this.falconInvoiceNumber, deletedReasonParameters);
-  }
-
-  private resolveDispute(disputeParameters: any): Observable<any> {
-    return this.invoiceService.resolveDispute(this.falconInvoiceNumber, disputeParameters);
   }
 
   get isSaveButtonDisabled(): boolean {
