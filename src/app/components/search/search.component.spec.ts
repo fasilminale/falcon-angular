@@ -33,14 +33,6 @@ describe('SearchComponent', () => {
   });
 
   describe('submit', () => {
-    it( 'Should get the correct error message when required field not provided', () => {
-    component.submitted = true;
-    document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
-    fixture.detectChanges();
-    expect(component.controlGroup.controls['control'].hasError('required')).toBeTrue();
-    expect(component.getErrorMessage()).toEqual(component.requiredMessage);
-    });
-
     describe('when type invoiceID,', () => {
       it( 'Should error when field contains values other than alpha numeric and - and  _', () => {
         component.controlGroup.controls['control'].setValue('D@560000001');
