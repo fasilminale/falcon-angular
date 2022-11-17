@@ -13,6 +13,27 @@
   opacity: 0.65;
 }
 
+.return-to-domicile {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.return-to-domicile-icon {
+  color: colors.$red;
+  margin-left: 8px;
+}
+
+.return-to-domicile-tooltip {
+  margin-left: 8px;
+  vertical-align: text-top;
+}
+
+.return-to-domicile-text {
+  color: colors.$red;
+  margin-left: 8px;
+}
+
 .border-radius-5 {
   border-radius: 5px;
 }

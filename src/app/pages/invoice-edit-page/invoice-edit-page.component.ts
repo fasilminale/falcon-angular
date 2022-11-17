@@ -192,7 +192,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       carrier: `${invoice.carrier?.scac} (${invoice.carrier?.name})`,
       carrierMode: `${invoice.mode?.reportKeyMode} (${invoice.mode?.reportModeDescription})`,
       freightPaymentTerms: invoice.freightPaymentTerms,
-      remitHistory: invoice.remitHistory
+      remitHistory: invoice.remitHistory,
+      returnToDomicile: invoice.returnToDomicile
     });
 
     this.loadInvoiceAmountDetail$.next({
@@ -204,7 +205,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       amountOfInvoice: invoice.amountOfInvoice,
       mileage: invoice.distance,
       currency: invoice.currency,
-      standardPaymentTermsOverride: invoice.standardPaymentTermsOverride
+      standardPaymentTermsOverride: invoice.standardPaymentTermsOverride,
+      returnToDomicile: invoice.returnToDomicile
     });
 
     this.loadAllocationDetails$.next({

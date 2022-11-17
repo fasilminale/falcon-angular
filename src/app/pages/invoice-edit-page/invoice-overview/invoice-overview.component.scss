@@ -1,3 +1,5 @@
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
+
 .invoice-info {
     display:flex;
     flex-direction: column;
@@ -22,6 +24,18 @@
 .value-text {
     font-size: 14px;
     color: #333333
+}
+
+.return-to-domicile {
+  font-size: 14px;
+  color: colors.$red;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.return-to-domicile-text {
+  margin-left: 8px;
 }
 
 .font-20 {

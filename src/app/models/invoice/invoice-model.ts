@@ -95,6 +95,7 @@ export class InvoiceDataModel {
   weightAdjustments: Array<WeightAdjustment>;
   refreshMasterDataStatus: string;
   historyLogs: Array<HistoryLog>;
+  returnToDomicile: boolean;
 
   /* --- AUTOMATED INVOICE: COST BREAKDOWN FIELDS --- */
   deliveryInstructions: Array<string>;
@@ -136,6 +137,7 @@ export class InvoiceDataModel {
     this.deleted = !!json?.deleted;
     this.failedToCreate = !!json?.failedToCreate;
     this.payable = !!json?.payable;
+    this.returnToDomicile = !!json?.returnToDomicile;
 
     // MANUAL INVOICE
     this.workType = json?.workType ?? '';

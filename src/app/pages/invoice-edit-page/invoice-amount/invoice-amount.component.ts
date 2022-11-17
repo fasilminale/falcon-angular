@@ -62,7 +62,10 @@ export class InvoiceAmountComponent implements OnInit {
   @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
     this.loadInvoiceOverviewDetailSubscription.unsubscribe();
     this.loadInvoiceOverviewDetailSubscription = observable.subscribe(
-      invoiceOverviewDetail => this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID'
+      invoiceOverviewDetail => {
+        this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID';
+        this.isReturnToDomicile = invoiceOverviewDetail.returnToDomicile === true;
+      }
     );
   }
 
@@ -170,6 +173,7 @@ export class InvoiceAmountComponent implements OnInit {
   @Output() invoiceAmountFormInvalid = new EventEmitter<any>();
   isValidCostBreakdownAmount = true;
   isPrepaid?: boolean;
+  isReturnToDomicile?: boolean;
 
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},

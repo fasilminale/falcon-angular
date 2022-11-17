@@ -350,7 +350,8 @@ describe('InvoiceAmountComponent', () => {
         ],
         deletedChargeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
-        mileage: '100'
+        mileage: '100',
+        returnToDomicile: false
       });
     });
 
@@ -495,7 +496,8 @@ describe('InvoiceAmountComponent', () => {
         disputeLineItems: [],
         deletedChargeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
-        mileage: '100'
+        mileage: '100',
+        returnToDomicile: false
       });
       expect(component.overridePaymentTermsFormGroup.controls.paymentTerms.value).toEqual('TestTerms');
       component.isPaymentOverrideSelected.at(0).setValue(null);
@@ -559,7 +561,8 @@ describe('InvoiceAmountComponent', () => {
         disputeLineItems: [],
         deletedChargeLineItems: [],
         standardPaymentTermsOverride: 'TestTerms',
-        mileage: '100'
+        mileage: '100',
+        returnToDomicile: false
       });
       expect(component.overridePaymentTermsFormGroup.controls.paymentTerms.value).toEqual('TestTerms');
       component.isPaymentOverrideSelected.clear();
