@@ -31,7 +31,7 @@ export class SearchComponent implements OnChanges {
   }
 
   showHelperText(): boolean {
-    return (!this.controlGroup.controls['control'].errors || !this.submitted);
+    return (!this.controlGroup.controls['control'].errors ||!this.submitted);
   }
 
   getErrorMessage(): string | null {
