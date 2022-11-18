@@ -65,6 +65,7 @@ export class InvoiceAmountComponent implements OnInit {
       invoiceOverviewDetail => {
         this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID';
         this.isSpotQuote = invoiceOverviewDetail.isSpotQuote;
+        this.isReturnToDomicile = invoiceOverviewDetail.returnToDomicile === true;
       }
     );
   }
@@ -174,6 +175,7 @@ export class InvoiceAmountComponent implements OnInit {
   isValidCostBreakdownAmount = true;
   isPrepaid?: boolean;
   isSpotQuote?: boolean;
+  isReturnToDomicile?: boolean;
 
   public paymentTermOptions: Array<FalRadioOption> = [
     {value: 'Z000', display: 'Pay Immediately'},
@@ -384,6 +386,7 @@ export class InvoiceAmountComponent implements OnInit {
       newLineItemGroup.get('requestStatusPair')?.setValue({key: 'ACCEPTED', label: 'Accepted'});
       newLineItemGroup.get('createdBy')?.setValue(this.userInfo?.email);
 
+      console.log(this.costBreakdownItemsControls);
       if ('OTHER' === modalResponse.selected.name) {
         const variables = modalResponse.selected.variables ?? [];
         newLineItemGroup.get('totalAmount')?.setValue(variables[0]?.quantity);

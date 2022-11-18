@@ -12,6 +12,7 @@ export interface InvoiceOverviewDetail {
     businessUnit?: string;
     remitHistory?: Array<RemitHistoryItem>;
     isSpotQuote?: boolean
+    returnToDomicile?: boolean;
 }
 
 export interface RemittanceInformation {

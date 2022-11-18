@@ -10,4 +10,5 @@ export interface InvoiceAmountDetail {
     currency: string;
     standardPaymentTermsOverride: string;
     mileage: string;
+    returnToDomicile: boolean;
 }

@@ -42,8 +42,6 @@
                         <ng-template #defaultDiv>
                             N/A
                         </ng-template>
-
-
                     </span>
                 </div>
 
@@ -58,13 +56,19 @@
                 <div class="col invoice-info">
                     <span class="label-text">Carrier Mode</span>
                     <span class="value-text">{{invoiceOverviewDetail?.carrierMode ? invoiceOverviewDetail?.carrierMode: 'N/A'}}</span>
-                </div>
+                    <ng-container *ngIf="invoiceOverviewDetail?.returnToDomicile">
+                      <span class="return-to-domicile">
+                        <mat-icon class="warning-icon">warning</mat-icon>
+                        <span class="return-to-domicile-text">(Return To Domicile)</span>
+                      </span>
+                      </ng-container>
+                    </div>
                 <div class="col invoice-info">
                     <span class="label-text">Business Unit</span>
                     <span class="value-text">{{invoiceOverviewDetail?.businessUnit ? invoiceOverviewDetail?.businessUnit : 'N/A'}}</span>
                 </div>
             </div>
-        </div>
+          </div>
         <div class="col-md-5 col-lg-5 col-xl-5">
             <div class="d-flex justify-content-between mb-3">
               <div>

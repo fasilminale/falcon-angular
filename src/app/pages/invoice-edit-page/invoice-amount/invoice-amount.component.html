@@ -1,5 +1,5 @@
 <div [formGroup]="_formGroup">
-  <div class="row px-1 justify-content-between">
+  <div class="row px-1 justify-content-start">
     <!--Invoice amount div starts-->
     <div class="col-3 headline2">
       Invoice Amount
@@ -7,8 +7,18 @@
        <mat-icon *ngIf="isSpotQuote" class="error-text warning-icon">warning</mat-icon>
        <span *ngIf="isSpotQuote"  class="error-text">(Spot Quote)</span>
     </div>
+    <div class="col-2 d-flex align-items-center" *ngIf="isReturnToDomicile">
+        <span class="return-to-domicile">
+          <mat-icon class="return-to-domicile-icon">warning</mat-icon>
+          <span class="return-to-domicile-text">(Return To Domicile)</span>
+        </span>
+      <app-info-icon-tooltip
+        class="return-to-domicile-tooltip"
+        [fontSize]="'20px'"
+        [tooltipMessage]="'Carrier to return back to the ORIGIN location'"></app-info-icon-tooltip>
+    </div>
     <!-- Re-rate Invoice -->
-    <div class="col-2 d-flex justify-content-end re-rate-button">
+    <div class="col-7 d-flex justify-content-end re-rate-button">
       <elm-button id="re-rate-button"
                   buttonType="button"
                   buttonStyle="primary"
