@@ -1,8 +1,8 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {SearchComponent} from './search.component';
-import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import { InputsModule } from '@elm/elm-styleguide-ui';
+import {InputsModule} from '@elm/elm-styleguide-ui';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -17,7 +17,7 @@ describe('SearchComponent', () => {
         InputsModule
       ],
       declarations: [SearchComponent],
-      providers:[FormBuilder]
+      providers: [FormBuilder]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SearchComponent);
@@ -34,7 +34,7 @@ describe('SearchComponent', () => {
 
   describe('submit', () => {
     describe('when type invoiceID,', () => {
-      it( 'Should error when field contains values other than alpha numeric and - and  _', () => {
+      it('Should error when field contains values other than alpha numeric and - and  _', () => {
         component.controlGroup.controls['control'].setValue('D@560000001');
         document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
         fixture.detectChanges();
@@ -42,21 +42,21 @@ describe('SearchComponent', () => {
         expect(component.getErrorMessage()).toEqual(component.patternMessage);
       });
 
-      it( 'Should not error when field contains only alpha numeric values', () => {
+      it('Should not error when field contains only alpha numeric values', () => {
         component.controlGroup.controls['control'].setValue('D560000001');
         document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
         fixture.detectChanges();
         expect(component.controlGroup.controls['control'].hasError('pattern')).toBeFalse();
       });
 
-      it( 'Should not error when field contains only alpha numeric values and -', () => {
+      it('Should not error when field contains only alpha numeric values and -', () => {
         component.controlGroup.controls['control'].setValue('D-560000001');
         document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
         fixture.detectChanges();
         expect(component.controlGroup.controls['control'].hasError('pattern')).toBeFalse();
       });
 
-      it( 'Should not error when field contains only alpha numeric values and _', () => {
+      it('Should not error when field contains only alpha numeric values and _', () => {
         component.controlGroup.controls['control'].setValue('D_560000001');
         document.querySelector('button')?.dispatchEvent(new MouseEvent('click'));
         fixture.detectChanges();
@@ -65,7 +65,7 @@ describe('SearchComponent', () => {
     });
 
     describe('when not invoice found,', () => {
-      it( 'Should error when no invoice found', () => {
+      it('Should error when no invoice found', () => {
         component.totalResults = 0;
         component.submitted = true;
         component.ngOnChanges();
@@ -73,7 +73,7 @@ describe('SearchComponent', () => {
         expect(component.getErrorMessage()).toEqual(component.invalidIdMessage);
       });
 
-      it( 'Should show no error when invoice found', () => {
+      it('Should show no error when invoice found', () => {
         component.totalResults = 10;
         component.submitted = true;
         component.ngOnChanges();
@@ -85,22 +85,40 @@ describe('SearchComponent', () => {
     describe('Emit event', () => {
       it('should emit an event with the search value', () => {
         const emit = spyOn(component.submitEvent, 'emit');
-        component.controlGroup.controls['control'].setValue('F0000000001');
+        component.controlGroup.controls['control'].setValue(' F0000000001  ');
         component.controlGroup.markAsDirty();
         fixture.detectChanges();
         component.submit();
         expect(emit).toHaveBeenCalledWith('F0000000001' as any);
       });
-    })
+
+      it('should still emit when missing control', () => {
+        const emit = spyOn(component.submitEvent, 'emit');
+        // force control to be null
+        component.controlGroup.addControl('control', null as any);
+        component.submit();
+        expect(emit).toHaveBeenCalledWith(null as any);
+      });
+
+      it('should still emit when missing control value', () => {
+        const emit = spyOn(component.submitEvent, 'emit');
+        component.controlGroup.controls['control'].setValue(null);
+        component.controlGroup.markAsDirty();
+        fixture.detectChanges();
+        component.submit();
+        expect(emit).toHaveBeenCalledWith(null as any);
+      });
+    });
+
 
   });
 
   describe('helper text', () => {
-    it( 'Should show when first loaded', () => {
+    it('Should show when first loaded', () => {
       expect(component.showHelperText()).toBeTrue();
     });
 
-    it( 'Should not show when there is an error', () => {
+    it('Should not show when there is an error', () => {
       component.controlGroup.controls['control'].setValue(null);
       component.submitted = true;
       component.showHelperText();
@@ -110,10 +128,10 @@ describe('SearchComponent', () => {
 
   describe('clear method', () => {
 
-    it( 'should set submitted to false and clear control', () => {
+    it('should set submitted to false and clear control', () => {
       component.controlGroup.controls['control'].setValue('qwerty');
       component.submitted = true;
-      expect(component.submitted).toBeTrue()
+      expect(component.submitted).toBeTrue();
       expect(component.controlGroup.controls['control'].value).toEqual('qwerty');
 
       component.clear();

@@ -18,10 +18,8 @@ export class SearchComponent implements OnChanges {
 
   submitted: boolean = false;
 
-  ngOnInit(): void {
-  }
-
   constructor() {
+    // empty
   }
 
   ngOnChanges(): void {
@@ -31,7 +29,7 @@ export class SearchComponent implements OnChanges {
   }
 
   showHelperText(): boolean {
-    return (!this.controlGroup.controls['control'].errors ||!this.submitted);
+    return (!this.controlGroup.controls['control'].errors || !this.submitted);
   }
 
   getErrorMessage(): string | null {
@@ -46,7 +44,9 @@ export class SearchComponent implements OnChanges {
 
   submit(): void {
     this.submitted = true;
-    let searchInputValue = this.controlGroup.controls['control']?.value ? this.controlGroup.controls['control']?.value?.trim() : null;
+    let searchInputValue = this.controlGroup.controls['control'].value
+      ? this.controlGroup.controls['control'].value.trim()
+      : null;
     if (!searchInputValue) {
       this.controlGroup.controls['control'].reset();
     }
