@@ -676,7 +676,7 @@ export class InvoiceAmountComponent implements OnInit {
     dialogResult.subscribe(result => {
       if (result) {
         disputeLineItem.patchValue({
-          closedBy: this.userInfo?.email,
+          closedBy: this.userInfo!.email,
           closedDate: new Date().toISOString(),
           responseComment: result.comment || 'N/A',
           disputeStatus: action === 'Accept' ? {key:'ACCEPTED', label: 'Accepted'}

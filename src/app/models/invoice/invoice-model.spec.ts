@@ -2,8 +2,8 @@ import {InvoiceDataModel, InvoiceUtils} from './invoice-model';
 import {TestBed} from '@angular/core/testing';
 import {StatusModel} from './status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {SelectOption} from "../select-option-model/select-option-model";
-import { ShippingPointLocationSelectOption, ShippingPointWarehouseLocation } from '../location/location-model';
+import {SelectOption} from '../select-option-model/select-option-model';
+import {ShippingPointLocationSelectOption, ShippingPointWarehouseLocation} from '../location/location-model';
 
 describe('Invoice Model Tests', () => {
 
@@ -136,17 +136,27 @@ describe('Invoice Model Tests', () => {
     expect(termsInvoiceTest.standardPaymentTermsOverride).toEqual('14 Day');
   });
 
+  it('Should have remit history date of payment display value', () => {
+    const invoice = new InvoiceDataModel({remitHistory: [{dateOfPayment: '2022-01-27T15:31:30.986Z'}]});
+    expect(invoice.dateOfPaymentDisplay).toEqual('01/27/2022');
+  });
+
+  it('Should have empty remit history date of payment display value', () => {
+    const invoice = new InvoiceDataModel({remitHistory: [null]});
+    expect(invoice.dateOfPaymentDisplay).toEqual('');
+  });
+
   describe('InvoiceUtils', () => {
 
     it('should construct SelectOption when toScacOption invoked ', () => {
       const carrier = {
         scac: 'ABCD',
         name: 'Vandalay Industries'
-      }
+      };
 
       const result: SelectOption<string> = InvoiceUtils.toScacOption(carrier);
 
-      expect(result.label).toEqual(`Vandalay Industries (ABCD)`)
+      expect(result.label).toEqual(`Vandalay Industries (ABCD)`);
     });
 
     it('should construct ShippingPointLocationSelectOption when toShippingPointLocation invoked ', () => {
@@ -154,7 +164,7 @@ describe('Invoice Model Tests', () => {
         shippingPointCode: 'ABCD',
         businessUnitName: 'Vandalay Industries',
         origin: {}
-      }
+      };
 
       const result: ShippingPointLocationSelectOption = InvoiceUtils.toShippingPointLocation(carrierShippingPoint);
 
@@ -168,7 +178,7 @@ describe('Invoice Model Tests', () => {
         customerCategory: 'CAH',
         warehouse: '',
         billto: {}
-      }
+      };
 
       const result: ShippingPointWarehouseLocation = InvoiceUtils.toShippingPointWarehouseLocation(carrierShippingPointWarehouse);
 
