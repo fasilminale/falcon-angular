@@ -641,9 +641,9 @@
                       buttonStyle="text"
                       class="flex-shrink-1"
                       *ngIf="disputeLineItem.get('attachment')?.value?.url"
-                      (click)="downloadAttachment(_.get('attachment')?.value?.url)">
+                      (click)="downloadAttachment(disputeLineItem.get('attachment')?.value?.url)">
             <div class="material-icons download-icon"
-                 (click)="downloadAttachment(_.get('attachment')?.value?.url)">file_download
+                 (click)="downloadAttachment(disputeLineItem.get('attachment')?.value?.url)">file_download
             </div>
             Download
           </elm-button>
@@ -660,7 +660,7 @@
                 [matTooltipPosition]="'below'"
                 [matTooltip]="disputeLineItem.value.createdBy"
                 [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
-                matTooltipClass="newLine">{{_.value.createdBy | ellipsisPipe:ellipsisPipeLimit}}</span>
+                matTooltipClass="newLine">{{disputeLineItem.value.createdBy | ellipsisPipe:ellipsisPipeLimit}}</span>
           <span *ngIf="disputeLineItem.value.createdBy?.length <= ellipsisPipeLimit">
             {{disputeLineItem.value.createdBy || 'N/A'}}
           </span>
@@ -682,7 +682,7 @@
 
         <!-- Dispute Line Item - Closed Date -->
         <div class="col-1">
-          {{(_.value.closedDate | date: dateFormat) || 'N/A'}}
+          {{(disputeLineItem.value.closedDate | date: dateFormat) || 'N/A'}}
         </div>
 
         <!-- Dispute Line Item - Closed By -->
@@ -691,9 +691,9 @@
                 [matTooltipPosition]="'below'"
                 [matTooltip]="disputeLineItem.value.closedBy"
                 [ngStyle]="{'font-size':'15px', 'vertical-align':'text-top'}"
-                matTooltipClass="newLine">{{_.value.closedBy | ellipsisPipe:ellipsisPipeLimit}}</span>
+                matTooltipClass="newLine">{{disputeLineItem.value.closedBy | ellipsisPipe:ellipsisPipeLimit}}</span>
           <span *ngIf="disputeLineItem.value.closedBy?.length <= ellipsisPipeLimit">
-            {{_.value.closedBy || 'N/A'}}
+            {{disputeLineItem.value.closedBy || 'N/A'}}
           </span>
         </div>
 
