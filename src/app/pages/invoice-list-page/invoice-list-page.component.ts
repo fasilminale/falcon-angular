@@ -41,7 +41,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     {header: 'destinationStr', label: 'Destination'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'paymentDueDisplay', label: 'Payment Due'},
-    {header: 'amountOfInvoice', label: 'Invoice Net Amount', alignment: 'end'},
+    {header: 'dateOfPaymentDisplay', label: 'Payment Date'} ,
+    {header: 'amountOfInvoice', label: 'Amount', alignment: 'end'},
     {header: 'currency', label: 'Currency'},
   ];
   invoices: Array<InvoiceDataModel> = [];
