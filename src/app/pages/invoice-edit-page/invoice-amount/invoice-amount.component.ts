@@ -632,7 +632,6 @@ export class InvoiceAmountComponent implements OnInit {
       this.pendingAccessorialCode = costLineItem.value.accessorialCode;
       this.rateEngineCall.emit(this.pendingAccessorialCode);
     }
-    console.log(this.costBreakdownItemsControls);
   }
 
   /**
