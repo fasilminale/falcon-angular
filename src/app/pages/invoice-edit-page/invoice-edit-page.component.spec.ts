@@ -1447,6 +1447,49 @@ describe('InvoiceEditPageComponent', () => {
     mockUpdateRequest$.next({});
   });
 
+  it('loadReRate on invoice with spot quote should not show success toast message.', done => {
+    const mockUpdateRequest$ = new Subject();
+    component.invoice.isSpotQuotePresent = true;
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openSuccessToast).and.stub();
+    component.loadReRate(component.invoice);
+    mockUpdateRequest$.subscribe(() => {
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockUpdateRequest$.next({});
+    expect(toastService.openSuccessToast).not.toHaveBeenCalled();
+  });
+
+  it('loadReRate on invoice without spot quote should show success toast message.', done => {
+    const mockUpdateRequest$ = new Subject();
+    component.invoice.isSpotQuotePresent = false;
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openSuccessToast).and.stub();
+    component.loadReRate(component.invoice);
+    mockUpdateRequest$.subscribe(() => {
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockUpdateRequest$.next({});
+    expect(toastService.openSuccessToast).toHaveBeenCalled();
+  });
+
+  it('loadReRate on invoice with spot quote and rate error should not show error toast message.', done => {
+    const mockUpdateRequest$ = new Subject();
+    component.invoice.isSpotQuotePresent = true;
+    component.invoice.hasRateEngineError = true;
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openErrorToast).and.stub();
+    component.loadReRate(component.invoice);
+    mockUpdateRequest$.subscribe(() => {
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockUpdateRequest$.next({});
+    expect(toastService.openErrorToast).not.toHaveBeenCalled();
+  });
+
   it('updateAndGetRates should call backend and error', done => {
     const mockUpdateRequest$ = new Subject();
     spyOn(component, 'updateInvoiceFromForms').and.stub();
