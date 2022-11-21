@@ -718,11 +718,13 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   }
 
   loadReRate(invoice: InvoiceDataModel): void {
-    this.loadInvoice(invoice);
-    if (invoice.hasRateEngineError) {
-      this.toastService.openErrorToast('There were errors while attempting to re-rate.');
-    } else {
-      this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
+        this.loadInvoice(invoice);
+    if (!invoice.isSpotQuotePresent) {
+      if (invoice.hasRateEngineError) {
+        this.toastService.openErrorToast('There were errors while attempting to re-rate.');
+      } else {
+        this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
+      }
     }
     this.rateCallCounter--;
   }
