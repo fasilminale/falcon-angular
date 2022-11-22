@@ -2,17 +2,17 @@
 @use "@elm/elm-styleguide-ui/src/styles/utility/elm-fonts";
 
 .cardLabel {
-  @extend .headline3;
+  @extend .headline3 !optional;
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
 
-.input-error ::ng-deep .elm-input-subtext {
+.input-error :host::ng-deep .elm-input-subtext {
   margin-top: 0.5em;
   margin-bottom: -1em;
 }
 
-.ng-select.error ::ng-deep .ng-select-container {
+.ng-select.error :host::ng-deep .ng-select-container {
   margin-top: 0;
 }
 
@@ -20,28 +20,28 @@
   color: colors.$red;
 }
 
-::ng-deep .error {
+:host::ng-deep .error {
   border-color: colors.$red;
 }
 
-::ng-deep .form-control.error {
+:host::ng-deep .form-control.error {
   border-color: colors.$red;
 }
 
-.app-fal-date-input.error ::ng-deep .form-control {
+.app-fal-date-input.error :host::ng-deep .form-control {
   border-color: colors.$red;
 }
 
-.ng-select.error ::ng-deep .ng-select-container {
+.ng-select.error :host::ng-deep .ng-select-container {
   border-color: colors.$red;
 }
 
-.ng-select.ng-select-disabled ::ng-deep .ng-select-container, ::ng-deep .form-control:disabled, ::ng-deep .form-control[readonly] {
+.ng-select.ng-select-disabled :host::ng-deep .ng-select-container, :host::ng-deep .form-control:disabled, :host::ng-deep .form-control[readonly] {
   opacity: 0.65;
   background-color: #e5e4e4
 }
 
-::ng-deep .elm-card {
+:host::ng-deep .elm-card {
   height: 91%;
 }
 
@@ -52,7 +52,7 @@
 
 .accordion-header {
   display: flex;
-  color: colors.$gray-darker2;
+  color: colors.$gray-darker;
 
   .accordian-link-text {
     text-transform: uppercase;
@@ -88,7 +88,7 @@
   color: rgba(0, 0, 0, 0.87);
 }
 
-.field-invalid ::ng-deep input {
+.field-invalid :host::ng-deep input {
   border: 1pt solid #db0000 !important;
 }
 

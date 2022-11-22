@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {FormControl, FormGroup} from '@angular/forms';
-import {buttonStyleOptions} from '@elm/elm-styleguide-ui';
+import {buttonStyle} from '@elm/elm-styleguide-ui';
 import {CommentModalData} from '../../services/util-service';
 
 @Component({
@@ -12,7 +12,7 @@ import {CommentModalData} from '../../services/util-service';
 export class FalCommentModalComponent implements OnInit {
 
   form: FormGroup;
-  primaryButtonStyle: buttonStyleOptions;
+  primaryButtonStyle: buttonStyle;
 
   @Output() confirmAction: EventEmitter<any> = new EventEmitter<any>();
 
@@ -20,7 +20,7 @@ export class FalCommentModalComponent implements OnInit {
     this.form = new FormGroup({
       comment: new FormControl('')
     });
-    this.primaryButtonStyle = data.confirmButtonStyle as buttonStyleOptions;
+    this.primaryButtonStyle = data.confirmButtonStyle as buttonStyle;
   }
 
   ngOnInit(): void {

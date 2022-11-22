@@ -14,7 +14,7 @@
   flex: 1;
 }
 
-::ng-deep :active {
+:host::ng-deep :active {
   outline: none;
 }
 .cardinal-spinner{

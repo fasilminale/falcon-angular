@@ -11,7 +11,7 @@
   min-height: 130px;
 }
 
-::ng-deep.master-data-download .material-icons {
+:host::ng-deep.master-data-download .material-icons {
   color: colors.$black;
   border-radius: 50%;
   padding: 5px;
