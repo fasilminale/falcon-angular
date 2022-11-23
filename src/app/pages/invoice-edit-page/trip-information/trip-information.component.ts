@@ -301,7 +301,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
     this.vendorNumberControl.setValue(tripInfo.vendorNumber);
     this.vendorNumberControl.markAsDirty();
-    this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
+    this.invoiceDateControl.setValue(tripInfo.invoiceDate?.toISOString() ?? undefined);
     this.pickUpDateControl.setValue(this.derivePickupDate(tripInfo));
     this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
     this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
@@ -351,7 +351,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     return formGroup;
   }
 
-  derivePickupDate(tripInfo?: TripInformation): Date | undefined {
+  derivePickupDate(tripInfo?: TripInformation): any | undefined {
     const deliveryDate = tripInfo?.deliveryDate?.getTime();
     if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()
       && tripInfo?.tripTenderTime?.getTime() != null) {
@@ -359,10 +359,12 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
       this.isPickupDateTimeTendered = true;
     }
-    return tripInfo?.pickUpDate ?? undefined;
+    console.log('pickup ISO date - ', tripInfo?.pickUpDate?.toISOString());
+    console.log('pickup date - ', tripInfo?.pickUpDate);
+    return tripInfo?.pickUpDate?.toISOString() ?? undefined;
   }
 
-  deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
+  deriveDeliveryDate(tripInfo: TripInformation): any | undefined {
     let dateToReturn: Date | undefined = tripInfo.deliveryDate ? new Date(tripInfo.deliveryDate) : undefined ;
     const overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
     const assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
@@ -382,7 +384,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
       this.showArrowForDeliveryDateTime = false;
       this.arrowLabelForDeliveryDateTime = '';
     } 
-    return dateToReturn;
+    return dateToReturn?.toISOString();
   }
 
   clickEditButton(): void {
