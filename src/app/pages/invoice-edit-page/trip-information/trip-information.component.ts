@@ -36,13 +36,7 @@ const {required, maxLength} = Validators;
 export function validateDate(control: AbstractControl): ValidationErrors | null {
   const dateString = control.value;
   if (dateString) {
-    // if (!(dateString instanceof Date) || (dateString.getFullYear() < 1000
-    //   || dateString.getFullYear() > 9999)) {
-    //   return {validateDate: true};
-    // } else if (dateString.valueOf() >= Date.now()) {
-    //   return {dateBefore: true};
-    // }
-    if (dateString.valueOf() >= DateTime.now()) {
+    if (DateTime.fromISO(dateString) >= DateTime.now()) {
       return {dateBefore: true};
     }
   }
@@ -53,10 +47,6 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
   selector: 'app-trip-information',
   templateUrl: './trip-information.component.html',
   styleUrls: ['./trip-information.component.scss'],
-  providers: [
-    {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter},
-    {provide: NgbDateParserFormatter, useClass: DateParserFormatter}
-  ]
 })
 export class TripInformationComponent implements OnInit, OnDestroy{
   @Output() updateAndContinueClickEvent = new EventEmitter<any>();
@@ -84,7 +74,6 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public filteredShippingPoints$ = new Subject<Array<ShippingPointLocationSelectOption>>();
   public masterDataShippingPointWarehouses: Array<ShippingPointWarehouseLocation> = [];
 
-  public pickUpDateControl2 = new FormControl();
   public tripIdControl = new FormControl();
   public vendorNumberControl = new FormControl({}, [required]);
   public freightOrders = new FormControl();
@@ -98,17 +87,12 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public carrierModeControl = new FormControl({}, [required]);
   public serviceLevelControl = new FormControl({}, [required]);
 
-  public formControl1 = new FormControl();
-  public formGroup1 = new FormGroup({formControl1:this.formControl1});
-  
-
   private _formGroup = new FormGroup({});
   public originAddressFormGroup = new FormGroup({});
   public destinationAddressFormGroup = new FormGroup({});
   public billToAddressFormGroup = new FormGroup({});
   private _editableFormArray = new FormArray([
     this.pickUpDateControl,
-    this.pickUpDateControl2,
     this.carrierControl,
     this.carrierModeControl,
     this.serviceLevelControl,
@@ -220,7 +204,6 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     givenFormGroup.setControl('vendorNumber', this.vendorNumberControl);
     givenFormGroup.setControl('invoiceDate', this.invoiceDateControl);
     givenFormGroup.setControl('pickUpDate', this.pickUpDateControl);
-    givenFormGroup.setControl('pickUpDate2',this.pickUpDateControl2);
     givenFormGroup.setControl('deliveryDate', this.deliveryDateControl);
     givenFormGroup.setControl('proTrackingNumber', this.proTrackingNumberControl);
     givenFormGroup.setControl('bolNumber', this.bolNumberControl);
@@ -366,16 +349,13 @@ export class TripInformationComponent implements OnInit, OnDestroy{
 
   derivePickupDate(tripInfo?: TripInformation): any | undefined {
     const deliveryDate = tripInfo?.deliveryDate?.getTime();
-    const pickUpDate =  DateTime.fromISO(tripInfo?.pickUpDate ?? "");
-    // if ( pickUpDate.toMillis() == tripInfo?.tripTenderTime?.getTime()
-    //   && tripInfo?.tripTenderTime?.getTime() != null) {
-    //   this.pickupDateMatchesTenderDate = true;
-    // } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
-    //   this.isPickupDateTimeTendered = true;
-    // }
-    // console.log('pickup ISO date - ', tripInfo?.pickUpDate?.toISOString());
-    // console.log('pickup date - ', tripInfo?.pickUpDate);
-    return pickUpDate.toISO()?? undefined;
+    if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()
+      && tripInfo?.tripTenderTime?.getTime() != null) {
+      this.pickupDateMatchesTenderDate = true;
+    } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
+      this.isPickupDateTimeTendered = true;
+    }
+    return tripInfo?.pickUpDate?.toISOString() ?? undefined;
   }
 
   deriveDeliveryDate(tripInfo: TripInformation): any | undefined {
@@ -398,7 +378,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
       this.showArrowForDeliveryDateTime = false;
       this.arrowLabelForDeliveryDateTime = '';
     } 
-    return dateToReturn?.toISOString();
+    return dateToReturn?.toISOString() ?? undefined;
   }
 
   clickEditButton(): void {

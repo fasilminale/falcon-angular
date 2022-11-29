@@ -134,7 +134,7 @@
       </label>
       <elm-text-input id="bolNumberInput"
                       formControlName="bolNumber"
-                      [addSpacing]="false"
+                      [addSpacing]="true"
                       [ngClass]="{'field-invalid': bolNumberControl.invalid || !isValidBolNumber}">
       </elm-text-input>
       <elm-input-subtext *ngIf="bolNumberControl.invalid || !isValidBolNumber"
