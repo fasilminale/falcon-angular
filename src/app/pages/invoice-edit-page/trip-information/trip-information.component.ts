@@ -28,16 +28,21 @@ import {SubjectValue} from 'src/app/utils/subject-value';
 import {InvoiceService} from 'src/app/services/invoice-service';
 import {InvoiceUtils} from 'src/app/models/invoice/invoice-model';
 import {CustomValidators, validateAlphanumeric} from '../../../utils/falcon-validators';
+import { DateTime } from 'luxon';
+import { ElmValidators } from '@elm/elm-styleguide-ui';
 
 const {required, maxLength} = Validators;
 
 export function validateDate(control: AbstractControl): ValidationErrors | null {
   const dateString = control.value;
   if (dateString) {
-    if (!(dateString instanceof Date) || (dateString.getFullYear() < 1000
-      || dateString.getFullYear() > 9999)) {
-      return {validateDate: true};
-    } else if (dateString.valueOf() >= Date.now()) {
+    // if (!(dateString instanceof Date) || (dateString.getFullYear() < 1000
+    //   || dateString.getFullYear() > 9999)) {
+    //   return {validateDate: true};
+    // } else if (dateString.valueOf() >= Date.now()) {
+    //   return {dateBefore: true};
+    // }
+    if (dateString.valueOf() >= DateTime.now()) {
       return {dateBefore: true};
     }
   }
@@ -79,11 +84,12 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public filteredShippingPoints$ = new Subject<Array<ShippingPointLocationSelectOption>>();
   public masterDataShippingPointWarehouses: Array<ShippingPointWarehouseLocation> = [];
 
+  public pickUpDateControl2 = new FormControl();
   public tripIdControl = new FormControl();
   public vendorNumberControl = new FormControl({}, [required]);
   public freightOrders = new FormControl();
   public invoiceDateControl = new FormControl({}, [required]);
-  public pickUpDateControl = new FormControl({}, [required, validateDate]);
+  public pickUpDateControl = new FormControl({}, [ElmValidators.required(), validateDate]);
   public deliveryDateControl = new FormControl({}, [required]);
   public proTrackingNumberControl = new FormControl({}, [required]);
   public bolNumberControl = new FormControl({}, [CustomValidators.requiredNonNA, validateAlphanumeric,maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
@@ -92,12 +98,17 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public carrierModeControl = new FormControl({}, [required]);
   public serviceLevelControl = new FormControl({}, [required]);
 
+  public formControl1 = new FormControl();
+  public formGroup1 = new FormGroup({formControl1:this.formControl1});
+  
+
   private _formGroup = new FormGroup({});
   public originAddressFormGroup = new FormGroup({});
   public destinationAddressFormGroup = new FormGroup({});
   public billToAddressFormGroup = new FormGroup({});
   private _editableFormArray = new FormArray([
     this.pickUpDateControl,
+    this.pickUpDateControl2,
     this.carrierControl,
     this.carrierModeControl,
     this.serviceLevelControl,
@@ -136,6 +147,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
 
   constructor(private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
               private invoiceService: InvoiceService) {
+                
   }
 
   ngOnInit(): void {
@@ -208,6 +220,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     givenFormGroup.setControl('vendorNumber', this.vendorNumberControl);
     givenFormGroup.setControl('invoiceDate', this.invoiceDateControl);
     givenFormGroup.setControl('pickUpDate', this.pickUpDateControl);
+    givenFormGroup.setControl('pickUpDate2',this.pickUpDateControl2);
     givenFormGroup.setControl('deliveryDate', this.deliveryDateControl);
     givenFormGroup.setControl('proTrackingNumber', this.proTrackingNumberControl);
     givenFormGroup.setControl('bolNumber', this.bolNumberControl);
@@ -353,15 +366,16 @@ export class TripInformationComponent implements OnInit, OnDestroy{
 
   derivePickupDate(tripInfo?: TripInformation): any | undefined {
     const deliveryDate = tripInfo?.deliveryDate?.getTime();
-    if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()
-      && tripInfo?.tripTenderTime?.getTime() != null) {
-      this.pickupDateMatchesTenderDate = true;
-    } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
-      this.isPickupDateTimeTendered = true;
-    }
-    console.log('pickup ISO date - ', tripInfo?.pickUpDate?.toISOString());
-    console.log('pickup date - ', tripInfo?.pickUpDate);
-    return tripInfo?.pickUpDate?.toISOString() ?? undefined;
+    const pickUpDate =  DateTime.fromISO(tripInfo?.pickUpDate ?? "");
+    // if ( pickUpDate.toMillis() == tripInfo?.tripTenderTime?.getTime()
+    //   && tripInfo?.tripTenderTime?.getTime() != null) {
+    //   this.pickupDateMatchesTenderDate = true;
+    // } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
+    //   this.isPickupDateTimeTendered = true;
+    // }
+    // console.log('pickup ISO date - ', tripInfo?.pickUpDate?.toISOString());
+    // console.log('pickup date - ', tripInfo?.pickUpDate);
+    return pickUpDate.toISO()?? undefined;
   }
 
   deriveDeliveryDate(tripInfo: TripInformation): any | undefined {
