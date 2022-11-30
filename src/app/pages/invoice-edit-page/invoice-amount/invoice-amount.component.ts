@@ -11,7 +11,7 @@ import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-de
 import {ConfirmationModalData, ElmFormHelper, ToastService} from '@elm/elm-styleguide-ui';
 import {CommentModel, UtilService} from '../../../services/util-service';
 import {UserInfoModel} from '../../../models/user-info/user-info-model';
-import { SubjectValue } from 'src/app/utils/subject-value';
+import {SubjectValue} from 'src/app/utils/subject-value';
 
 @Component({
   selector: 'app-invoice-amount',
