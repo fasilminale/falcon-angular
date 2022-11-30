@@ -380,6 +380,36 @@ describe('InvoiceAmountComponent', () => {
       } as InvoiceAmountDetail);
     });
 
+    it('should enable currency fields for spot quote invoice.', done => {
+      loadInvoiceOverviewDetail$.subscribe(() => {
+      component.currencyOptions.forEach( (element) => {
+          expect(element.disabled).toBeFalse();
+      });
+        done();
+      });
+      loadInvoiceOverviewDetail$.next({isSpotQuote: true} as InvoiceOverviewDetail);
+    });
+
+    it('should not enable currency fields for non spot quote invoice.', done => {
+      loadInvoiceOverviewDetail$.subscribe(() => {
+        component.currencyOptions.forEach( (element) => {
+          expect(element.disabled).toBeTrue();
+        });
+        done();
+      });
+      loadInvoiceOverviewDetail$.next({isSpotQuote: false} as InvoiceOverviewDetail);
+    });
+
+    fit('should enable currency fields for spot quote invoice.', done => {
+      loadInvoiceOverviewDetail$.subscribe(() => {
+        for (let i = 0; i < 2; i++) {
+          expect(component.currencyOptions[i].disabled).toBeFalse();
+        }
+        done();
+      });
+      loadInvoiceOverviewDetail$.next({isSpotQuote: true} as InvoiceOverviewDetail);
+    });
+
     it('should set isPrepaid to True', done => {
       loadInvoiceOverviewDetail$.subscribe(() => {
         expect(component.isPrepaid).toBeTrue();
