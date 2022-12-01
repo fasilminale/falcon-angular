@@ -60,14 +60,12 @@ export class InvoiceAmountComponent implements OnInit {
   }
 
   @Input() set loadInvoiceOverviewDetail$(observable: Observable<InvoiceOverviewDetail>) {
-    console.log('1');
     this.loadInvoiceOverviewDetailSubscription.unsubscribe();
     this.loadInvoiceOverviewDetailSubscription = observable.subscribe(
       invoiceOverviewDetail => {
         this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID';
         this.isSpotQuote = invoiceOverviewDetail.isSpotQuote;
         this.currencyOptions.forEach( (element) => {
-          console.log('2');
           element.disabled = !(<boolean> this.isSpotQuote);
         });
         this.isReturnToDomicile = invoiceOverviewDetail.returnToDomicile === true;
@@ -187,8 +185,8 @@ export class InvoiceAmountComponent implements OnInit {
     {value: 'ZN14', display: 'Pay in 14 days'}
   ];
   public currencyOptions = [
-    {label: 'USD', value: 'USD', disabled:true},
-    {label: 'CAD', value: 'CAD', disabled:true}
+    {label: 'USD', value: 'USD', disabled: true},
+    {label: 'CAD', value: 'CAD', disabled: true}
   ];
   public overridePaymentTermsOptions = [
     {label: 'Override Standard Payment Terms', value: 'override', disabled: false}
