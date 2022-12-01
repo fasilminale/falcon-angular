@@ -17,6 +17,8 @@ import {TripInformationComponent} from './trip-information/trip-information.comp
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {BillToLocationUtils, Location, LocationUtils} from '../../models/location/location-model';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
+import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
+import {InvoiceLockService} from '../../services/invoice-lock-service';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -112,6 +114,7 @@ describe('InvoiceEditPageComponent', () => {
   let route: ActivatedRoute;
   let routeParamMap$: Subject<ParamMap>;
   let invoiceService: InvoiceService;
+  let invoiceLockService: InvoiceLockService;
   let userService: UserService;
   let utilService: UtilService;
   let modalService: ModalService;
@@ -141,6 +144,12 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(invoiceService, 'deleteInvoice').and.returnValue(of());
     spyOn(invoiceService, 'deleteInvoiceWithReason').and.returnValue(of());
     spyOn(invoiceService, 'resolveDispute').and.returnValue(of());
+
+    // Mock Invoice Lock Service
+    invoiceLockService = TestBed.inject(InvoiceLockService);
+    spyOn(invoiceLockService, 'releaseInvoiceLock').and.returnValue();
+    spyOn(invoiceLockService, 'retrieveInvoiceLock').and.returnValue(of());
+    spyOn(invoiceLockService, 'createInvoiceLock').and.returnValue();
 
     // Mock User Service
     userService = TestBed.inject(UserService);
@@ -570,6 +579,7 @@ describe('InvoiceEditPageComponent', () => {
     // Setup
     const getUserInfo$ = new Subject<UserInfo>();
     asSpy(userService.getUserInfo).and.returnValue(getUserInfo$.asObservable());
+    spyOn(invoiceLockService, 'getInvoiceLock').and.returnValue(new InvoiceLockModel());
     const testUser = new UserInfoModel({
       firstName: 'Test',
       lastName: 'User',
@@ -577,8 +587,9 @@ describe('InvoiceEditPageComponent', () => {
       permissions: []
     });
     component.ngOnInit();
-    // Assertions
-    getUserInfo$.subscribe(() => {
+
+    getUserInfo$.subscribe(async () => {
+      await fixture.whenStable();
       expect(component.userInfo).toEqual(testUser);
       done();
     });
@@ -833,6 +844,7 @@ describe('InvoiceEditPageComponent', () => {
       expect(component.performPostUpdateActions).toHaveBeenCalledOnceWith(
         `Success! Falcon Invoice ${component.falconInvoiceNumber} has been updated.`
       );
+      expect(invoiceLockService.releaseInvoiceLock).toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
       );
@@ -847,6 +859,7 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       component.clickSaveButton();
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceLockService.releaseInvoiceLock).not.toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
       );
@@ -859,6 +872,7 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(throwError(new Error('Bad')));
       component.clickSaveButton();
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceLockService.releaseInvoiceLock).not.toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
       );
@@ -873,6 +887,7 @@ describe('InvoiceEditPageComponent', () => {
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(invoiceDataModel));
       component.clickSaveButton();
       expect(component.performPostUpdateActions).not.toHaveBeenCalled();
+      expect(invoiceLockService.releaseInvoiceLock).not.toHaveBeenCalled();
       expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
     });
   });
@@ -914,6 +929,7 @@ describe('InvoiceEditPageComponent', () => {
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
       );
+      expect(invoiceLockService.releaseInvoiceLock).toHaveBeenCalled();
       expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
     });
 
@@ -928,6 +944,7 @@ describe('InvoiceEditPageComponent', () => {
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
       );
+      expect(invoiceLockService.releaseInvoiceLock).not.toHaveBeenCalled();
       expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
     });
 
@@ -944,6 +961,7 @@ describe('InvoiceEditPageComponent', () => {
       expect(invoiceService.updateAutoInvoice).toHaveBeenCalledOnceWith(
         component.mapTripInformationToEditAutoInvoiceModel(), component.falconInvoiceNumber
       );
+      expect(invoiceLockService.releaseInvoiceLock).not.toHaveBeenCalled();
       expect(invoiceService.submitForApproval).toHaveBeenCalledOnceWith(invoiceDataModel.falconInvoiceNumber);
     });
 
@@ -960,6 +978,7 @@ describe('InvoiceEditPageComponent', () => {
         component.performSubmitAction();
         expect(component.performPostUpdateActions).not.toHaveBeenCalled();
         expect(invoiceService.updateAutoInvoice).not.toHaveBeenCalled();
+        expect(invoiceLockService.releaseInvoiceLock).not.toHaveBeenCalled();
         expect(invoiceService.submitForApproval).not.toHaveBeenCalled();
       });
   });

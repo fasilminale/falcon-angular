@@ -21,6 +21,7 @@ import {UserService} from '../services/user-service';
 import {ServicesModule, SnackbarModule, ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {RateService} from '../services/rate-service';
 import {NgSelectModule} from '@ng-select/ng-select';
+import {InvoiceLockService} from '../services/invoice-lock-service';
 
 @NgModule({
   declarations: [],
@@ -62,6 +63,7 @@ import {NgSelectModule} from '@ng-select/ng-select';
     InvoiceFormManager,
     UserService,
     RateService,
+    InvoiceLockService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: []
