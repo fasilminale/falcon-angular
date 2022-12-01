@@ -7,7 +7,7 @@ import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {Observable, Observer, Subject, Subscription} from 'rxjs';
-import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {EntryType, Invoice, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';
@@ -23,6 +23,8 @@ import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
+import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
+import {InvoiceLockService} from '../../services/invoice-lock-service';
 
 
 @Component({
@@ -37,6 +39,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               private userService: UserService,
               private invoiceService: InvoiceService,
+              private invoiceLockService: InvoiceLockService,
               private toastService: ToastService,
               private rateService: RateService,
               @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
@@ -54,6 +57,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   breadcrumbs: Array<ElmLinkInterface> = [{label: 'All Invoices', path: `/invoices`}];
   public falconInvoiceNumber = '';
   public invoiceStatus = '';
+  public isInvoiceLocked = false;
+  public invoiceLockedUser = '';
   public milestones: Array<Milestone> = [];
   public userInfo: UserInfoModel | undefined;
   public isDeletedInvoice = false;
@@ -82,6 +87,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
   public showEditInfoBanner = false;
+  public showInvoiceInEditMode = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
 
   INVOICE_AMOUNT_CL = 'invoice-amount-cl';
@@ -219,8 +225,17 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadUserInfo(newUserInfo: UserInfoModel): void {
-    this.userInfo = new UserInfoModel(newUserInfo);
+  private async loadUserInfo(newUserInfo: UserInfoModel): Promise<void> {
+    const userInfo = new UserInfoModel(newUserInfo);
+    await this.invoiceLockService.retrieveInvoiceLock(this.falconInvoiceNumber).toPromise();
+    const lock = this.invoiceLockService.getInvoiceLock();
+
+    if (lock !== null && !lock.currentUser) {
+      this.showInvoiceInEditMode = true;
+      this.isInvoiceLocked = true;
+      this.invoiceLockedUser = lock.fullName;
+    }
+    this.userInfo = userInfo;
     this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
   }
 
@@ -254,17 +269,21 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   clickCloseBanner(): void {
     this.showEditInfoBanner = false;
+    this.showInvoiceInEditMode = false;
   }
 
+
+
   clickToggleEditMode(): void {
-    if(this.invoice.isSpotQuotePresent){
+    if (this.invoice.isSpotQuotePresent) {
       this.confirmSpotQuote().subscribe(result => {
         if (result) {
-          this.toggleEditMode()
+          this.toggleEditMode();
+
         }
       });
     } else {
-      this.toggleEditMode()
+      this.toggleEditMode();
     }
   }
 
@@ -274,6 +293,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     this.showEditInfoBanner = this.isGlobalEditMode$.value;
     this.otherSectionEditMode$.value = true;
     this.invoiceFormGroup.markAsPristine();
+    this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
   }
 
   public confirmSpotQuote(): Observable<boolean> {
@@ -339,6 +359,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     this.isTripEditMode$.value = false;
     this.otherSectionEditMode$.value = false;
     this.invoiceAmountFormGroup.get('fileFormGroup')?.reset();
+    this.invoiceLockService.releaseInvoiceLock();
+    this.invoiceLockService.invoiceLock = null;
   }
 
   handleTripEditModeEvent($event: any): void {

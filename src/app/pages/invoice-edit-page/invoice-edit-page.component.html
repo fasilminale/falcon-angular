@@ -8,6 +8,7 @@
                   buttonStyle="secondary"
                   class="flex-shrink-1 header-button"
                   [isDisabled]="(isGlobalEditMode$.value || isDeletedInvoice
+                          || isInvoiceLocked
                           || (!isEditableInvoice && !(isAutoInvoice && isApprovedInvoice)))"
                   (buttonClick)="clickDeleteButton()">
         Delete
@@ -18,6 +19,7 @@
                   class="flex-shrink-1 header-button"
                   [isDisabled]="isGlobalEditMode$.value
                             || isDeletedInvoice
+                            || isInvoiceLocked
                             || !isEditableInvoice"
                   (buttonClick)="clickToggleEditMode()">
         Edit
@@ -28,6 +30,12 @@
 <mat-toolbar *ngIf="showEditInfoBanner" class="margin-b-24">
   <div class="headline3 w-100 text-center text-danger">
     <span><strong>ATTENTION:</strong> To update and apply changes, click the <strong>"SAVE"</strong> button</span>
+    <span role="button" class="material-icons material-icons-outlined close-icon" (click)="clickCloseBanner()">close</span>
+  </div>
+</mat-toolbar>
+<mat-toolbar *ngIf="showInvoiceInEditMode && isInvoiceLocked" class="margin-b-24">
+  <div class="headline3 w-100 text-center text-danger">
+    <span><strong>WARNING:</strong> Invoice edit option disabled. Invoice in edit mode by {{invoiceLockedUser}}.</span>
     <span role="button" class="material-icons material-icons-outlined close-icon" (click)="clickCloseBanner()">close</span>
   </div>
 </mat-toolbar>
