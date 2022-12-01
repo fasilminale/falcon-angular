@@ -15,7 +15,8 @@ describe('InvoiceLockService', () => {
   const invoiceLock = {
     falconInvoiceNumber: 'F0000000001',
     user: 'test@test.com',
-    isCurrentUser: false,
+    fullName: 'test',
+    currentUser: false,
     dateTimeCreated: new Date().toISOString(),
     dateTimeExpiration: new Date().toISOString()
   }

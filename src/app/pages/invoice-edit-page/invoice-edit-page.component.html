@@ -35,7 +35,7 @@
 </mat-toolbar>
 <mat-toolbar *ngIf="showInvoiceInEditMode && isInvoiceLocked" class="margin-b-24">
   <div class="headline3 w-100 text-center text-danger">
-    <span><strong>WARNING:</strong> Invoice edit option disabled. Invoice in edit mode by another user.</span>
+    <span><strong>WARNING:</strong> Invoice edit option disabled. Invoice in edit mode by {{invoiceLockedUser}}.</span>
     <span role="button" class="material-icons material-icons-outlined close-icon" (click)="clickCloseBanner()">close</span>
   </div>
 </mat-toolbar>

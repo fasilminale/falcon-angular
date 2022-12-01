@@ -58,6 +58,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   public falconInvoiceNumber = '';
   public invoiceStatus = '';
   public isInvoiceLocked = false;
+  public invoiceLockedUser = '';
   public milestones: Array<Milestone> = [];
   public userInfo: UserInfoModel | undefined;
   public isDeletedInvoice = false;
@@ -232,6 +233,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     if (lock !== null && !lock.currentUser) {
       this.showInvoiceInEditMode = true;
       this.isInvoiceLocked = true;
+      this.invoiceLockedUser = lock.fullName;
     }
     this.userInfo = userInfo;
     this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);

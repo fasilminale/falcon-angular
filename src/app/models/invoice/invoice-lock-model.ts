@@ -6,6 +6,7 @@ export class InvoiceLockModel {
 
   falconInvoiceNumber: string;
   user: string;
+  fullName: string;
   currentUser: boolean;
   dateTimeCreated: string;
   dateTimeExpiration: string;
@@ -13,6 +14,7 @@ export class InvoiceLockModel {
   constructor(json?: any) {
     this.falconInvoiceNumber = json?.falconInvoiceNumber ?? null;
     this.user = json?.user ?? null;
+    this.fullName = json?.fullName ?? null;
     this.currentUser = json?.currentUser ?? false;
     this.dateTimeCreated = InvoiceLockModel.date(json?.dateTimeCreated);
     this.dateTimeExpiration = InvoiceLockModel.date(json?.dateTimeExpiration);
