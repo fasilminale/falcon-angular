@@ -1,6 +1,7 @@
 <div>
   <form class="needs-validation" [formGroup]="controlGroup" (submit)="submit()" novalidate>
     <label for="searchInput">Find an Invoice (search all invoices)</label>
+    <span *ngIf="submitted" class="clear-search-text" (click)="clearSearchFilter()"><u>Clear Search</u></span>
     <div class="input-group" style="width: 450px">
       <input [maxLength]="255"
              [required]="false"

@@ -23,6 +23,13 @@
   width: fit-content;
 }
 
+.clear-search-text {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  align-items: flex-end;
+}
+
 .ng-select.invoice-status-input :host::ng-deep .ng-input {
   width: 0;
 }

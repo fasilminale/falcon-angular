@@ -12,3 +12,9 @@
 .error-message {
   color: colors.$error-red;
 }
+
+.clear-search-text{
+    margin-left: 42px;
+    color: colors.$red;
+    cursor: pointer
+}
