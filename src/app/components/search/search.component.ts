@@ -49,6 +49,7 @@ export class SearchComponent implements OnChanges {
       ? this.controlGroup.controls['control'].value.trim()
       : null;
     if (!searchInputValue) {
+      this.submitted = false;
       this.controlGroup.controls['control'].reset();
     }
     this.submitEvent.emit(searchInputValue);

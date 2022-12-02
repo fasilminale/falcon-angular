@@ -23,11 +23,11 @@
   margin: 1rem;
 }
 
-::ng-deep .fake-form-control {
+:host::ng-deep .fake-form-control {
   padding: 0.375rem 0.75rem;
 }
 
-::ng-deep .elm-card {
+:host::ng-deep .elm-card {
   margin-top: 1em;
 }
 
@@ -69,11 +69,11 @@
   padding-left: 0em;
 }
 
-::ng-deep .error {
+:host::ng-deep .error {
   border-color: colors.$red;
 }
 
-#erp-type-input ::ng-deep label.error {
+#erp-type-input :host::ng-deep label.error {
   border: none;
 }
 
@@ -81,19 +81,19 @@
   border: 1px solid colors.$red;
 }
 
-::ng-deep .form-control.error {
+:host::ng-deep .form-control.error {
   border-color: colors.$red;
 }
 
-.app-fal-date-input.error ::ng-deep .form-control {
+.app-fal-date-input.error :host::ng-deep .form-control {
   border-color: colors.$red;
 }
 
-::ng-deep .error-text {
+:host::ng-deep .error-text {
   color: colors.$red;
 }
 
-.ng-select.error ::ng-deep .ng-select-container {
+.ng-select.error :host::ng-deep .ng-select-container {
   border-color: colors.$red;
 }
 
@@ -120,7 +120,7 @@
   transform: rotate(270deg) translateY(-95%) translateX(-50%);
 }
 
-::ng-deep .vertical-spacer {
+:host::ng-deep .vertical-spacer {
   width: 100%;
 }
 
@@ -128,11 +128,11 @@
   text-align: center;
 }
 
-::ng-deep .nodisplay {
+:host::ng-deep .nodisplay {
   display: none;
 }
 
-::ng-deep #currency-input {
+:host::ng-deep #currency-input {
   div[role="radiogroup"].form-control {
     border: none;
     padding: 0px;
@@ -195,7 +195,7 @@
   font-style: italic;
 }
 
-#currency-input ::ng-deep .elm-input .elm-input-label {
+#currency-input :host::ng-deep .elm-input .elm-input-label {
   margin-bottom: 0px;
 }
 
@@ -207,7 +207,7 @@
   background-color: #e5e4e4;
 }
 
-.radio-dev-disabled ::ng-deep .elm-input {
+.radio-dev-disabled :host::ng-deep .elm-input {
   background-color: #e5e4e4;
   padding-bottom: 0px;
   border: solid 0px transparent;

@@ -30,6 +30,6 @@
   align-items: flex-end;
 }
 
-.ng-select.invoice-status-input ::ng-deep .ng-input {
+.ng-select.invoice-status-input :host::ng-deep .ng-input {
   width: 0;
 }

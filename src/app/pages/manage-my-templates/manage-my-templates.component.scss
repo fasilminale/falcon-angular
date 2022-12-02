@@ -58,19 +58,19 @@ th.mat-header-cell, td.mat-cell {
   text-align: center;
 }
 
-::ng-deep .error {
+:host::ng-deep .error {
   border-color: colors.$red;
 }
 
-::ng-deep .form-control.error {
+:host::ng-deep .form-control.error {
   border-color: colors.$red;
 }
 
-.app-fal-date-input.error ::ng-deep .form-control {
+.app-fal-date-input.error :host::ng-deep .form-control {
   border-color: red;
 }
 
-::ng-deep .error-text {
+:host::ng-deep .error-text {
   color: colors.$red;
 }
 

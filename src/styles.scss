@@ -4,7 +4,7 @@
 
 .fal-label {
   @extend .form-label;
-  @extend .fieldLabel1;
+  @extend .fieldLabel1 !optional;
   margin-top: 1em;
 }
 
@@ -14,4 +14,8 @@
 
 .debug-outline {
   border: 1px solid red;
+}
+
+.ng-select.error {
+  margin-bottom: 20px;
 }

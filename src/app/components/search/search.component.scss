@@ -1,9 +1,17 @@
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-input-group" as input-group;
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-fonts" as fonts;
 @use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
 
-.invalid-feedback{
-    display: flex;
-    justify-content: space-between;
-  }
+.sub-text {
+  @include fonts.field-label;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-message {
+  color: colors.$error-red;
+}
 
 .clear-search-text{
     margin-left: 42px;

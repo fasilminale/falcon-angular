@@ -46,10 +46,7 @@
                        [items]="form.workTypeOptions"
                        [searchable]="true"
                        placeholder="Select One...."
-                       [ngClass]="{ 'error': form.workType.errors
-                                             && form.workType.hasError('required')
-                                             && form.workType.touched,
-                                    'disabled': readOnly }">
+                       [ngClass]="{ 'disabled': readOnly }">
             </ng-select>
             <small class="error-text"
                    *ngIf="form.workType.hasError('required')

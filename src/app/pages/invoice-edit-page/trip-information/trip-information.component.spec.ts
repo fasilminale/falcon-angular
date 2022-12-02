@@ -21,6 +21,7 @@ import {
   ShippingPointWarehouseLocation
 } from 'src/app/models/location/location-model';
 import {InvoiceService} from 'src/app/services/invoice-service';
+import { DateTime } from 'luxon';
 
 describe('TripInformationComponent', () => {
 
@@ -790,9 +791,15 @@ describe('TripInformationComponent', () => {
       component.filteredCarrierModeOptionsPopulatedSubject.complete();
       await component.loadTripInformationData(tripInformation);
       expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
-      expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
-      expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
-      expect(component.deliveryDateControl.value).toEqual(tripInformation.deliveryDate);
+      expect(DateTime.fromISO(component.invoiceDateControl.value)).toEqual(DateTime.fromJSDate(tripInformation.invoiceDate));
+      if (tripInformation.pickUpDate) {
+        let expPickUpDate = DateTime.fromJSDate(tripInformation.pickUpDate);
+        expect(DateTime.fromISO(component.pickUpDateControl.value)).toEqual(expPickUpDate);
+      }
+      if (tripInformation.deliveryDate) {
+        let expDeliveryDate = DateTime.fromJSDate(tripInformation.deliveryDate);
+        expect(DateTime.fromISO(component.deliveryDateControl.value)).toEqual(expDeliveryDate);
+      }
       expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
       expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
       expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
@@ -884,9 +891,13 @@ describe('TripInformationComponent', () => {
     component.filteredCarrierModeOptionsPopulatedSubject.complete();
     await component.loadTripInformationData(tripInformation);
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
-    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
-    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
-    expect(component.deliveryDateControl.value).toEqual(new Date(tripInformation.freightOrders[0].deliverydatetime));
+    expect(DateTime.fromISO(component.invoiceDateControl.value)).toEqual(DateTime.fromJSDate(tripInformation.invoiceDate));
+    if (tripInformation.pickUpDate) {
+      let expPickUpDate = DateTime.fromJSDate(tripInformation.pickUpDate);
+      expect(DateTime.fromISO(component.pickUpDateControl.value)).toEqual(expPickUpDate);
+    }
+    let expDeliveryDate = DateTime.fromJSDate(new Date(tripInformation.freightOrders[0].deliverydatetime));
+    expect(DateTime.fromISO(component.deliveryDateControl.value)).toEqual(expDeliveryDate);
     expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
     expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
     expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
@@ -927,9 +938,15 @@ describe('TripInformationComponent', () => {
     component.filteredCarrierModeOptionsPopulatedSubject.complete();
     await component.loadTripInformationData(tripInformation);
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
-    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
-    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
-    expect(component.deliveryDateControl.value).toEqual(tripInformation.overriddenDeliveryDateTime);
+    expect(DateTime.fromISO(component.invoiceDateControl.value)).toEqual(DateTime.fromJSDate(tripInformation.invoiceDate));
+    if (tripInformation.pickUpDate) {
+      let expPickUpDate = DateTime.fromJSDate(tripInformation.pickUpDate);
+      expect(DateTime.fromISO(component.pickUpDateControl.value)).toEqual(expPickUpDate);
+    }
+    if (tripInformation.overriddenDeliveryDateTime) {
+      let expDeliveryDate = DateTime.fromJSDate(tripInformation.overriddenDeliveryDateTime);
+      expect(DateTime.fromISO(component.deliveryDateControl.value)).toEqual(expDeliveryDate);
+    }
     expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
     expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
     expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
@@ -970,9 +987,15 @@ describe('TripInformationComponent', () => {
     component.filteredCarrierModeOptionsPopulatedSubject.complete();
     await component.loadTripInformationData(tripInformation);
     expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
-    expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
-    expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
-    expect(component.deliveryDateControl.value).toEqual(tripInformation.assumedDeliveryDateTime);
+    expect(DateTime.fromISO(component.invoiceDateControl.value)).toEqual(DateTime.fromJSDate(tripInformation.invoiceDate));
+    if (tripInformation.pickUpDate) {
+      let expPickUpDate = DateTime.fromJSDate(tripInformation.pickUpDate);
+      expect(DateTime.fromISO(component.pickUpDateControl.value)).toEqual(expPickUpDate);
+    }
+    if (tripInformation.assumedDeliveryDateTime) {
+      let expDeliveryDate = DateTime.fromJSDate(tripInformation.assumedDeliveryDateTime);
+      expect(DateTime.fromISO(component.deliveryDateControl.value)).toEqual(expDeliveryDate);
+    }
     expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
     expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
     expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
@@ -1016,9 +1039,15 @@ describe('TripInformationComponent', () => {
       component.filteredCarrierModeOptionsPopulatedSubject.complete();
       await component.loadTripInformationData(tripInformation);
       expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
-      expect(component.invoiceDateControl.value).toEqual(tripInformation.invoiceDate);
-      expect(component.pickUpDateControl.value).toEqual(tripInformation.pickUpDate);
-      expect(component.deliveryDateControl.value).toEqual(tripInformation.overriddenDeliveryDateTime);
+      expect(DateTime.fromISO(component.invoiceDateControl.value)).toEqual(DateTime.fromJSDate(tripInformation.invoiceDate));
+      if (tripInformation.pickUpDate) {
+        let expPickUpDate = DateTime.fromJSDate(tripInformation.pickUpDate);
+        expect(DateTime.fromISO(component.pickUpDateControl.value)).toEqual(expPickUpDate);
+      }
+      if (tripInformation.overriddenDeliveryDateTime) {
+        let expDeliveryDate = DateTime.fromJSDate(tripInformation.overriddenDeliveryDateTime);
+        expect(DateTime.fromISO(component.deliveryDateControl.value)).toEqual(expDeliveryDate);
+      }
       expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
       expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
       expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);

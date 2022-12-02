@@ -28,16 +28,15 @@ import {SubjectValue} from 'src/app/utils/subject-value';
 import {InvoiceService} from 'src/app/services/invoice-service';
 import {InvoiceUtils} from 'src/app/models/invoice/invoice-model';
 import {CustomValidators, validateAlphanumeric} from '../../../utils/falcon-validators';
+import { DateTime } from 'luxon';
+import { ElmValidators } from '@elm/elm-styleguide-ui';
 
 const {required, maxLength} = Validators;
 
 export function validateDate(control: AbstractControl): ValidationErrors | null {
   const dateString = control.value;
   if (dateString) {
-    if (!(dateString instanceof Date) || (dateString.getFullYear() < 1000
-      || dateString.getFullYear() > 9999)) {
-      return {validateDate: true};
-    } else if (dateString.valueOf() >= Date.now()) {
+    if (DateTime.fromISO(dateString) >= DateTime.now()) {
       return {dateBefore: true};
     }
   }
@@ -48,10 +47,6 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
   selector: 'app-trip-information',
   templateUrl: './trip-information.component.html',
   styleUrls: ['./trip-information.component.scss'],
-  providers: [
-    {provide: NgbDateAdapter, useClass: NgbDateNativeAdapter},
-    {provide: NgbDateParserFormatter, useClass: DateParserFormatter}
-  ]
 })
 export class TripInformationComponent implements OnInit, OnDestroy{
   @Output() updateAndContinueClickEvent = new EventEmitter<any>();
@@ -83,7 +78,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public vendorNumberControl = new FormControl({}, [required]);
   public freightOrders = new FormControl();
   public invoiceDateControl = new FormControl({}, [required]);
-  public pickUpDateControl = new FormControl({}, [required, validateDate]);
+  public pickUpDateControl = new FormControl({}, [ElmValidators.required(), validateDate]);
   public deliveryDateControl = new FormControl({}, [required]);
   public proTrackingNumberControl = new FormControl({}, [required]);
   public bolNumberControl = new FormControl({}, [CustomValidators.requiredNonNA, validateAlphanumeric,maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
@@ -136,6 +131,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
 
   constructor(private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
               private invoiceService: InvoiceService) {
+                
   }
 
   ngOnInit(): void {
@@ -301,7 +297,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     this.tripIdControl.setValue(tripInfo.tripId ?? 'N/A');
     this.vendorNumberControl.setValue(tripInfo.vendorNumber);
     this.vendorNumberControl.markAsDirty();
-    this.invoiceDateControl.setValue(tripInfo.invoiceDate ?? undefined);
+    this.invoiceDateControl.setValue(tripInfo.invoiceDate?.toISOString() ?? undefined);
     this.pickUpDateControl.setValue(this.derivePickupDate(tripInfo));
     this.deliveryDateControl.setValue(this.deriveDeliveryDate(tripInfo));
     this.proTrackingNumberControl.setValue(tripInfo.proTrackingNumber ?? 'N/A');
@@ -351,7 +347,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     return formGroup;
   }
 
-  derivePickupDate(tripInfo?: TripInformation): Date | undefined {
+  derivePickupDate(tripInfo?: TripInformation): any | undefined {
     const deliveryDate = tripInfo?.deliveryDate?.getTime();
     if (tripInfo?.pickUpDate?.getTime() == tripInfo?.tripTenderTime?.getTime()
       && tripInfo?.tripTenderTime?.getTime() != null) {
@@ -359,10 +355,10 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     } else if (tripInfo?.pickUpDate && tripInfo.tripTenderTime && deliveryDate == tripInfo.tripTenderTime.getTime()) {
       this.isPickupDateTimeTendered = true;
     }
-    return tripInfo?.pickUpDate ?? undefined;
+    return tripInfo?.pickUpDate?.toISOString() ?? undefined;
   }
 
-  deriveDeliveryDate(tripInfo: TripInformation): Date | undefined {
+  deriveDeliveryDate(tripInfo: TripInformation): any | undefined {
     let dateToReturn: Date | undefined = tripInfo.deliveryDate ? new Date(tripInfo.deliveryDate) : undefined ;
     const overriddenDeliveryDateTime = tripInfo.overriddenDeliveryDateTime;
     const assumedDeliveryDateTime = tripInfo.assumedDeliveryDateTime;
@@ -382,7 +378,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
       this.showArrowForDeliveryDateTime = false;
       this.arrowLabelForDeliveryDateTime = '';
     } 
-    return dateToReturn;
+    return dateToReturn?.toISOString() ?? undefined;
   }
 
   clickEditButton(): void {

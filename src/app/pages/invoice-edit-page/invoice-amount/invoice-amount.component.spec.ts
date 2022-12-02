@@ -383,7 +383,11 @@ describe('InvoiceAmountComponent', () => {
     it('should enable currency fields for spot quote invoice.', done => {
       loadInvoiceOverviewDetail$.subscribe(() => {
       component.currencyOptions.forEach( (element) => {
-          expect(element.disabled).toBeFalse();
+          if(element.label === 'USD') {
+            expect(element.disabled).toBeFalse();
+          } else {
+            expect(element.disabled).toBeTrue();
+          }
       });
         done();
       });
