@@ -67,7 +67,9 @@ export class InvoiceAmountComponent implements OnInit {
         this.isPrepaid = invoiceOverviewDetail.freightPaymentTerms === 'PREPAID';
         this.isSpotQuote = invoiceOverviewDetail.isSpotQuote;
         this.currencyOptions.forEach( (element) => {
-          element.disabled = !(<boolean> this.isSpotQuote);
+          if(element.label === 'USD') {
+            element.disabled = !(<boolean> this.isSpotQuote);
+          }
         });
         this.isReturnToDomicile = invoiceOverviewDetail.returnToDomicile === true;
       }
