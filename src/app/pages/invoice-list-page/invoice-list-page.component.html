@@ -4,7 +4,7 @@
       <div class="headline1">Invoice List</div>
     </div>
   </div>
-  <app-search [controlGroup]="controlGroup" (submitEvent)="searchInvoices($event)" [totalResults]="totalSearchResult"></app-search>
+  <app-search [controlGroup]="controlGroup" (clearSearch)="clearSearchFilter()" (submitEvent)="searchInvoices($event)" [totalResults]="totalSearchResult"></app-search>
 </div>
 <elm-card>
   <elm-section-header [sectionTitle]="this.invoiceCountLabel">

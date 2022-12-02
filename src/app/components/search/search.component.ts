@@ -15,6 +15,7 @@ export class SearchComponent implements OnChanges {
   @Input() controlGroup!: FormGroup;
 
   @Output() submitEvent: EventEmitter<string> = new EventEmitter<string>();
+  @Output() clearSearch: EventEmitter<any> = new EventEmitter<any>();
 
   submitted: boolean = false;
 
@@ -56,5 +57,9 @@ export class SearchComponent implements OnChanges {
   clear(): void {
     this.controlGroup.controls['control'].setValue('');
     this.submitted = false;
+  }
+
+  clearSearchFilter(): void {
+    this.clearSearch.emit();
   }
 }

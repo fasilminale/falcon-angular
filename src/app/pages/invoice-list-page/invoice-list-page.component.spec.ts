@@ -323,6 +323,16 @@ describe('InvoiceListPageComponent', () => {
     expect(component.createdByUser).toEqual(true);
   }));
 
+  it('should call clearSearchFilter and reset search', fakeAsync(() => {
+    spyOn(component, 'resetTable').and.stub();
+    spyOn(component.searchComponent, 'clear');
+    component.searchValue = 'qwerty';
+    component.clearSearchFilter();
+    expect(component.resetTable).toHaveBeenCalled();
+    expect(component.searchComponent.clear).toHaveBeenCalled();
+    expect(component.searchValue).toEqual('');
+  }));
+
   it('should init with invoices from api', () => {
     component.getTableData(pageEvent.pageSize);
     http.expectOne(`${environment.baseServiceUrl}/v1/invoices`)

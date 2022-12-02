@@ -142,4 +142,13 @@ describe('SearchComponent', () => {
     });
   });
 
+  describe('clear method', () => {
+
+    it('should set submitted to false and emit clear search', () => {
+      const emit = spyOn(component.clearSearch, 'emit');
+      component.clearSearchFilter();
+      expect(emit).toHaveBeenCalled();
+    });
+  });
+
 });

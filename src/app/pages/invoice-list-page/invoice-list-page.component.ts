@@ -239,6 +239,12 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  clearSearchFilter(): void {
+    this.searchValue = '';
+    this.searchComponent.clear();
+    this.resetTable();
+  }
+
   resetTable(isInvoiceSearched = false): void {
     if (this.paginationModel.pageIndex !== 1) {
       this.dataTable.goToFirstPage();

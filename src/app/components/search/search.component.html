@@ -1,6 +1,7 @@
 <div>
   <form class="needs-validation" [formGroup]="controlGroup" (submit)="submit()" novalidate>
     <label for="searchInput">Find an Invoice (search all invoices)</label>
+    <span *ngIf="submitted" class="clear-search-text" (click)="clearSearchFilter()"><u>Clear Search</u></span>
     <div class="input-group has-validation" style="width: 387px">
       <elm-text-input id="searchInput" class="form-control" [required]="false"
             formControlName="control" [maxLength]="255" [autocomplete]="false">

@@ -1,4 +1,12 @@
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
+
 .invalid-feedback{
     display: flex;
     justify-content: space-between;
   }
+
+.clear-search-text{
+    margin-left: 42px;
+    color: colors.$red;
+    cursor: pointer
+}
