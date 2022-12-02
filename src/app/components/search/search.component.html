@@ -1,17 +1,29 @@
 <div>
   <form class="needs-validation" [formGroup]="controlGroup" (submit)="submit()" novalidate>
     <label for="searchInput">Find an Invoice (search all invoices)</label>
-    <div class="input-group has-validation" style="width: 387px">
-      <elm-text-input id="searchInput" class="form-control" [required]="false"
-            formControlName="control" [maxLength]="255" [autocomplete]="false">
-      </elm-text-input>
-      <button type="submit"
-              class="input-group-button">
-        <span class="material-icons" [attr.aria-label]="label">search</span>
-      </button>
+    <div class="input-group" style="width: 450px">
+      <input [maxLength]="255"
+             [required]="false"
+             autocomplete="off"
+             class="form-control"
+             formControlName="control"
+             id="searchInput"
+             type="text">
+      <elm-button [buttonType]="'submit'"
+                  centerIcon="search"
+                  class="input-group-btn input-append-button">
+      </elm-button>
     </div>
-    <span class="fieldHelperText">{{label}}</span>
-    <span class="invalid-feedback elm-field-sub1">{{getErrorMessage()}}</span>
-
+    <div class="sub-text">
+      <div>
+        <div *ngIf="showHelperText()">
+          {{label}}
+        </div>
+        <div *ngIf="!showHelperText()"
+             class="error-message">
+          {{getErrorMessage()}}
+        </div>
+      </div>
+    </div>
   </form>
 </div>

@@ -64,7 +64,7 @@
   margin-right: 5px
 }
 
-:host ::ng-deep #backrgound-grey .elm-card {
+:host :host::ng-deep #backrgound-grey .elm-card {
     background-color: #f6f6f6;
 
 }

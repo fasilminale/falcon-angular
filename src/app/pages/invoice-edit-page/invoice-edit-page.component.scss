@@ -58,6 +58,6 @@
   border-radius: 15px;
 }
 
-::ng-deep .fake-form-control {
+:host::ng-deep .fake-form-control {
   padding: 0.375rem 0.75rem;
 }

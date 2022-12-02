@@ -29,6 +29,6 @@
   border: 1px solid colors.$gray-light;
 }
 
-::ng-deep .updatedTimeClickable {
+:host::ng-deep .updatedTimeClickable {
   padding: 0;
 }

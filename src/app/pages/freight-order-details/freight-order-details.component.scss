@@ -37,11 +37,11 @@ th.mat-header-cell {
   padding-top: 24px;
 }
 
-::ng-deep .error {
+:host::ng-deep .error {
   border-color: colors.$red;
 }
 
-.input-error ::ng-deep .elm-input-subtext{
+.input-error :host::ng-deep .elm-input-subtext{
   margin-top: 0;
 }
 

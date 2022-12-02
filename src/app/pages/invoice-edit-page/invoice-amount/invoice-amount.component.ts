@@ -8,9 +8,10 @@ import {CalcDetail, CostBreakDownUtils, RateDetailResponse} from '../../../model
 import {first, map} from 'rxjs/operators';
 import {SelectOption} from '../../../models/select-option-model/select-option-model';
 import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
-import {ConfirmationModalData, ElmFormHelper, SubjectValue, ToastService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalData, ElmFormHelper, ToastService} from '@elm/elm-styleguide-ui';
 import {CommentModel, UtilService} from '../../../services/util-service';
 import {UserInfoModel} from '../../../models/user-info/user-info-model';
+import {SubjectValue} from 'src/app/utils/subject-value';
 
 @Component({
   selector: 'app-invoice-amount',

@@ -8,7 +8,8 @@
       <ng-select id="shippingPoint"
                  [items]="addressType === 'origin' || (addressType === 'destination' && destinationType == 'DC') ? masterDataShippingPoints : shippingPointItems"
                  formControlName="shippingPoint"
-                 (change)="onShippingPointChange($event)">
+                 (change)="onShippingPointChange($event)"
+                 [ngClass]="{'error': _formGroup.get('shippingPoint')?.errors?.required}">
       </ng-select>
       <elm-input-subtext *ngIf="_formGroup.get('shippingPoint')?.errors?.required"
                          [isError]="true">

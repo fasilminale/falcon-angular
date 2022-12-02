@@ -1,7 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
-import {buttonStyleOptions} from '@elm/elm-styleguide-ui';
+import {buttonStyle} from '@elm/elm-styleguide-ui';
 import {Subscription} from 'rxjs';
 import {CalcDetail, CalcDetailVariable} from '../../models/rate-engine/rate-engine-request';
 import {SelectOption} from '../../models/select-option-model/select-option-model';
@@ -103,7 +103,7 @@ export class FalEditChargeModalComponent {
    * Style setting for the confirmation button.
    * Defaults to primary style.
    */
-  get confirmButtonStyle(): buttonStyleOptions {
+  get confirmButtonStyle(): buttonStyle {
     return this.data.confirmButtonStyle ?? 'primary';
   }
 
@@ -289,7 +289,7 @@ export class FalEditChargeModalComponent {
 export type EditChargeModalInput = {
   title?: string,
   innerHtmlMessage?: string,
-  confirmButtonStyle?: buttonStyleOptions,
+  confirmButtonStyle?: buttonStyle,
   confirmButtonText?: string,
   cancelButtonText?: string,
   costLineItem?: AbstractControl,
