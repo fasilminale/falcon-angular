@@ -31,10 +31,6 @@ export class InvoiceFilterModalComponent implements OnInit {
     this.masterDataModes = data.masterDataModes;
   }
 
-  onSpotQuoteCheckChange(event: any): void {
-
-  }
-
   ngOnInit(): void {
     this.sortedMasterDataScacs = this.sortScacs(this.masterDataScacs);
     this.sortedMasterDataShippingPoints = this.sortShippingPoints(this.masterDataShippingPoints);

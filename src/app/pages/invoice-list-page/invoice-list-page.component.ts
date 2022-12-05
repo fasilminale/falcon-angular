@@ -138,7 +138,6 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   getTableData(numberPerPage: number, isInvoiceSearched = false): void {
     this.loadingService.showLoading('Loading');
     const searchFilters = this.filterService.invoiceFilterModel.formatForSearch();
-    debugger;
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices`, {
       page: this.paginationModel.pageIndex,
       sortField: this.paginationModel.sortField ? this.paginationModel.sortField : 'falconInvoiceNumber',
