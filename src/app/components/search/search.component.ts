@@ -24,6 +24,9 @@ export class SearchComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
+    if (this.controlGroup.controls['control'].value) {
+      this.submitted = true;
+    }
     if (this.submitted && this.totalResults === 0) {
       this.controlGroup.controls['control'].setErrors({badID: true});
     }
