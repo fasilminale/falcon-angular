@@ -23,6 +23,7 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.removeControl('scac');
     testingFiltersModel.form.removeControl('shippingPoints');
     testingFiltersModel.form.removeControl('mode');
+    testingFiltersModel.form.removeControl('filterBySpotQuote');
     const result = testingFiltersModel.formatForSearch();
     expect(result).toEqual({
       invoiceStatuses: undefined,
@@ -31,6 +32,7 @@ describe('Models: Filter |', () => {
       carrierSCAC: [],
       shippingPoints: [],
       mode: [],
+      filterBySpotQuote: undefined
     });
   });
 
@@ -41,6 +43,7 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.get('scac')?.setValue(['ODFL']);
     testingFiltersModel.form.get('shippingPoints')?.setValue('D46');
     testingFiltersModel.form.get('mode')?.setValue('LTL');
+    testingFiltersModel.form.get('filterBySpotQuote')?.setValue(true);
     const result = testingFiltersModel.formatForSearch();
     expect(result).toEqual({
       invoiceStatuses: undefined,
@@ -48,7 +51,8 @@ describe('Models: Filter |', () => {
       destinationCity: undefined,
       carrierSCAC: ['ODFL'],
       shippingPoints: ['D46'],
-      mode: 'LTL'
+      mode: 'LTL',
+      filterBySpotQuote: true
     });
   });
 
