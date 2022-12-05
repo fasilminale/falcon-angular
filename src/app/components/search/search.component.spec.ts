@@ -82,6 +82,17 @@ describe('SearchComponent', () => {
 
     });
 
+    describe('when search field has value,', () => {
+      it('Should show no error when invoice found', () => {
+        component.controlGroup.controls['control'].setValue('qwerty');
+        component.submitted = true;
+        component.ngOnChanges();
+        expect(component.submitted).toBeTrue();
+        expect(component.controlGroup.controls['control'].value).toEqual('qwerty');
+      });
+
+    });
+
     describe('Emit event', () => {
       it('should emit an event with the search value', () => {
         const emit = spyOn(component.submitEvent, 'emit');
@@ -142,9 +153,9 @@ describe('SearchComponent', () => {
     });
   });
 
-  describe('clear method', () => {
+  describe('clear search method method', () => {
 
-    it('should set submitted to false and emit clear search', () => {
+    it('should emit clear search', () => {
       const emit = spyOn(component.clearSearch, 'emit');
       component.clearSearchFilter();
       expect(emit).toHaveBeenCalled();
