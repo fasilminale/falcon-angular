@@ -41,6 +41,7 @@ export class ChipComponent implements OnChanges {
     const shippingPointCode = this.filtersModel.form.get('shippingPoints');
     const mode = this.filtersModel.form.get('mode');
     const scac = this.filtersModel.form.get('scac');
+    const filterBySpotQuote = this.filtersModel.form.get('filterBySpotQuote');
 
     if (statusForm?.value.length > 0) {
       this.chips.push(
@@ -65,6 +66,12 @@ export class ChipComponent implements OnChanges {
         this.formatChip(
           'Carrier:&nbsp', scac as FormGroup, 'scac')
         );
+    }
+
+    if (filterBySpotQuote?.value) {
+      this.chips.push(
+        this.formatSpotBooleanChip('Spot Quote', filterBySpotQuote as FormGroup, 'filterBySpotQuote')
+      );
     }
 
     if (shippingPointCode?.value?.length > 0) {
@@ -94,6 +101,14 @@ export class ChipComponent implements OnChanges {
       label: formArray.value.length + ' Selected',
       group,
       tooltips: this.getTooltips(formArray, arrayOptions)
+    };
+  }
+
+  formatSpotBooleanChip(type: string, formGroup: FormGroup, group: string): { label: any; type: string; group: string } {
+    return {
+      type,
+      label: '',
+      group
     };
   }
 

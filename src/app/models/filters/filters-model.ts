@@ -15,7 +15,8 @@ export class FiltersModel {
     invoiceStatuses: new FormArray([]),
     scac: new FormControl(),
     shippingPoints: new FormControl(),
-    mode: new FormControl()
+    mode: new FormControl(),
+    filterBySpotQuote: new FormControl()
   });
 
   constructor() {
@@ -28,7 +29,8 @@ export class FiltersModel {
       destinationCity: null,
       scac: null,
       shippingPoints: null,
-      mode: null
+      mode: null,
+      filterBySpotQuote: null
     });
     (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }
@@ -102,11 +104,13 @@ export class FiltersModel {
     const carrierSCAC = this.form.get('scac')?.value;
     const shippingPoints = this.form.get('shippingPoints')?.value;
     const carrierMode = this.form.get('mode')?.value;
+    const filterBySpotQuote = this.form.get('filterBySpotQuote')?.value;
     return {
       invoiceStatuses, originCity, destinationCity,
       carrierSCAC: carrierSCAC ? carrierSCAC : [],
       shippingPoints: shippingPoints ? [shippingPoints] : [],
       mode: carrierMode ? carrierMode : [],
+      filterBySpotQuote
     };
   }
 

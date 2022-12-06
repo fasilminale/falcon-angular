@@ -56,6 +56,7 @@ describe('ChipComponent', () => {
     component.filtersModel.form.get('scac')?.setValue('ABCD');
     component.filtersModel.form.get('shippingPoints')?.setValue('D36');
     component.filtersModel.form.get('mode')?.setValue(['D36']);
+    component.filtersModel.form.get('filterBySpotQuote')?.setValue(true);
   }
 
   it('should create', () => {
@@ -76,7 +77,7 @@ describe('ChipComponent', () => {
       addFilter('SUBMITTED');
       component.updateChipFilters();
       fixture.detectChanges();
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(7);
     });
 
     it('should ignore empty chip lists', () => {
@@ -86,6 +87,7 @@ describe('ChipComponent', () => {
       component.filtersModel.form.get('shippingPoints')?.setValue([]);
       component.filtersModel.form.get('mode')?.setValue([]);
       component.filtersModel.form.get('scac')?.setValue([]);
+      component.filtersModel.form.get('filterBySpotQuote')?.setValue(false);
       component.updateChipFilters();
       expect(component.chips.length).toBe(0);
     });
@@ -97,6 +99,7 @@ describe('ChipComponent', () => {
       component.filtersModel.form.removeControl('shippingPoints');
       component.filtersModel.form.removeControl('mode');
       component.filtersModel.form.removeControl('scac');
+      component.filtersModel.form.removeControl('filterBySpotQuote');
       component.updateChipFilters();
       expect(component.chips.length).toBe(0);
     });
@@ -132,10 +135,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(7);
       component.removeChip('invoiceStatuses');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual([]);
-      expect(component.chips.length).toBe(5);
+      expect(component.chips.length).toBe(6);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -144,10 +147,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('originCity')?.value).toEqual('TestOriginCity');
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(7);
       component.removeChip('originCity');
       expect(component.filtersModel.form.get('originCity')?.value).toBeNull();
-      expect(component.chips.length).toBe(5);
+      expect(component.chips.length).toBe(6);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -156,10 +159,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('destinationCity')?.value).toEqual('TestDestinationCity');
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(7);
       component.removeChip('destinationCity');
       expect(component.filtersModel.form.get('destinationCity')?.value).toBeNull();
-      expect(component.chips.length).toBe(5);
+      expect(component.chips.length).toBe(6);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -168,10 +171,22 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('scac')?.value).toEqual('ABCD');
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(7);
       component.removeChip('scac');
       expect(component.filtersModel.form.get('scac')?.value).toBeNull();
-      expect(component.chips.length).toBe(5);
+      expect(component.chips.length).toBe(6);
+      expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
+    });
+
+    it('should properly remove filterBySpotQuote, update the chips, and emit', () => {
+      addFilter();
+      component.updateChipFilters();
+      spyOn(component.chipRemovedEvent, 'emit');
+      expect(component.filtersModel.form.get('filterBySpotQuote')?.value).toEqual(true);
+      expect(component.chips.length).toBe(7);
+      component.removeChip('filterBySpotQuote');
+      expect(component.filtersModel.form.get('filterBySpotQuote')?.value).toBeNull();
+      expect(component.chips.length).toBe(6);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -183,7 +198,7 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(7);
       component.clearFilters();
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual([]);
       expect(component.chips.length).toBe(0);
