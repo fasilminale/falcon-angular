@@ -313,5 +313,4 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         return field;
     }
   }
-
 }
