@@ -21,6 +21,9 @@ export class FalHistoryLogModalComponent {
     {header: 'updatedBy', label: 'Updated By'},
     {header: 'updatedTimes', label: '# of Updates'},
   ];
+  columnTooltips: Array<ElmTooltipInterface> = [
+    { column: 'field', tooltip: 'description'}
+  ]
   falconInvoiceNumber = '';
   invoiceStatus = '';
   historyLogs: Array<HistoryLog> = [];
