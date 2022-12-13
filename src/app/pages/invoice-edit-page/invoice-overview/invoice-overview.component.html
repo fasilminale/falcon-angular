@@ -104,6 +104,10 @@
                     <span class="label-text">Date of Payment</span>
                     <span *ngFor="let value of dateOfPayments" class="value-text">{{ value === 'N/A' ? 'N/A' : value | date:'MM-dd-yyyy'}}</span>
                 </div>
+                <div class="remit-row">
+                  <span class="label-text">Check Number</span>
+                  <span *ngFor="let value of checkNumbers" class="value-text">{{ value}}</span>
+                </div>
             </div>
         </div>
 
