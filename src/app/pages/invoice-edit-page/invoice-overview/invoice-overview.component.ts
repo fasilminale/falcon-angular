@@ -61,10 +61,6 @@ export class InvoiceOverviewComponent {
     }
   }
 
-  get showHistoryLog(): boolean {
-    return this.environmentService.showFeature('historylog');
-  }
-
   onViewHistoryLog(): void {
     this.viewHistoryLog.emit();
   }
