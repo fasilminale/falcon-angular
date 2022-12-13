@@ -17,6 +17,7 @@ export class InvoiceOverviewComponent {
   vendorIds: string[] = [];
   amountOfPayments: string[] = [];
   dateOfPayments: string[] = [];
+  checkNumbers: string[] = [];
 
   private loadInvoiceOverDetailSubscription = new Subscription();
 
@@ -42,6 +43,7 @@ export class InvoiceOverviewComponent {
     this.vendorIds = [];
     this.amountOfPayments = [];
     this.dateOfPayments = [];
+    this.checkNumbers = [];
 
     if (remitData.length === 0) {
       this.erpInvoiceNumbers.push('N/A');
@@ -49,6 +51,7 @@ export class InvoiceOverviewComponent {
       this.vendorIds.push('N/A');
       this.amountOfPayments.push('N/A');
       this.dateOfPayments.push('N/A');
+      this.checkNumbers.push('N/A');
     } else {
       remitData.forEach((item) => {
         this.erpInvoiceNumbers.push(item.erpInvoiceNumber);
@@ -57,6 +60,7 @@ export class InvoiceOverviewComponent {
         const amountOfPaymentString = item.amountOfPayment ? item.amountOfPayment + '' : undefined;
         this.amountOfPayments.push(amountOfPaymentString ?? 'N/A');
         this.dateOfPayments.push(item.dateOfPayment ?? 'N/A');
+        this.checkNumbers.push(item.checkNumber ?? 'N/A')
       });
     }
   }
