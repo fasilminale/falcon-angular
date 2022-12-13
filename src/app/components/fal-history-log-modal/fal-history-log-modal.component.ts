@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {ElmDataTableHeader} from '@elm/elm-styleguide-ui';
+import {ElmDataTableHeader, ElmTooltipInterface} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {MAT_DIALOG_DATA} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {HistoryLog} from '../../models/invoice/history-log';
@@ -21,9 +21,9 @@ export class FalHistoryLogModalComponent {
     {header: 'updatedBy', label: 'Updated By'},
     {header: 'updatedTimes', label: '# of Updates'},
   ];
-  columnTooltips: Array<ElmTooltipInterface> = [
-    { column: 'field', tooltip: 'description'}
-  ]
+  columnTooltips: ElmTooltipInterface = {
+    field: 'description'
+  }
   falconInvoiceNumber = '';
   invoiceStatus = '';
   historyLogs: Array<HistoryLog> = [];
