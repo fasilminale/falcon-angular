@@ -99,8 +99,8 @@ export class ChipComponent implements OnChanges {
   }
 
   formatDatesRange(type: string, minDate: string, maxDate: string, group: string): FilterChip{
-    minDate = minDate !== null ? DateTime.fromISO(minDate).toISODate() : 'No start date';
-    maxDate = maxDate !== null ? DateTime.fromISO(maxDate).toISODate() : 'No end date';
+    minDate = minDate !== null ? DateTime.fromISO(minDate, {setZone: true}).toISODate() : 'No start date';
+    maxDate = maxDate !== null ? DateTime.fromISO(maxDate, {setZone: true}).toISODate() : 'No end date';
     return {
       type,
       label: minDate + ' - ' + maxDate,

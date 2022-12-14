@@ -24,6 +24,8 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.removeControl('shippingPoints');
     testingFiltersModel.form.removeControl('mode');
     testingFiltersModel.form.removeControl('filterBySpotQuote');
+    testingFiltersModel.form.removeControl('minPickupDateTime');
+    testingFiltersModel.form.removeControl('maxPickupDateTime');
     const result = testingFiltersModel.formatForSearch();
     expect(result).toEqual({
       invoiceStatuses: undefined,
@@ -32,7 +34,9 @@ describe('Models: Filter |', () => {
       carrierSCAC: [],
       shippingPoints: [],
       mode: [],
-      filterBySpotQuote: undefined
+      filterBySpotQuote: undefined,
+      minPickupDateTime: undefined,
+      maxPickupDateTime: undefined
     });
   });
 
@@ -44,6 +48,8 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.get('shippingPoints')?.setValue('D46');
     testingFiltersModel.form.get('mode')?.setValue('LTL');
     testingFiltersModel.form.get('filterBySpotQuote')?.setValue(true);
+    testingFiltersModel.form.get('minPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    testingFiltersModel.form.get('maxPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
     const result = testingFiltersModel.formatForSearch();
     expect(result).toEqual({
       invoiceStatuses: undefined,
@@ -52,7 +58,9 @@ describe('Models: Filter |', () => {
       carrierSCAC: ['ODFL'],
       shippingPoints: ['D46'],
       mode: 'LTL',
-      filterBySpotQuote: true
+      filterBySpotQuote: true,
+      minPickupDateTime: '2022-12-09T00:00:48.699+0000',
+      maxPickupDateTime: '2022-12-09T00:00:48.699+0000'
     });
   });
 

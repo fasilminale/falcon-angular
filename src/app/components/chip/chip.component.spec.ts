@@ -11,7 +11,7 @@ import { KeyedLabel } from 'src/app/models/generic/keyed-label';
 import { CarrierSCAC } from 'src/app/models/master-data-models/carrier-scac';
 import { FilterService } from 'src/app/services/filter-service';
 
-fdescribe('ChipComponent', () => {
+describe('ChipComponent', () => {
   let component: ChipComponent;
   let fixture: ComponentFixture<ChipComponent>;
   let http: HttpTestingController;
@@ -210,6 +210,33 @@ fdescribe('ChipComponent', () => {
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     })
 
+    it('should properly format minPickupDateTime and null maxPickupDateTime', () => {
+      setupEmptyChips();
+      component.filtersModel.form.get('maxPickupDateTime')?.setValue(null);
+      component.filtersModel.form.get('minPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+      component.updateChipFilters();
+      expect(component.chips.length).toBe(1);
+      expect(component.chips[0].label).toEqual("2022-12-09 - No end date");
+    })
+
+    it('should properly format null minPickupDateTime and maxPickupDateTime', () => {
+      setupEmptyChips();
+      component.filtersModel.form.get('maxPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+      component.filtersModel.form.get('minPickupDateTime')?.setValue(null);
+      component.updateChipFilters();
+      expect(component.chips.length).toBe(1);
+      expect(component.chips[0].label).toEqual("No start date - 2022-12-09");
+    })
+
+    it('should properly format  minPickupDateTime and maxPickupDateTime', () => {
+      setupEmptyChips();
+      component.filtersModel.form.get('minPickupDateTime')?.setValue('2022-12-08T00:00:48.699+0000');
+      component.filtersModel.form.get('maxPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+      component.updateChipFilters();
+      expect(component.chips.length).toBe(1);
+      expect(component.chips[0].label).toEqual("2022-12-08 - 2022-12-09");
+    })
+
   });
 
   describe('clearFilters', () => {
@@ -225,5 +252,18 @@ fdescribe('ChipComponent', () => {
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
   });
+
+  function setupEmptyChips() {
+    component.filtersModel.form.get('invoiceStatuses')?.setValue([]);
+    component.filtersModel.form.get('originCity')?.setValue([]);
+    component.filtersModel.form.get('destinationCity')?.setValue([]);
+    component.filtersModel.form.get('shippingPoints')?.setValue([]);
+    component.filtersModel.form.get('mode')?.setValue([]);
+    component.filtersModel.form.get('scac')?.setValue([]);
+    component.filtersModel.form.get('filterBySpotQuote')?.setValue(false);
+    component.filtersModel.form.get('minPickupDateTime')?.setValue(null);
+    component.filtersModel.form.get('maxPickupDateTime')?.setValue(null);
+    component.filtersModel.form.get('minPickupDateTime')?.setValue(null);
+  }
 });
 

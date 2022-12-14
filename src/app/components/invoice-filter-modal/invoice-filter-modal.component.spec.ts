@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, flush, TestBed} from '@angular/core/testing';
 import {InvoiceFilterModalComponent} from './invoice-filter-modal.component';
 import {AppModule} from '../../app.module';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
@@ -100,6 +100,7 @@ describe('LoadsFilterModalComponent', () => {
       expect(component.localFilterModel.form.get('originCity')?.value).toBeNull();
       expect(component.localFilterModel.form.get('destinationCity')?.value).toBeNull();
       expect(component.localFilterModel.form.get('scac')?.value).toBeNull();
+      flush();
     }));
   });
 
