@@ -137,13 +137,13 @@ describe('Invoice Model Tests', () => {
   });
 
   it('Should have remit history date of payment display value', () => {
-    const invoice = new InvoiceDataModel({remitHistory: [{dateOfPayment: '2022-01-27T15:31:30.986Z'}]});
-    expect(invoice.dateOfPaymentDisplay).toEqual('01/27/2022');
+    const invoice = new InvoiceDataModel({lastPaidDate: '2022-01-27T15:31:30.986Z'});
+    expect(invoice.lastPaidDate).toEqual('01/27/2022');
   });
 
   it('Should have empty remit history date of payment display value', () => {
-    const invoice = new InvoiceDataModel({remitHistory: [null]});
-    expect(invoice.dateOfPaymentDisplay).toEqual('');
+    const invoice = new InvoiceDataModel({lastPaidDate: null});
+    expect(invoice.lastPaidDate).toEqual('');
   });
 
   describe('InvoiceUtils', () => {
