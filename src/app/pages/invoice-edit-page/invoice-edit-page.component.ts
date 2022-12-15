@@ -729,7 +729,6 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
    *  Rate management is not called if checkAccessorialData() returns false,indicating required data is missing.
    */
   getRates(): void {
-    debugger;
     this.updateInvoiceFromForms();
     if (this.invoice.isSpotQuotePresent || (this.checkAccessorialData(this.invoice) && this.invoice.payable)) {
       this.rateCallCounter++;
