@@ -568,6 +568,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       standardPaymentTermsOverride: paymentTermsOverridenValue,
       billOfLadingNumber: CommonUtils.handleNAValues(this.invoice.billOfLadingNumber),
       currency: this.invoiceAmountFormGroup.controls.currency.value,
+      payable: this.invoice.payable
     };
   }
 
@@ -714,7 +715,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   updateAndGetRates(): void {
     this.updateInvoiceFromForms();
-    if (this.checkAccessorialData(this.invoice) && this.invoice.payable) {
+    if (this.checkAccessorialData(this.invoice)) {
       this.rateCallCounter++;
       this.rateService.updateInvoice(this.invoice).subscribe(
         (invoice: any) => this.loadReRate(invoice),
@@ -730,7 +731,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
    */
   getRates(): void {
     this.updateInvoiceFromForms();
-    if (this.invoice.isSpotQuotePresent || (this.checkAccessorialData(this.invoice) && this.invoice.payable)) {
+    if (this.invoice.isSpotQuotePresent || (this.checkAccessorialData(this.invoice))) {
       this.rateCallCounter++;
       this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => this.loadReRate(ratedInvoiced),
