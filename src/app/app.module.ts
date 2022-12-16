@@ -230,7 +230,6 @@ const oktaConfig = {
     InputsModule,
     ServicesModule,
     MatIconModule,
-    MatDialogModule,
   ],
   providers: [
     WebServices,
