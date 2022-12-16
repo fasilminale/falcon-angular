@@ -26,6 +26,8 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.removeControl('filterBySpotQuote');
     testingFiltersModel.form.removeControl('minPickupDateTime');
     testingFiltersModel.form.removeControl('maxPickupDateTime');
+    testingFiltersModel.form.removeControl('minDeliveryDateTime');
+    testingFiltersModel.form.removeControl('maxDeliveryDateTime');
     const result = testingFiltersModel.formatForSearch();
     expect(result).toEqual({
       invoiceStatuses: undefined,
@@ -36,7 +38,9 @@ describe('Models: Filter |', () => {
       mode: [],
       filterBySpotQuote: undefined,
       minPickupDateTime: undefined,
-      maxPickupDateTime: undefined
+      maxPickupDateTime: undefined,
+      minDeliveryDate: undefined,
+      maxDeliveryDate: undefined
     });
   });
 
@@ -50,6 +54,8 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.get('filterBySpotQuote')?.setValue(true);
     testingFiltersModel.form.get('minPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
     testingFiltersModel.form.get('maxPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    testingFiltersModel.form.get('minDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    testingFiltersModel.form.get('maxDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
     const result = testingFiltersModel.formatForSearch();
     expect(result).toEqual({
       invoiceStatuses: undefined,
@@ -60,7 +66,9 @@ describe('Models: Filter |', () => {
       mode: 'LTL',
       filterBySpotQuote: true,
       minPickupDateTime: '2022-12-09T00:00:48.699+0000',
-      maxPickupDateTime: '2022-12-09T00:00:48.699+0000'
+      maxPickupDateTime: '2022-12-09T00:00:48.699+0000',
+      minDeliveryDate: '2022-12-09T00:00:48.699+0000',
+      maxDeliveryDate: '2022-12-09T00:00:48.699+0000'
     });
   });
 
