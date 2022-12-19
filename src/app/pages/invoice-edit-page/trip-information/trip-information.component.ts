@@ -21,8 +21,6 @@ import {
 } from 'src/app/models/location/location-model';
 import {FreightOrder} from 'src/app/models/freight-order/freight-order-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
-import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
-import {DateParserFormatter} from '../../../utils/date-parser-formatter';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
 import {SubjectValue} from 'src/app/utils/subject-value';
 import {InvoiceService} from 'src/app/services/invoice-service';
@@ -131,7 +129,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
 
   constructor(private masterData: MasterDataService, private changeDetection: ChangeDetectorRef,
               private invoiceService: InvoiceService) {
-                
+
   }
 
   ngOnInit(): void {
@@ -377,7 +375,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     } else if (dateToReturn) {
       this.showArrowForDeliveryDateTime = false;
       this.arrowLabelForDeliveryDateTime = '';
-    } 
+    }
     return dateToReturn?.toISOString() ?? undefined;
   }
 

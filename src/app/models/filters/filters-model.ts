@@ -19,8 +19,10 @@ export class FiltersModel {
     shippingPoints: new FormControl(),
     mode: new FormControl(),
     filterBySpotQuote: new FormControl(),
-    minPickupDateTime: new FormControl({}, [ElmValidators.required(), validateDate]),
-    maxPickupDateTime: new FormControl({}, [ElmValidators.required(), validateDate])
+    minPickupDateTime: new FormControl({}, [ElmValidators.required()]),
+    maxPickupDateTime: new FormControl({}, [ElmValidators.required()]),
+    minDeliveryDateTime: new FormControl({}, [ElmValidators.required()]),
+    maxDeliveryDateTime: new FormControl({}, [ElmValidators.required()])
   });
 
   constructor() {
@@ -37,6 +39,8 @@ export class FiltersModel {
       filterBySpotQuote: null,
       minPickupDateTime: null,
       maxPickupDateTime: null,
+      minDeliveryDateTime: null,
+      maxDeliveryDateTime: null
     });
     (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }
@@ -113,6 +117,8 @@ export class FiltersModel {
     const filterBySpotQuote = this.form.get('filterBySpotQuote')?.value;
     const minPickupDateTime = this.form.get('minPickupDateTime')?.value;
     const maxPickupDateTime = this.form.get('maxPickupDateTime')?.value;
+    const minDeliveryDate = this.form.get('minDeliveryDateTime')?.value;
+    const maxDeliveryDate = this.form.get('maxDeliveryDateTime')?.value;
     return {
       invoiceStatuses, originCity, destinationCity,
       carrierSCAC: carrierSCAC ? carrierSCAC : [],
@@ -120,7 +126,9 @@ export class FiltersModel {
       mode: carrierMode ? carrierMode : [],
       filterBySpotQuote,
       minPickupDateTime,
-      maxPickupDateTime
+      maxPickupDateTime,
+      minDeliveryDate,
+      maxDeliveryDate
     };
   }
 
