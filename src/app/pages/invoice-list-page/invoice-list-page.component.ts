@@ -20,6 +20,7 @@ import {Subscription} from 'rxjs';
 import {SearchComponent} from '../../components/search/search.component';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
+import moment from 'moment';
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -41,7 +42,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     {header: 'destinationStr', label: 'Destination'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'paymentDueDisplay', label: 'Payment Due'},
-    {header: 'dateOfPaymentDisplay', label: 'Payment Date'} ,
+    {header: 'lastPaidDate', label: 'Payment Date'} ,
     {header: 'amountOfInvoice', label: 'Amount', alignment: 'end'},
     {header: 'currency', label: 'Currency'},
   ];
@@ -305,6 +306,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         return 'mode.mode';
       case 'paymentDueDisplay':
         return 'paymentDue';
+      case 'lastPaidDate':
+        return 'lastPaidDate';
       case 'originStr':
         return 'origin.city';
       case 'destinationStr':

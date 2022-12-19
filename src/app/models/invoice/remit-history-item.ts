@@ -5,4 +5,5 @@ export interface RemitHistoryItem {
   amountOfPayment: number;
   dateOfPayment: string;
   remitStatus: string;
+  checkNumber: string;
 }
