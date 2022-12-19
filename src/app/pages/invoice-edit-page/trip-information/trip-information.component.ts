@@ -79,7 +79,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public pickUpDateControl = new FormControl({}, [ElmValidators.required(), validateDate]);
   public deliveryDateControl = new FormControl({}, [required]);
   public proTrackingNumberControl = new FormControl({}, [required]);
-  public bolNumberControl = new FormControl({}, [CustomValidators.requiredNonNA, validateAlphanumeric,maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
+  public bolNumberControl = new FormControl({}, [CustomValidators.requiredNonNA, validateAlphanumeric, maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
   public freightPaymentTermsControl = new FormControl({}, [required]);
   public carrierControl = new FormControl({}, [required]);
   public carrierModeControl = new FormControl({}, [required]);
@@ -333,6 +333,10 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     if (this._editableFormArray.disabled) {
       this.formGroup.disable();
     }
+    if (this.tripInformation.isBolNumberDuplicate) {
+      this.clickEditButton();
+      this.bolNumberControl.setErrors({duplicate: true});
+    }
   }
 
   public toWeightAdjustmentFormGroup(weightAdjustment: WeightAdjustment): FormGroup {
@@ -494,6 +498,9 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     const messages = [];
     if (this.bolNumberControl.errors?.required || !this.isValidBolNumber) {
       messages.push('BOL Number is missing');
+    }
+    if (this.tripInformation.isBolNumberDuplicate && this.tripInformation.duplicateBOLErrorMessage) {
+      messages.push(this.tripInformation.duplicateBOLErrorMessage);
     }
     if (this.bolNumberControl.errors?.pattern) {
       messages.push('Contains invalid characters');

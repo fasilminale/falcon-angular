@@ -1493,6 +1493,22 @@ describe('InvoiceEditPageComponent', () => {
     expect(toastService.openErrorToast).not.toHaveBeenCalled();
   });
 
+  it('loadReRate on invoice with spot quote and duplicate bol number should show error toast message.', done => {
+    const mockUpdateRequest$ = new Subject();
+    component.invoice.isSpotQuotePresent = false;
+    component.invoice.isBillOfLadingNumberDuplicate = true;
+    component.invoice.hasRateEngineError = false;
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openErrorToast).and.stub();
+    component.loadReRate(component.invoice);
+    mockUpdateRequest$.subscribe(() => {
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockUpdateRequest$.next({});
+    expect(toastService.openErrorToast).toHaveBeenCalled();
+  });
+
   it('updateAndGetRates should call backend and error', done => {
     const mockUpdateRequest$ = new Subject();
     spyOn(component, 'updateInvoiceFromForms').and.stub();

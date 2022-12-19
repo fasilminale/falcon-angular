@@ -169,6 +169,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       deliveryDate: invoice.deliveryDateTime ? new Date(invoice.deliveryDateTime) : undefined,
       proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
       bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A',
+      isBolNumberDuplicate: invoice.isBillOfLadingNumberDuplicate,
+      duplicateBOLErrorMessage: invoice.duplicateBOLErrorMessage,
       freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,
       destinationType: invoice.destinationType,
       businessUnit: invoice.businessUnit,
@@ -742,9 +744,11 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   }
 
   loadReRate(invoice: InvoiceDataModel): void {
-        this.loadInvoice(invoice);
+    this.loadInvoice(invoice);
     if (!invoice.isSpotQuotePresent) {
-      if (invoice.hasRateEngineError) {
+      if (invoice.isBillOfLadingNumberDuplicate) {
+        this.toastService.openErrorToast('The BOL number already exists on another invoice.');
+      } else if (invoice.hasRateEngineError) {
         this.toastService.openErrorToast('There were errors while attempting to re-rate.');
       } else {
         this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');
