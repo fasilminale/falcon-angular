@@ -92,6 +92,7 @@
       </ng-select>
     </div>
 
+
     <div class="row mt-4 px-3">
       <h6 class="px-0">Origin</h6>
       <label class="elm-field-label1" for="originCity">
@@ -106,6 +107,7 @@
       placeholder="Select One..."
       [compareWith]="compareCitiesWith"
      >
+
 </ng-select>
     </div>
 
@@ -124,6 +126,41 @@
      ></ng-select>
 
     </div>
+
+    <hr>
+    <span class="elm-nav1">Pickup Date</span>
+    <div class="row">
+      <div class="col-md-6">
+        <elm-date-picker id="minPickupDateTime"
+                         label="From"
+                         labelPosition="top"
+                         formControlName="minPickupDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [maxDate]="localFilterModel.form.controls.maxPickupDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+
+        </elm-date-picker>
+      </div>
+
+      <div class="col-md-6">
+        <elm-date-picker id="maxPickupDateTime"
+                         label="To"
+                         labelPosition="top"
+                         formControlName="maxPickupDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [minDate]="localFilterModel.form.controls.minPickupDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+
+        </elm-date-picker>
+      </div>
+    </div>
+
+
+
 
   </form>
 </div>
