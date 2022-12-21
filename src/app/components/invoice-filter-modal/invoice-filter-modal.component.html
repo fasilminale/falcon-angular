@@ -77,8 +77,7 @@
                  bindValue="value"
                  placeholder="Select One..."
                  formControlName="shippingPoints"
-      >
-      </ng-select>
+      ></ng-select>
     </div>
 
     <div class="row mt-4 px-3">
@@ -91,17 +90,12 @@
                  placeholder="Select One..."
                  formControlName="mode"
                  [closeOnSelect]="false"
-      >
-      </ng-select>
+      ></ng-select>
     </div>
 
 
     <div class="row mt-4 px-3">
       <h6 class="px-0">Origin</h6>
-      <label class="elm-field-label1" for="originCities">
-        Origin City
-      </label>
-
       <ng-select id="originCities"
                  [items]="originCities"
                  bindLabel="label"
@@ -109,16 +103,11 @@
                  formControlName="originCity"
                  placeholder="Select One..."
                  [compareWith]="compareCitiesWith"
-      >
-
-      </ng-select>
+      ></ng-select>
     </div>
 
-    <div class="row mt-2 px-3">
+    <div class="row mt-4 px-3">
       <h6 class="px-0">Destination</h6>
-      <label class="elm-field-label1" for="destinationCities">
-        Destination City
-      </label>
       <ng-select id="destinationCities"
                  [items]="destinationCities"
                  bindLabel="label"
@@ -127,7 +116,6 @@
                  placeholder="Select One..."
                  [compareWith]="compareCitiesWith"
       ></ng-select>
-
     </div>
 
     <hr>
@@ -142,9 +130,8 @@
                          [showTimezone]="false"
                          [maxDate]="localFilterModel.form.controls.maxPickupDateTime?.value"
                          [placement]="'top'"
-                         width="100%">
-
-        </elm-date-picker>
+                         width="100%"
+        ></elm-date-picker>
       </div>
 
       <div class="col-md-6">
@@ -156,9 +143,8 @@
                          [showTimezone]="false"
                          [minDate]="localFilterModel.form.controls.minPickupDateTime?.value"
                          [placement]="'top'"
-                         width="100%">
-
-        </elm-date-picker>
+                         width="100%"
+        ></elm-date-picker>
       </div>
     </div>
 

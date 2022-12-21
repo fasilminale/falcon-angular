@@ -6,7 +6,6 @@ import {
   FormGroup
 } from '@angular/forms';
 import {ElmValidators} from '@elm/elm-styleguide-ui';
-import {validateDate} from '../../pages/invoice-edit-page/trip-information/trip-information.component';
 
 export class FiltersModel {
   fb = new FormBuilder();
