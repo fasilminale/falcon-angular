@@ -5,6 +5,8 @@ import {
   FormControl,
   FormGroup
 } from '@angular/forms';
+import {ElmValidators} from '@elm/elm-styleguide-ui';
+import {validateDate} from '../../pages/invoice-edit-page/trip-information/trip-information.component';
 
 export class FiltersModel {
   fb = new FormBuilder();
@@ -16,7 +18,11 @@ export class FiltersModel {
     scac: new FormControl(),
     shippingPoints: new FormControl(),
     mode: new FormControl(),
-    filterBySpotQuote: new FormControl()
+    filterBySpotQuote: new FormControl(),
+    minPickupDateTime: new FormControl({}, [ElmValidators.required()]),
+    maxPickupDateTime: new FormControl({}, [ElmValidators.required()]),
+    minDeliveryDateTime: new FormControl({}, [ElmValidators.required()]),
+    maxDeliveryDateTime: new FormControl({}, [ElmValidators.required()])
   });
 
   constructor() {
@@ -30,7 +36,11 @@ export class FiltersModel {
       scac: null,
       shippingPoints: null,
       mode: null,
-      filterBySpotQuote: null
+      filterBySpotQuote: null,
+      minPickupDateTime: null,
+      maxPickupDateTime: null,
+      minDeliveryDateTime: null,
+      maxDeliveryDateTime: null
     });
     (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }
@@ -105,12 +115,20 @@ export class FiltersModel {
     const shippingPoints = this.form.get('shippingPoints')?.value;
     const carrierMode = this.form.get('mode')?.value;
     const filterBySpotQuote = this.form.get('filterBySpotQuote')?.value;
+    const minPickupDateTime = this.form.get('minPickupDateTime')?.value;
+    const maxPickupDateTime = this.form.get('maxPickupDateTime')?.value;
+    const minDeliveryDate = this.form.get('minDeliveryDateTime')?.value;
+    const maxDeliveryDate = this.form.get('maxDeliveryDateTime')?.value;
     return {
       invoiceStatuses, originCity, destinationCity,
       carrierSCAC: carrierSCAC ? carrierSCAC : [],
       shippingPoints: shippingPoints ? [shippingPoints] : [],
       mode: carrierMode ? carrierMode : [],
-      filterBySpotQuote
+      filterBySpotQuote,
+      minPickupDateTime,
+      maxPickupDateTime,
+      minDeliveryDate,
+      maxDeliveryDate
     };
   }
 

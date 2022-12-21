@@ -14,6 +14,8 @@ export interface TripInformation {
   deliveryDate?: Date;
   proTrackingNumber: string;
   bolNumber: string;
+  isBolNumberDuplicate?: boolean;
+  duplicateBOLErrorMessage?: string;
   freightPaymentTerms: FreightPaymentTerms;
   carrier?: CarrierReference;
   carrierMode?: CarrierModeCodeReference;

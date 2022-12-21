@@ -169,6 +169,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       deliveryDate: invoice.deliveryDateTime ? new Date(invoice.deliveryDateTime) : undefined,
       proTrackingNumber: invoice.proNumber ? invoice.proNumber : 'N/A',
       bolNumber: invoice.billOfLadingNumber ? invoice.billOfLadingNumber : 'N/A',
+      isBolNumberDuplicate: invoice.isBillOfLadingNumberDuplicate,
+      duplicateBOLErrorMessage: invoice.duplicateBOLErrorMessage,
       freightPaymentTerms: invoice.freightPaymentTerms as FreightPaymentTerms,
       destinationType: invoice.destinationType,
       businessUnit: invoice.businessUnit,
@@ -568,6 +570,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       standardPaymentTermsOverride: paymentTermsOverridenValue,
       billOfLadingNumber: CommonUtils.handleNAValues(this.invoice.billOfLadingNumber),
       currency: this.invoiceAmountFormGroup.controls.currency.value,
+      payable: this.invoice.payable
     };
   }
 
@@ -714,7 +717,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   updateAndGetRates(): void {
     this.updateInvoiceFromForms();
-    if (this.checkAccessorialData(this.invoice) && this.invoice.payable) {
+    if (this.checkAccessorialData(this.invoice)) {
       this.rateCallCounter++;
       this.rateService.updateInvoice(this.invoice).subscribe(
         (invoice: any) => this.loadReRate(invoice),
@@ -730,7 +733,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
    */
   getRates(): void {
     this.updateInvoiceFromForms();
-    if (this.invoice.isSpotQuotePresent || (this.checkAccessorialData(this.invoice) && this.invoice.payable)) {
+    if (this.invoice.isSpotQuotePresent || (this.checkAccessorialData(this.invoice))) {
       this.rateCallCounter++;
       this.rateService.rateInvoice(this.invoice).subscribe(
         ratedInvoiced => this.loadReRate(ratedInvoiced),
@@ -741,9 +744,11 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   }
 
   loadReRate(invoice: InvoiceDataModel): void {
-        this.loadInvoice(invoice);
+    this.loadInvoice(invoice);
     if (!invoice.isSpotQuotePresent) {
-      if (invoice.hasRateEngineError) {
+      if (invoice.isBillOfLadingNumberDuplicate) {
+        this.toastService.openErrorToast('The BOL number already exists on another invoice.');
+      } else if (invoice.hasRateEngineError) {
         this.toastService.openErrorToast('There were errors while attempting to re-rate.');
       } else {
         this.toastService.openSuccessToast('Success. Invoice charges have been re-rated.');

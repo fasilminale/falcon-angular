@@ -2,14 +2,12 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ChipComponent, FilterChip} from './chip.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
-import {AbstractControl, FormArray, FormControl} from '@angular/forms';
+import {FormArray, FormControl} from '@angular/forms';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {environment} from '../../../environments/environment';
-import { KeyedLabel } from 'src/app/models/generic/keyed-label';
-import { CarrierSCAC } from 'src/app/models/master-data-models/carrier-scac';
-import { FilterService } from 'src/app/services/filter-service';
+import {FilterService} from 'src/app/services/filter-service';
 
 describe('ChipComponent', () => {
   let component: ChipComponent;
@@ -23,8 +21,8 @@ describe('ChipComponent', () => {
   ];
 
   const scacs: Array<any> = [
-    {scac: "C007", name: "RENAL FLEET"},
-    {scac: "PYLE", name: "A DUIE"}
+    {scac: 'C007', name: 'RENAL FLEET'},
+    {scac: 'PYLE', name: 'A DUIE'}
   ];
 
   beforeEach(() => {
@@ -57,6 +55,10 @@ describe('ChipComponent', () => {
     component.filtersModel.form.get('shippingPoints')?.setValue('D36');
     component.filtersModel.form.get('mode')?.setValue(['D36']);
     component.filtersModel.form.get('filterBySpotQuote')?.setValue(true);
+    component.filtersModel.form.get('minPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    component.filtersModel.form.get('maxPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    component.filtersModel.form.get('minDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    component.filtersModel.form.get('maxDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
   }
 
   it('should create', () => {
@@ -77,7 +79,7 @@ describe('ChipComponent', () => {
       addFilter('SUBMITTED');
       component.updateChipFilters();
       fixture.detectChanges();
-      expect(component.chips.length).toBe(7);
+      expect(component.chips.length).toBe(9);
     });
 
     it('should ignore empty chip lists', () => {
@@ -88,6 +90,10 @@ describe('ChipComponent', () => {
       component.filtersModel.form.get('mode')?.setValue([]);
       component.filtersModel.form.get('scac')?.setValue([]);
       component.filtersModel.form.get('filterBySpotQuote')?.setValue(false);
+      component.filtersModel.form.get('minPickupDateTime')?.setValue(null);
+      component.filtersModel.form.get('maxPickupDateTime')?.setValue(null);
+      component.filtersModel.form.get('minDeliveryDateTime')?.setValue(null);
+      component.filtersModel.form.get('maxDeliveryDateTime')?.setValue(null);
       component.updateChipFilters();
       expect(component.chips.length).toBe(0);
     });
@@ -100,6 +106,10 @@ describe('ChipComponent', () => {
       component.filtersModel.form.removeControl('mode');
       component.filtersModel.form.removeControl('scac');
       component.filtersModel.form.removeControl('filterBySpotQuote');
+      component.filtersModel.form.removeControl('minPickupDateTime');
+      component.filtersModel.form.removeControl('maxPickupDateTime');
+      component.filtersModel.form.removeControl('minDeliveryDateTime');
+      component.filtersModel.form.removeControl('maxDeliveryDateTime');
       component.updateChipFilters();
       expect(component.chips.length).toBe(0);
     });
@@ -135,10 +145,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
-      expect(component.chips.length).toBe(7);
+      expect(component.chips.length).toBe(9);
       component.removeChip('invoiceStatuses');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual([]);
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(8);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -147,10 +157,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('originCity')?.value).toEqual('TestOriginCity');
-      expect(component.chips.length).toBe(7);
+      expect(component.chips.length).toBe(9);
       component.removeChip('originCity');
       expect(component.filtersModel.form.get('originCity')?.value).toBeNull();
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(8);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -159,10 +169,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('destinationCity')?.value).toEqual('TestDestinationCity');
-      expect(component.chips.length).toBe(7);
+      expect(component.chips.length).toBe(9);
       component.removeChip('destinationCity');
       expect(component.filtersModel.form.get('destinationCity')?.value).toBeNull();
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(8);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -171,10 +181,10 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('scac')?.value).toEqual('ABCD');
-      expect(component.chips.length).toBe(7);
+      expect(component.chips.length).toBe(9);
       component.removeChip('scac');
       expect(component.filtersModel.form.get('scac')?.value).toBeNull();
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(8);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
 
@@ -183,11 +193,97 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('filterBySpotQuote')?.value).toEqual(true);
-      expect(component.chips.length).toBe(7);
+      expect(component.chips.length).toBe(9);
       component.removeChip('filterBySpotQuote');
       expect(component.filtersModel.form.get('filterBySpotQuote')?.value).toBeNull();
-      expect(component.chips.length).toBe(6);
+      expect(component.chips.length).toBe(8);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
+    });
+
+    describe('Pickup Date Range:', () => {
+      it('should properly remove minPickupDateTime and maxPickupDateTime update the chips, and emit', () => {
+        addFilter();
+        component.updateChipFilters();
+        spyOn(component.chipRemovedEvent, 'emit');
+        expect(component.filtersModel.form.get('minPickupDateTime')?.value).toEqual('2022-12-09T00:00:48.699+0000');
+        expect(component.filtersModel.form.get('maxPickupDateTime')?.value).toEqual('2022-12-09T00:00:48.699+0000');
+        expect(component.chips.length).toBe(9);
+        component.removeChip('minPickupDateTime');
+        expect(component.filtersModel.form.get('minPickupDateTime')?.value).toBeNull();
+        expect(component.filtersModel.form.get('maxPickupDateTime')?.value).toBeNull();
+        expect(component.chips.length).toBe(8);
+        expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
+      });
+
+      it('should properly format minPickupDateTime and null maxPickupDateTime', () => {
+        setupEmptyChips();
+        component.filtersModel.form.get('maxPickupDateTime')?.setValue(null);
+        component.filtersModel.form.get('minPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+        component.updateChipFilters();
+        expect(component.chips.length).toBe(1);
+        expect(component.chips[0].label).toEqual('2022-12-09 - No end date');
+      });
+
+      it('should properly format null minPickupDateTime and maxPickupDateTime', () => {
+        setupEmptyChips();
+        component.filtersModel.form.get('maxPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+        component.filtersModel.form.get('minPickupDateTime')?.setValue(null);
+        component.updateChipFilters();
+        expect(component.chips.length).toBe(1);
+        expect(component.chips[0].label).toEqual('No start date - 2022-12-09');
+      });
+
+      it('should properly format  minPickupDateTime and maxPickupDateTime', () => {
+        setupEmptyChips();
+        component.filtersModel.form.get('minPickupDateTime')?.setValue('2022-12-08T00:00:48.699+0000');
+        component.filtersModel.form.get('maxPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+        component.updateChipFilters();
+        expect(component.chips.length).toBe(1);
+        expect(component.chips[0].label).toEqual('2022-12-08 - 2022-12-09');
+      });
+    });
+
+    describe('Delivery Date Range:', () => {
+      it('should properly remove minDeliveryDateTime and maxDeliveryDateTime update the chips, and emit', () => {
+        addFilter();
+        component.updateChipFilters();
+        spyOn(component.chipRemovedEvent, 'emit');
+        expect(component.filtersModel.form.get('minDeliveryDateTime')?.value).toEqual('2022-12-09T00:00:48.699+0000');
+        expect(component.filtersModel.form.get('maxDeliveryDateTime')?.value).toEqual('2022-12-09T00:00:48.699+0000');
+        expect(component.chips.length).toBe(9);
+        component.removeChip('minDeliveryDateTime');
+        expect(component.filtersModel.form.get('minDeliveryDateTime')?.value).toBeNull();
+        expect(component.filtersModel.form.get('maxDeliveryDateTime')?.value).toBeNull();
+        expect(component.chips.length).toBe(8);
+        expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
+      });
+
+      it('should properly format minDeliveryDateTime and null maxDeliveryDateTime', () => {
+        setupEmptyChips();
+        component.filtersModel.form.get('minDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+        component.filtersModel.form.get('maxDeliveryDateTime')?.setValue(null);
+        component.updateChipFilters();
+        expect(component.chips.length).toBe(1);
+        expect(component.chips[0].label).toEqual('2022-12-09 - No end date');
+      });
+
+      it('should properly format null minDeliveryDateTime and maxDeliveryDateTime', () => {
+        setupEmptyChips();
+        component.filtersModel.form.get('minDeliveryDateTime')?.setValue(null);
+        component.filtersModel.form.get('maxDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+        component.updateChipFilters();
+        expect(component.chips.length).toBe(1);
+        expect(component.chips[0].label).toEqual('No start date - 2022-12-09');
+      });
+
+      it('should properly format  minDeliveryDateTime and maxDeliveryDateTime', () => {
+        setupEmptyChips();
+        component.filtersModel.form.get('minDeliveryDateTime')?.setValue('2022-12-08T00:00:48.699+0000');
+        component.filtersModel.form.get('maxDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+        component.updateChipFilters();
+        expect(component.chips.length).toBe(1);
+        expect(component.chips[0].label).toEqual('2022-12-08 - 2022-12-09');
+      });
     });
 
   });
@@ -198,12 +294,26 @@ describe('ChipComponent', () => {
       component.updateChipFilters();
       spyOn(component.chipRemovedEvent, 'emit');
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual(['CREATED']);
-      expect(component.chips.length).toBe(7);
+      expect(component.chips.length).toBe(9);
       component.clearFilters();
       expect(component.filtersModel.form.get('invoiceStatuses')?.value).toEqual([]);
       expect(component.chips.length).toBe(0);
       expect(component.chipRemovedEvent.emit).toHaveBeenCalled();
     });
   });
+
+  function setupEmptyChips() {
+    component.filtersModel.form.get('invoiceStatuses')?.setValue([]);
+    component.filtersModel.form.get('originCity')?.setValue([]);
+    component.filtersModel.form.get('destinationCity')?.setValue([]);
+    component.filtersModel.form.get('shippingPoints')?.setValue([]);
+    component.filtersModel.form.get('mode')?.setValue([]);
+    component.filtersModel.form.get('scac')?.setValue([]);
+    component.filtersModel.form.get('filterBySpotQuote')?.setValue(false);
+    component.filtersModel.form.get('minPickupDateTime')?.setValue(null);
+    component.filtersModel.form.get('maxPickupDateTime')?.setValue(null);
+    component.filtersModel.form.get('minDeliveryDateTime')?.setValue(null);
+    component.filtersModel.form.get('maxDeliveryDateTime')?.setValue(null);
+  }
 });
 

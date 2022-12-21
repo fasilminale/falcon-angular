@@ -319,7 +319,7 @@ describe('InvoiceEditPageComponent', () => {
           assumedDeliveryDateTime: new Date().toISOString(),
           tripTenderTime: new Date().toISOString(),
           totalGrossWeight: 1000,
-          payable: true
+          payable: false
         };
         spyOn(component, 'updateInvoiceFromForms').and.stub();
         spyOn(rateService, 'rateInvoice').and.returnValue(of(testInvoice));
@@ -490,23 +490,6 @@ describe('InvoiceEditPageComponent', () => {
         // Assertions
         ratesResponse$.subscribe(() => {
           expect(rateService.rateInvoice).toHaveBeenCalled();
-          done();
-        });
-
-        // Run Test
-        ratesResponse$.next(true);
-      });
-
-      it('should not call getRates', done => {
-        // Setup
-        const ratesResponse$ = new Subject<any>();
-        asSpy(rateService.getRates).and.returnValue(ratesResponse$.asObservable());
-        component.invoice = new InvoiceDataModel();
-        component.getRates();
-
-        // Assertions
-        ratesResponse$.subscribe(() => {
-          expect(rateService.rateInvoice).not.toHaveBeenCalled();
           done();
         });
 
@@ -1159,6 +1142,7 @@ describe('InvoiceEditPageComponent', () => {
         hasRateEngineError: component.invoice.hasRateEngineError,
         billOfLadingNumber: 'TESTBOL123',
         currency: 'USD',
+        payable: false
       });
     });
   });
@@ -1507,6 +1491,22 @@ describe('InvoiceEditPageComponent', () => {
     });
     mockUpdateRequest$.next({});
     expect(toastService.openErrorToast).not.toHaveBeenCalled();
+  });
+
+  it('loadReRate on invoice with spot quote and duplicate bol number should show error toast message.', done => {
+    const mockUpdateRequest$ = new Subject();
+    component.invoice.isSpotQuotePresent = false;
+    component.invoice.isBillOfLadingNumberDuplicate = true;
+    component.invoice.hasRateEngineError = false;
+    spyOn(component, 'loadInvoice').and.stub();
+    asSpy(toastService.openErrorToast).and.stub();
+    component.loadReRate(component.invoice);
+    mockUpdateRequest$.subscribe(() => {
+      expect(component.loadInvoice).toHaveBeenCalled();
+      done();
+    });
+    mockUpdateRequest$.next({});
+    expect(toastService.openErrorToast).toHaveBeenCalled();
   });
 
   it('updateAndGetRates should call backend and error', done => {

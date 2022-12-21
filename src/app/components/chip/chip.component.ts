@@ -3,7 +3,8 @@ import {FiltersModel} from '../../models/filters/filters-model';
 import {FormArray, FormGroup} from '@angular/forms';
 import {StatusModel} from 'src/app/models/invoice/status-model';
 import {FilterService} from '../../services/filter-service';
-import { KeyedLabel } from 'src/app/models/generic/keyed-label';
+import {KeyedLabel} from 'src/app/models/generic/keyed-label';
+import {DateTime} from 'luxon';
 
 export interface FilterChip {
   type: string;
@@ -42,6 +43,10 @@ export class ChipComponent implements OnChanges {
     const mode = this.filtersModel.form.get('mode');
     const scac = this.filtersModel.form.get('scac');
     const filterBySpotQuote = this.filtersModel.form.get('filterBySpotQuote');
+    const minPickupDateTime = this.filtersModel.form.get('minPickupDateTime');
+    const maxPickupDateTime = this.filtersModel.form.get('maxPickupDateTime');
+    const minDeliveryDateTime = this.filtersModel.form.get('minDeliveryDateTime');
+    const maxDeliveryDateTime = this.filtersModel.form.get('maxDeliveryDateTime');
 
     if (statusForm?.value.length > 0) {
       this.chips.push(
@@ -65,7 +70,7 @@ export class ChipComponent implements OnChanges {
       this.chips.push(
         this.formatChip(
           'Carrier:&nbsp', scac as FormGroup, 'scac')
-        );
+      );
     }
 
     if (filterBySpotQuote?.value) {
@@ -80,12 +85,42 @@ export class ChipComponent implements OnChanges {
       );
     }
 
+    if (minPickupDateTime?.value?.length > 0
+      || maxPickupDateTime?.value?.length > 0) {
+      this.chips.push(this.formatDatesRange(
+        'Pickup Date:&nbsp',
+        minPickupDateTime?.value,
+        maxPickupDateTime?.value,
+        'minPickupDateTime'
+      ));
+    }
+
+    if (minDeliveryDateTime?.value?.length > 0
+      || maxDeliveryDateTime?.value?.length > 0) {
+      this.chips.push(this.formatDatesRange(
+        'Delivery Date:&nbsp;',
+        minDeliveryDateTime?.value,
+        maxDeliveryDateTime?.value,
+        'minDeliveryDateTime'
+      ));
+    }
+
     if (mode?.value?.length > 0) {
       const arrObjMode = mode?.value.map((m: any) => ({'key': m, 'label': m}));
       this.chips.push(
         this.formatArrayChip('Mode:&nbsp', mode as FormArray, arrObjMode, 'mode')
       );
     }
+  }
+
+  formatDatesRange(type: string, minDate: string, maxDate: string, group: string): FilterChip {
+    minDate = minDate !== null ? DateTime.fromISO(minDate, {setZone: true}).toISODate() : 'No start date';
+    maxDate = maxDate !== null ? DateTime.fromISO(maxDate, {setZone: true}).toISODate() : 'No end date';
+    return {
+      type,
+      label: minDate + ' - ' + maxDate,
+      group
+    };
   }
 
   formatArrayChip(type: string, formArray: FormArray, arrayOptions: Array<KeyedLabel>, group: string): FilterChip {
@@ -133,7 +168,15 @@ export class ChipComponent implements OnChanges {
   }
 
   removeChip(group: string): void {
-    this.filtersModel.resetGroup(this.filtersModel.form.get(group));
+    if (group === 'maxPickupDateTime' || group === 'minPickupDateTime') {
+      this.filtersModel.resetGroup(this.filtersModel.form.get('maxPickupDateTime'));
+      this.filtersModel.resetGroup(this.filtersModel.form.get('minPickupDateTime'));
+    } else if (group === 'maxDeliveryDateTime' || group === 'minDeliveryDateTime') {
+      this.filtersModel.resetGroup(this.filtersModel.form.get('maxDeliveryDateTime'));
+      this.filtersModel.resetGroup(this.filtersModel.form.get('minDeliveryDateTime'));
+    } else {
+      this.filtersModel.resetGroup(this.filtersModel.form.get(group));
+    }
     this.updateChipFilters();
     this.chipRemovedEvent.emit(true);
   }

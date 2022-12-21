@@ -1,10 +1,13 @@
 <div mat-dialog-title class="modal-title">
-  <div class="d-flex align-items-center" style="margin-bottom: 8px">
+  <div class="d-flex align-items-center"
+       style="margin-bottom: 8px">
     <span class="elm-h2"
           style="line-height: 1">
       Invoice Filters
     </span>
-    <elm-close-button class="ms-auto" mat-dialog-close></elm-close-button>
+    <elm-close-button class="ms-auto"
+                      [mat-dialog-close]="undefined">
+    </elm-close-button>
   </div>
   <div class="elm-div2 mt-1"></div>
 </div>
@@ -56,74 +59,138 @@
     <div class="row mt-4 px-3">
       <h6 class="px-0">Carrier</h6>
       <ng-select id="masterDataScacs"
-        [items]="sortedMasterDataScacs"
-        [multiple]="true"
-        bindLabel="label"
-        bindValue="value"
-        placeholder="Select multiple..."
-        formControlName="scac"
-        >
+                 [items]="sortedMasterDataScacs"
+                 [multiple]="true"
+                 bindLabel="label"
+                 bindValue="value"
+                 placeholder="Select multiple..."
+                 formControlName="scac"
+      >
       </ng-select>
     </div>
 
     <div class="row mt-4 px-3">
       <h6 class="px-0">Shipping point</h6>
       <ng-select id="masterDataShippingPoints"
-        [items]="sortedMasterDataShippingPoints"
-        bindLabel="label"
-        bindValue="value"
-        placeholder="Select One..."
-        formControlName="shippingPoints"
-        >
+                 [items]="sortedMasterDataShippingPoints"
+                 bindLabel="label"
+                 bindValue="value"
+                 placeholder="Select One..."
+                 formControlName="shippingPoints"
+      >
       </ng-select>
     </div>
 
     <div class="row mt-4 px-3">
       <h6 class="px-0">Mode</h6>
       <ng-select id="masterDataModes"
-        [items]="sortedMasterDataModes"
-        bindLabel="label"
-        [multiple]="true"
-        bindValue="value"
-        placeholder="Select One..."
-        formControlName="mode"
-        [closeOnSelect]="false"
-        >
+                 [items]="sortedMasterDataModes"
+                 bindLabel="label"
+                 [multiple]="true"
+                 bindValue="value"
+                 placeholder="Select One..."
+                 formControlName="mode"
+                 [closeOnSelect]="false"
+      >
       </ng-select>
     </div>
 
+
     <div class="row mt-4 px-3">
       <h6 class="px-0">Origin</h6>
-      <label class="elm-field-label1" for="originCity">
+      <label class="elm-field-label1" for="originCities">
         Origin City
       </label>
 
       <ng-select id="originCities"
-      [items]="originCities"
-      bindLabel="label"
-      bindValue="value"
-      formControlName="originCity"
-      placeholder="Select One..."
-      [compareWith]="compareCitiesWith"
-     >
-</ng-select>
+                 [items]="originCities"
+                 bindLabel="label"
+                 bindValue="value"
+                 formControlName="originCity"
+                 placeholder="Select One..."
+                 [compareWith]="compareCitiesWith"
+      >
+
+      </ng-select>
     </div>
 
     <div class="row mt-2 px-3">
       <h6 class="px-0">Destination</h6>
-      <label class="elm-field-label1" for="destinationCity">
+      <label class="elm-field-label1" for="destinationCities">
         Destination City
       </label>
       <ng-select id="destinationCities"
-      [items]="destinationCities"
-      bindLabel="label"
-      bindValue="value"
-      formControlName="destinationCity"
-      placeholder="Select One..."
-      [compareWith]="compareCitiesWith"
-     ></ng-select>
+                 [items]="destinationCities"
+                 bindLabel="label"
+                 bindValue="value"
+                 formControlName="destinationCity"
+                 placeholder="Select One..."
+                 [compareWith]="compareCitiesWith"
+      ></ng-select>
 
     </div>
+
+    <hr>
+    <span class="elm-nav1">Pickup Date</span>
+    <div class="row">
+      <div class="col-md-6">
+        <elm-date-picker id="minPickupDateTime"
+                         label="From"
+                         labelPosition="top"
+                         formControlName="minPickupDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [maxDate]="localFilterModel.form.controls.maxPickupDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+
+        </elm-date-picker>
+      </div>
+
+      <div class="col-md-6">
+        <elm-date-picker id="maxPickupDateTime"
+                         label="To"
+                         labelPosition="top"
+                         formControlName="maxPickupDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [minDate]="localFilterModel.form.controls.minPickupDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+
+        </elm-date-picker>
+      </div>
+    </div>
+
+    <span class="elm-nav1">Delivery Date</span>
+    <div class="row">
+      <div class="col-md-6">
+        <elm-date-picker id="minDeliveryDateTime"
+                         label="From"
+                         labelPosition="top"
+                         formControlName="minDeliveryDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [maxDate]="localFilterModel.form.controls.maxDeliveryDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+        </elm-date-picker>
+      </div>
+
+      <div class="col-md-6">
+        <elm-date-picker id="maxDeliveryDateTime"
+                         label="To"
+                         labelPosition="top"
+                         formControlName="maxDeliveryDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [minDate]="localFilterModel.form.controls.minDeliveryDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+        </elm-date-picker>
+      </div>
+    </div>
+
 
   </form>
 </div>
@@ -138,7 +205,7 @@
   <div class="mt-2 flex-grow-1 d-flex justify-content-end">
     <elm-button buttonStyle="secondary"
                 class="me-3"
-                mat-dialog-close>
+                [mat-dialog-close]="undefined">
       CANCEL
     </elm-button>
     <elm-button buttonStyle="primary"

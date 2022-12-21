@@ -32,4 +32,5 @@ export interface EditAutoInvoiceModel {
   hasRateEngineError?: boolean;
   billOfLadingNumber: string;
   currency: string;
+  payable: boolean;
 }
