@@ -137,7 +137,7 @@
                       [addSpacing]="true"
                       [ngClass]="{'field-invalid': bolNumberControl.invalid || !isValidBolNumber}">
       </elm-text-input>
-      <elm-input-subtext *ngIf="bolNumberControl.invalid || !isValidBolNumber"
+      <elm-input-subtext *ngIf="bolNumberControl.invalid || !isValidBolNumber || tripInformation.isBolNumberDuplicate"
                          class="input-error"
                          [isError]="true">
         <span *ngFor="let message of bolNumberControlErrorMessages">
