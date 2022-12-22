@@ -70,6 +70,8 @@ export class InvoiceDataModel {
   trackingNumber: string;
   proNumber: string;
   billOfLadingNumber: string;
+  isBillOfLadingNumberDuplicate: boolean;
+  duplicateBOLErrorMessage?: string;
   vendorPaymentTermsOverride: string;
   paymentDue: string;
   paymentDueDisplay: string;
@@ -172,6 +174,8 @@ export class InvoiceDataModel {
     this.trackingNumber = json?.trackingNumber ?? '';
     this.proNumber = json?.proNumber ?? '';
     this.billOfLadingNumber = json?.billOfLadingNumber ?? '';
+    this.isBillOfLadingNumberDuplicate = json?.isBillOfLadingNumberDuplicate ?? false;
+    this.duplicateBOLErrorMessage = json?.duplicateBOLErrorMessage ?? undefined;
     this.vendorPaymentTermsOverride = json?.vendorPaymentTermsOverride ?? '';
     this.paymentDue = date(json?.paymentDue);
     if (this.standardPaymentTermsOverride === 'Immediately') {
