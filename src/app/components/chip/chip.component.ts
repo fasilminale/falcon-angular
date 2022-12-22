@@ -47,6 +47,10 @@ export class ChipComponent implements OnChanges {
     const maxPickupDateTime = this.filtersModel.form.get('maxPickupDateTime');
     const minDeliveryDateTime = this.filtersModel.form.get('minDeliveryDateTime');
     const maxDeliveryDateTime = this.filtersModel.form.get('maxDeliveryDateTime');
+    const minInvoiceDateTime = this.filtersModel.form.get('minInvoiceDateTime');
+    const maxInvoiceDateTime = this.filtersModel.form.get('maxInvoiceDateTime');
+    const minPaidDateTime = this.filtersModel.form.get('minPaidDateTime');
+    const maxPaidDateTime = this.filtersModel.form.get('maxPaidDateTime');
 
     if (statusForm?.value.length > 0) {
       this.chips.push(
@@ -102,6 +106,26 @@ export class ChipComponent implements OnChanges {
         minDeliveryDateTime?.value,
         maxDeliveryDateTime?.value,
         'minDeliveryDateTime'
+      ));
+    }
+
+    if (minInvoiceDateTime?.value?.length > 0
+      || maxInvoiceDateTime?.value?.length > 0) {
+      this.chips.push(this.formatDatesRange(
+        'Invoice Date:&nbsp;',
+        minInvoiceDateTime?.value,
+        maxInvoiceDateTime?.value,
+        'minInvoiceDateTime'
+      ));
+    }
+
+    if (minPaidDateTime?.value?.length > 0
+      || maxPaidDateTime?.value?.length > 0) {
+      this.chips.push(this.formatDatesRange(
+        'Paid Date:&nbsp;',
+        minPaidDateTime?.value,
+        maxPaidDateTime?.value,
+        'minPaidDateTime'
       ));
     }
 
@@ -164,7 +188,8 @@ export class ChipComponent implements OnChanges {
     for (const value of formArray.value) {
       tooltips.push(this.getLabel(value, options));
     }
-    return tooltips.sort().join('<br>');
+    tooltips.sort();
+    return tooltips.join('<br>');
   }
 
   removeChip(group: string): void {
@@ -174,6 +199,12 @@ export class ChipComponent implements OnChanges {
     } else if (group === 'maxDeliveryDateTime' || group === 'minDeliveryDateTime') {
       this.filtersModel.resetGroup(this.filtersModel.form.get('maxDeliveryDateTime'));
       this.filtersModel.resetGroup(this.filtersModel.form.get('minDeliveryDateTime'));
+    } else if (group === 'maxInvoiceDateTime' || group === 'minInvoiceDateTime') {
+      this.filtersModel.resetGroup(this.filtersModel.form.get('maxInvoiceDateTime'));
+      this.filtersModel.resetGroup(this.filtersModel.form.get('minInvoiceDateTime'));
+    } else if (group === 'maxPaidDateTime' || group === 'minPaidDateTime') {
+      this.filtersModel.resetGroup(this.filtersModel.form.get('maxPaidDateTime'));
+      this.filtersModel.resetGroup(this.filtersModel.form.get('minPaidDateTime'));
     } else {
       this.filtersModel.resetGroup(this.filtersModel.form.get(group));
     }

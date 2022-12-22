@@ -28,6 +28,10 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.removeControl('maxPickupDateTime');
     testingFiltersModel.form.removeControl('minDeliveryDateTime');
     testingFiltersModel.form.removeControl('maxDeliveryDateTime');
+    testingFiltersModel.form.removeControl('minInvoiceDateTime');
+    testingFiltersModel.form.removeControl('maxInvoiceDateTime');
+    testingFiltersModel.form.removeControl('minPaidDateTime');
+    testingFiltersModel.form.removeControl('maxPaidDateTime');
     const result = testingFiltersModel.formatForSearch();
     expect(result).toEqual({
       invoiceStatuses: undefined,
@@ -40,7 +44,11 @@ describe('Models: Filter |', () => {
       minPickupDateTime: undefined,
       maxPickupDateTime: undefined,
       minDeliveryDate: undefined,
-      maxDeliveryDate: undefined
+      maxDeliveryDate: undefined,
+      minInvoiceDate: undefined,
+      maxInvoiceDate: undefined,
+      minPaidDate: undefined,
+      maxPaidDate: undefined,
     });
   });
 
@@ -56,6 +64,10 @@ describe('Models: Filter |', () => {
     testingFiltersModel.form.get('maxPickupDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
     testingFiltersModel.form.get('minDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
     testingFiltersModel.form.get('maxDeliveryDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    testingFiltersModel.form.get('minInvoiceDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    testingFiltersModel.form.get('maxInvoiceDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    testingFiltersModel.form.get('minPaidDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
+    testingFiltersModel.form.get('maxPaidDateTime')?.setValue('2022-12-09T00:00:48.699+0000');
     const result = testingFiltersModel.formatForSearch();
     expect(result).toEqual({
       invoiceStatuses: undefined,
@@ -68,7 +80,11 @@ describe('Models: Filter |', () => {
       minPickupDateTime: '2022-12-09T00:00:48.699+0000',
       maxPickupDateTime: '2022-12-09T00:00:48.699+0000',
       minDeliveryDate: '2022-12-09T00:00:48.699+0000',
-      maxDeliveryDate: '2022-12-09T00:00:48.699+0000'
+      maxDeliveryDate: '2022-12-09T00:00:48.699+0000',
+      minInvoiceDate: '2022-12-09T00:00:48.699+0000',
+      maxInvoiceDate: '2022-12-09T00:00:48.699+0000',
+      minPaidDate: '2022-12-09T00:00:48.699+0000',
+      maxPaidDate: '2022-12-09T00:00:48.699+0000',
     });
   });
 

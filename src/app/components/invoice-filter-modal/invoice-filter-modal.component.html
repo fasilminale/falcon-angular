@@ -177,6 +177,64 @@
       </div>
     </div>
 
+    <span class="elm-nav1">Invoice Date</span>
+    <div class="row">
+      <div class="col-md-6">
+        <elm-date-picker id="minInvoiceDateTime"
+                         label="From"
+                         labelPosition="top"
+                         formControlName="minInvoiceDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [maxDate]="localFilterModel.form.controls.maxInvoiceDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+        </elm-date-picker>
+      </div>
+
+      <div class="col-md-6">
+        <elm-date-picker id="maxInvoiceDateTime"
+                         label="To"
+                         labelPosition="top"
+                         formControlName="maxInvoiceDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [minDate]="localFilterModel.form.controls.minInvoiceDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+        </elm-date-picker>
+      </div>
+    </div>
+
+    <span class="elm-nav1">Paid Date</span>
+    <div class="row">
+      <div class="col-md-6">
+        <elm-date-picker id="minPaidDateTime"
+                         label="From"
+                         labelPosition="top"
+                         formControlName="minPaidDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [maxDate]="localFilterModel.form.controls.maxPaidDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+        </elm-date-picker>
+      </div>
+
+      <div class="col-md-6">
+        <elm-date-picker id="maxPaidDateTime"
+                         label="To"
+                         labelPosition="top"
+                         formControlName="maxPaidDateTime"
+                         outsideDays="hidden"
+                         [showTimezone]="false"
+                         [minDate]="localFilterModel.form.controls.minPaidDateTime?.value"
+                         [placement]="'top'"
+                         width="100%">
+        </elm-date-picker>
+      </div>
+    </div>
+
 
   </form>
 </div>
@@ -195,7 +253,7 @@
       CANCEL
     </elm-button>
     <elm-button buttonStyle="primary"
-                [isDisabled]="!this.localFilterModel.form.valid"
+                [isDisabled]="this.localFilterModel.form.invalid"
                 (buttonClick)="onSubmit()">
       APPLY
     </elm-button>
