@@ -5,8 +5,6 @@ import {
   FormControl,
   FormGroup
 } from '@angular/forms';
-import {ElmValidators} from '@elm/elm-styleguide-ui';
-import {validateDate} from '../../pages/invoice-edit-page/trip-information/trip-information.component';
 
 export class FiltersModel {
   fb = new FormBuilder();
@@ -19,10 +17,14 @@ export class FiltersModel {
     shippingPoints: new FormControl(),
     mode: new FormControl(),
     filterBySpotQuote: new FormControl(),
-    minPickupDateTime: new FormControl({}, [ElmValidators.required()]),
-    maxPickupDateTime: new FormControl({}, [ElmValidators.required()]),
-    minDeliveryDateTime: new FormControl({}, [ElmValidators.required()]),
-    maxDeliveryDateTime: new FormControl({}, [ElmValidators.required()])
+    minPickupDateTime: new FormControl({}),
+    maxPickupDateTime: new FormControl({}),
+    minDeliveryDateTime: new FormControl({}),
+    maxDeliveryDateTime: new FormControl({}),
+    minInvoiceDateTime: new FormControl({}),
+    maxInvoiceDateTime: new FormControl({}),
+    minPaidDateTime: new FormControl({}),
+    maxPaidDateTime: new FormControl({}),
   });
 
   constructor() {
@@ -40,7 +42,11 @@ export class FiltersModel {
       minPickupDateTime: null,
       maxPickupDateTime: null,
       minDeliveryDateTime: null,
-      maxDeliveryDateTime: null
+      maxDeliveryDateTime: null,
+      minInvoiceDateTime: null,
+      maxInvoiceDateTime: null,
+      minPaidDateTime: null,
+      maxPaidDateTime: null,
     });
     (this.form.get('invoiceStatuses') as FormArray)?.clear();
   }
@@ -119,20 +125,24 @@ export class FiltersModel {
     const maxPickupDateTime = this.form.get('maxPickupDateTime')?.value;
     const minDeliveryDate = this.form.get('minDeliveryDateTime')?.value;
     const maxDeliveryDate = this.form.get('maxDeliveryDateTime')?.value;
+    const minInvoiceDate = this.form.get('minInvoiceDateTime')?.value;
+    const maxInvoiceDate = this.form.get('maxInvoiceDateTime')?.value;
+    const minPaidDate = this.form.get('minPaidDateTime')?.value;
+    const maxPaidDate = this.form.get('maxPaidDateTime')?.value;
     return {
       invoiceStatuses, originCity, destinationCity,
       carrierSCAC: carrierSCAC ? carrierSCAC : [],
       shippingPoints: shippingPoints ? [shippingPoints] : [],
       mode: carrierMode ? carrierMode : [],
       filterBySpotQuote,
-      minPickupDateTime,
-      maxPickupDateTime,
-      minDeliveryDate,
-      maxDeliveryDate
+      minPickupDateTime, maxPickupDateTime,
+      minDeliveryDate, maxDeliveryDate,
+      minInvoiceDate, maxInvoiceDate,
+      minPaidDate, maxPaidDate,
     };
   }
 
-  resetGroup<T extends AbstractControl>(control: AbstractControl | null): void {
+  resetGroup(control: AbstractControl | null): void {
     if (control instanceof FormArray) {
       control.clear();
     }
