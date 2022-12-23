@@ -335,6 +335,8 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     }
     if (this.tripInformation.isBolNumberDuplicate) {
       this.clickEditButton();
+    }
+    if (this.tripInformation.duplicateBOLErrorMessage){
       this.bolNumberControl.setErrors({duplicate: true});
     }
   }
@@ -499,7 +501,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     if (this.bolNumberControl.errors?.required || !this.isValidBolNumber) {
       messages.push('BOL Number is missing');
     }
-    if (this.tripInformation.isBolNumberDuplicate && this.tripInformation.duplicateBOLErrorMessage) {
+    if (this.tripInformation.duplicateBOLErrorMessage) {
       messages.push(this.tripInformation.duplicateBOLErrorMessage);
     }
     if (this.bolNumberControl.errors?.pattern) {
