@@ -20,8 +20,8 @@ describe('LoadsFilterModalComponent', () => {
   };
 
   const scacs: Array<any> = [
-    {scac: "C007", name: "RENAL FLEET"},
-    {scac: "PYLE", name: "A DUIE"}
+    {scac: 'C007', name: 'RENAL FLEET'},
+    {scac: 'PYLE', name: 'A DUIE'}
   ];
 
   const dialogDataMock = {
@@ -111,6 +111,14 @@ describe('LoadsFilterModalComponent', () => {
       spyOn(injectedMatDialogRef, 'close').and.callThrough();
       component.onSubmit();
       fixture.detectChanges();
+      expect(injectedMatDialogRef.close).toHaveBeenCalled();
+    });
+  });
+
+  describe('onClose', () => {
+    it('should close the modal', () => {
+      spyOn(injectedMatDialogRef, 'close').and.callThrough();
+      component.onCancel();
       expect(injectedMatDialogRef.close).toHaveBeenCalled();
     });
   });
