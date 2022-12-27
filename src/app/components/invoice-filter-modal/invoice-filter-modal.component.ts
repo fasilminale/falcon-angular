@@ -50,6 +50,10 @@ export class InvoiceFilterModalComponent implements OnInit {
     }
   }
 
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
   clearFilters(): void {
     this.localFilterModel.resetForm();
   }
