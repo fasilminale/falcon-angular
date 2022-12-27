@@ -808,6 +808,34 @@ describe('TripInformationComponent', () => {
       expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
       expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
     });
+
+    it('should load trip information data with duplicate BOL Number case', async () => {
+      component.filteredCarrierModeOptionsPopulatedSubject.next(1);
+      component.filteredCarrierModeOptionsPopulatedSubject.complete();
+      tripInformation.isBolNumberDuplicate = true;
+      tripInformation.duplicateBOLErrorMessage = 'This BOL number exists on another invoice(s)';
+      component.hasUpdateAndContinueClicked = true;
+      await component.loadTripInformationData(tripInformation);
+      expect(component.tripIdControl.value).toEqual(tripInformation.tripId);
+      expect(DateTime.fromISO(component.invoiceDateControl.value)).toEqual(DateTime.fromJSDate(tripInformation.invoiceDate));
+      if (tripInformation.pickUpDate) {
+        let expPickUpDate = DateTime.fromJSDate(tripInformation.pickUpDate);
+        expect(DateTime.fromISO(component.pickUpDateControl.value)).toEqual(expPickUpDate);
+      }
+      if (tripInformation.deliveryDate) {
+        let expDeliveryDate = DateTime.fromJSDate(tripInformation.deliveryDate);
+        expect(DateTime.fromISO(component.deliveryDateControl.value)).toEqual(expDeliveryDate);
+      }
+      expect(component.proTrackingNumberControl.value).toEqual(tripInformation.proTrackingNumber);
+      expect(component.bolNumberControl.value).toEqual(tripInformation.bolNumber);
+      expect(component.freightPaymentTermsControl.value).toEqual(tripInformation.freightPaymentTerms);
+      expect(component.carrierControl.value).toEqual(tripInformation.carrier);
+      expect(component.carrierModeControl.value).toEqual(tripInformation.carrierMode);
+      expect(component.serviceLevelControl.value).toEqual(tripInformation.serviceLevel);
+      expect(component.vendorNumberControl.value).toEqual(tripInformation.vendorNumber);
+      expect(component.hasUpdateAndContinueClicked).toBeFalse();
+      expect(component.tripInformation.isBolNumberDuplicate).toBeTrue();
+    });
   });
 
   it('should load trip information and use First FO Delivery date when First FO Delivery date is given', async () => {
