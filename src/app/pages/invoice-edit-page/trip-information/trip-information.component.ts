@@ -120,6 +120,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   carrierUtilsToDisplayLabel = CarrierUtils.toDisplayLabel;
 
   public enableTripEditButton = false;
+  public hasUpdateAndContinueClicked: boolean = false;
   public isTripEditMode$ = new SubjectValue<boolean>(false);
 
   private loadTripInformationSubscription = new Subscription();
@@ -333,10 +334,11 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     if (this._editableFormArray.disabled) {
       this.formGroup.disable();
     }
-    if (this.tripInformation.isBolNumberDuplicate) {
+    if (this.tripInformation.isBolNumberDuplicate && this.hasUpdateAndContinueClicked) {
       this.clickEditButton();
+      this.hasUpdateAndContinueClicked = false;
     }
-    if (this.tripInformation.duplicateBOLErrorMessage){
+    if (this.tripInformation.duplicateBOLErrorMessage) {
       this.bolNumberControl.setErrors({duplicate: true});
     }
   }
@@ -413,6 +415,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     this.updateAndContinueClickEvent.emit({event: 'update', value: true});
     this.isTripEditMode$.value = false;
     this._editableFormArray.disable();
+    this.hasUpdateAndContinueClicked = true;
   }
 
   updateBillToEvent($event: any): void {
