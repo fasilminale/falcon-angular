@@ -334,9 +334,17 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     if (this._editableFormArray.disabled) {
       this.formGroup.disable();
     }
-    if (this.tripInformation.isBolNumberDuplicate && this.hasUpdateAndContinueClicked) {
-      this.clickEditButton();
-      this.hasUpdateAndContinueClicked = false;
+    if (this.tripInformation.isBolNumberDuplicate) {
+      this.bolNumberControl.valueChanges.subscribe(newValue => {
+        if (newValue != this.tripInformation.bolNumber) {
+          this.tripInformation.duplicateBOLErrorMessage = undefined;
+        }
+      });
+
+      if (this.hasUpdateAndContinueClicked) {
+        this.clickEditButton();
+        this.hasUpdateAndContinueClicked = false;
+      }
     }
     if (this.tripInformation.duplicateBOLErrorMessage) {
       this.bolNumberControl.setErrors({duplicate: true});
