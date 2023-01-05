@@ -3,6 +3,7 @@ import {MatDialogRef, MAT_DIALOG_DATA} from 'node_modules/@elm/elm-styleguide-ui
 import {FilterService} from '../../services/filter-service';
 import {FiltersModel} from '../../models/filters/filters-model';
 import {SelectOption} from 'src/app/models/select-option-model/select-option-model';
+import {EnvironmentService} from '../../services/environment-service/environment-service';
 
 @Component({
   selector: 'app-loads-filter-modal',
@@ -22,7 +23,8 @@ export class InvoiceFilterModalComponent implements OnInit {
   sortedMasterDataModes: Array<SelectOption<string>> = [];
 
   constructor(private dialogRef: MatDialogRef<InvoiceFilterModalComponent>,
-              public filterService: FilterService, @Inject(MAT_DIALOG_DATA) data: any) {
+              public filterService: FilterService, @Inject(MAT_DIALOG_DATA) data: any,
+              private environmentService: EnvironmentService) {
     this.resetForm();
     this.originCities = data.originCities;
     this.destinationCities = data.destinationCities;
@@ -82,6 +84,10 @@ export class InvoiceFilterModalComponent implements OnInit {
       return 1;
     }
     return 0;
+  }
+
+  get showDateRangeFilters(): boolean {
+    return this.environmentService.showFeature('dateRangeFilters');
   }
 
 }

@@ -104,141 +104,143 @@
       ></ng-select>
     </div>
 
-    <hr>
-    <span class="elm-nav1">Pickup Date</span>
-    <div class="row">
-      <div class="col-md-6">
-        <elm-date-picker id="minPickupDateTime"
-                         label="From"
-                         labelPosition="top"
-                         formControlName="minPickupDateTime"
-                         outsideDays="hidden"
-                         [showTimezone]="false"
-                         [maxDate]="localFilterModel.form.controls.maxPickupDateTime?.value"
-                         width="100%"
-                         placement="bottom auto"
-                         container=""
-        ></elm-date-picker>
+    <ng-template [ngIf]="showDateRangeFilters">
+      <hr>
+      <span class="elm-nav1">Pickup Date</span>
+      <div class="row">
+        <div class="col-md-6">
+          <elm-date-picker id="minPickupDateTime"
+                           label="From"
+                           labelPosition="top"
+                           formControlName="minPickupDateTime"
+                           outsideDays="hidden"
+                           [showTimezone]="false"
+                           [maxDate]="localFilterModel.form.controls.maxPickupDateTime?.value"
+                           width="100%"
+                           placement="bottom auto"
+                           container=""
+          ></elm-date-picker>
+        </div>
+
+        <div class="col-md-6">
+          <elm-date-picker id="maxPickupDateTime"
+                           label="To"
+                           labelPosition="top"
+                           formControlName="maxPickupDateTime"
+                           outsideDays="hidden"
+                           [showTimezone]="false"
+                           [minDate]="localFilterModel.form.controls.minPickupDateTime?.value"
+                           width="100%"
+                           placement="bottom auto"
+                           container=""
+          ></elm-date-picker>
+        </div>
       </div>
 
-      <div class="col-md-6">
-        <elm-date-picker id="maxPickupDateTime"
-                         label="To"
-                         labelPosition="top"
-                         formControlName="maxPickupDateTime"
-                         outsideDays="hidden"
-                         [showTimezone]="false"
-                         [minDate]="localFilterModel.form.controls.minPickupDateTime?.value"
-                         width="100%"
-                         placement="bottom auto"
-                         container=""
-        ></elm-date-picker>
-      </div>
-    </div>
+      <span class="elm-nav1">Delivery Date</span>
+      <div class="row">
+        <div class="col-md-6">
+          <elm-date-picker id="minDeliveryDateTime"
+                           label="From"
+                           labelPosition="top"
+                           formControlName="minDeliveryDateTime"
+                           outsideDays="hidden"
+                           [showTimezone]="false"
+                           [maxDate]="localFilterModel.form.controls.maxDeliveryDateTime?.value"
+                           width="100%"
+                           placement="bottom auto"
+                           container=""
+          ></elm-date-picker>
+        </div>
 
-    <span class="elm-nav1">Delivery Date</span>
-    <div class="row">
-      <div class="col-md-6">
-        <elm-date-picker id="minDeliveryDateTime"
-                         label="From"
-                         labelPosition="top"
-                         formControlName="minDeliveryDateTime"
-                         outsideDays="hidden"
-                         [showTimezone]="false"
-                         [maxDate]="localFilterModel.form.controls.maxDeliveryDateTime?.value"
-                         width="100%"
-                         placement="bottom auto"
-                         container=""
-        ></elm-date-picker>
-      </div>
-
-      <div class="col-md-6">
-        <elm-date-picker id="maxDeliveryDateTime"
-                         label="To"
-                         labelPosition="top"
-                         formControlName="maxDeliveryDateTime"
-                         outsideDays="hidden"
-                         [showTimezone]="false"
-                         [minDate]="localFilterModel.form.controls.minDeliveryDateTime?.value"
-                         width="100%"
-                         placement="bottom auto"
-                         container=""
-        ></elm-date-picker>
-      </div>
-    </div>
-
-    <span class="elm-nav1">Invoice Date</span>
-    <div class="row">
-      <div class="col-md-6">
-        <elm-date-picker id="minInvoiceDateTime"
-                         label="From"
-                         labelPosition="top"
-                         formControlName="minInvoiceDateTime"
-                         outsideDays="hidden"
-                         [showTimezone]="false"
-                         [maxDate]="localFilterModel.form.controls.maxInvoiceDateTime?.value"
-                         width="100%"
-                         placement="bottom auto"
-                         container=""
-        ></elm-date-picker>
+        <div class="col-md-6">
+          <elm-date-picker id="maxDeliveryDateTime"
+                           label="To"
+                           labelPosition="top"
+                           formControlName="maxDeliveryDateTime"
+                           outsideDays="hidden"
+                           [showTimezone]="false"
+                           [minDate]="localFilterModel.form.controls.minDeliveryDateTime?.value"
+                           width="100%"
+                           placement="bottom auto"
+                           container=""
+          ></elm-date-picker>
+        </div>
       </div>
 
-      <div class="col-md-6">
-        <elm-date-picker id="maxInvoiceDateTime"
-                         label="To"
-                         labelPosition="top"
-                         formControlName="maxInvoiceDateTime"
-                         outsideDays="hidden"
-                         [showTimezone]="false"
-                         [minDate]="localFilterModel.form.controls.minInvoiceDateTime?.value"
-                         width="100%"
-                         placement="bottom auto"
-                         container=""
-        ></elm-date-picker>
-      </div>
-    </div>
+      <span class="elm-nav1">Invoice Date</span>
+      <div class="row">
+        <div class="col-md-6">
+          <elm-date-picker id="minInvoiceDateTime"
+                           label="From"
+                           labelPosition="top"
+                           formControlName="minInvoiceDateTime"
+                           outsideDays="hidden"
+                           [showTimezone]="false"
+                           [maxDate]="localFilterModel.form.controls.maxInvoiceDateTime?.value"
+                           width="100%"
+                           placement="bottom auto"
+                           container=""
+          ></elm-date-picker>
+        </div>
 
-    <span class="elm-nav1">Paid Date</span>
-    <div class="row">
-      <div class="col-md-6">
-        <elm-date-picker id="minPaidDateTime"
-                         label="From"
-                         labelPosition="top"
-                         formControlName="minPaidDateTime"
-                         outsideDays="hidden"
-                         [showTimezone]="false"
-                         [maxDate]="localFilterModel.form.controls.maxPaidDateTime?.value"
-                         width="100%"
-                         placement="bottom auto"
-                         container=""
-        ></elm-date-picker>
+        <div class="col-md-6">
+          <elm-date-picker id="maxInvoiceDateTime"
+                           label="To"
+                           labelPosition="top"
+                           formControlName="maxInvoiceDateTime"
+                           outsideDays="hidden"
+                           [showTimezone]="false"
+                           [minDate]="localFilterModel.form.controls.minInvoiceDateTime?.value"
+                           width="100%"
+                           placement="bottom auto"
+                           container=""
+          ></elm-date-picker>
+        </div>
       </div>
 
-      <div class="col-md-6">
-        <elm-date-picker id="maxPaidDateTime"
-                         label="To"
-                         labelPosition="top"
-                         formControlName="maxPaidDateTime"
-                         outsideDays="hidden"
-                         [showTimezone]="false"
-                         [minDate]="localFilterModel.form.controls.minPaidDateTime?.value"
-                         width="100%"
-                         placement="bottom auto"
-                         container=""
-        ></elm-date-picker>
+      <span class="elm-nav1">Paid Date</span>
+      <div class="row">
+        <div class="col-md-6">
+          <elm-date-picker id="minPaidDateTime"
+                           label="From"
+                           labelPosition="top"
+                           formControlName="minPaidDateTime"
+                           outsideDays="hidden"
+                           [showTimezone]="false"
+                           [maxDate]="localFilterModel.form.controls.maxPaidDateTime?.value"
+                           width="100%"
+                           placement="bottom auto"
+                           container=""
+          ></elm-date-picker>
+        </div>
+
+        <div class="col-md-6">
+          <elm-date-picker id="maxPaidDateTime"
+                           label="To"
+                           labelPosition="top"
+                           formControlName="maxPaidDateTime"
+                           outsideDays="hidden"
+                           [showTimezone]="false"
+                           [minDate]="localFilterModel.form.controls.minPaidDateTime?.value"
+                           width="100%"
+                           placement="bottom auto"
+                           container=""
+          ></elm-date-picker>
+        </div>
       </div>
-    </div>
+    </ng-template>
   </form>
 </elm-modal-body>
 <elm-modal-footer
-                  tertiaryButtonText="CLEAR FILTERS"
-                  (tertiaryButtonClick)="clearFilters()"
+  tertiaryButtonText="CLEAR FILTERS"
+  (tertiaryButtonClick)="clearFilters()"
 
 
-                  secondaryButtonText="CANCEL"
-                  (secondaryButtonClick)="onCancel()"
+  secondaryButtonText="CANCEL"
+  (secondaryButtonClick)="onCancel()"
 
 
-                  primaryButtonText="APPLY"
-                  (primaryButtonClick)="onSubmit()"
+  primaryButtonText="APPLY"
+  (primaryButtonClick)="onSubmit()"
 ></elm-modal-footer>
