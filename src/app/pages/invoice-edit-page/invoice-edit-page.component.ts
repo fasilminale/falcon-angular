@@ -595,6 +595,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     this.invoice.deniedChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.deniedChargeLineItems);
     this.invoice.disputeLineItems = this.getDisputeLineItems(this.invoiceAmountFormGroup.controls.disputeLineItems);
     this.invoice.glLineItems = this.invoiceAllocationFormGroup.controls.invoiceAllocations.value;
+    this.invoice.vendorNumber = this.tripInformationFormGroup.controls.vendorNumber?.value;
     const paymentTerms = this.invoiceAmountFormGroup.controls.overridePaymentTerms?.value ?? {};
     this.invoice.standardPaymentTermsOverride = paymentTerms.isPaymentOverrideSelected && paymentTerms.isPaymentOverrideSelected.length > 0
     && paymentTerms.isPaymentOverrideSelected[0] === 'override' && paymentTerms.paymentTerms ? paymentTerms.paymentTerms : undefined;
