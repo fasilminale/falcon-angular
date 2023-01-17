@@ -7,6 +7,7 @@ import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {UserService} from '../../services/user-service';
 import {of} from 'rxjs';
 import {FormBuilder} from '@angular/forms';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 describe('InvoiceCreatePageComponent', () => {
   let component: InvoiceCreatePageComponent;
@@ -15,13 +16,13 @@ describe('InvoiceCreatePageComponent', () => {
   let time: TimeService;
   let userService: UserService;
 
-  const userInfo = {
+  const userInfo: UserInfoModel = new UserInfoModel({
     firstName: 'test',
     lastName: 'user',
     email: 'test@test.com',
-    uid: '12345',
-    role: 'FAL_INTERNAL_TECH_ADIMN'
-  };
+    role: 'FAL_INTERNAL_TECH_ADIMN',
+    permissions: []
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

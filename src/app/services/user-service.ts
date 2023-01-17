@@ -42,7 +42,7 @@ export class UserService {
 
   private userInfoUrl = `${environment.baseServiceUrl}/v1/user/info`;
 
-  public getUserInfo(): Observable<any> {
+  public getUserInfo(): Observable<UserInfoModel> {
     if (this.userInfoCache) {
       return of(this.userInfoCache);
     } else if (this.observableCache) {
@@ -53,7 +53,7 @@ export class UserService {
     return this.observableCache;
   }
 
-  private callUserInfo(): Observable<any> {
+  private callUserInfo(): Observable<UserInfoModel> {
     return this.web.httpGet<UserInfoModel[]>(this.userInfoUrl).pipe(
         map(data => this.storeUser(data)),
         share()
