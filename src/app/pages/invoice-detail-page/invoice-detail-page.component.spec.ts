@@ -18,6 +18,7 @@ import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-man
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {UserService} from '../../services/user-service';
 import {FormBuilder} from '@angular/forms';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 describe('InvoiceDetailPageComponent', () => {
   const MOCK_CONFIRM_DIALOG = jasmine.createSpyObj({
@@ -30,16 +31,15 @@ describe('InvoiceDetailPageComponent', () => {
     close: null
   });
 
-  const userInfo = {
+  const userInfo: UserInfoModel = new UserInfoModel({
     firstName: 'test',
     lastName: 'user',
     email: 'test@test.com',
-    uid: '12345',
     role: 'FAL_INTERNAL_WRITE',
     permissions: [
       'falAllowInvoiceAccess'
     ]
-  };
+  });
 
   const falconInvoiceNumber = 'F0000000001';
   const invoiceResponse = {

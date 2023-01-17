@@ -7,6 +7,9 @@ import {MasterDataUploadModalComponent} from './master-data-upload-modal.compone
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {MasterDataRow} from '../../models/master-data-row/master-data-row';
+import {ElmUamRoles} from '../../utils/elm-uam-roles';
 
 describe('MasterDataUploadModalComponent', () => {
   let component: MasterDataUploadModalComponent;
@@ -15,19 +18,22 @@ describe('MasterDataUploadModalComponent', () => {
   let http: HttpTestingController;
   let toast: ToastService;
   let modal: ModalService;
+  let data: any;
 
   const dialogMock = {
     close: () => {
     }
   };
 
+  const user = new UserInfoModel();
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppModule, HttpClientTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [WebServices, ToastService, ModalService,
-        { provide: MAT_DIALOG_DATA, useValue: {} },
-        { provide: MatDialogRef, useValue: dialogMock }
+        {provide: MAT_DIALOG_DATA, useValue: {}},
+        {provide: MatDialogRef, useValue: dialogMock}
       ]
     })
       .compileComponents();
@@ -39,6 +45,7 @@ describe('MasterDataUploadModalComponent', () => {
     fixture = TestBed.createComponent(MasterDataUploadModalComponent);
     toast = TestBed.inject(ToastService);
     modal = TestBed.inject(ModalService);
+    data = TestBed.inject(MAT_DIALOG_DATA);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -57,6 +64,7 @@ describe('MasterDataUploadModalComponent', () => {
   it('should create', () => {
     console.log('testing MasterDataUploadModalComponent');
     expect(component).toBeTruthy();
+    http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
   });
 
   describe('resetForm', () => {
@@ -68,6 +76,7 @@ describe('MasterDataUploadModalComponent', () => {
       expect(component.resetForm).toHaveBeenCalled();
       expect(component.form.get('masterDataTypeDropdown')?.value).toBeNull();
       expect(component.form.get('fileSelector')?.value).toBeNull();
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
     });
   });
 
@@ -76,6 +85,7 @@ describe('MasterDataUploadModalComponent', () => {
       spyOn(component, 'postMasterDataFile').and.callThrough();
       component.onSubmit();
       fixture.detectChanges();
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
       http.expectOne(`${environment.baseServiceUrl}/v1/businessUnit/upload`).flush({});
     });
   });
@@ -86,6 +96,7 @@ describe('MasterDataUploadModalComponent', () => {
       if (component.fileToUpload) {
         component.postMasterDataFile(component.fileToUpload, component.masterDataType);
         fixture.detectChanges();
+        http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
         http.expectOne(`${environment.baseServiceUrl}/v1/businessUnit/upload`).flush({
           masterDataType: 'carrier',
           generalErrorMessage: '',
@@ -99,6 +110,7 @@ describe('MasterDataUploadModalComponent', () => {
       // @ts-ignore
       component.postMasterDataFile(component.fileToUpload, component.masterDataType);
       fixture.detectChanges();
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
       http.expectOne(`${environment.baseServiceUrl}/v1/businessUnit/upload`).flush({
         masterDataType: 'carrier',
         generalErrorMessage: 'testError',
@@ -110,35 +122,40 @@ describe('MasterDataUploadModalComponent', () => {
 
   describe('checking for proper file type', () => {
     it('should be valid if csv', () => {
-      const mockEvt = { target: { files: [component.fileToUpload] } };
+      const mockEvt = {target: {files: [component.fileToUpload]}};
       component.handleFileInput(mockEvt as any);
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
       expect(component.isValidFileType).toBeTrue();
     });
     it('should be valid if windows csv', () => {
       const blob = new Blob(['test'], {type: 'application/vnd.ms-excel'}) as any;
       blob.lastModifiedDate = new Date();
       blob.name = 'carrier.html';
-      const mockEvt = { target: { files: [blob as File] } };
+      const mockEvt = {target: {files: [blob as File]}};
       component.handleFileInput(mockEvt as any);
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
       expect(component.isValidFileType).toBeTrue();
     });
     it('should be invalid if not csv', () => {
       const blob = new Blob(['test'], {type: 'text/html'}) as any;
       blob.lastModifiedDate = new Date();
       blob.name = 'carrier.html';
-      const mockEvt = { target: { files: [blob as File] } };
+      const mockEvt = {target: {files: [blob as File]}};
       component.handleFileInput(mockEvt as any);
       expect(component.isValidFileType).toBeFalse();
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
     });
   });
 
   describe('enable/disable submit', () => {
     it('should disable upload when no value selected', () => {
       expect(component.uploadButtonDisabled()).toBeTrue();
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
     });
     it('should enable upload when value and .csv file selected', () => {
       component.isValidFileType = true;
       expect(component.uploadButtonDisabled()).toBeFalse();
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
     });
   });
 
@@ -149,7 +166,31 @@ describe('MasterDataUploadModalComponent', () => {
       expect(component.masterDataType).not.toEqual(testValue);
       component.handleDataTypeInput();
       expect(component.masterDataType).toEqual(testValue);
+      http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
     });
+  });
+
+  it('should remove message config from rows if missing permission', () => {
+    data.masterDataRows = [
+      new MasterDataRow({label: 'Message Config'}),
+      new MasterDataRow({label: 'Other'})
+    ];
+    const rows = component.masterDataRows;
+    expect(rows.length).toBe(1);
+    http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(user);
+  });
+
+  it('should keep message config in rows if has permission', () => {
+    data.masterDataRows = [
+      new MasterDataRow({label: 'Message Config'}),
+      new MasterDataRow({label: 'Other'})
+    ];
+    const userWithPermission = new UserInfoModel({
+      permissions: [ElmUamRoles.ALLOW_MESSAGE_CONFIG_UPLOAD]
+    });
+    http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(userWithPermission);
+    const rows = component.masterDataRows;
+    expect(rows.length).toBe(2);
   });
 });
 
