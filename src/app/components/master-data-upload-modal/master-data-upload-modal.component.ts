@@ -6,9 +6,13 @@ import {environment} from '../../../environments/environment';
 import {MasterDataUploadResponseModel} from '../../models/master-data-upload-response/master-data-upload-response-model';
 import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {MasterDataUploadErrorModalComponent} from '../master-data-upload-error-modal/master-data-upload-error-modal.component';
+import {UserService} from '../../services/user-service';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {MasterDataRow} from '../../models/master-data-row/master-data-row';
 
 export interface MasterDataUploadModalData {
-  masterDataRows: [];
+  masterDataRows: Array<MasterDataRow>;
 }
 
 @Component({
@@ -23,13 +27,27 @@ export class MasterDataUploadModalComponent {
   fileToUpload: File | null = null;
   masterDataType = '';
   isValidFileType = false;
+  hasMessageConfigUploadPermission = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: MasterDataUploadModalData,
               public dialogRef: MatDialogRef<MasterDataUploadModalComponent>,
               private webService: WebServices,
               private toastService: ToastService,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private userService: UserService) {
     this.resetForm();
+    this.userService.getUserInfo().subscribe(userInfo => {
+      this.hasMessageConfigUploadPermission = userInfo.hasPermission([ElmUamRoles.ALLOW_MESSAGE_CONFIG_UPLOAD]);
+    });
+  }
+
+  get masterDataRows(): Array<MasterDataRow> {
+    const rows = this.data.masterDataRows ?? [];
+    if (this.hasMessageConfigUploadPermission) {
+      return rows;
+    }
+    // removes message config from rows, since user doesn't have permission to upload
+    return rows.filter(row => row.label !== 'Message Config')
   }
 
   onSubmit(): void {
