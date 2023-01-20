@@ -1,0 +1,18 @@
+applications:
+  - name: elm-falcon-ui
+    routes:
+      - route: https://elm-falcon-ui-noisy-wolverine.apps.cf.np.gc.cahcloud.net
+    env:
+      baseServiceUrl: https://elm-falcon-noisy-wolverine.apps.cf.np.gc.cahcloud.net
+    disk_quota: 256M
+    memory: 128M
+    instances: 2
+    buildpack: nginx_buildpack
+    path: ./elm-falcon-ui.zip
+    metadata:
+      annotations:
+        contact: "bj.hanley@cardinalhealth.com friat.hadush@cardinalhealth.com"
+      labels:
+        APMID: "27191"
+        environment: "DR"
+        ingress_routes: "UI"
