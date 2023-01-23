@@ -1,4 +1,7 @@
 # Elm Falcon UI
+
+__This readme is outdated!__
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.0.
 
 ## Getting Started
