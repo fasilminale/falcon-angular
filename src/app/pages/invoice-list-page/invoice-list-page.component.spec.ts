@@ -237,6 +237,13 @@ describe('InvoiceListPageComponent', () => {
       expect(result).toEqual('paymentDue');
     }));
 
+    it('lastPaidDate should be lastPaidDate', () => {
+      const result = component.checkSortFields('lastPaidDate');
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('lastPaidDate');
+    });
+
     it('originStr should be origin.city', fakeAsync(() => {
       const result = component.checkSortFields('originStr');
       tick(150);

@@ -1,11 +1,12 @@
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 export class SubjectValue<T> {
 
   private _value: T;
-  private _subject = new Subject<T>();
+  private readonly _subject: BehaviorSubject<T>;
 
   constructor(initialValue: T) {
+    this._subject = new BehaviorSubject(initialValue);
     this._value = initialValue;
     this.value = initialValue;
   }
@@ -19,7 +20,7 @@ export class SubjectValue<T> {
     return this._value;
   }
 
-  asSubject(): Subject<T> {
+  asSubject(): BehaviorSubject<T> {
     return this._subject;
   }
 

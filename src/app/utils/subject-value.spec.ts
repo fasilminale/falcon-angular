@@ -1,6 +1,7 @@
 import {TestBed} from '@angular/core/testing';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 import {SubjectValue} from './subject-value';
+import {first} from 'rxjs/operators';
 
 describe('SubjectValue', () => {
 
@@ -26,12 +27,13 @@ describe('SubjectValue', () => {
     expect(subjectValue.value).toBe(135);
   });
 
-  it('should be observable', done => {
-    subjectValue.asObservable().subscribe(result => {
+  it('should emit existing value', done => {
+    subjectValue.value = 643;
+    subjectValue.asObservable().pipe(first()).subscribe(result => {
       expect(result).toBe(643);
       done();
     });
-    subjectValue.value = 643;
+    subjectValue.value = 765;
   });
 
 });

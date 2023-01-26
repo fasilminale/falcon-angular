@@ -1,4 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {InvoiceLockListPageComponent} from './invoice-lock-list-page.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
@@ -11,7 +11,10 @@ import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {Sort} from '@angular/material/sort';
 import {WebServices} from '../../services/web-services';
 import {PageEvent} from '@angular/material/paginator';
-import {environment} from '../../../environments/environment';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {UserService} from '../../services/user-service';
+import {SubjectValue} from '../../utils/subject-value';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -48,10 +51,24 @@ describe('InvoiceLockListPageComponent', () => {
   pageEvent.pageSize = 30;
   pageEvent.pageIndex = 1;
 
+  const $userInfo = new SubjectValue(
+    new UserInfoModel({
+      firstName: 'test',
+      lastName: 'user',
+      email: 'test@test.com',
+      uid: '12345',
+      role: 'FAL_INTERNAL_TECH_ADIMN',
+      permissions: [
+        ElmUamPermission.ALLOW_INVOICE_WRITE
+      ]
+    })
+  );
+
   let component: InvoiceLockListPageComponent;
   let fixture: ComponentFixture<InvoiceLockListPageComponent>;
   let router: Router;
   let webService: WebServices;
+  let userService: UserService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -72,15 +89,22 @@ describe('InvoiceLockListPageComponent', () => {
         }
       ]
     }).compileComponents();
+    router = TestBed.inject(Router);
+    webService = TestBed.inject(WebServices);
+    userService = TestBed.inject(UserService);
+    spyOn(userService, 'getUserInfo').and.returnValue($userInfo.asObservable());
     fixture = TestBed.createComponent(InvoiceLockListPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    router = TestBed.inject(Router);
-    webService = TestBed.inject(WebServices);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should get user info', async () => {
+    await fixture.whenStable();
+    expect(component.userInfo).toEqual($userInfo.value);
   });
 
   it('should route to a manual invoice edit page', () => {
@@ -140,6 +164,13 @@ describe('InvoiceLockListPageComponent', () => {
       fixture.detectChanges();
       expect(component.checkSortFields).toHaveBeenCalled();
       expect(result).toEqual('paymentDue');
+    });
+
+    it('lastPaidDate should be lastPaidDate', () => {
+      const result = component.checkSortFields('lastPaidDate');
+      fixture.detectChanges();
+      expect(component.checkSortFields).toHaveBeenCalled();
+      expect(result).toEqual('lastPaidDate');
     });
 
     it('originStr should be origin.city', () => {

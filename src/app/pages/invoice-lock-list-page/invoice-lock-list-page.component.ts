@@ -21,7 +21,7 @@ import {Sort} from '@angular/material/sort';
 })
 export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
 
-  private userInfo: UserInfoModel | undefined;
+  userInfo: UserInfoModel | undefined;
   public paginationModel: PaginationModel = new PaginationModel();
   public headers: Array<ElmDataTableHeader> = [
     {header: 'statusLabel', label: 'Status'},
@@ -91,19 +91,14 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
       createdByUser: this.createdByUser,
       numberPerPage
     }).subscribe((invoiceData: any) => {
-      if (invoiceData?.data?.length === 1 && this.searchValue !== '') {
-        this.controlGroup.controls.control.setValue('');
-        this.rowClicked(invoiceData.data[0]).then();
-      } else {
-        this.paginationModel.total = invoiceData.total;
-        this.totalSearchResult = invoiceData.total;
-        if (this.totalSearchResult !== 0) {
-          const invoiceArray: Array<InvoiceDataModel> = [];
-          invoiceData.data.map((invoice: any) => {
-            invoiceArray.push(new InvoiceDataModel(invoice));
-          });
-          this.invoices = invoiceArray;
-        }
+      this.paginationModel.total = invoiceData.total;
+      this.totalSearchResult = invoiceData.total;
+      if (this.totalSearchResult !== 0) {
+        const invoiceArray: Array<InvoiceDataModel> = [];
+        invoiceData.data.map((invoice: any) => {
+          invoiceArray.push(new InvoiceDataModel(invoice));
+        });
+        this.invoices = invoiceArray;
       }
       this.loadingService.hideLoading();
     });
