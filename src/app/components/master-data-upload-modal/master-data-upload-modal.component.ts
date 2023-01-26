@@ -8,7 +8,7 @@ import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {MasterDataUploadErrorModalComponent} from '../master-data-upload-error-modal/master-data-upload-error-modal.component';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {MasterDataRow} from '../../models/master-data-row/master-data-row';
 
 export interface MasterDataUploadModalData {
@@ -37,7 +37,7 @@ export class MasterDataUploadModalComponent {
               private userService: UserService) {
     this.resetForm();
     this.userService.getUserInfo().subscribe(userInfo => {
-      this.hasMessageConfigUploadPermission = userInfo.hasPermission([ElmUamRoles.ALLOW_MESSAGE_CONFIG_UPLOAD]);
+      this.hasMessageConfigUploadPermission = userInfo.hasPermission([ElmUamPermission.ALLOW_MESSAGE_CONFIG_UPLOAD]);
     });
   }
 

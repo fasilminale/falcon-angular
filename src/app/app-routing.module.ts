@@ -15,20 +15,39 @@ import {NewUserLogoutPageComponent} from './pages/new-user-logout-page/new-user-
 import {DirtyInvoiceEditFormGuard} from './services/dirty-edit-invoice-form-deactivate.guard';
 import {DirtyInvoiceCreateFormGuard} from './services/dirty-create-invoice-form-deactivate.guard';
 import {DirtyAutoInvoiceEditFormGuard} from './services/dirty-edit-auto-invoice-form-deactivate.guard';
+import {InvoiceLockListPageComponent} from './pages/invoice-lock-list-page/invoice-lock-list-page.component';
+import {ElmUamPermission} from './utils/elm-uam-permission';
 
 const routes: Routes = [
-  {path: 'master-data', component:  MasterDataPageComponent, canActivate: [OktaAuthGuard]},
+  {path: 'master-data', component: MasterDataPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoices', component: InvoiceListPageComponent, canActivate: [OktaAuthGuard]},
   {path: 'invoice-extraction', component: InvoiceExtractionPageComponent, canActivate: [OktaAuthGuard]},
-  {path: 'invoice/create', component: InvoiceCreatePageComponent, canActivate: [OktaAuthGuard, RoleGuard], canDeactivate: [DirtyInvoiceCreateFormGuard], data: {
-    permissions: ['falAllowAllAccess', 'falAllowInvoiceWrite']
-  }},
-  {path: 'invoice/:falconInvoiceNumber/:entryType', component: InvoiceEditPageComponent, canDeactivate: [DirtyAutoInvoiceEditFormGuard], canActivate: [OktaAuthGuard]},
-  {path: 'invoice/:falconInvoiceNumber', component: InvoiceDetailPageComponent, canDeactivate: [DirtyInvoiceEditFormGuard], canActivate: [OktaAuthGuard]},
-  {path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard, RoleGuard], data: {permissions: ['falAllowAllAccess', 'falAllowInvoiceWrite']
-  }},
+  {path: 'manage-invoice-locks', component: InvoiceLockListPageComponent, canActivate: [OktaAuthGuard]},
+  {
+    path: 'invoice/create',
+    component: InvoiceCreatePageComponent,
+    canActivate: [OktaAuthGuard, RoleGuard],
+    canDeactivate: [DirtyInvoiceCreateFormGuard],
+    data: {permissions: [ElmUamPermission.ALLOW_INVOICE_WRITE]}
+  },
+  {
+    path: 'invoice/:falconInvoiceNumber/:entryType',
+    component: InvoiceEditPageComponent,
+    canDeactivate: [DirtyAutoInvoiceEditFormGuard],
+    canActivate: [OktaAuthGuard]
+  },
+  {
+    path: 'invoice/:falconInvoiceNumber',
+    component: InvoiceDetailPageComponent,
+    canDeactivate: [DirtyInvoiceEditFormGuard],
+    canActivate: [OktaAuthGuard]
+  },
+  {
+    path: 'templates', component: ManageMyTemplatesComponent, canActivate: [OktaAuthGuard, RoleGuard],
+    data: {permissions: [ElmUamPermission.ALLOW_INVOICE_WRITE]}
+  },
   {path: 'login/callback', component: OktaCallbackComponent},
-  {path: 'logged-out', component:  LoggedOutPageComponent},
+  {path: 'logged-out', component: LoggedOutPageComponent},
   {path: 'newUserForbidden', component: NewUserLogoutPageComponent},
   {path: '', redirectTo: '/invoices', pathMatch: 'full'},
 ];

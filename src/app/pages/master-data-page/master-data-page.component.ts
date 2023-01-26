@@ -10,7 +10,7 @@ import { WebServices } from 'src/app/services/web-services';
 import {Observable} from 'rxjs';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 
 type MasterDataFields = 'label' | 'lastUpdated' | 'endpoint' | 'download' | 'downloadTemplate' | 'hasDownloadableTemplate';
 
@@ -31,7 +31,7 @@ export class MasterDataPageComponent implements OnInit {
   ];
   masterDataRows: MasterDataRow[] = [];
 
-  private readonly requiredPermissions = [ElmUamRoles.ALLOW_MASTER_DATA_UPLOAD];
+  private readonly requiredPermissions = [ElmUamPermission.ALLOW_MASTER_DATA_UPLOAD];
   public hasMasterDataUpload = false;
 
   constructor(private masterDataService: MasterDataService,

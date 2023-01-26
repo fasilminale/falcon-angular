@@ -1,0 +1,23 @@
+<elm-page-header headerTitle="Invoice List">
+</elm-page-header>
+<elm-card>
+  <elm-section-header [sectionTitle]="this.invoiceCountLabel">
+  </elm-section-header>
+  <cardinal-chip [totalResults]="paginationModel.total"
+                 [filtersModel]="this.filterService.invoiceFilterModel"
+                 (chipRemovedEvent)="this.resetTable()"
+  ></cardinal-chip>
+  <elm-data-table
+    tableType="clickable"
+    [data]="invoices"
+    [headers]="headers"
+    [pageSize]="paginationModel.numberPerPage"
+    [pageIndex]="paginationModel.pageIndex-1"
+    (pageChangedEvent)="pageChanged($event)"
+    (dataSelectedEvent)="rowClicked($event[0])"
+    (sortEvent)="sortChanged($event)"
+    [shouldSort]=true
+    [totalResults]="paginationModel.total"
+    [pageSizes]="paginationModel.pageSizes">
+  </elm-data-table>
+</elm-card>

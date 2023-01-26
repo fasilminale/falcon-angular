@@ -19,9 +19,11 @@ import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
 import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SearchComponent} from '../../components/search/search.component';
-import { ModalService } from '@elm/elm-styleguide-ui';
+import {ModalService} from '@elm/elm-styleguide-ui';
 import {PaginationModel} from '../../models/PaginationModel';
 import {UtilService} from '../../services/util-service';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -60,7 +62,7 @@ describe('InvoiceListPageComponent', () => {
     uid: '12345',
     role: 'FAL_INTERNAL_TECH_ADIMN',
     permissions: [
-      'falRestrictInvoiceWrite'
+      ElmUamPermission.ALLOW_INVOICE_WRITE
     ]
   };
 
@@ -91,7 +93,7 @@ describe('InvoiceListPageComponent', () => {
   const scacs: Array<any> = [{
     scac: 'ABCD',
     name: 'Vandalay Industries'
-  },{
+  }, {
     scac: 'EFGH',
     name: 'Kramerica'
   }];
@@ -111,7 +113,7 @@ describe('InvoiceListPageComponent', () => {
         },
         {
           provide: ActivatedRoute,
-          useValue: new MockActivatedRoute({ falconInvoiceNumber: '1' })
+          useValue: new MockActivatedRoute({falconInvoiceNumber: '1'})
         }
       ]
     }).compileComponents();
@@ -150,7 +152,7 @@ describe('InvoiceListPageComponent', () => {
       originCities: ['New York'],
       destinationCities: ['Chicago']
     }]);
-    const carriersCall  = http.match((request) => {
+    const carriersCall = http.match((request) => {
       return request.url == `${environment.baseServiceUrl}/v1/carriers`;
     });
     expect(carriersCall.length === 2);
@@ -356,8 +358,8 @@ describe('InvoiceListPageComponent', () => {
   }));
 
   describe('openFilter', () => {
-    const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed : of({}), close: null });
-    dialogRefSpyObj.componentInstance = { body: '' };
+    const dialogRefSpyObj = jasmine.createSpyObj({afterClosed: of({}), close: null});
+    dialogRefSpyObj.componentInstance = {body: ''};
 
     beforeEach(() => {
       spyOn(TestBed.inject(MatDialog), 'open').and.returnValue(dialogRefSpyObj);
@@ -388,18 +390,34 @@ describe('InvoiceListPageComponent', () => {
     }));
   });
 
-  it('should display the extract invoice remittance button', () => {
-    component.hasInvoiceWrite = true;
+  it('should display the extract invoice remittance button', async () => {
+    // make sure permissions are set for this test
+    userInfo.permissions = [ElmUamPermission.ALLOW_INVOICE_WRITE];
+    component.userInfo = new UserInfoModel(userInfo);
     fixture.detectChanges();
-    const deleteBtn = fixture.debugElement.query(By.css('#extract-invoice-button'));
-    expect(deleteBtn).not.toBeNull();
+
+    // check that permission calculation works
+    expect(component.hasPermissions([ElmUamPermission.ALLOW_INVOICE_WRITE])).toBeTrue();
+
+    // wait for template to update based on detect changes
+    await fixture.whenStable();
+    const extractButton = fixture.debugElement.query(By.css('#extract-invoice-button'));
+    expect(extractButton).not.toBeNull();
   });
 
-  it('should not display the extract invoice remittance button', () => {
-    component.hasInvoiceWrite = false;
+  it('should not display the extract invoice remittance button', async () => {
+    // make sure permissions are set for this test
+    userInfo.permissions = [];
+    component.userInfo = new UserInfoModel(userInfo);
     fixture.detectChanges();
-    const deleteBtn = fixture.debugElement.query(By.css('#extract-invoice-button'));
-    expect(deleteBtn).toBeNull();
+
+    // check that permission calculation works
+    expect(component.hasPermissions([ElmUamPermission.ALLOW_INVOICE_WRITE])).toBeFalse();
+
+    // wait for template to update based on detect changes
+    await fixture.whenStable();
+    const extractButton = fixture.debugElement.query(By.css('#extract-invoice-button'));
+    expect(extractButton).toBeNull();
   });
 
   it('should prompt user before downloading a list of invoices', fakeAsync(() => {
@@ -413,7 +431,7 @@ describe('InvoiceListPageComponent', () => {
   }));
 
   it('should download a list of invoices', fakeAsync(() => {
-    component.filterService.invoiceFilterModel.fb.group({ invoiceStatuses: new FormArray([]) });
+    component.filterService.invoiceFilterModel.fb.group({invoiceStatuses: new FormArray([])});
     const formArray: any = component.filterService.invoiceFilterModel.form.get('invoiceStatuses');
     formArray.push(new FormControl('APPROVED'));
     spyOn(utilService, 'downloadCsv').and.stub();
@@ -435,6 +453,17 @@ describe('InvoiceListPageComponent', () => {
     expect(service.controlGroupState).toBe(controlGroup);
   });
 
+  it('routeToExtractPage should navigate', () => {
+    spyOn(router, 'navigate').and.stub();
+    component.routeToExtractPage();
+    expect(router.navigate).toHaveBeenCalledOnceWith(['/invoice-extraction']);
+  });
+
+  it('routeToManageInvoiceLocksPage should navigate', () => {
+    spyOn(router, 'navigate').and.stub();
+    component.routeToManageInvoiceLocksPage();
+    expect(router.navigate).toHaveBeenCalledOnceWith(['/manage-invoice-locks']);
+  });
 
 });
 

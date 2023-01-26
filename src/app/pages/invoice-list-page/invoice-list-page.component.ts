@@ -5,22 +5,24 @@ import {WebServices} from '../../services/web-services';
 import {PaginationModel} from '../../models/PaginationModel';
 import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel, InvoiceUtils} from '../../models/invoice/invoice-model';
-import {ConfirmationModalComponent, DataTableComponent, ElmDataTableHeader, ToastService, ModalService} from '@elm/elm-styleguide-ui';
+import {ConfirmationModalComponent, DataTableComponent, ElmDataTableHeader, ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
 import {MatDialog, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
-import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {UserService} from '../../services/user-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
-import { SelectOption } from 'src/app/models/select-option-model/select-option-model';
-import { InvoiceService } from 'src/app/services/invoice-service';
+import {SelectOption} from 'src/app/models/select-option-model/select-option-model';
+import {InvoiceService} from 'src/app/services/invoice-service';
 import {Subscription} from 'rxjs';
 import {SearchComponent} from '../../components/search/search.component';
 import {FormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
-import moment from 'moment';
+
+
+const {ALLOW_MANAGE_INVOICE_LOCKS, ALLOW_INVOICE_WRITE} = ElmUamPermission;
 
 @Component({
   selector: 'app-invoice-list-page',
@@ -42,7 +44,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     {header: 'destinationStr', label: 'Destination'},
     {header: 'invoiceDate', label: 'Invoice Date'},
     {header: 'paymentDueDisplay', label: 'Payment Due'},
-    {header: 'lastPaidDate', label: 'Payment Date'} ,
+    {header: 'lastPaidDate', label: 'Payment Date'},
     {header: 'amountOfInvoice', label: 'Amount', alignment: 'end'},
     {header: 'currency', label: 'Currency'},
   ];
@@ -63,9 +65,6 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   public masterDataScacs: Array<SelectOption<string>> = [];
   public masterDataShippingPoints: Array<SelectOption<string>> = [];
   public masterDataModes: Array<SelectOption<string>> = [];
-
-  private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
-  public hasInvoiceWrite = false;
 
   controlGroup: FormGroup;
 
@@ -98,32 +97,31 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     });
     this.userService.getUserInfo().subscribe(userInfo => {
       this.userInfo = new UserInfoModel(userInfo);
-      this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
     });
     this.invoiceService.getOriginDestinationCities()
-    .subscribe(opts => {
-       if(opts && opts.length > 0) {
-         this.originCities = opts[0].originCities.map(InvoiceUtils.toOption);
-         this.destinationCities = opts[0].destinationCities.map(InvoiceUtils.toOption);
-       }
-    });
+      .subscribe(opts => {
+        if (opts && opts.length > 0) {
+          this.originCities = opts[0].originCities.map(InvoiceUtils.toOption);
+          this.destinationCities = opts[0].destinationCities.map(InvoiceUtils.toOption);
+        }
+      });
     this.subscription.add(this.invoiceService.getMasterDataScacs().subscribe(
       opts => {
-        if(opts && opts.length > 0) {
+        if (opts && opts.length > 0) {
           this.masterDataScacs = opts.map(InvoiceUtils.toScacOption);
         }
       }
     ));
     this.subscription.add(this.invoiceService.getMasterDataShippingPoints().subscribe(
       opts => {
-        if(opts && opts.length > 0) {
+        if (opts && opts.length > 0) {
           this.masterDataShippingPoints = opts.map(InvoiceUtils.toShippingPointCode);
         }
       }
     ));
     this.subscription.add(this.invoiceService.getMasterDataModes().subscribe(
       opts => {
-        if(opts && opts.length > 0) {
+        if (opts && opts.length > 0) {
           this.masterDataModes = opts.map(InvoiceUtils.toModeOption);
         }
       }
@@ -134,6 +132,18 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     this.userService.searchState = this.paginationModel;
     this.userService.controlGroupState = this.controlGroup;
     this.subscription.unsubscribe();
+  }
+
+  get canExtractInvoice(): boolean {
+    return this.hasPermissions([ALLOW_INVOICE_WRITE]);
+  }
+
+  get canManageInvoiceLocks(): boolean {
+    return this.hasPermissions([ALLOW_INVOICE_WRITE, ALLOW_MANAGE_INVOICE_LOCKS]);
+  }
+
+  hasPermissions(permissions: string[]): boolean {
+    return this.userInfo?.hasPermission(permissions) ?? false;
   }
 
   getTableData(numberPerPage: number, isInvoiceSearched = false): void {
@@ -148,13 +158,13 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
       ...searchFilters,
       numberPerPage
     }).subscribe((invoiceData: any) => {
-      if(invoiceData?.data?.length === 1 && this.searchValue !== '') {
-          this.controlGroup.controls.control.setValue('');
-          this.rowClicked(invoiceData.data[0]);
-      } else  {
+      if (invoiceData?.data?.length === 1 && this.searchValue !== '') {
+        this.controlGroup.controls.control.setValue('');
+        this.rowClicked(invoiceData.data[0]);
+      } else {
         this.paginationModel.total = invoiceData.total;
         this.totalSearchResult = invoiceData.total;
-        if(!isInvoiceSearched || this.totalSearchResult !== 0) {
+        if (!isInvoiceSearched || this.totalSearchResult !== 0) {
           this.invoiceCountLabel = this.createdByUser
             ? `My Invoices (${this.paginationModel.total})`
             : (this.searchValue || this.selectedInvoiceStatuses.length > 0)
@@ -166,7 +176,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
           });
           this.invoices = invoiceArray;
         }
-    }
+      }
       this.loadingService.hideLoading();
     });
   }
@@ -254,8 +264,12 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  routeToExtractPage(): void {
-    this.router.navigate(['/invoice-extraction']);
+  async routeToExtractPage(): Promise<boolean> {
+    return this.router.navigate(['/invoice-extraction']);
+  }
+
+  async routeToManageInvoiceLocksPage(): Promise<boolean> {
+    return this.router.navigate(['/manage-invoice-locks']);
   }
 
   downloadCsv(): void {
@@ -276,11 +290,11 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
         .afterClosed()
         .subscribe(result => {
           if (result) {
-            this.callCSVApi({ page: 1, numberPerPage: this.paginationModel.total });
+            this.callCSVApi({page: 1, numberPerPage: this.paginationModel.total});
           }
         });
     } else {
-      this.callCSVApi({ page: 1, numberPerPage: this.paginationModel.total });
+      this.callCSVApi({page: 1, numberPerPage: this.paginationModel.total});
     }
 
   }
