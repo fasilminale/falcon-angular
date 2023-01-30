@@ -89,6 +89,7 @@ import {FalEditChargeModalComponent} from './components/fal-edit-charge-modal/fa
 import { FalAdjustWeightModalComponent } from './components/fal-adjust-weight-modal/fal-adjust-weight-modal.component';
 import { FalEditGlModalComponent } from './components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 import { FalHistoryLogModalComponent } from './components/fal-history-log-modal/fal-history-log-modal.component';
+import { InvoiceLockListPageComponent } from './pages/invoice-lock-list-page/invoice-lock-list-page.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -189,7 +190,8 @@ const oktaConfig = {
     FalAccessorialDetailComponent,
     FalAdjustWeightModalComponent,
     FalEditGlModalComponent,
-    FalHistoryLogModalComponent
+    FalHistoryLogModalComponent,
+    InvoiceLockListPageComponent
   ],
   imports: [
     BrowserModule,

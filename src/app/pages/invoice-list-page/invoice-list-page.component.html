@@ -4,13 +4,17 @@
       <div class="headline1">Invoice List</div>
     </div>
   </div>
-  <app-search [controlGroup]="controlGroup" (clearSearch)="clearSearchFilter()" (submitEvent)="searchInvoices($event)" [totalResults]="totalSearchResult"></app-search>
+  <app-search [controlGroup]="controlGroup"
+              (clearSearch)="clearSearchFilter()"
+              (submitEvent)="searchInvoices($event)"
+              [totalResults]="totalSearchResult"
+  ></app-search>
 </div>
 <elm-card>
   <elm-section-header [sectionTitle]="this.invoiceCountLabel">
     <div class='d-flex col-12'>
       <div class="ml-col-3">
-        <div *ngIf="hasInvoiceWrite">
+        <div *ngIf="canExtractInvoice">
           <elm-button id="extract-invoice-button"
                       buttonType="button"
                       buttonStyle="text"
@@ -32,6 +36,18 @@
           Download List
         </elm-button>
       </div>
+      <div class="ml-col-3">
+        <div *ngIf="canManageInvoiceLocks">
+          <elm-button id="manage-invoice-locks"
+                      buttonType="button"
+                      buttonStyle="text"
+                      class="flex-shrink-1"
+                      buttonColor="black"
+                      (buttonClick)="routeToManageInvoiceLocksPage()">
+            <u>Manage Invoice Locks</u>
+          </elm-button>
+        </div>
+      </div>
       <div class="ms-auto ml-col-6">
         <elm-button buttonStyle="primary"
                     (buttonClick)="openFilter()"
@@ -43,7 +59,8 @@
   </elm-section-header>
   <cardinal-chip [totalResults]="paginationModel.total"
                  [filtersModel]="this.filterService.invoiceFilterModel"
-                 (chipRemovedEvent)="this.resetTable()"></cardinal-chip>
+                 (chipRemovedEvent)="this.resetTable()"
+  ></cardinal-chip>
   <elm-data-table
     tableType="clickable"
     [data]="invoices"

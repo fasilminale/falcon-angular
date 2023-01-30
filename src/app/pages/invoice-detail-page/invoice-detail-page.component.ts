@@ -13,7 +13,7 @@ import {Milestone} from '../../models/milestone/milestone-model';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
-import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {CommentModel, UtilService} from '../../services/util-service';
 
 @Component({
@@ -41,7 +41,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
   public milestones: Array<Milestone> = [];
   public invoiceStatus = '';
 
-  private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
+  private readonly requiredPermissions = [ElmUamPermission.ALLOW_INVOICE_WRITE];
   public hasInvoiceWrite = false;
   public onCancel$ = new Subject<any>();
 

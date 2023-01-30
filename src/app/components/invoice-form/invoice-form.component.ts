@@ -32,7 +32,7 @@ import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ConfirmationModalData, ElmFormHelper, ModalService, ToastService} from '@elm/elm-styleguide-ui';
-import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 
 @Component({
   selector: 'app-invoice-form',
@@ -50,7 +50,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
   public readonly regex = /[a-zA-Z0-9_\\-]/;
   public readonly freeTextRegex = /[\w\-\s]/;
   public readonly specialCharErrorMessage = 'Special characters are not allowed';
-  public readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
+  public readonly requiredPermissions = [ElmUamPermission.ALLOW_INVOICE_WRITE];
   public editableInvoice = true;
   public lineItemRemoveButtonDisable = true;
   public validAmount = true;
