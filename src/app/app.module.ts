@@ -90,6 +90,7 @@ import { FalAdjustWeightModalComponent } from './components/fal-adjust-weight-mo
 import { FalEditGlModalComponent } from './components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 import { FalHistoryLogModalComponent } from './components/fal-history-log-modal/fal-history-log-modal.component';
 import { InvoiceLockListPageComponent } from './pages/invoice-lock-list-page/invoice-lock-list-page.component';
+import {FalPageHeaderComponent} from './components/fal-page-header/fal-page-header.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -149,6 +150,7 @@ const oktaConfig = {
   logoutUrl: oktaConfigKeys.logoutUrl,
 };
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -185,6 +187,7 @@ const oktaConfig = {
     InfoIconTooltipComponent,
     FalCommentModalComponent,
     FalEditChargeModalComponent,
+    FalPageHeaderComponent,
     NewUserLogoutPageComponent,
     EllipsisPipe,
     FalAccessorialDetailComponent,
