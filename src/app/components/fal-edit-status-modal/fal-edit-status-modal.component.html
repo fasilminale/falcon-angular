@@ -1,0 +1,67 @@
+<div mat-dialog-title class="d-flex align-items-center" xmlns="http://www.w3.org/1999/html">
+  <span class="headline2">{{title}}</span>
+  <elm-close-button class="dialog-close-button" mat-dialog-close></elm-close-button>
+</div>
+<form [formGroup]="form">
+  <div mat-dialog-content class="modal-height">
+    <div class="elm-h3" innerHTML="{{innerHtmlMessage}}"></div>
+    <label for="cost-line-item-charge" class="fal-label">
+      Charge
+    </label>
+
+      <elm-text-input id="cost-line-item-charge"
+                      formControlName="charge"
+                      [addSpacing]="false">
+      </elm-text-input>
+
+
+    <div>
+      <!-- FILE CHOOSER -->
+      <label for="file-chooser-input"
+             class="fal-label">
+        File
+      </label>
+      <app-fal-file-input id="file-chooser-input"
+                          formControlName="file"
+                          accept=".eml, .doc, .jpg, .pdf, .xlsx">
+      </app-fal-file-input>
+    </div>
+
+    <div *ngIf="statusControl.valid && commentControl.enabled">
+      <label for="commentInput"
+             class="fal-label">
+        Comment
+      </label>
+      <elm-textarea-input id="commentInput"
+                          formControlName="comment"
+                          [addSpacing]="true"
+                          type>
+      </elm-textarea-input>
+      <elm-input-subtext *ngIf="commentControl.invalid ?? false"
+                         class="input-error"
+                         [isError]="true">
+        Comment is missing
+      </elm-input-subtext>
+    </div>
+
+  </div>
+
+  <div mat-dialog-actions class="float-right">
+    <elm-button buttonStyle="secondary"
+                class="ms-auto"
+                [mat-dialog-close]="undefined"
+                id="cancel"
+                aria-label="cancel">
+      {{cancelButtonText}}
+    </elm-button>
+    <elm-button [buttonStyle]="confirmButtonStyle"
+                class="ms-3"
+                (buttonClick)="onConfirmButtonClick()"
+                [isDisabled]="form.invalid"
+                id="confirm"
+                aria-label="confirm">
+      {{confirmButtonText}}
+    </elm-button>
+  </div>
+
+</form>

@@ -1,5 +1,8 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import { ElmLinkInterface,  DataTableComponent} from '@elm/elm-styleguide-ui/lib/components/data-table/data-table.component';
+import {first} from 'rxjs/operators';
+import {UtilService} from '../../services/util-service';
+import {ToastService} from '@elm/elm-styleguide-ui';
 
 @Component({
   selector: 'fal-elm-page-header',
@@ -7,6 +10,9 @@ import { ElmLinkInterface,  DataTableComponent} from '@elm/elm-styleguide-ui/lib
   styleUrls: ['./fal-page-header.component.scss']
 })
 export class FalPageHeaderComponent {
+
+  constructor(private utilService: UtilService) {
+  }
 
   public enableStatusEditButton = true;
 
@@ -29,7 +35,12 @@ export class FalPageHeaderComponent {
    */
   @Output() helpRequested: EventEmitter<true> = new EventEmitter<true>();
 
-  clickStatusEditButton(): void {
+  async clickStatusEditButton(): Promise<void> {
+
+    const modalResponse = await this.utilService.openNewStatusEditModal({
+
+    }).pipe(first()).toPromise();
+    if (modalResponse) {}
     //this.isTripEditMode$.value = true;
     //this._editableFormArray.enable();
     //this.updateAndContinueClickEvent.emit({event: 'edit', value: false});
