@@ -23,7 +23,7 @@ export class WebSocketService {
       });
     }
 
-    _connect(topic?: string) {
+    connect(topic?: string) {
         console.log("Initialize WebSocket Connection");
         if(topic) {
             this.topic = topic;
@@ -38,7 +38,7 @@ export class WebSocketService {
         }, this.errorCallBack);
     };
 
-    _disconnect() {
+    disconnect() {
         if (this.stompClient !== null) {
             this.stompClient.disconnect();
         }
@@ -49,7 +49,7 @@ export class WebSocketService {
     errorCallBack(error: any) {
         console.log("errorCallBack -> " + error)
         setTimeout(() => {
-            this._connect();
+            this.connect();
         }, 5000);
     }
 

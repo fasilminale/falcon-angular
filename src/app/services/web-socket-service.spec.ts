@@ -35,7 +35,7 @@ describe('WebSocket Tests', () => {
       connect: () => {}
     }
     http.expectOne("https://somedomain.com/v1/user/info");
-    webSocketService._connect("/user/someemail/queue/notification");
+    webSocketService.connect("/user/someemail/queue/notification");
   });
 
   it('should disconnect', async () => {
@@ -43,7 +43,7 @@ describe('WebSocket Tests', () => {
       disconnect: () => {}
     }
     http.expectOne("https://somedomain.com/v1/user/info");
-    webSocketService._disconnect();
+    webSocketService.disconnect();
   });
 
   it('should handle error', async () => {
