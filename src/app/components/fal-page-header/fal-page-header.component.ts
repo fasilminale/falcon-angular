@@ -8,6 +8,8 @@ import { ElmLinkInterface,  DataTableComponent} from '@elm/elm-styleguide-ui/lib
 })
 export class FalPageHeaderComponent {
 
+  public enableStatusEditButton = true;
+
   @Input() headerTitle = '';
   @Input() headerTitleStyling?: string;
   @Input() headerSubtitle = '';
@@ -26,4 +28,10 @@ export class FalPageHeaderComponent {
    * Event emitted when the help button or help link is clicked.
    */
   @Output() helpRequested: EventEmitter<true> = new EventEmitter<true>();
+
+  clickStatusEditButton(): void {
+    //this.isTripEditMode$.value = true;
+    //this._editableFormArray.enable();
+    //this.updateAndContinueClickEvent.emit({event: 'edit', value: false});
+  }
 }
