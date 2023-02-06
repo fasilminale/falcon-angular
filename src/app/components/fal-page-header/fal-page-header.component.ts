@@ -24,6 +24,7 @@ export class FalPageHeaderComponent {
   @Input() contentFlex: string | undefined;
   @Input() breadcrumbs: Array<ElmLinkInterface> = [];
   @Input() helpUrl = '';
+  @Input() falconInvoiceNumber = '';
   /**
    * Forces the help button to be visible when a helpUrl is not given.
    * Allows capture of helpRequested event.
@@ -36,9 +37,8 @@ export class FalPageHeaderComponent {
   @Output() helpRequested: EventEmitter<true> = new EventEmitter<true>();
 
   async clickStatusEditButton(): Promise<void> {
-
-    const modalResponse = await this.utilService.openNewStatusEditModal({
-
+    debugger;
+    const modalResponse = await this.utilService.openNewStatusEditModal({"falconInvoiceNumber": this.falconInvoiceNumber
     }).pipe(first()).toPromise();
     if (modalResponse) {}
     //this.isTripEditMode$.value = true;

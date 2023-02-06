@@ -2,10 +2,11 @@ import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {buttonStyle} from '@elm/elm-styleguide-ui';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {CalcDetail, CalcDetailVariable} from '../../models/rate-engine/rate-engine-request';
 import {SelectOption} from '../../models/select-option-model/select-option-model';
-import {EditChargeModalInput, EditChargeModalOutput} from '../fal-edit-charge-modal/fal-edit-charge-modal.component';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {InvoiceService} from '../../services/invoice-service';
 
 @Component({
   selector: 'app-fal-edit-status-modal',
@@ -15,24 +16,24 @@ import {EditChargeModalInput, EditChargeModalOutput} from '../fal-edit-charge-mo
 export class FalEditStatusModalComponent {
 
   public readonly statusControl = new FormControl('', Validators.required);
-  public readonly commentControl: FormControl = new FormControl('');
+  public readonly reasonControl: FormControl = new FormControl('');
   public readonly subscriptions = new Subscription();
+  public falconInvoiceNumber = '';
 
-  constructor(@Inject(MAT_DIALOG_DATA) private data: EditChargeModalInput,
-              private dialogRef: MatDialogRef<FalEditStatusModalComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) private data: EditStatusModalInput,
+              private dialogRef: MatDialogRef<FalEditStatusModalComponent>,
+              private invoiceService: InvoiceService) {
 
     // make sure all subscriptions are closed after the modal closes
     this.subscriptions.add(this.dialogRef.afterClosed()
       .subscribe(() => this.subscriptions.unsubscribe())
     );
 
-
+    this.form.addControl('reason', this.reasonControl);
   }
 
-
-
   public readonly form = new FormGroup({
-    charge: this.statusControl
+    status: this.statusControl
   });
   /**
    * The title text for the modal.
@@ -75,7 +76,9 @@ export class FalEditStatusModalComponent {
   }
 
   onConfirmButtonClick(): void {
-    let output: EditChargeModalOutput;
+    let output: EditStatusModalOutput;
+
+    this.updateInvoice();
 
     this.close(output);
   }
@@ -86,20 +89,20 @@ export class FalEditStatusModalComponent {
   close(result: EditStatusModalOutput): void {
     this.dialogRef.close(result);
   }
+
+  updateInvoice(): Observable<InvoiceDataModel> {
+
+    const returnedInvoice = this.invoiceService.updateInvoiceStatus('ERROR', this.data.falconInvoiceNumber);
+
+    return returnedInvoice;
+  }
 }
 
 /**
  * Input type required to create the modal.
  */
 export type EditStatusModalInput = {
-  title?: string,
-  innerHtmlMessage?: string,
-  confirmButtonStyle?: buttonStyle,
-  confirmButtonText?: string,
-  cancelButtonText?: string,
-  costLineItem?: AbstractControl,
-  costBreakdownOptions?: Array<SelectOption<CalcDetail>>,
-  file?: File
+ falconInvoiceNumber: string
 };
 
 /**

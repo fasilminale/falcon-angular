@@ -94,8 +94,18 @@ export class InvoiceService {
   }
 
   public updateInvoice(invoice: any): Observable<any> {
+    debugger;
     return this.web.httpPut(
       `${environment.baseServiceUrl}/v1/invoice/${invoice.falconInvoiceNumber}`,
+      invoice
+    );
+  }
+
+  public updateInvoiceStatus(status: any, falconInvoiceNumber: any): Observable<any> {
+    let invoice: any = {"status": status, "falconInvoiceNumber": falconInvoiceNumber};
+    debugger;
+    return this.web.httpPut(
+      `${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}/status`,
       invoice
     );
   }

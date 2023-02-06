@@ -14,36 +14,22 @@
                       [addSpacing]="false">
       </elm-text-input>
 
-
     <div>
-      <!-- FILE CHOOSER -->
-      <label for="file-chooser-input"
+      <label for="reasonInput"
              class="fal-label">
-        File
+        Reason
       </label>
-      <app-fal-file-input id="file-chooser-input"
-                          formControlName="file"
-                          accept=".eml, .doc, .jpg, .pdf, .xlsx">
-      </app-fal-file-input>
-    </div>
-
-    <div *ngIf="statusControl.valid && commentControl.enabled">
-      <label for="commentInput"
-             class="fal-label">
-        Comment
-      </label>
-      <elm-textarea-input id="commentInput"
+      <elm-textarea-input id="reasonInput"
                           formControlName="comment"
                           [addSpacing]="true"
                           type>
       </elm-textarea-input>
-      <elm-input-subtext *ngIf="commentControl.invalid ?? false"
+      <elm-input-subtext *ngIf="reasonControl.invalid ?? false"
                          class="input-error"
                          [isError]="true">
-        Comment is missing
+        Reason is missing
       </elm-input-subtext>
     </div>
-
   </div>
 
   <div mat-dialog-actions class="float-right">
@@ -57,7 +43,6 @@
     <elm-button [buttonStyle]="confirmButtonStyle"
                 class="ms-3"
                 (buttonClick)="onConfirmButtonClick()"
-                [isDisabled]="form.invalid"
                 id="confirm"
                 aria-label="confirm">
       {{confirmButtonText}}
