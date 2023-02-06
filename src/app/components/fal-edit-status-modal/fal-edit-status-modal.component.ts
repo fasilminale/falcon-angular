@@ -78,7 +78,7 @@ export class FalEditStatusModalComponent {
   onConfirmButtonClick(): void {
     let output: EditStatusModalOutput;
 
-    this.updateInvoice();
+    this.updateInvoice().subscribe();
 
     this.close(output);
   }
@@ -92,7 +92,9 @@ export class FalEditStatusModalComponent {
 
   updateInvoice(): Observable<InvoiceDataModel> {
 
-    const returnedInvoice = this.invoiceService.updateInvoiceStatus('ERROR', this.data.falconInvoiceNumber);
+    let status: string = 'ERROR';
+
+    const returnedInvoice = this.invoiceService.updateInvoiceStatus( this.data.falconInvoiceNumber, {status: status});
 
     return returnedInvoice;
   }
