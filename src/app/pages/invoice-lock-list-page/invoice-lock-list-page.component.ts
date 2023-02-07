@@ -13,6 +13,7 @@ import {FilterService} from '../../services/filter-service';
 import {UserService} from '../../services/user-service';
 import {environment} from '../../../environments/environment';
 import {Sort} from '@angular/material/sort';
+import { SubjectValue } from 'src/app/utils/subject-value';
 
 @Component({
   selector: 'app-invoice-lock-list-page',
@@ -40,11 +41,14 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
     {header: 'currency', label: 'Currency'},
   ];
   public invoices: Array<InvoiceDataModel> = [];
+  public unlockInvoices: Array<String> = [];
   searchValue = '';
-  private createdByUser = false;
+  public createdByUser = false;
   private totalSearchResult = 0;
   private subscription: Subscription = new Subscription();
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
+
+  public isResetTableData$ = new SubjectValue<boolean>(false);
 
   controlGroup: FormGroup;
 
@@ -56,7 +60,7 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
     public filterService: FilterService,
     public userService: UserService,
     private modalService: ModalService,
-    private toastService: ToastService,
+    public toastService: ToastService,
   ) {
     this.controlGroup = userService.controlGroupState;
   }
@@ -73,6 +77,11 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
     this.userService.getUserInfo().subscribe(userInfo => {
       this.userInfo = new UserInfoModel(userInfo);
     });
+    this.isResetTableData$.asObservable().subscribe((value: boolean) => {
+      if (value) {
+        this.resetTable();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -83,6 +92,14 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
 
   getTableData(numberPerPage: number): void {
     this.loadingService.showLoading('Loading');
+    console.log({
+      page: this.paginationModel.pageIndex,
+      sortField: this.paginationModel.sortField ? this.paginationModel.sortField : 'falconInvoiceNumber',
+      sortOrder: this.paginationModel.sortOrder ? this.paginationModel.sortOrder : 'desc',
+      searchValue: this.searchValue,
+      createdByUser: this.createdByUser,
+      numberPerPage
+    });
     this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices/locked`, {
       page: this.paginationModel.pageIndex,
       sortField: this.paginationModel.sortField ? this.paginationModel.sortField : 'falconInvoiceNumber',
@@ -93,12 +110,14 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
     }).subscribe((invoiceData: any) => {
       this.paginationModel.total = invoiceData.total;
       this.totalSearchResult = invoiceData.total;
-      if (this.totalSearchResult !== 0) {
+      if (this.totalSearchResult && this.totalSearchResult !== 0) {
         const invoiceArray: Array<InvoiceDataModel> = [];
         invoiceData.data.map((invoice: any) => {
           invoiceArray.push(new InvoiceDataModel(invoice));
         });
         this.invoices = invoiceArray;
+      } else {
+        this.invoices = [];
       }
       this.loadingService.hideLoading();
     });
@@ -114,6 +133,26 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
     } else {
       return this.router.navigate([`/invoice/${invoice.falconInvoiceNumber}`]);
     }
+  }
+
+  public rowSelected(invoiceArray: Array<InvoiceDataModel>) {
+    this.unlockInvoices = invoiceArray.map(inv => inv.falconInvoiceNumber);
+  }
+
+  public unlockSelectedInvoices() {
+    this.loadingService.showLoading('Loading');
+    this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices/lock/delete`, {
+      invoiceNumbers: this.unlockInvoices
+    }).subscribe((response: any) => {
+      if (response['message'] === 'SUCCESS') {
+        this.toastService.openSuccessToast(`Success! Selected Falcon Invoices unlocked.`, 5 * 1000);
+        this.isResetTableData$.value = true;
+      } else {
+        this.toastService.openErrorToast(`Error! Unlocking Falcon invoices failed.`, 5 * 1000);
+        this.loadingService.hideLoading();
+        this.isResetTableData$.value = false;
+      }
+    });
   }
 
   public sortChanged(sort: Sort): void {
