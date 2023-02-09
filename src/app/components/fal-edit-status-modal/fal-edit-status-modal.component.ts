@@ -24,6 +24,7 @@ export class FalEditStatusModalComponent {
 
   public readonly subscriptions = new Subscription();
   public falconInvoiceNumber = '';
+  public newStatus: string =  '';
 
 
   public allowStatuses: Array<any> = [];
@@ -37,10 +38,9 @@ export class FalEditStatusModalComponent {
       .subscribe(() => this.subscriptions.unsubscribe())
     );
 
-
     console.log(this.newStatusControl.value);
     this.subscriptions.add(this.newStatusControl.valueChanges.subscribe(
-      value => (console.log(value))
+      value => (this.newStatus = value)
     ));
 
     this.invoiceService.getAllowedStatuses(this.data.falconInvoiceNumber).subscribe(
@@ -62,23 +62,6 @@ export class FalEditStatusModalComponent {
     return this.allowStatuses ?? [];
   }
 
-  /**
-   * An event that is triggered when a new status is selected
-   * from the dropdown within the modal.
-   */
-  /*onStatusSelect(charge: CalcDetail): void {
-    if (!charge) {
-      return;
-    }
-    this.commentControl.disable();
-    this.commentControl.setValidators([]);
-    if (charge.name === 'OTHER') {
-      this.commentControl.setValidators([Validators.required]);
-      this.commentControl.enable();
-    }
-    this.commentControl.setValue('');
-    this.setVariables(charge.variables);
-  }*/
 
   /**
    * The title text for the modal.
@@ -109,7 +92,7 @@ export class FalEditStatusModalComponent {
    * Has sensible defaults.
    */
   get confirmButtonText(): string {
-    return 'Update Status.'
+    return 'Update Status'
   }
 
   /**
@@ -147,9 +130,8 @@ export class FalEditStatusModalComponent {
 
   updateInvoice(): Observable<InvoiceDataModel> {
 
-    let status: string = 'ERROR';
-
-    const returnedInvoice = this.invoiceService.updateInvoiceStatus( this.data.falconInvoiceNumber, {status: status});
+    const returnedInvoice = this.invoiceService.updateInvoiceStatus( this.data.falconInvoiceNumber,
+      {status: this.newStatus, reason: this.reasonControl?.value});
 
     return returnedInvoice;
   }
