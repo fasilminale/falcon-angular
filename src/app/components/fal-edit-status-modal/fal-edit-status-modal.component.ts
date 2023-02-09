@@ -15,10 +15,18 @@ import {InvoiceService} from '../../services/invoice-service';
 })
 export class FalEditStatusModalComponent {
 
-  public readonly statusControl = new FormControl('', Validators.required);
+  public readonly newStatusControl = new FormControl('', Validators.required);
   public readonly reasonControl: FormControl = new FormControl('');
+  public readonly form = new FormGroup({
+    newStatus: this.newStatusControl,
+    reason: this.reasonControl
+  });
+
   public readonly subscriptions = new Subscription();
   public falconInvoiceNumber = '';
+
+
+  public allowStatuses: Array<any> = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) private data: EditStatusModalInput,
               private dialogRef: MatDialogRef<FalEditStatusModalComponent>,
@@ -29,12 +37,43 @@ export class FalEditStatusModalComponent {
       .subscribe(() => this.subscriptions.unsubscribe())
     );
 
-    this.form.addControl('reason', this.reasonControl);
+    this.invoiceService.getAllowedStatuses(this.data.falconInvoiceNumber).subscribe(
+      i => {this.allowStatuses = i}
+    );
+
+    //on destroy
+
+    this.form.addControl('comment', this.reasonControl);
   }
 
-  public readonly form = new FormGroup({
-    status: this.statusControl
-  });
+  /**
+   * Convenience accessor for cost breakdown option data.
+   * Defaults to an empty array if not provided.
+   */
+  get allowedStatusesOptions(): Array<any> {
+
+    //return this.data.costBreakdownOptions ?? [];
+    return this.allowStatuses ?? [];
+  }
+
+  /**
+   * An event that is triggered when a new status is selected
+   * from the dropdown within the modal.
+   */
+  /*onStatusSelect(charge: CalcDetail): void {
+    if (!charge) {
+      return;
+    }
+    this.commentControl.disable();
+    this.commentControl.setValidators([]);
+    if (charge.name === 'OTHER') {
+      this.commentControl.setValidators([Validators.required]);
+      this.commentControl.enable();
+    }
+    this.commentControl.setValue('');
+    this.setVariables(charge.variables);
+  }*/
+
   /**
    * The title text for the modal.
    * Has sensible defaults.
@@ -83,6 +122,12 @@ export class FalEditStatusModalComponent {
     this.close(output);
   }
 
+
+  onNewStatusSelect(newStatus: any): void {
+    debugger;
+
+  }
+
   /**
    * Wrapper around the dialogRef.close() method to enforce type.
    */
@@ -104,7 +149,8 @@ export class FalEditStatusModalComponent {
  * Input type required to create the modal.
  */
 export type EditStatusModalInput = {
- falconInvoiceNumber: string
+ falconInvoiceNumber: string,
+  allowedStatusesOptions?: Array<SelectOption<CalcDetail>>
 };
 
 /**

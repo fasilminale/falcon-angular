@@ -94,7 +94,6 @@ export class InvoiceService {
   }
 
   public updateInvoice(invoice: any): Observable<any> {
-    debugger;
     return this.web.httpPut(
       `${environment.baseServiceUrl}/v1/invoice/${invoice.falconInvoiceNumber}`,
       invoice
@@ -102,8 +101,11 @@ export class InvoiceService {
   }
 
   public updateInvoiceStatus(falconInvoiceNumber: any, status: any): Observable<any> {
-    debugger;
     return this.web.httpPut(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}/status`, status);
+  }
+
+  public getAllowedStatuses(falconInvoiceNumber: any): Observable<any> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}/allowedNewStatuses`);
   }
 
   public updateAutoInvoice(body: EditAutoInvoiceModel, falconInvoiceNumber: string): Observable<InvoiceDataModel> {

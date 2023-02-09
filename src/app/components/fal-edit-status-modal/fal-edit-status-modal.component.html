@@ -5,17 +5,22 @@
 <form [formGroup]="form">
   <div mat-dialog-content class="modal-height">
     <div class="elm-h3" innerHTML="{{innerHtmlMessage}}"></div>
-    <!--<label for="cost-line-item-charge" class="fal-label">
-      Charge
+    <!--<label for="newStatus" class="fal-label">
+      New Status
     </label>-->
 
-      <!--<elm-text-input id="cost-line-item-charge"
-                      formControlName="charge"
-                      [addSpacing]="false">
-      </elm-text-input>-->
+    <ng-select id="newStatusField"
+               formControlName="newStatus"
+               [items]="allowedStatusesOptions"
+               [clearable]="false"
+               appendTo="body"
+               bindLabel="label"
+               bindValue="value"
+               placeholder="Select One...">
+    </ng-select>
 
     <div>
-      <!--<label for="reasonInput"
+      <label for="reasonInput"
              class="fal-label">
         Reason
       </label>
@@ -23,7 +28,7 @@
                           formControlName="comment"
                           [addSpacing]="true"
                           type>
-      </elm-textarea-input>-->
+      </elm-textarea-input>
       <elm-input-subtext *ngIf="reasonControl.invalid ?? false"
                          class="input-error"
                          [isError]="true">
