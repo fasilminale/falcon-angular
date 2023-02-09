@@ -37,6 +37,12 @@ export class FalEditStatusModalComponent {
       .subscribe(() => this.subscriptions.unsubscribe())
     );
 
+
+    console.log(this.newStatusControl.value);
+    this.subscriptions.add(this.newStatusControl.valueChanges.subscribe(
+      value => (console.log(value))
+    ));
+
     this.invoiceService.getAllowedStatuses(this.data.falconInvoiceNumber).subscribe(
       i => {this.allowStatuses = i}
     );
@@ -126,6 +132,10 @@ export class FalEditStatusModalComponent {
   onNewStatusSelect(newStatus: any): void {
     debugger;
 
+  }
+
+  changeStatus(){
+    console.log('ben ' + this.newStatusControl.value);
   }
 
   /**
