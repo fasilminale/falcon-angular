@@ -35,12 +35,17 @@ export class FalPageHeaderComponent {
    * Event emitted when the help button or help link is clicked.
    */
   @Output() helpRequested: EventEmitter<true> = new EventEmitter<true>();
+  @Output("reloadPage") reloadPage: EventEmitter<any> = new EventEmitter()
 
   async clickStatusEditButton(): Promise<void> {
-    debugger;
     const modalResponse = await this.utilService.openNewStatusEditModal({"falconInvoiceNumber": this.falconInvoiceNumber
     }).pipe(first()).toPromise();
-    if (modalResponse) {}
+    console.log("modal repsonse " + modalResponse);
+    //this.reloadPage.emit();
+
+    if (modalResponse) {
+      this.reloadPage.emit();
+    }
     //this.isTripEditMode$.value = true;
     //this._editableFormArray.enable();
     //this.updateAndContinueClickEvent.emit({event: 'edit', value: false});

@@ -1,7 +1,8 @@
 <fal-elm-page-header class="page-header" (breadcrumbClick)="router.navigate([$event])" [breadcrumbs]="breadcrumbs"
                  headerTitle="Invoice {{falconInvoiceNumber}}"
                  headerSubtitle="Status: {{invoiceStatus}}"
-                 falconInvoiceNumber="{{falconInvoiceNumber}}">
+                 falconInvoiceNumber="{{falconInvoiceNumber}}"
+                  (reloadPage)="reloadPage()">
   <div class="d-flex justify-content-end header-button">
     <div *ngIf="hasInvoiceWrite" class="col-12 d-flex justify-content-end">
       <elm-button id="delete-button"

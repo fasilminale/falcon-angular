@@ -106,9 +106,14 @@ export class FalEditStatusModalComponent {
   onConfirmButtonClick(): void {
     let output: EditStatusModalOutput;
 
-    this.updateInvoice().subscribe();
+    this.updateInvoice().subscribe(
+      data=> {
+        console.log("nnnnn " + data.status);
+        this.close(output);
+      }
+    );
 
-    this.close(output);
+
   }
 
 
