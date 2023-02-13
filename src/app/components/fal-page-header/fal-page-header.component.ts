@@ -3,6 +3,9 @@ import { ElmLinkInterface,  DataTableComponent} from '@elm/elm-styleguide-ui/lib
 import {first} from 'rxjs/operators';
 import {UtilService} from '../../services/util-service';
 import {ToastService} from '@elm/elm-styleguide-ui';
+import {UserInfoModel} from '../../models/user-info/user-info-model';
+import {UserService} from '../../services/user-service';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 
 @Component({
   selector: 'fal-elm-page-header',
@@ -10,11 +13,22 @@ import {ToastService} from '@elm/elm-styleguide-ui';
   styleUrls: ['./fal-page-header.component.scss']
 })
 export class FalPageHeaderComponent {
+  public userInfo: UserInfoModel | undefined;
+  private readonly requiredPermissions = [ElmUamPermission.ALLOW_EDIT_STATUS];
+  public hasPermission: boolean = false;
 
-  constructor(private utilService: UtilService) {
+  ngOnInit(): void {
+    this.userService.getUserInfo().subscribe(userInfo => {
+      this.userInfo = new UserInfoModel(userInfo);
+      this.enableStatusEditButton = this.userInfo.hasPermission(this.requiredPermissions);;
+    });
   }
 
-  public enableStatusEditButton = true;
+  constructor(private utilService: UtilService,private userService: UserService
+              ) {
+  }
+
+  public enableStatusEditButton = false;
 
   @Input() headerTitle = '';
   @Input() headerTitleStyling?: string;
@@ -40,14 +54,9 @@ export class FalPageHeaderComponent {
   async clickStatusEditButton(): Promise<void> {
     const modalResponse = await this.utilService.openNewStatusEditModal({"falconInvoiceNumber": this.falconInvoiceNumber
     }).pipe(first()).toPromise();
-    console.log("modal repsonse " + modalResponse);
-    //this.reloadPage.emit();
 
-    if (modalResponse) {
+    if (modalResponse === undefined) {
       this.reloadPage.emit();
     }
-    //this.isTripEditMode$.value = true;
-    //this._editableFormArray.enable();
-    //this.updateAndContinueClickEvent.emit({event: 'edit', value: false});
   }
 }

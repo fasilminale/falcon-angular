@@ -23,7 +23,6 @@ import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
-import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
 import {InvoiceLockService} from '../../services/invoice-lock-service';
 
 
