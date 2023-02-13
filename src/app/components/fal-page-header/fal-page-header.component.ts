@@ -6,6 +6,7 @@ import {ToastService} from '@elm/elm-styleguide-ui';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
 import {ElmUamPermission} from '../../utils/elm-uam-permission';
+import {InvoiceLockService} from '../../services/invoice-lock-service';
 
 @Component({
   selector: 'fal-elm-page-header',
@@ -15,16 +16,11 @@ import {ElmUamPermission} from '../../utils/elm-uam-permission';
 export class FalPageHeaderComponent {
   public userInfo: UserInfoModel | undefined;
   private readonly requiredPermissions = [ElmUamPermission.ALLOW_EDIT_STATUS];
-  public hasPermission: boolean = false;
 
-  ngOnInit(): void {
-    this.userService.getUserInfo().subscribe(userInfo => {
-      this.userInfo = new UserInfoModel(userInfo);
-      this.enableStatusEditButton = this.userInfo.hasPermission(this.requiredPermissions);;
-    });
-  }
 
-  constructor(private utilService: UtilService,private userService: UserService
+  constructor(private utilService: UtilService,
+              private userService: UserService,
+              private invoiceLockService: InvoiceLockService
               ) {
   }
 
@@ -49,13 +45,41 @@ export class FalPageHeaderComponent {
    * Event emitted when the help button or help link is clicked.
    */
   @Output() helpRequested: EventEmitter<true> = new EventEmitter<true>();
-  @Output("reloadPage") reloadPage: EventEmitter<any> = new EventEmitter()
+  @Output("reloadPage") reloadPage: EventEmitter<any> = new EventEmitter();
+
+  ngOnInit(): void {
+
+      this.userService.getUserInfo().subscribe(u => this.loadUserInfo(u));
+
+  }
+
+  private async loadUserInfo(newUserInfo: UserInfoModel): Promise<void> {
+
+    this.userInfo = new UserInfoModel(newUserInfo);
+    await this.invoiceLockService.retrieveInvoiceLock(this.falconInvoiceNumber).toPromise();
+    const lock = this.invoiceLockService.getInvoiceLock();
+
+    const hasPermission = this.userInfo.hasPermission(this.requiredPermissions);
+
+    console.log("------- " + lock)
+    console.log("-------2 " + lock?.currentUser)
+    console.log("-------2 " + lock?.user)
+    console.log("-------2 " + lock?.falconInvoiceNumber)
+    console.log("-------3 " + hasPermission)
+
+    if ((!lock || lock?.currentUser) && hasPermission) {
+      this.enableStatusEditButton = true;
+    }
+  }
 
   async clickStatusEditButton(): Promise<void> {
+    await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
+
     const modalResponse = await this.utilService.openNewStatusEditModal({"falconInvoiceNumber": this.falconInvoiceNumber
     }).pipe(first()).toPromise();
 
     if (modalResponse === undefined) {
+      await this.invoiceLockService.releaseInvoiceLock();
       this.reloadPage.emit();
     }
   }
