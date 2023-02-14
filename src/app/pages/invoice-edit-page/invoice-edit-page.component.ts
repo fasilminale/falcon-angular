@@ -84,8 +84,11 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   public standardPaymentTermsOverrideValid = true;
 
   private readonly requiredPermissions = [ElmUamPermission.ALLOW_INVOICE_WRITE];
+  private readonly requiredRoles = ['FAL_INTERNAL_NONPROD_ALL_ACCESS', 'FAL_INTERNAL_WRITE'];
+
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
+  public hasInvoiceWriteOrAll = false;
   public showEditInfoBanner = false;
   public showInvoiceInEditMode = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
@@ -239,6 +242,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     }
     this.userInfo = userInfo;
     this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
+    this.hasInvoiceWriteOrAll = this.userInfo.hasRoles(this.requiredRoles);
   }
 
   clickDeleteButton(): void {

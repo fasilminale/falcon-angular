@@ -89,4 +89,8 @@ export class UserInfoModel implements FalUserInfo {
   hasPermission(permissions: string[]): boolean {
     return permissions.some(permission => this.mPermissions.includes(permission));
   }
+
+  hasRoles(roles: string[]): boolean {
+    return roles.some(r => this.role);
+  }
 }
