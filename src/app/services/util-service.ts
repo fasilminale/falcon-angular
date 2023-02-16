@@ -90,10 +90,10 @@ export class UtilService {
       .pipe(mergeMap<any, Observable<NewChargeModalOutput>>(result => of(result)));
   }
 
-  public openNewStatusEditModal(data: EditStatusModalInput): Observable<any> {
+  public openNewStatusEditModal(data: EditStatusModalInput): Observable<void> {
     return this.dialog.open(FalEditStatusModalComponent, {autoFocus: false, data})
       .afterClosed()
-      .pipe(mergeMap<any, Observable<any>>(
+      .pipe(mergeMap<any, Observable<void>>(
         result => of(result)
       ));
   }

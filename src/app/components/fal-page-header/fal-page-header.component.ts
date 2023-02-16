@@ -2,11 +2,11 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import { ElmLinkInterface,  DataTableComponent} from '@elm/elm-styleguide-ui/lib/components/data-table/data-table.component';
 import {first} from 'rxjs/operators';
 import {UtilService} from '../../services/util-service';
-import {ToastService} from '@elm/elm-styleguide-ui';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
 import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {InvoiceLockService} from '../../services/invoice-lock-service';
+import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
 
 @Component({
   selector: 'fal-elm-page-header',
@@ -25,6 +25,7 @@ export class FalPageHeaderComponent {
   }
 
   public enableStatusEditButton = false;
+  private isCurrentUser = false;
 
   @Input() headerTitle = '';
   @Input() headerTitleStyling?: string;
@@ -48,38 +49,40 @@ export class FalPageHeaderComponent {
   @Output("reloadPage") reloadPage: EventEmitter<any> = new EventEmitter();
 
   ngOnInit(): void {
-
       this.userService.getUserInfo().subscribe(u => this.loadUserInfo(u));
-
   }
 
   private async loadUserInfo(newUserInfo: UserInfoModel): Promise<void> {
-
     this.userInfo = new UserInfoModel(newUserInfo);
     await this.invoiceLockService.retrieveInvoiceLock(this.falconInvoiceNumber).toPromise();
     const lock = this.invoiceLockService.getInvoiceLock();
 
     const hasPermission = this.userInfo.hasPermission(this.requiredPermissions);
 
-    console.log("------- " + lock)
-    console.log("-------2 " + lock?.currentUser)
-    console.log("-------2 " + lock?.user)
-    console.log("-------2 " + lock?.falconInvoiceNumber)
-    console.log("-------3 " + hasPermission)
-
     if ((!lock || lock?.currentUser) && hasPermission) {
       this.enableStatusEditButton = true;
+    }
+
+    this.isCurrentUser = !!lock?.currentUser;
+    if (this.isCurrentUser){
+      await this.invoiceLockService.releaseInvoiceLock();
     }
   }
 
   async clickStatusEditButton(): Promise<void> {
     await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
 
-    const modalResponse = await this.utilService.openNewStatusEditModal({"falconInvoiceNumber": this.falconInvoiceNumber
+    const modalResponse = await this.utilService.openNewStatusEditModal({
+      "falconInvoiceNumber": this.falconInvoiceNumber
     }).pipe(first()).toPromise();
 
+    //TODO Change from undefined to a more explicit return object.
     if (modalResponse === undefined) {
-      await this.invoiceLockService.releaseInvoiceLock();
+      if (this.isCurrentUser){
+        const lock = this.invoiceLockService.getInvoiceLock();
+        this.isCurrentUser = !!lock?.currentUser;
+        await this.invoiceLockService.releaseInvoiceLock();
+      }
       this.reloadPage.emit();
     }
   }

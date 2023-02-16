@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
-import {AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {buttonStyle} from '@elm/elm-styleguide-ui';
 import {Observable, Subscription} from 'rxjs';
 import {CalcDetail, CalcDetailVariable} from '../../models/rate-engine/rate-engine-request';
@@ -25,7 +25,7 @@ export class FalEditStatusModalComponent {
   public readonly subscriptions = new Subscription();
   public falconInvoiceNumber = '';
   public newStatus: string =  '';
-
+  public currentStatus: string = '';
 
   public allowStatuses: Array<any> = [];
 
@@ -47,9 +47,14 @@ export class FalEditStatusModalComponent {
       i => {this.allowStatuses = i}
     );
 
-    //on destroy
+
+    this.invoiceService.getInvoice(this.data.falconInvoiceNumber).subscribe(
+      i => {this.currentStatus = i.status.label}
+    );
 
     this.form.addControl('comment', this.reasonControl);
+
+
   }
 
   /**
@@ -108,22 +113,9 @@ export class FalEditStatusModalComponent {
 
     this.updateInvoice().subscribe(
       data=> {
-        console.log("nnnnn " + data.status);
         this.close(output);
       }
     );
-
-
-  }
-
-
-  onNewStatusSelect(newStatus: any): void {
-    debugger;
-
-  }
-
-  changeStatus(){
-    console.log('ben ' + this.newStatusControl.value);
   }
 
   /**
@@ -134,7 +126,6 @@ export class FalEditStatusModalComponent {
   }
 
   updateInvoice(): Observable<InvoiceDataModel> {
-
     const returnedInvoice = this.invoiceService.updateInvoiceStatus( this.data.falconInvoiceNumber,
       {status: this.newStatus, reason: this.reasonControl?.value});
 
@@ -146,7 +137,7 @@ export class FalEditStatusModalComponent {
  * Input type required to create the modal.
  */
 export type EditStatusModalInput = {
- falconInvoiceNumber: string,
+  falconInvoiceNumber: string,
   allowedStatusesOptions?: Array<SelectOption<CalcDetail>>
 };
 

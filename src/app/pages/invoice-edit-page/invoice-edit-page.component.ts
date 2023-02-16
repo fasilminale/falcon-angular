@@ -127,7 +127,6 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   }
 
   public loadInvoice(invoice: InvoiceDataModel, freshData = false): void {
-    debugger;
     if (!freshData) {
       invoice.costLineItems?.forEach((item, index) => {
         let found;
@@ -330,11 +329,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   }
 
   reloadPage(){
-    console.log("ben test 111");
-    debugger;
     this.fetchFalconInvoice();
-
-
   }
 
   public askForCancelConfirmation(): Observable<boolean> {

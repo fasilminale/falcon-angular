@@ -5,10 +5,8 @@
 <form [formGroup]="form">
   <div mat-dialog-content class="modal-height">
     <div class="elm-h3" innerHTML="{{innerHtmlMessage}}"></div>
-    <!--<label for="newStatus" class="fal-label">
-      New Status
-    </label>-->
-
+    <label class="fal-label">Current Status: {{currentStatus}}</label><br>
+    <label class="fal-label">New Status</label>
     <ng-select id="newStatusField"
                formControlName="newStatus"
                [items]="allowedStatusesOptions"
@@ -18,12 +16,9 @@
                bindValue="key"
                placeholder="Select One...">
     </ng-select>
-
+    <br>
     <div>
-      <label for="reasonInput"
-             class="fal-label">
-        Reason
-      </label>
+      <label class="fal-label">Reason</label>
       <elm-textarea-input id="reasonInput"
                           formControlName="comment"
                           [addSpacing]="true"
