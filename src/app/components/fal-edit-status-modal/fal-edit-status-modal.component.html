@@ -16,11 +16,16 @@
                bindValue="key"
                placeholder="Select One...">
     </ng-select>
+    <elm-input-subtext *ngIf="reasonControl.invalid ?? false"
+                       class="input-error"
+                       [isError]="true">
+      Reason is missing
+    </elm-input-subtext>
     <br>
     <div>
       <label class="fal-label">Reason</label>
       <elm-textarea-input id="reasonInput"
-                          formControlName="comment"
+                          formControlName="reason"
                           [addSpacing]="true"
                           type>
       </elm-textarea-input>
@@ -43,6 +48,7 @@
     <elm-button [buttonStyle]="confirmButtonStyle"
                 class="ms-3"
                 (buttonClick)="onConfirmButtonClick()"
+                [isDisabled]="form.invalid"
                 id="confirm"
                 aria-label="confirm">
       {{confirmButtonText}}

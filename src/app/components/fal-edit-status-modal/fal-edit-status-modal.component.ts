@@ -38,7 +38,6 @@ export class FalEditStatusModalComponent {
       .subscribe(() => this.subscriptions.unsubscribe())
     );
 
-    console.log(this.newStatusControl.value);
     this.subscriptions.add(this.newStatusControl.valueChanges.subscribe(
       value => (this.newStatus = value)
     ));
@@ -47,14 +46,12 @@ export class FalEditStatusModalComponent {
       i => {this.allowStatuses = i}
     );
 
-
     this.invoiceService.getInvoice(this.data.falconInvoiceNumber).subscribe(
       i => {this.currentStatus = i.status.label}
     );
 
-    this.form.addControl('comment', this.reasonControl);
-
-
+    this.form.addControl('reason', this.reasonControl);
+    this.reasonControl.setValidators([Validators.required]);
   }
 
   /**
@@ -62,11 +59,8 @@ export class FalEditStatusModalComponent {
    * Defaults to an empty array if not provided.
    */
   get allowedStatusesOptions(): Array<any> {
-
-    //return this.data.costBreakdownOptions ?? [];
     return this.allowStatuses ?? [];
   }
-
 
   /**
    * The title text for the modal.
