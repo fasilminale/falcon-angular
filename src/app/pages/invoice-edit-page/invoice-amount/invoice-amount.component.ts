@@ -45,6 +45,8 @@ export class InvoiceAmountComponent implements OnInit {
 
   @Input() isMakingRateCall = false;
 
+  @Input() allowSpotQuoteEdit = false;
+
   @Input() set updateIsEditMode$(observable: Observable<boolean>) {
     this.updateIsEditModeSubscription.unsubscribe();
     this.updateIsEditModeSubscription = observable.subscribe(
@@ -567,7 +569,7 @@ export class InvoiceAmountComponent implements OnInit {
     if (editChargeDetails) {
       const existingCostLineItem = costLineItems.find(lineItem => editChargeDetails.uid === lineItem.value?.uid);
       if (existingCostLineItem) {
-        if (existingCostLineItem.value.charge === 'OTHER') {
+        if (existingCostLineItem.value.charge === 'OTHER' || existingCostLineItem.value.charge === 'Spot Quote') {
           existingCostLineItem.patchValue({
             totalAmount: editChargeDetails.variables[0].quantity
           });

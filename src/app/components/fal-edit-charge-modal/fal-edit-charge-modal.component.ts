@@ -39,7 +39,8 @@ export class FalEditChargeModalComponent {
       this.chargeControl.disable();
       this.setVariables(this.data.costLineItem?.value?.variables);
       this.chargeControl.patchValue(this.data.costLineItem?.value?.charge);
-      this.accessorialControl.patchValue(this.data.costLineItem?.value?.accessorialCode);
+      let patchValue = this.data.costLineItem?.value?.accessorialCode ? this.data.costLineItem?.value?.accessorialCode : this.data.costLineItem?.value?.uid;
+      this.accessorialControl.patchValue(patchValue);
     } else {
       // ADD MODE INIT
       this.subscriptions.add(this.chargeControl.valueChanges.subscribe(
