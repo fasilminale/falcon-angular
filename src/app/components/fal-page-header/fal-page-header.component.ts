@@ -6,7 +6,7 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
 import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {InvoiceLockService} from '../../services/invoice-lock-service';
-import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
+import {EnvironmentService} from '../../services/environment-service/environment-service';
 
 @Component({
   selector: 'fal-elm-page-header',
@@ -20,7 +20,8 @@ export class FalPageHeaderComponent {
 
   constructor(private utilService: UtilService,
               private userService: UserService,
-              private invoiceLockService: InvoiceLockService
+              private invoiceLockService: InvoiceLockService,
+              private environmentService: EnvironmentService
               ) {
   }
 
@@ -53,13 +54,17 @@ export class FalPageHeaderComponent {
   }
 
   private async loadUserInfo(newUserInfo: UserInfoModel): Promise<void> {
+    await this.environmentService.getFeatures();
+    const isFeatureEnabled: boolean = this.environmentService.showFeature('edit.status.enabled');
+    console.log(isFeatureEnabled)
+
     this.userInfo = new UserInfoModel(newUserInfo);
     await this.invoiceLockService.retrieveInvoiceLock(this.falconInvoiceNumber).toPromise();
     const lock = this.invoiceLockService.getInvoiceLock();
 
     const hasPermission = this.userInfo.hasPermission(this.requiredPermissions);
 
-    if ((!lock || lock?.currentUser) && hasPermission) {
+    if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
       this.enableStatusEditButton = true;
     }
 

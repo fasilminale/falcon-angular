@@ -73,6 +73,7 @@ export class EnvironmentService {
       this.featureFlags = features;
       this.featureFlagsSubject.next(true);
     }
+    debugger;
     return Promise.resolve();
   }
 }

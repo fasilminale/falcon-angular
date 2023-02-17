@@ -28,12 +28,9 @@
     <div class="title-container">
       <div>
         <div [innerHTML]="headerTitle" [style]="headerTitleStyling" class="page-title"></div>
-        <div>
-          <span class="page-subtitle" [style]="headerSubtitleStyling">{{headerSubtitle}}</span>
-          <span *ngIf="enableStatusEditButton" role="button" class="material-icons material-icons-outlined valign-middle"
-                (click)="clickStatusEditButton()">
-            edit
-          </span>
+        <div [style]="headerSubtitleStyling" class="page-subtitle">
+             {{headerSubtitle}} <span *ngIf="enableStatusEditButton" role="button" class="material-icons material-icons-outlined valign-middle"
+                                      (click)="clickStatusEditButton()">edit</span>
         </div>
       </div>
     </div>
