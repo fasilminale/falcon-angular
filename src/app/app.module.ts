@@ -90,6 +90,7 @@ import { FalAdjustWeightModalComponent } from './components/fal-adjust-weight-mo
 import { FalEditGlModalComponent } from './components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 import { FalHistoryLogModalComponent } from './components/fal-history-log-modal/fal-history-log-modal.component';
 import { InvoiceLockListPageComponent } from './pages/invoice-lock-list-page/invoice-lock-list-page.component';
+import {WebSocketService} from './services/web-socket-service';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -260,6 +261,7 @@ const oktaConfig = {
     FeedbackCollectorService,
     BuildInfoService,
     ToastService,
+    WebSocketService
   ],
   bootstrap: [
     AppComponent

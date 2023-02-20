@@ -22,6 +22,7 @@ import {ServicesModule, SnackbarModule, ModalService, ToastService} from '@elm/e
 import {RateService} from '../services/rate-service';
 import {NgSelectModule} from '@ng-select/ng-select';
 import {InvoiceLockService} from '../services/invoice-lock-service';
+import {WebSocketService} from '../services/web-socket-service';
 
 @NgModule({
   declarations: [],
@@ -63,7 +64,8 @@ import {InvoiceLockService} from '../services/invoice-lock-service';
     InvoiceFormManager,
     UserService,
     RateService,
-    InvoiceLockService
+    InvoiceLockService,
+    WebSocketService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: []

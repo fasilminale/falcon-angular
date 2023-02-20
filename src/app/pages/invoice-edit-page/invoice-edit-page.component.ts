@@ -23,8 +23,9 @@ import {first, switchMap} from 'rxjs/operators';
 import {TripInformationComponent} from './trip-information/trip-information.component';
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
-import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
 import {InvoiceLockService} from '../../services/invoice-lock-service';
+import {WebSocketService} from '../../services/web-socket-service';
+import {EnvironmentService} from '../../services/environment-service/environment-service';
 
 
 @Component({
@@ -43,6 +44,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
               private toastService: ToastService,
               private rateService: RateService,
               @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
+              private webSocketService: WebSocketService,
+              private environmentService: EnvironmentService,
               public router: Router) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
@@ -243,6 +246,9 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     this.userInfo = userInfo;
     this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
     this.hasInvoiceWriteOrAll = this.userInfo.hasRoles(this.requiredRoles);
+    if (this.environmentService.showFeature('websockets')) {
+      this.webSocketService.connect(`/user/${this.userInfo.email}/queue/notification`);
+    }
   }
 
   clickDeleteButton(): void {
