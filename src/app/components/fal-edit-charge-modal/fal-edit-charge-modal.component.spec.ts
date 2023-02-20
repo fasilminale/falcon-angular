@@ -100,6 +100,53 @@ describe('FalEditChargeModalComponent', () => {
     });
   });
 
+  describe('#EditSpotQuoteCharge', () => {
+    beforeEach(() => {
+      // set mock data for edit scenario
+      MOCK_MODAL_INPUT.costLineItem = new FormControl({
+        uid: 'SPOTQUOTE1',
+        charge: 'Spot Quote',
+        variables: TEST_CALC_DETAIL.variables
+      });
+      MOCK_MODAL_INPUT.costBreakdownOptions = undefined;
+      createComponent();
+    });
+    it('should have default edit title', () => {
+      expect(component.title).toEqual('Update Charge Details');
+    });
+    it('should have default edit html', () => {
+      expect(component.innerHtmlMessage).toEqual('');
+    });
+    it('should have default edit confirmation style', () => {
+      expect(component.confirmButtonStyle).toEqual('primary');
+    });
+    it('should have default edit confirmation text', () => {
+      expect(component.confirmButtonText).toEqual('Accept Charge Update');
+    });
+    it('should have default edit cancel text', () => {
+      expect(component.cancelButtonText).toEqual('Close');
+    });
+    it('should NOT have cost breakdown options', () => {
+      expect(component.costBreakdownOptions).toEqual([]);
+    });
+    it('should create variable form using quantity', () => {
+      const vfc = component.createFormControlForVariable({
+        variable: TEST_VARIABLE_NAME,
+        quantity: 10,
+      });
+      expect(vfc.value).toEqual(10);
+    });
+    it('should confirm edit values', () => {
+      spyOn(MOCK_DIALOG, 'close').and.callThrough();
+      component.onConfirmButtonClick();
+      expect(MOCK_DIALOG.close).toHaveBeenCalledOnceWith({
+        uid: 'SPOTQUOTE1',
+        charge: 'Spot Quote',
+        variables: TEST_CALC_DETAIL.variables,
+        file: ''
+      });
+    });
+  });
 
   describe('#EditCharge', () => {
     beforeEach(() => {

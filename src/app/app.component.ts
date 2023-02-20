@@ -8,7 +8,7 @@ import {AUTH_SERVICE, AuthService} from './services/auth-service';
 import {filter, mergeMap, repeatWhen, take, tap} from 'rxjs/operators';
 import {UserInfoModel} from './models/user-info/user-info-model';
 import {UserService} from './services/user-service';
-import {ElmUamRoles} from './utils/elm-uam-roles';
+import {ElmUamPermission} from './utils/elm-uam-permission';
 import {environment} from '../environments/environment';
 import {BuildInfoService} from './services/build-info-service';
 
@@ -98,7 +98,7 @@ export class AppComponent implements OnInit {
   }
 
   public buildNavBar(): void {
-    const requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
+    const requiredPermissions = [ElmUamPermission.ALLOW_INVOICE_WRITE];
 
     // Create Invoice Header
     if (requiredPermissions.some(permission => this.userInfo?.permissions.includes(permission))) {

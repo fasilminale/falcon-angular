@@ -15,7 +15,7 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {InvoiceOverviewDetail} from 'src/app/models/invoice/invoice-overview-detail.model';
 import {ConfirmationModalData, ElmLinkInterface, ToastService, ModalService} from '@elm/elm-styleguide-ui';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
-import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {RateEngineRequest, RateDetailResponse} from '../../models/rate-engine/rate-engine-request';
 import {RateService} from '../../services/rate-service';
 import {EditAutoInvoiceModel} from '../../models/invoice/edit-auto-invoice.model';
@@ -86,9 +86,12 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   public standardPaymentTermsOverrideValid = true;
 
-  private readonly requiredPermissions = [ElmUamRoles.ALLOW_INVOICE_WRITE];
+  private readonly requiredPermissions = [ElmUamPermission.ALLOW_INVOICE_WRITE];
+  private readonly requiredRoles = ['FAL_INTERNAL_NONPROD_ALL_ACCESS', 'FAL_INTERNAL_WRITE'];
+
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
+  public hasInvoiceWriteOrAll = false;
   public showEditInfoBanner = false;
   public showInvoiceInEditMode = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
@@ -242,6 +245,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     }
     this.userInfo = userInfo;
     this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
+    this.hasInvoiceWriteOrAll = this.userInfo.hasRoles(this.requiredRoles);
     if (this.environmentService.showFeature('websockets')) {
       this.webSocketService.connect(`/user/${this.userInfo.email}/queue/notification`);
     }

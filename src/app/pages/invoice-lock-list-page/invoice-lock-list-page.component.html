@@ -1,0 +1,32 @@
+<elm-page-header headerTitle="Invoice List">
+</elm-page-header>
+<elm-card>
+  <elm-section-header [sectionTitle]="this.invoiceCountLabel">
+    <div class='d-flex col-12'>
+      <div class="ms-auto ml-col-6">
+        <elm-button buttonStyle="primary"
+                    (buttonClick)="unlockSelectedInvoices()"
+                    [isDisabled]="unlockInvoices.length <= 0">
+          Unlock
+        </elm-button>
+      </div>
+    </div>
+  </elm-section-header>
+  <cardinal-chip [totalResults]="paginationModel.total"
+                 [filtersModel]="this.filterService.invoiceFilterModel"
+                 (chipRemovedEvent)="this.resetTable()"
+  ></cardinal-chip>
+  <elm-data-table
+    tableType="multiSelect"
+    [data]="invoices"
+    [headers]="headers"
+    [pageSize]="paginationModel.numberPerPage"
+    [pageIndex]="paginationModel.pageIndex-1"
+    (pageChangedEvent)="pageChanged($event)"
+    (dataSelectedEvent)="rowSelected($event)"
+    (sortEvent)="sortChanged($event)"
+    [shouldSort]=true
+    [totalResults]="paginationModel.total"
+    [pageSizes]="paginationModel.pageSizes">
+  </elm-data-table>
+</elm-card>

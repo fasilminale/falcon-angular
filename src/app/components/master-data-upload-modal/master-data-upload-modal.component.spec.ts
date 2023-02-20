@@ -9,7 +9,7 @@ import {environment} from '../../../environments/environment';
 import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {MasterDataRow} from '../../models/master-data-row/master-data-row';
-import {ElmUamRoles} from '../../utils/elm-uam-roles';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 
 describe('MasterDataUploadModalComponent', () => {
   let component: MasterDataUploadModalComponent;
@@ -186,7 +186,7 @@ describe('MasterDataUploadModalComponent', () => {
       new MasterDataRow({label: 'Other'})
     ];
     const userWithPermission = new UserInfoModel({
-      permissions: [ElmUamRoles.ALLOW_MESSAGE_CONFIG_UPLOAD]
+      permissions: [ElmUamPermission.ALLOW_MESSAGE_CONFIG_UPLOAD]
     });
     http.expectOne(`${environment.baseServiceUrl}/v1/user/info`).flush(userWithPermission);
     const rows = component.masterDataRows;

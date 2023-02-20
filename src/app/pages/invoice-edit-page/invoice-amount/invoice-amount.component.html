@@ -127,7 +127,7 @@
         <div *ngIf="!readOnlyForm" class="col-6">Actions</div>
       </div>
     </div>
-    <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && isPrepaid">
+    <ng-container *ngIf="costBreakdownItemsControls && costBreakdownItemsControls.length > 0 && (isPrepaid || isSpotQuote)">
       <div *ngFor="let _ of costBreakdownItemsControls; index as i"
            class="row my-3 mx-0"
            [ngClass]="{ 'cost-breakdown-item-row' : _.get('message')?.value !== 'NOT FOUND' }"
@@ -237,18 +237,19 @@
               />
             </div>
 
-            <div class="col-6" *ngIf="!readOnlyForm">
+            <div class="col-6" [attr.data-temp]="_.value.charge" *ngIf="!readOnlyForm">
               <div
                 *ngIf="_.value.entrySource === 'FAL'
                 || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract')
-                || (_.value.lineItemType === 'ACCESSORIAL' && _.value.accessorialCode !== 'FUE' && _.value.accessorialCode !== '405')">
-                <div *ngIf="_.value.variables?.length > 0 || _.value.charge === 'OTHER'"
+                || (_.value.lineItemType === 'ACCESSORIAL' && _.value.accessorialCode !== 'FUE' && _.value.accessorialCode !== '405')
+                || (_.value.charge === 'Spot Quote' && allowSpotQuoteEdit)">
+                <div *ngIf="_.value.variables?.length > 0 || _.value.charge === 'OTHER' || _.value.charge === 'Spot Quote'"
                      class="material-icons edit-icon"
                      (click)="onEditCostLineItem(_, costBreakdownItemsControls)">edit
                 </div>
-                <div *ngIf="_.value.variables?.length === 0 && _.value.charge !== 'OTHER'"
+                <div *ngIf="_.value.variables?.length === 0 && _.value.charge !== 'OTHER' && _.value.charge !== 'Spot Quote'"
                      class="edit-icon-invisible"></div>
-                <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_, i)">delete</div>
+                <div *ngIf="_.value.charge !== 'Spot Quote'" class="material-icons edit-icon" (click)="onDeleteCostLineItem(_, i)">delete</div>
               </div>
               <div
                 *ngIf="!(_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract'))">
