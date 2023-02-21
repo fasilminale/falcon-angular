@@ -37,7 +37,7 @@ export class MasterDataUploadModalComponent {
               private userService: UserService) {
     this.resetForm();
     this.userService.getUserInfo().subscribe(userInfo => {
-      this.hasMessageConfigUploadPermission = userInfo.hasPermission([ElmUamPermission.ALLOW_MESSAGE_CONFIG_UPLOAD]);
+      this.hasMessageConfigUploadPermission = userInfo.hasAtLeastOnePermission([ElmUamPermission.ALLOW_MESSAGE_CONFIG_UPLOAD]);
     });
   }
 

@@ -46,7 +46,7 @@ export class MasterDataPageComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getUserInfo().subscribe(userInfo => {
       this.userInfo = new UserInfoModel(userInfo);
-      this.hasMasterDataUpload = this.userInfo.hasPermission(this.requiredPermissions);;
+      this.hasMasterDataUpload = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);;
     });
   }
 

@@ -67,7 +67,7 @@ export class InvoiceDetailPageComponent implements OnInit, OnDestroy {
     );
     this.userService.getUserInfo().subscribe(userInfo => {
       this.userInfo = new UserInfoModel(userInfo);
-      this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
+      this.hasInvoiceWrite = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
     });
   }
 
