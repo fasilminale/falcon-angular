@@ -135,14 +135,14 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   }
 
   get canExtractInvoice(): boolean {
-    return this.hasPermissions([ALLOW_INVOICE_WRITE]);
+    return this.hasAllPermissions([ALLOW_INVOICE_WRITE]);
   }
 
   get canManageInvoiceLocks(): boolean {
-    return this.hasPermissions([ALLOW_INVOICE_WRITE, ALLOW_MANAGE_INVOICE_LOCKS]);
+    return this.hasAllPermissions([ALLOW_INVOICE_WRITE, ALLOW_MANAGE_INVOICE_LOCKS]);
   }
 
-  hasPermissions(permissions: Array<ElmUamPermission>): boolean {
+  hasAllPermissions(permissions: Array<ElmUamPermission>): boolean {
     return this.userInfo?.hasAllPermissions(permissions) ?? false;
   }
 

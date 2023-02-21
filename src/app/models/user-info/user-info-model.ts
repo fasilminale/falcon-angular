@@ -87,7 +87,7 @@ export class UserInfoModel implements FalUserInfo {
     }
   }
 
-  hasPermission(permissions: string[]): boolean {
+  hasAtLeastOnePermission(permissions: string[]): boolean {
     return permissions.some(permission => this.mPermissions.includes(permission));
   }
 

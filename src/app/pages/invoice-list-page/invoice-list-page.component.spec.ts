@@ -404,7 +404,7 @@ describe('InvoiceListPageComponent', () => {
     fixture.detectChanges();
 
     // check that permission calculation works
-    expect(component.hasPermissions([ElmUamPermission.ALLOW_INVOICE_WRITE])).toBeTrue();
+    expect(component.hasAllPermissions([ElmUamPermission.ALLOW_INVOICE_WRITE])).toBeTrue();
 
     // wait for template to update based on detect changes
     await fixture.whenStable();
@@ -419,7 +419,7 @@ describe('InvoiceListPageComponent', () => {
     fixture.detectChanges();
 
     // check that permission calculation works
-    expect(component.hasPermissions([ElmUamPermission.ALLOW_INVOICE_WRITE])).toBeFalse();
+    expect(component.hasAllPermissions([ElmUamPermission.ALLOW_INVOICE_WRITE])).toBeFalse();
 
     // wait for template to update based on detect changes
     await fixture.whenStable();

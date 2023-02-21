@@ -244,7 +244,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       this.invoiceLockedUser = lock.fullName;
     }
     this.userInfo = userInfo;
-    this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
+    this.hasInvoiceWrite = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
     this.hasInvoiceWriteOrAll = this.userInfo.hasRoles(this.requiredRoles);
     if (this.environmentService.showFeature('websockets')) {
       this.webSocketService.connect(`/user/${this.userInfo.email}/queue/notification`);
