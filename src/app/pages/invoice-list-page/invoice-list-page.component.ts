@@ -142,8 +142,8 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
     return this.hasPermissions([ALLOW_INVOICE_WRITE, ALLOW_MANAGE_INVOICE_LOCKS]);
   }
 
-  hasPermissions(permissions: string[]): boolean {
-    return this.userInfo?.hasPermission(permissions) ?? false;
+  hasPermissions(permissions: Array<ElmUamPermission>): boolean {
+    return this.userInfo?.hasAllPermissions(permissions) ?? false;
   }
 
   getTableData(numberPerPage: number, isInvoiceSearched = false): void {

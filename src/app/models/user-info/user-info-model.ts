@@ -1,4 +1,5 @@
 import {UserInfo} from '@elm/elm-styleguide-ui';
+import {ElmUamPermission} from '../../utils/elm-uam-permission';
 
 export interface FalUserInfo extends UserInfo {
   permissions: string[];
@@ -88,6 +89,10 @@ export class UserInfoModel implements FalUserInfo {
 
   hasPermission(permissions: string[]): boolean {
     return permissions.some(permission => this.mPermissions.includes(permission));
+  }
+
+  hasAllPermissions(permissions: Array<ElmUamPermission>) {
+    return permissions.every(permission => this.mPermissions.includes(permission));
   }
 
   hasRoles(roles: string[]): boolean {
