@@ -139,7 +139,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   }
 
   get canManageInvoiceLocks(): boolean {
-    return this.hasAllPermissions([ALLOW_INVOICE_WRITE, ALLOW_MANAGE_INVOICE_LOCKS]);
+    return this.hasAllPermissions([ALLOW_MANAGE_INVOICE_LOCKS]);
   }
 
   hasAllPermissions(permissions: Array<ElmUamPermission>): boolean {
