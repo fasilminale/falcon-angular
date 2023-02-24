@@ -1040,6 +1040,26 @@ describe('InvoiceAmountComponent', () => {
     expect(component.costBreakdownItemsControls[0].get('attachment')?.value.url).toEqual('pending');
   });
 
+  it('should call onEditCostLineItem for Spot Quote.', async () => {
+    component.costBreakdownItems.push(new FormGroup({
+      uid: new FormControl('SPOTQUOTE1'),
+      charge: new FormControl('Spot Quote'),
+    }));
+    const costLineItem = component.costBreakdownItemsControls[0];
+    spyOn(component.getAccessorialDetails, 'emit').and.stub();
+    spyOn(utilService, 'openEditChargeModal').and.returnValue(of({
+      uid: 'SPOTQUOTE1',
+      charge: 'Spot Quote',
+      variables: [{
+        variable: 'test',
+        quantity: 1
+      }],
+    }));
+    const promise = component.onEditCostLineItem(costLineItem, component.costBreakdownItemsControls);
+    await promise;
+    expect(utilService.openEditChargeModal).toHaveBeenCalledTimes(1);
+  });
+
   it('should call onEditCostLineItem with NO new file being passed and no existing file', async () => {
     component.costBreakdownItems.push(  new FormGroup({
       uid: new FormControl('OTHER1'),

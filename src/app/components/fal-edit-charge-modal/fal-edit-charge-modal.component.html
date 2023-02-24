@@ -50,7 +50,7 @@
       </div>
     </form>
 
-    <div>
+    <div *ngIf="!(isEditModal && chargeControl.value === 'Spot Quote')">
       <!-- FILE CHOOSER -->
       <label for="file-chooser-input"
              class="fal-label">

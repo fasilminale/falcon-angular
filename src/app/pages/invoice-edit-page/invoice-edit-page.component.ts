@@ -24,6 +24,8 @@ import {TripInformationComponent} from './trip-information/trip-information.comp
 import {BillToLocationUtils, CommonUtils, LocationUtils} from '../../models/location/location-model';
 import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/line-item-model';
 import {InvoiceLockService} from '../../services/invoice-lock-service';
+import {WebSocketService} from '../../services/web-socket-service';
+import {EnvironmentService} from '../../services/environment-service/environment-service';
 
 
 @Component({
@@ -42,6 +44,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
               private toastService: ToastService,
               private rateService: RateService,
               @Inject(ATTACHMENT_SERVICE) private attachmentService: AttachmentService,
+              private webSocketService: WebSocketService,
+              private environmentService: EnvironmentService,
               public router: Router) {
     this.tripInformationFormGroup = new FormGroup({});
     this.invoiceAmountFormGroup = new FormGroup({});
@@ -83,8 +87,11 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   public standardPaymentTermsOverrideValid = true;
 
   private readonly requiredPermissions = [ElmUamPermission.ALLOW_INVOICE_WRITE];
+  private readonly requiredRoles = ['FAL_INTERNAL_NONPROD_ALL_ACCESS', 'FAL_INTERNAL_WRITE'];
+
   public invoice: InvoiceDataModel = new InvoiceDataModel();
   public hasInvoiceWrite = false;
+  public hasInvoiceWriteOrAll = false;
   public showEditInfoBanner = false;
   public showInvoiceInEditMode = false;
   @ViewChild(TripInformationComponent) tripInformationComponent!: TripInformationComponent;
@@ -237,7 +244,11 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       this.invoiceLockedUser = lock.fullName;
     }
     this.userInfo = userInfo;
-    this.hasInvoiceWrite = this.userInfo.hasPermission(this.requiredPermissions);
+    this.hasInvoiceWrite = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
+    this.hasInvoiceWriteOrAll = this.userInfo.hasRoles(this.requiredRoles);
+    if (this.environmentService.showFeature('websockets')) {
+      this.webSocketService.connect(`/user/${this.userInfo.email}/queue/notification`);
+    }
   }
 
   clickDeleteButton(): void {

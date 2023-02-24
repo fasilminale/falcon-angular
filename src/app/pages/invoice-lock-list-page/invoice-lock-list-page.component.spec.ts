@@ -15,6 +15,8 @@ import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {UserService} from '../../services/user-service';
 import {SubjectValue} from '../../utils/subject-value';
+import { environment } from 'src/environments/environment';
+import { ToastService } from '@elm/elm-styleguide-ui';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -69,6 +71,7 @@ describe('InvoiceLockListPageComponent', () => {
   let router: Router;
   let webService: WebServices;
   let userService: UserService;
+  let toastService: ToastService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -92,6 +95,7 @@ describe('InvoiceLockListPageComponent', () => {
     router = TestBed.inject(Router);
     webService = TestBed.inject(WebServices);
     userService = TestBed.inject(UserService);
+    toastService = TestBed.inject(ToastService);
     spyOn(userService, 'getUserInfo').and.returnValue($userInfo.asObservable());
     fixture = TestBed.createComponent(InvoiceLockListPageComponent);
     component = fixture.componentInstance;
@@ -119,6 +123,40 @@ describe('InvoiceLockListPageComponent', () => {
     const navigateSpy = spyOn(router, 'navigate').and.stub();
     component.rowClicked(invoice);
     expect(navigateSpy).toHaveBeenCalledWith(['/invoice/1/AUTO']);
+  });
+
+  it('should add falcon invoice number to unlockInvoices', () => {
+    component.unlockInvoices = [];
+    const invoice1 = new InvoiceDataModel({falconInvoiceNumber: '1', entryType: 'AUTO'});
+    const invoice2 = new InvoiceDataModel({falconInvoiceNumber: '2', entryType: 'AUTO'});
+    component.rowSelected([invoice1, invoice2]);
+    expect(component.unlockInvoices).toEqual(['1', '2']);
+  });
+
+  it('should remove selected falcon invoice number from unlockInvoices', () => {
+    component.unlockInvoices = ['1', '2'];
+    component.rowSelected([]);
+    expect(component.unlockInvoices).toEqual([]);
+  });
+
+  it('should unlock invoices with error', () => {
+    component.unlockInvoices = ['1'];
+    const response = {'message': 'ERROR'};
+    spyOn(webService, 'httpPost').and.returnValue(of(response));
+    spyOn(toastService, 'openErrorToast');
+    component.unlockSelectedInvoices();
+    fixture.detectChanges();
+    expect(component.toastService.openErrorToast).toHaveBeenCalled();
+  });
+
+  it('should unlock invoices with success', () => {
+    component.unlockInvoices = ['1', '2'];
+    const response = {'message': 'SUCCESS'};
+    spyOn(webService, 'httpPost').and.returnValue(of(response));
+    spyOn(toastService, 'openSuccessToast');
+    component.unlockSelectedInvoices();
+    fixture.detectChanges();
+    expect(component.toastService.openSuccessToast).toHaveBeenCalled();
   });
 
   it('should Sort Fields', () => {

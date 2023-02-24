@@ -94,6 +94,7 @@
          (rateEngineCall)="getRates()"
          (requestGlAllocation)="onGlAllocationRequestEvent($event)"
          [isMakingRateCall]="isMakingRateCall"
+         [allowSpotQuoteEdit]="hasInvoiceWriteOrAll"
          >
         </app-invoice-amount>
         <hr>

@@ -19,6 +19,7 @@ import {BillToLocationUtils, Location, LocationUtils} from '../../models/locatio
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
 import {InvoiceLockService} from '../../services/invoice-lock-service';
+import {WebSocketService} from '../../services/web-socket-service';
 
 describe('InvoiceEditPageComponent', () => {
 
@@ -121,6 +122,7 @@ describe('InvoiceEditPageComponent', () => {
   let toastService: ToastService;
   let rateService: RateService;
   let attachmentService: AttachmentService;
+  let websocketService: WebSocketService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -178,6 +180,7 @@ describe('InvoiceEditPageComponent', () => {
     spyOn(rateService, 'adjustWeightOnInvoice').and.returnValue(of());
 
     attachmentService = TestBed.inject(ATTACHMENT_SERVICE);
+    websocketService = TestBed.inject(WebSocketService);
 
     // Create Component
     fixture = TestBed.createComponent(InvoiceEditPageComponent);
