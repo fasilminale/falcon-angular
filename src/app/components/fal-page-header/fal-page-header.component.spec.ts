@@ -1,8 +1,8 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FalPageHeaderComponent} from './fal-page-header.component';
-import {NavigationModule} from '@elm/elm-styleguide-ui/lib/components/navigation/navigation.module';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {By} from '@angular/platform-browser';
+import {NavigationModule} from '@elm/elm-styleguide-ui';
 
 describe('FalPageHeaderComponent', () => {
   let component: FalPageHeaderComponent;

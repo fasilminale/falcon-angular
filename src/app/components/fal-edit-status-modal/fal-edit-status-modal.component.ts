@@ -96,15 +96,14 @@ export class FalEditStatusModalComponent {
 
   /**
    * Text for the cancel button.
-   * Defaults to 'Close'.
+   * Defaults to 'Cancel'.
    */
   get cancelButtonText(): string {
-    return 'Close';
+    return 'Cancel';
   }
 
   onConfirmButtonClick(): void {
     let output: EditStatusModalOutput;
-
     this.updateInvoice().subscribe(
       data=> {
         this.close(output);

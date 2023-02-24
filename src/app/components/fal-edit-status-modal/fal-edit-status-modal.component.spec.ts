@@ -3,7 +3,9 @@ import {EditStatusModalInput, FalEditStatusModalComponent} from './fal-edit-stat
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {FormControl, Validators} from '@angular/forms';
-import {Subject} from 'rxjs';
+import {of, Subject} from 'rxjs';
+import {InvoiceService} from '../../services/invoice-service';
+import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 
 
 describe('FalEditStatusModalComponent', () => {
@@ -11,9 +13,11 @@ describe('FalEditStatusModalComponent', () => {
   let MOCK_DIALOG: any;
   let afterClosed$: Subject<any>;
   let MOCK_MODAL_INPUT: EditStatusModalInput;
-
   let fixture: ComponentFixture<FalEditStatusModalComponent>;
   let component: FalEditStatusModalComponent;
+  let invoiceService: InvoiceService;
+
+  const testInvoice: InvoiceDataModel = new InvoiceDataModel();
 
 
   /* BEGIN TESTS */
@@ -35,6 +39,15 @@ describe('FalEditStatusModalComponent', () => {
         {provide: MAT_DIALOG_DATA, useValue: MOCK_MODAL_INPUT}
       ]
     }).compileComponents();
+
+    invoiceService = TestBed.inject(InvoiceService);
+    testInvoice.status = {key: 'APPROVED', label: 'Approved'},
+    spyOn(invoiceService, 'getInvoice').and.returnValue(of(testInvoice));
+    let allowedInvoices = [{"label":"Error","key":"ERROR"},{"label":"Deleted","key":"DELETED"}];
+    //const allowedInvoices = new Subject<any>();
+    spyOn(invoiceService, 'getAllowedStatuses').and.returnValue(of(allowedInvoices));
+
+
   });
 
   /**
@@ -50,12 +63,46 @@ describe('FalEditStatusModalComponent', () => {
 
   describe('#EditStatus', () => {
     beforeEach(() => {
-      // set mock data for add scenario
       createComponent();
     });
 
-    fit('should have current status', () => {
-      expect(component.currentStatus).toEqual('Add New Charge  bbb');
+    it('should have current status', () => {
+      expect(component.currentStatus).toEqual('Approved');
+    });
+
+    it('should have allowed statuses', () => {
+      expect(component.allowStatuses.length).toEqual(2);
+    });
+
+    it('should have title', () => {
+      expect(component.title).toEqual('Edit Status');
+    });
+
+    it('should have confirmButtonText', () => {
+      expect(component.confirmButtonText).toEqual('Update Status');
+    });
+
+    it('should have cancelButtonText', () => {
+      expect(component.cancelButtonText).toEqual('Cancel');
+    });
+
+    it('should have confirmButtonStyle', () => {
+      expect(component.confirmButtonStyle).toEqual('primary');
+    });
+
+  });
+
+  describe('#onConfirmButtonClick', () => {
+    beforeEach(() => {
+      spyOn(invoiceService, 'updateInvoiceStatus').and.returnValue(of(testInvoice));
+      createComponent();
+    });
+
+    it('should close modal', () => {
+      spyOn(MOCK_DIALOG, 'close').and.callThrough();
+      component.onConfirmButtonClick();
+      expect(MOCK_DIALOG.close).toHaveBeenCalledTimes(1);
+      expect(invoiceService.updateInvoiceStatus).toHaveBeenCalledTimes(1)
     });
 
   });

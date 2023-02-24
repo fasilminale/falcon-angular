@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import { ElmLinkInterface,  DataTableComponent} from '@elm/elm-styleguide-ui/lib/components/data-table/data-table.component';
+import { ElmLinkInterface} from '@elm/elm-styleguide-ui/lib/components/data-table/data-table.component';
 import {first} from 'rxjs/operators';
 import {UtilService} from '../../services/util-service';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
@@ -62,7 +62,7 @@ export class FalPageHeaderComponent {
     await this.invoiceLockService.retrieveInvoiceLock(this.falconInvoiceNumber).toPromise();
     const lock = this.invoiceLockService.getInvoiceLock();
 
-    const hasPermission = this.userInfo.hasPermission(this.requiredPermissions);
+    const hasPermission = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
 
     if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
       this.enableStatusEditButton = true;
