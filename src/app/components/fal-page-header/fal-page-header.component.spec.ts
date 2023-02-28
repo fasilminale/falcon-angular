@@ -18,8 +18,6 @@ describe('FalPageHeaderComponent', () => {
   let component: FalPageHeaderComponent;
   let fixture: ComponentFixture<FalPageHeaderComponent>;
   let invoiceLockServiceRef: InvoiceLockService;
-  //let utilService: UtilService;
-
 
   const MOCK_EDIT_MODAL = {
     openNewStatusEditModal: (data: EditStatusModalInput): Observable<NewStatusModalOutput>  => {
