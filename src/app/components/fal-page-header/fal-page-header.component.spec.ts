@@ -13,9 +13,8 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {EnvironmentService} from '../../services/environment-service/environment-service';
 import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
-import {InvoiceService} from '../../services/invoice-service';
 
-fdescribe('FalPageHeaderComponent', () => {
+describe('FalPageHeaderComponent', () => {
   let component: FalPageHeaderComponent;
   let fixture: ComponentFixture<FalPageHeaderComponent>;
   let invoiceLockServiceRef: InvoiceLockService;
