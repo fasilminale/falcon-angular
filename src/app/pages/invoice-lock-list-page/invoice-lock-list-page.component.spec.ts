@@ -17,6 +17,7 @@ import {UserService} from '../../services/user-service';
 import {SubjectValue} from '../../utils/subject-value';
 import { environment } from 'src/environments/environment';
 import { ToastService } from '@elm/elm-styleguide-ui';
+import { UtilService } from 'src/app/services/util-service';
 
 class MockActivatedRoute extends ActivatedRoute {
   constructor(private map: any) {
@@ -72,6 +73,7 @@ describe('InvoiceLockListPageComponent', () => {
   let webService: WebServices;
   let userService: UserService;
   let toastService: ToastService;
+  let utilService: UtilService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -96,6 +98,7 @@ describe('InvoiceLockListPageComponent', () => {
     webService = TestBed.inject(WebServices);
     userService = TestBed.inject(UserService);
     toastService = TestBed.inject(ToastService);
+    utilService = TestBed.inject(UtilService);
     spyOn(userService, 'getUserInfo').and.returnValue($userInfo.asObservable());
     fixture = TestBed.createComponent(InvoiceLockListPageComponent);
     component = fixture.componentInstance;
@@ -139,7 +142,19 @@ describe('InvoiceLockListPageComponent', () => {
     expect(component.unlockInvoices).toEqual([]);
   });
 
+  it('should not unlock invoices when confirmation modal cancelled', () => {
+    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(false));
+    component.unlockInvoices = ['1'];
+    spyOn(toastService, 'openErrorToast');
+    spyOn(toastService, 'openSuccessToast');
+    component.unlockSelectedInvoices();
+    fixture.detectChanges();
+    expect(component.toastService.openErrorToast).not.toHaveBeenCalled();
+    expect(component.toastService.openSuccessToast).not.toHaveBeenCalled();
+  });
+
   it('should unlock invoices with error', () => {
+    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
     component.unlockInvoices = ['1'];
     const response = {'message': 'ERROR'};
     spyOn(webService, 'httpPost').and.returnValue(of(response));
@@ -150,6 +165,7 @@ describe('InvoiceLockListPageComponent', () => {
   });
 
   it('should unlock invoices with success', () => {
+    spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
     component.unlockInvoices = ['1', '2'];
     const response = {'message': 'SUCCESS'};
     spyOn(webService, 'httpPost').and.returnValue(of(response));
