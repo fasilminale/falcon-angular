@@ -19,10 +19,13 @@ fdescribe('FalPageHeaderComponent', () => {
   let component: FalPageHeaderComponent;
   let fixture: ComponentFixture<FalPageHeaderComponent>;
   let invoiceLockServiceRef: InvoiceLockService;
+  //let utilService: UtilService;
+
 
   const MOCK_EDIT_MODAL = {
     openNewStatusEditModal: (data: EditStatusModalInput): Observable<NewStatusModalOutput>  => {
-      return new Observable<NewStatusModalOutput>();
+      return of({});
+
     }
   };
 
@@ -62,18 +65,6 @@ fdescribe('FalPageHeaderComponent', () => {
     }
   };
 
-  const MOCK_INVOICE_LOCK_SERVICE_LOCKED_BY_CURRENT_USER = {
-    retrieveInvoiceLock: (invoiceNumber: string): any => {
-      return of(true);
-    },
-    getInvoiceLock: (): InvoiceLockModel => {
-      let invoiceLockModel = new InvoiceLockModel();
-      invoiceLockModel.currentUser = false;
-      return invoiceLockModel
-    },
-    releaseInvoiceLock: (): void => {}
-  };
-
   const MOCK_INVOICE_LOCK_SERVICE_LOCKED_BY_DIFFERENT_USER = {
     retrieveInvoiceLock: (invoiceNumber: string): any => {
       return of(true);
@@ -81,12 +72,14 @@ fdescribe('FalPageHeaderComponent', () => {
     getInvoiceLock: (): InvoiceLockModel => {
       let invoiceLockModel = new InvoiceLockModel();
       invoiceLockModel.currentUser = false;
+
       return invoiceLockModel
     },
-    releaseInvoiceLock: (): void => {}
+    releaseInvoiceLock: (): void => {},
+    createInvoiceLock: (invoiceNumber: string): void => {}
   };
 
-  const MOCK_INVOICE_LOCK_SERVICE = {
+  const MOCK_INVOICE_LOCK_SERVICE_LOCKED_BY_CURRENT_USER = {
     retrieveInvoiceLock: (invoiceNumber: string): any => {
       return of(true);
     },
@@ -95,7 +88,21 @@ fdescribe('FalPageHeaderComponent', () => {
       invoiceLockModel.currentUser = true;
       return invoiceLockModel
     },
-    releaseInvoiceLock: (): void => {}
+    releaseInvoiceLock: (): void => {},
+    createInvoiceLock: (invoiceNumber: string): void => {}
+  };
+
+  const MOCK_INVOICE_LOCK_SERVICE_NO_LOCK = {
+    retrieveInvoiceLock: (invoiceNumber: string): any => {
+      return of(false);
+    },
+    getInvoiceLock: (): InvoiceLockModel => {
+      let invoiceLockModel = new InvoiceLockModel();
+      invoiceLockModel.currentUser = true;
+      return invoiceLockModel
+    },
+    releaseInvoiceLock: (): void => {},
+    createInvoiceLock: (invoiceNumber: string): void => {}
   };
 
   const setup = () => {
@@ -110,14 +117,13 @@ fdescribe('FalPageHeaderComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [FalPageHeaderComponent],
       providers: [{provide: UtilService, useValue: MOCK_EDIT_MODAL},
-                  {provide: InvoiceLockService, useValue: MOCK_INVOICE_LOCK_SERVICE},
+                  {provide: InvoiceLockService, useValue: MOCK_INVOICE_LOCK_SERVICE_NO_LOCK},
                   {provide: UserService, useValue: MOCK_USER_SERVICE_WITH_PERMISSION},
                   {provide: EnvironmentService, useValue: MOCK_ENVIRONMENT_SERVICE}
       ],
       imports: [NavigationModule, FalconTestingModule],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
-      //.compileComponents();
 
   });
 
@@ -127,26 +133,56 @@ fdescribe('FalPageHeaderComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('click edit status icon', () => {
+    it('should release lock when modal is done', async () => {
+      setup();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      spyOn(invoiceLockServiceRef, 'releaseInvoiceLock');
+      await component.clickStatusEditButton();
+      expect(invoiceLockServiceRef.releaseInvoiceLock).toHaveBeenCalled();
+
+    });
+
+    it('should not release lock when modal is done if not current user.', async () => {
+      TestBed.overrideProvider(InvoiceLockService, {useValue:MOCK_INVOICE_LOCK_SERVICE_LOCKED_BY_DIFFERENT_USER});
+      setup();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      spyOn(invoiceLockServiceRef, 'releaseInvoiceLock');
+      await component.clickStatusEditButton();
+      expect(invoiceLockServiceRef.releaseInvoiceLock).not.toHaveBeenCalled();
+
+    });
+
+    it('should refresh page', async () => {
+      setup();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      spyOn(component.reloadPage, 'emit').and.stub();
+      await component.clickStatusEditButton();
+      expect(component.reloadPage.emit).toHaveBeenCalled();
+
+    });
+  });
 
   describe('edit status icon', () => {
 
     it('should be visible with permissions, no lock and feature flag', async () => {
       TestBed.overrideProvider(UserService, {useValue:MOCK_USER_SERVICE_WITH_PERMISSION});
       setup();
-
-      spyOn(invoiceLockServiceRef, 'releaseInvoiceLock');
       await fixture.whenStable();
       fixture.detectChanges();
 
       expect(component.enableStatusEditButton).toBeTrue();
       const editStatusButton = fixture.debugElement.query(By.css('#edit-status-button'));
       expect(editStatusButton).not.toBeNull();
-      expect(invoiceLockServiceRef.releaseInvoiceLock).toHaveBeenCalled();
-
     });
 
     it('should not be visible without permissions, no lock and feature flag', async () => {
-
       TestBed.overrideProvider(UserService, {useValue:MOCK_USER_SERVICE_WITHOUT_PERMISSION});
       setup();
       await fixture.whenStable();
@@ -158,7 +194,7 @@ fdescribe('FalPageHeaderComponent', () => {
 
     });
 
-    it('should not be visible with permissions, a another user lock and feature flag', async () => {
+    it('should not be visible with permissions, a different user lock and feature flag', async () => {
       TestBed.overrideProvider(InvoiceLockService, {useValue:MOCK_INVOICE_LOCK_SERVICE_LOCKED_BY_DIFFERENT_USER});
       setup();
       await fixture.whenStable();
@@ -170,7 +206,7 @@ fdescribe('FalPageHeaderComponent', () => {
 
     });
 
-    it('should be visible with permissions, a current user lock and feature flag', async () => {
+    it('should  be visible with permissions, the current user lock and feature flag', async () => {
       TestBed.overrideProvider(InvoiceLockService, {useValue:MOCK_INVOICE_LOCK_SERVICE_LOCKED_BY_CURRENT_USER});
       setup();
       await fixture.whenStable();

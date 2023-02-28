@@ -150,8 +150,4 @@ export type EditStatusModalOutput = undefined | {
  * Output type used for helper services working with the Add New Charge scenario.
  */
 export type NewStatusModalOutput = undefined | {
-  selected: CalcDetail,
-  uid: string,
-  comment?: string,
-  file?: File
 };

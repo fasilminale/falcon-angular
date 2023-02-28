@@ -65,14 +65,7 @@ export class FalPageHeaderComponent {
     if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
       this.enableStatusEditButton = true;
     }
-
-    /*
-    this.isCurrentUser = !!lock?.currentUser;
-    if (this.isCurrentUser){
-      await this.invoiceLockService.releaseInvoiceLock();
-    }*/
   }
-
 
   async clickStatusEditButton(): Promise<void> {
     await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
@@ -82,14 +75,12 @@ export class FalPageHeaderComponent {
     }).pipe(first()).toPromise();
 
     //TODO Change from undefined to a more explicit return object.
-    if (modalResponse === undefined) {
-      //if (this.isCurrentUser){
+    if (modalResponse !== null) {
         const lock = this.invoiceLockService.getInvoiceLock();
         this.isCurrentUser = !!lock?.currentUser;
         if(this.isCurrentUser) {
           await this.invoiceLockService.releaseInvoiceLock();
         }
-     // }
       this.reloadPage.emit();
     }
   }
