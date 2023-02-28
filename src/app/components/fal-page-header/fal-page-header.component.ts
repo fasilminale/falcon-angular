@@ -17,7 +17,6 @@ export class FalPageHeaderComponent {
   public userInfo: UserInfoModel | undefined;
   private readonly requiredPermissions = [ElmUamPermission.ALLOW_EDIT_STATUS];
 
-
   constructor(private utilService: UtilService,
               private userService: UserService,
               private invoiceLockService: InvoiceLockService,
@@ -50,13 +49,12 @@ export class FalPageHeaderComponent {
   @Output("reloadPage") reloadPage: EventEmitter<any> = new EventEmitter();
 
   ngOnInit(): void {
-      this.userService.getUserInfo().subscribe(u => this.loadUserInfo(u));
+    this.userService.getUserInfo().subscribe(u => this.loadUserInfo(u));
   }
 
   private async loadUserInfo(newUserInfo: UserInfoModel): Promise<void> {
     await this.environmentService.getFeatures();
     const isFeatureEnabled: boolean = this.environmentService.showFeature('edit.status.enabled');
-    console.log(isFeatureEnabled)
 
     this.userInfo = new UserInfoModel(newUserInfo);
     await this.invoiceLockService.retrieveInvoiceLock(this.falconInvoiceNumber).toPromise();
@@ -68,11 +66,13 @@ export class FalPageHeaderComponent {
       this.enableStatusEditButton = true;
     }
 
+    /*
     this.isCurrentUser = !!lock?.currentUser;
     if (this.isCurrentUser){
       await this.invoiceLockService.releaseInvoiceLock();
-    }
+    }*/
   }
+
 
   async clickStatusEditButton(): Promise<void> {
     await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
@@ -83,11 +83,13 @@ export class FalPageHeaderComponent {
 
     //TODO Change from undefined to a more explicit return object.
     if (modalResponse === undefined) {
-      if (this.isCurrentUser){
+      //if (this.isCurrentUser){
         const lock = this.invoiceLockService.getInvoiceLock();
         this.isCurrentUser = !!lock?.currentUser;
-        await this.invoiceLockService.releaseInvoiceLock();
-      }
+        if(this.isCurrentUser) {
+          await this.invoiceLockService.releaseInvoiceLock();
+        }
+     // }
       this.reloadPage.emit();
     }
   }

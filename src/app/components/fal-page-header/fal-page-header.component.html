@@ -29,7 +29,10 @@
       <div>
         <div [innerHTML]="headerTitle" [style]="headerTitleStyling" class="page-title"></div>
         <div [style]="headerSubtitleStyling" class="page-subtitle">
-             {{headerSubtitle}} <span *ngIf="enableStatusEditButton" role="button" class="material-icons material-icons-outlined valign-middle"
+             {{headerSubtitle}} <span *ngIf="enableStatusEditButton"
+                                      id="edit-status-button"
+                                      role="button"
+                                      class="material-icons material-icons-outlined valign-middle"
                                       (click)="clickStatusEditButton()">edit</span>
         </div>
       </div>
