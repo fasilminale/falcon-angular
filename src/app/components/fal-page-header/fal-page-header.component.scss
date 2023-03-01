@@ -1,0 +1,71 @@
+@use '@elm/elm-styleguide-ui/src/styles/utility/elm-colors' as colors;
+@use '@elm/elm-styleguide-ui/src/styles/utility/elm-fonts' as fonts;
+
+.page-header {
+  background-color: colors.$white;
+  padding: 0 24px;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .title-content-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 16px;
+    width: fit-content;
+    .page-title {
+      @include fonts.h1;
+      white-space: nowrap;
+    }
+    .page-subtitle {
+      @include fonts.h3;
+      padding-bottom: 16px;
+    }
+  }
+  .content-container {
+    align-self: flex-end;
+    padding-bottom: 16px;
+  }
+  .breadcrumb-container {
+    min-height: 36px;
+    padding-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    #help-link {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      text-decoration: none;
+
+      &:visited {
+        color: colors.$link-blue;
+      }
+
+      .help-label {
+        text-decoration: underline;
+        padding-right: 2px;
+      }
+    }
+
+    #help-btn {
+      ::ng-deep .btn-elm {
+        padding: 2px;
+        min-height: unset;
+      }
+
+      ::ng-deep .btn-text {
+        margin-right: -0.5rem;
+      }
+    }
+  }
+}

@@ -30,6 +30,11 @@ import {FalHistoryLogModalComponent} from '../components/fal-history-log-modal/f
 import {InvoiceDataModel} from '../models/invoice/invoice-model';
 import {saveAs} from 'file-saver';
 import {WebServices} from './web-services';
+import {
+  EditStatusModalInput,
+  FalEditStatusModalComponent,
+  NewStatusModalOutput
+} from '../components/fal-edit-status-modal/fal-edit-status-modal.component';
 
 @Injectable()
 export class UtilService {
@@ -83,6 +88,14 @@ export class UtilService {
     return this.dialog.open(FalEditChargeModalComponent, {autoFocus: false, data})
       .afterClosed()
       .pipe(mergeMap<any, Observable<NewChargeModalOutput>>(result => of(result)));
+  }
+
+  public openNewStatusEditModal(data: EditStatusModalInput): Observable<void> {
+    return this.dialog.open(FalEditStatusModalComponent, {autoFocus: false, data})
+      .afterClosed()
+      .pipe(mergeMap<any, Observable<void>>(
+        result => of(result)
+      ));
   }
 
   public openEditChargeModal(data: EditChargeModalInput): Observable<EditChargeModalOutput> {

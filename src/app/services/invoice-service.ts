@@ -100,6 +100,14 @@ export class InvoiceService {
     );
   }
 
+  public updateInvoiceStatus(falconInvoiceNumber: any, status: any): Observable<any> {
+    return this.web.httpPut(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}/status`, status);
+  }
+
+  public getAllowedStatuses(falconInvoiceNumber: any): Observable<any> {
+    return this.web.httpGet(`${environment.baseServiceUrl}/v1/invoice/${falconInvoiceNumber}/allowedNewStatuses`);
+  }
+
   public updateAutoInvoice(body: EditAutoInvoiceModel, falconInvoiceNumber: string): Observable<InvoiceDataModel> {
     return this.web.httpPut<InvoiceDataModel>(
       `${environment.baseServiceUrl}/v1/invoice/auto/${falconInvoiceNumber}`,

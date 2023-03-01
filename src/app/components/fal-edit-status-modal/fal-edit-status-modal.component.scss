@@ -1,0 +1,72 @@
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
+
+.dialog-close-button {
+  margin-left: auto;
+  margin-bottom: auto;
+}
+
+.label {
+  margin-top: 1em;
+}
+
+span.input-error {
+  color: #db0000;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.mat-dialog-title{
+  margin: -24px -24px 0;
+  padding: 32px 32px 12px 32px;
+  font-size: 24px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1 !important;
+  letter-spacing: 0;
+  text-align: left;
+  color: colors.$black;
+}
+
+.scrollable {
+  overflow-y: scroll;
+}
+
+.add-dialog-border {
+  border-top: colors.$gray-lightest solid 1px;
+  border-bottom: colors.$gray-lightest solid 1px;
+}
+
+.mat-dialog-content {
+  overflow: auto;
+  margin: 0 -24px;
+  padding: 20px 32px 0;
+  color: colors.$black;
+  border-top: colors.$gray-lightest solid 1px;
+  border-bottom: colors.$gray-lightest solid 1px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  align-items: flex-end;
+  max-height: 10px;
+  margin: 0 -24px -24px;
+  padding: 0 32px 26px 32px;
+}
+
+.modal-error-icon {
+  font-size: 28px;
+  color: colors.$red;
+}
+
+.modal-height {
+  min-height: 244px;
+}
+
+.error-text {
+  color: colors.$red;
+}
+
+.error {
+  border-color: colors.$red;
+}
