@@ -566,9 +566,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
         name: this.tripInformationFormGroup.controls.carrier.value.name,
       },
       serviceLevel: {
-        level: this.tripInformationFormGroup.controls.serviceLevel.value?.level ??
-          this.tripInformationFormGroup.controls.serviceLevel.value,
-        name: this.invoice.serviceCode
+        level: this.tripInformationFormGroup.controls.serviceLevel.value?.level,
+        name: this.tripInformationFormGroup.controls.serviceLevel.value?.name
       },
       pickupDateTime: this.tripInformationFormGroup.controls.pickUpDate.value,
       glLineItemList: this.invoiceAllocationFormGroup.controls.invoiceAllocations.value,
@@ -586,10 +585,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   updateInvoiceFromForms(): void {
     this.invoice.pickupDateTime = this.tripInformationFormGroup.controls.pickUpDate?.value;
-    this.invoice.serviceLevel = this.tripInformationFormGroup.controls.serviceLevel?.value?.level ??
-      this.tripInformationFormGroup.controls.serviceLevel?.value;
-    this.invoice.serviceCode = this.tripInformationFormGroup.controls.serviceLevel?.value?.name ??
-      this.tripInformationFormGroup.controls.serviceLevel?.value;
+    this.invoice.serviceLevel = this.tripInformationFormGroup.controls.serviceLevel?.value;
     this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode?.value;
     this.invoice.carrier = this.tripInformationFormGroup.controls.carrier?.value;
     this.invoice.billOfLadingNumber = this.tripInformationFormGroup.controls.bolNumber?.value;
