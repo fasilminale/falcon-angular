@@ -61,8 +61,8 @@ export class FalPageHeaderComponent {
     const lock = this.invoiceLockService.getInvoiceLock();
 
     const hasPermission = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
-
-    console.log("userInfo: " + this.userInfo.email + " " + this.userInfo.lastName);
+    
+    console.log("userInfo: ", this.userInfo);
     console.log("this.requiredPermissions: " + this.requiredPermissions);
     console.log("Enable Status Edit Button: " + !lock + " " + lock?.currentUser +  " " + hasPermission + " " + " " + isFeatureEnabled);
     if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
