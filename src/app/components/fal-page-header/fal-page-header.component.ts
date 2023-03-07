@@ -54,18 +54,14 @@ export class FalPageHeaderComponent {
 
   private async loadUserInfo(newUserInfo: UserInfoModel): Promise<void> {
     await this.environmentService.getFeatures();
-    const isFeatureEnabled: boolean = this.environmentService.showFeature('edit.status.enabled');
+    const isFeatureEnabled: boolean = this.environmentService.showFeature('editStatusEnabled');
 
     this.userInfo = new UserInfoModel(newUserInfo);
     await this.invoiceLockService.retrieveInvoiceLock(this.falconInvoiceNumber).toPromise();
     const lock = this.invoiceLockService.getInvoiceLock();
 
     const hasPermission = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
-
-    console.log("userInfo: ", this.userInfo);
-    console.log("this.requiredPermissions:  " + this.requiredPermissions);
-    console.log("lock: " + lock);
-    console.log("Enable Status Edit Button: " + !lock + " " + lock?.currentUser +  " " + hasPermission + " " + " " + isFeatureEnabled);
+    
     if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
       this.enableStatusEditButton = true;
     }
