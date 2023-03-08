@@ -9,6 +9,8 @@
   flex-direction: column;
   justify-content: space-between;
 
+
+
   .title-content-container {
     display: flex;
     justify-content: space-between;
@@ -28,6 +30,10 @@
     .page-subtitle {
       @include fonts.h3;
       padding-bottom: 16px;
+      .disable-span{
+        color: #E6E6E6;
+        cursor: not-allowed;
+      }
     }
   }
   .content-container {

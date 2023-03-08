@@ -168,6 +168,17 @@ describe('FalPageHeaderComponent', () => {
 
   describe('edit status icon', () => {
 
+    it('should be greyed out if status is not in master data.', async () => {
+      TestBed.overrideProvider(UserService, {useValue:MOCK_USER_SERVICE_WITH_PERMISSION});
+      setup();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(component.enableStatusEditButton).toBeTrue();
+      const editStatusButton = fixture.debugElement.query(By.css('#edit-status-button'));
+      expect(editStatusButton).not.toBeNull();
+    });
+
     it('should be visible with permissions, no lock and feature flag', async () => {
       TestBed.overrideProvider(UserService, {useValue:MOCK_USER_SERVICE_WITH_PERMISSION});
       setup();
