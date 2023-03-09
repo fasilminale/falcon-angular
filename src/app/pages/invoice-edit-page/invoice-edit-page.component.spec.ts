@@ -1126,8 +1126,8 @@ describe('InvoiceEditPageComponent', () => {
           name: component.tripInformationFormGroup.controls.carrier.value.name,
         },
         serviceLevel: {
-          level: component.tripInformationFormGroup.controls.serviceLevel.value,
-          name: component.invoice.serviceCode,
+          level: component.tripInformationFormGroup.controls.serviceLevel.value.level,
+          name: component.tripInformationFormGroup.controls.serviceLevel.value.name,
         },
         pickupDateTime: component.tripInformationFormGroup.controls.pickUpDate.value,
         glLineItemList: component.invoiceAllocationFormGroup.controls.invoiceAllocations.value,
