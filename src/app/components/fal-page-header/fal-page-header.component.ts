@@ -65,35 +65,31 @@ export class FalPageHeaderComponent {
 
     const hasPermission = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
 
-    console.log("userInfo: ", this.userInfo);
-    console.log("this.requiredPermissions:  " + this.requiredPermissions);
-    console.log("lock: " + lock);
-    console.log("Enable Status Edit Button: " + !lock + " " + lock?.currentUser +  " " + hasPermission + " " + " " + isFeatureEnabled);
-
     if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
-      console.log("AAAA");
+
       this.invoiceService.getAllowedStatuses(this.falconInvoiceNumber).subscribe(
         i => {this.greyStatusEditButton = i.length === 0}
       );
-      console.log("BBBB");
       this.enableStatusEditButton = true;
     }
   }
 
   async clickStatusEditButton(): Promise<void> {
-    await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
+    if(!this.greyStatusEditButton) {
+      await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
 
-    const modalResponse = await this.utilService.openNewStatusEditModal({
-      "falconInvoiceNumber": this.falconInvoiceNumber
-    }).pipe(first()).toPromise();
+      const modalResponse = await this.utilService.openNewStatusEditModal({
+        "falconInvoiceNumber": this.falconInvoiceNumber
+      }).pipe(first()).toPromise();
 
-    if (modalResponse !== null) {
+      if (modalResponse !== null) {
         const lock = this.invoiceLockService.getInvoiceLock();
         this.isCurrentUser = !!lock?.currentUser;
-        if(this.isCurrentUser) {
+        if (this.isCurrentUser) {
           await this.invoiceLockService.releaseInvoiceLock();
         }
-      this.reloadPage.emit();
+        this.reloadPage.emit();
+      }
     }
   }
 }

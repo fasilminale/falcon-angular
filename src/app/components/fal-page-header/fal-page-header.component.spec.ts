@@ -20,6 +20,7 @@ describe('FalPageHeaderComponent', () => {
   let fixture: ComponentFixture<FalPageHeaderComponent>;
   let invoiceLockServiceRef: InvoiceLockService;
   let invoiceServiceRef: InvoiceService;
+  let utilServiceRef: UtilService;
 
   const MOCK_EDIT_MODAL = {
     openNewStatusEditModal: (data: EditStatusModalInput): Observable<NewStatusModalOutput>  => {
@@ -131,6 +132,7 @@ describe('FalPageHeaderComponent', () => {
     fixture = TestBed.createComponent(FalPageHeaderComponent);
     invoiceLockServiceRef = TestBed.inject(InvoiceLockService);
     invoiceServiceRef = TestBed.inject(InvoiceService);
+    utilServiceRef = TestBed.inject(UtilService);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }
@@ -158,6 +160,19 @@ describe('FalPageHeaderComponent', () => {
   });
 
   describe('click edit status icon', () => {
+    it('should do nothing if no to statuses.', async () => {
+      TestBed.overrideProvider(InvoiceService, {useValue:MOCK_INVOICE_SERVICE_NO_STATUSES});
+      setup();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      spyOn(invoiceLockServiceRef, 'createInvoiceLock');
+      spyOn(utilServiceRef, 'openNewStatusEditModal');
+      await component.clickStatusEditButton();
+      expect(invoiceLockServiceRef.createInvoiceLock).not.toHaveBeenCalled();
+      expect(utilServiceRef.openNewStatusEditModal).not.toHaveBeenCalled();
+    });
+
     it('should release lock when modal is done', async () => {
       setup();
       await fixture.whenStable();

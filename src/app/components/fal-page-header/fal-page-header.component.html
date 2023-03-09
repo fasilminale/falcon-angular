@@ -32,7 +32,7 @@
              {{headerSubtitle}} <span *ngIf="enableStatusEditButton"
                                       id="edit-status-button"
                                       role="button"
-                                      [ngbTooltip]="greyStatusEditButton?'The status can\'t be edited for this invoice.':''"
+                                      [ngbTooltip]="greyStatusEditButton?'The status for this invoice can\'t be edited.':''"
                                       [ngClass]="greyStatusEditButton?'disable-span':''"
                                       class="material-icons material-icons-outlined valign-middle"
                                       (click)="clickStatusEditButton()">edit</span>
