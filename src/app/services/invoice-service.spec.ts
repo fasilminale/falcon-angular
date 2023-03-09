@@ -87,6 +87,19 @@ describe('InvoiceService', () => {
     expect(web.httpPut).toHaveBeenCalled();
   });
 
+  it('should update invoice status', async () => {
+    spyOn(web, 'httpPut').and.returnValue(of(invoice));
+    await invoiceService.updateInvoiceStatus("F0001", "APPROVED").toPromise();
+    expect(web.httpPut).toHaveBeenCalled();
+
+  });
+
+  it('should get allowed invoices', async () => {
+    spyOn(web, 'httpGet').and.returnValue(of(["APPROVED"]));
+    await invoiceService.getAllowedStatuses("F0001").toPromise();
+    expect(web.httpGet).toHaveBeenCalled();
+  });
+
   it('should refresh master data', async () => {
     spyOn(web, 'httpPost').and.returnValue(of(invoice));
     const result = await invoiceService.refreshMasterData(invoice).toPromise();

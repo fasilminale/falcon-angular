@@ -1,6 +1,8 @@
-<elm-page-header class="page-header" (breadcrumbClick)="router.navigate([$event])" [breadcrumbs]="breadcrumbs"
+<fal-elm-page-header class="page-header" (breadcrumbClick)="router.navigate([$event])" [breadcrumbs]="breadcrumbs"
                  headerTitle="Invoice {{falconInvoiceNumber}}"
-                 headerSubtitle="Status: {{invoiceStatus}}">
+                 headerSubtitle="Status: {{invoiceStatus}}"
+                 falconInvoiceNumber="{{falconInvoiceNumber}}"
+                  (reloadPage)="reloadPage()">
   <div class="d-flex justify-content-end header-button">
     <div *ngIf="hasInvoiceWrite" class="col-12 d-flex justify-content-end">
       <elm-button id="delete-button"
@@ -26,7 +28,7 @@
       </elm-button>
     </div>
   </div>
-</elm-page-header>
+</fal-elm-page-header>
 <mat-toolbar *ngIf="showEditInfoBanner" class="margin-b-24">
   <div class="headline3 w-100 text-center text-danger">
     <span><strong>ATTENTION:</strong> To update and apply changes, click the <strong>"SAVE"</strong> button</span>

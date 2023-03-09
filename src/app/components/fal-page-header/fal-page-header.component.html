@@ -1,0 +1,45 @@
+<div class="page-header" [style.margin]="margin">
+  <div class="breadcrumb-container">
+    <elm-breadcrumbs [breadcrumbs]="breadcrumbs"></elm-breadcrumbs>
+    <div *ngIf="helpUrl || forceHelpButton" class="help">
+      <a *ngIf="helpUrl; else noUrl"
+         (click)="helpRequested.emit(true)"
+         [href]="helpUrl"
+         tabindex="0"
+         id="help-link"
+         target="_blank">
+        <div class="help-label">
+          Help
+        </div>
+        <div class="material-icons">launch</div>
+      </a>
+      <ng-template #noUrl>
+        <elm-button (buttonClick)="helpRequested.emit(true)"
+                    [isUppercase]="false"
+                    id="help-btn"
+                    buttonStyle="text"
+                    appendIcon="launch">
+          Help
+        </elm-button>
+      </ng-template>
+    </div>
+  </div>
+  <div class="title-content-container">
+    <div class="title-container">
+      <div>
+        <div [innerHTML]="headerTitle" [style]="headerTitleStyling" class="page-title"></div>
+        <div [style]="headerSubtitleStyling" class="page-subtitle">
+             {{headerSubtitle}} <span *ngIf="enableStatusEditButton"
+                                      id="edit-status-button"
+                                      role="button"
+                                      class="material-icons material-icons-outlined valign-middle"
+                                      (click)="clickStatusEditButton()">edit</span>
+        </div>
+      </div>
+    </div>
+    <div class="content-container" [style.flex]="contentFlex">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+</div>

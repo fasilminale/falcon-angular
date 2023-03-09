@@ -339,6 +339,10 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  reloadPage(){
+    this.fetchFalconInvoice();
+  }
+
   public askForCancelConfirmation(): Observable<boolean> {
     return this.util.openConfirmationModal({
       title: 'Cancel',

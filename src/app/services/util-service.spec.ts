@@ -98,6 +98,20 @@ describe('UtilService', () => {
     expect(result).toBeFalse();
   });
 
+  it('openEditStatusModal should confirm', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
+    const result = await util.openNewStatusEditModal({falconInvoiceNumber: "F01"}).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeTrue();
+  });
+
+  it('openEditStatusModal should cancel', async () => {
+    spyOn(dialog, 'open').and.returnValue(MOCK_CLOSE_DIALOG);
+    const result = await util.openNewStatusEditModal({falconInvoiceNumber: "F01"}).toPromise();
+    expect(dialog.open).toHaveBeenCalled();
+    expect(result).toBeFalse();
+  });
+
   it('openNewChargeModal should confirm', async () => {
     spyOn(dialog, 'open').and.returnValue(MOCK_CONFIRM_DIALOG);
     const result = await util.openNewChargeModal(testNewChargeData).toPromise();

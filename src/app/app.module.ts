@@ -90,6 +90,8 @@ import { FalAdjustWeightModalComponent } from './components/fal-adjust-weight-mo
 import { FalEditGlModalComponent } from './components/fal-edit-gl-modal/fal-edit-gl-modal.component';
 import { FalHistoryLogModalComponent } from './components/fal-history-log-modal/fal-history-log-modal.component';
 import { InvoiceLockListPageComponent } from './pages/invoice-lock-list-page/invoice-lock-list-page.component';
+import {FalPageHeaderComponent} from './components/fal-page-header/fal-page-header.component';
+import {FalEditStatusModalComponent} from './components/fal-edit-status-modal/fal-edit-status-modal.component';
 import {WebSocketService} from './services/web-socket-service';
 
 const getOktaConfig = () => {
@@ -186,6 +188,8 @@ const oktaConfig = {
     InfoIconTooltipComponent,
     FalCommentModalComponent,
     FalEditChargeModalComponent,
+    FalEditStatusModalComponent,
+    FalPageHeaderComponent,
     NewUserLogoutPageComponent,
     EllipsisPipe,
     FalAccessorialDetailComponent,

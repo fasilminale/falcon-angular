@@ -3,7 +3,7 @@ import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {PaginationModel} from '../../models/PaginationModel';
 import {DataTableComponent, ElmDataTableHeader, ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {SearchComponent} from '../../components/search/search.component';
 import {FormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -14,6 +14,7 @@ import {UserService} from '../../services/user-service';
 import {environment} from '../../../environments/environment';
 import {Sort} from '@angular/material/sort';
 import { SubjectValue } from 'src/app/utils/subject-value';
+import { UtilService } from 'src/app/services/util-service';
 
 @Component({
   selector: 'app-invoice-lock-list-page',
@@ -57,6 +58,7 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private loadingService: LoadingService,
     private webservice: WebServices,
+    private util: UtilService,
     public filterService: FilterService,
     public userService: UserService,
     private modalService: ModalService,
@@ -139,18 +141,32 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
     this.unlockInvoices = invoiceArray.map(inv => inv.falconInvoiceNumber);
   }
 
+  public confirmUnlockInvoices(): Observable<boolean> {
+    return this.util.openConfirmationModal({
+      title: 'Warning!',
+      innerHtmlMessage: `Are you sure you want to Unlock the selected invoice(s)?
+                  This can not be undone.`,
+      confirmButtonText: 'YES, UNLOCK',
+      cancelButtonText: 'CANCEL'
+    });
+  }
+
   public unlockSelectedInvoices() {
-    this.loadingService.showLoading('Loading');
-    this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices/lock/delete`, {
-      invoiceNumbers: this.unlockInvoices
-    }).subscribe((response: any) => {
-      if (response['message'] === 'SUCCESS') {
-        this.toastService.openSuccessToast(`Success! Selected Falcon Invoices unlocked.`, 5 * 1000);
-        this.isResetTableData$.value = true;
-      } else {
-        this.toastService.openErrorToast(`Error! Unlocking Falcon invoices failed.`, 5 * 1000);
-        this.loadingService.hideLoading();
-        this.isResetTableData$.value = false;
+    this.confirmUnlockInvoices().subscribe(result => {
+      if (result) {
+        this.loadingService.showLoading('Loading');
+        this.webservice.httpPost(`${environment.baseServiceUrl}/v1/invoices/lock/delete`, {
+          invoiceNumbers: this.unlockInvoices
+        }).subscribe((response: any) => {
+          if (response['message'] === 'SUCCESS') {
+            this.toastService.openSuccessToast(`Success! Selected Falcon Invoices unlocked.`, 5 * 1000);
+            this.isResetTableData$.value = true;
+          } else {
+            this.toastService.openErrorToast(`Error! Unlocking Falcon invoices failed.`, 5 * 1000);
+            this.loadingService.hideLoading();
+            this.isResetTableData$.value = false;
+          }
+        });
       }
     });
   }
