@@ -65,10 +65,17 @@ export class FalPageHeaderComponent {
 
     const hasPermission = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
 
+    console.log("userInfo: ", this.userInfo);
+    console.log("this.requiredPermissions:  " + this.requiredPermissions);
+    console.log("lock: " + lock);
+    console.log("Enable Status Edit Button: " + !lock + " " + lock?.currentUser +  " " + hasPermission + " " + " " + isFeatureEnabled);
+
     if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
+      console.log("AAAA");
       this.invoiceService.getAllowedStatuses(this.falconInvoiceNumber).subscribe(
         i => {this.greyStatusEditButton = i.length === 0}
       );
+      console.log("BBBB");
       this.enableStatusEditButton = true;
     }
   }
