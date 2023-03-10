@@ -2,6 +2,7 @@
                  headerTitle="Invoice {{falconInvoiceNumber}}"
                  headerSubtitle="Status: {{invoiceStatus}}"
                  falconInvoiceNumber="{{falconInvoiceNumber}}"
+                 [isInGlobalEditMode]="isGlobalEditMode$.value"
                   (reloadPage)="reloadPage()">
   <div class="d-flex justify-content-end header-button">
     <div *ngIf="hasInvoiceWrite" class="col-12 d-flex justify-content-end">

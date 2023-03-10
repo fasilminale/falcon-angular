@@ -7,6 +7,7 @@ import {UserService} from '../../services/user-service';
 import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {InvoiceLockService} from '../../services/invoice-lock-service';
 import {EnvironmentService} from '../../services/environment-service/environment-service';
+import {InvoiceService} from '../../services/invoice-service';
 
 @Component({
   selector: 'fal-elm-page-header',
@@ -20,11 +21,13 @@ export class FalPageHeaderComponent {
   constructor(private utilService: UtilService,
               private userService: UserService,
               private invoiceLockService: InvoiceLockService,
-              private environmentService: EnvironmentService
+              private environmentService: EnvironmentService,
+              private invoiceService: InvoiceService
               ) {
   }
 
   public enableStatusEditButton = false;
+  public greyStatusEditButton = true;
   private isCurrentUser = false;
 
   @Input() headerTitle = '';
@@ -36,6 +39,7 @@ export class FalPageHeaderComponent {
   @Input() breadcrumbs: Array<ElmLinkInterface> = [];
   @Input() helpUrl = '';
   @Input() falconInvoiceNumber = '';
+  @Input() isInGlobalEditMode:boolean = false;
   /**
    * Forces the help button to be visible when a helpUrl is not given.
    * Allows capture of helpRequested event.
@@ -61,27 +65,35 @@ export class FalPageHeaderComponent {
     const lock = this.invoiceLockService.getInvoiceLock();
 
     const hasPermission = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
-    
+
     if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
+      this.invoiceService.getAllowedStatuses(this.falconInvoiceNumber).subscribe(
+        i => {this.greyStatusEditButton = (i.length === 0)}
+      );
       this.enableStatusEditButton = true;
     }
   }
 
+  disableEditStatusButton() {
+     return this.greyStatusEditButton || this.isInGlobalEditMode;
+  }
+
   async clickStatusEditButton(): Promise<void> {
-    await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
+    if(!this.disableEditStatusButton()) {
+      await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
 
-    const modalResponse = await this.utilService.openNewStatusEditModal({
-      "falconInvoiceNumber": this.falconInvoiceNumber
-    }).pipe(first()).toPromise();
+      const modalResponse = await this.utilService.openNewStatusEditModal({
+        "falconInvoiceNumber": this.falconInvoiceNumber
+      }).pipe(first()).toPromise();
 
-    //TODO Change from undefined to a more explicit return object.
-    if (modalResponse !== null) {
+      if (modalResponse !== null) {
         const lock = this.invoiceLockService.getInvoiceLock();
         this.isCurrentUser = !!lock?.currentUser;
-        if(this.isCurrentUser) {
+        if (this.isCurrentUser) {
           await this.invoiceLockService.releaseInvoiceLock();
         }
-      this.reloadPage.emit();
+        this.reloadPage.emit();
+      }
     }
   }
 }
