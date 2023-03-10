@@ -39,6 +39,7 @@ export class FalPageHeaderComponent {
   @Input() breadcrumbs: Array<ElmLinkInterface> = [];
   @Input() helpUrl = '';
   @Input() falconInvoiceNumber = '';
+  @Input() isInGlobalEditMode:boolean = false;
   /**
    * Forces the help button to be visible when a helpUrl is not given.
    * Allows capture of helpRequested event.
@@ -66,16 +67,19 @@ export class FalPageHeaderComponent {
     const hasPermission = this.userInfo.hasAtLeastOnePermission(this.requiredPermissions);
 
     if ((!lock || lock?.currentUser) && hasPermission && isFeatureEnabled) {
-
       this.invoiceService.getAllowedStatuses(this.falconInvoiceNumber).subscribe(
-        i => {this.greyStatusEditButton = i.length === 0}
+        i => {this.greyStatusEditButton = (i.length === 0)}
       );
       this.enableStatusEditButton = true;
     }
   }
 
+  disableEditStatusButton() {
+     return this.greyStatusEditButton || this.isInGlobalEditMode;
+  }
+
   async clickStatusEditButton(): Promise<void> {
-    if(!this.greyStatusEditButton) {
+    if(!this.disableEditStatusButton()) {
       await this.invoiceLockService.createInvoiceLock(this.falconInvoiceNumber);
 
       const modalResponse = await this.utilService.openNewStatusEditModal({

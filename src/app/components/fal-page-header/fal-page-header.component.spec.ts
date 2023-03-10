@@ -209,6 +209,20 @@ describe('FalPageHeaderComponent', () => {
   });
 
   describe('edit status icon', () => {
+    it('should be greyed out if global edit is on', async () => {
+      TestBed.overrideProvider(UserService, {useValue:MOCK_USER_SERVICE_WITH_PERMISSION});
+      setup();
+      component.isInGlobalEditMode = true;
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(component.enableStatusEditButton).toBeTrue();
+      expect(component.isInGlobalEditMode).toBeTrue()
+      expect(component.disableEditStatusButton()).toBeTrue();
+      const editStatusButton = fixture.debugElement.query(By.css('#edit-status-button'));
+      expect(editStatusButton.classes['disable-span']).toBeTruthy();
+      expect(editStatusButton).not.toBeNull();
+    });
 
     it('should be greyed out if status is not in master data.', async () => {
       TestBed.overrideProvider(UserService, {useValue:MOCK_USER_SERVICE_WITH_PERMISSION});
