@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { of } from 'rxjs';
 import { UserService } from './user-service';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup} from '@angular/forms';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -17,7 +17,7 @@ describe('UserService', () => {
       ],
       providers: [
         WebServices,
-        FormBuilder,
+        UntypedFormBuilder,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
@@ -41,7 +41,7 @@ describe('UserService', () => {
   });
 
   it('should set controlGroupState', async () => {
-    const cg = new FormGroup({});
+    const cg = new UntypedFormGroup({});
     userService.controlGroupState = cg;
     expect(userService.controlGroupState).toBe(cg);
   });

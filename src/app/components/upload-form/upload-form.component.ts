@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import { UtilService } from 'src/app/services/util-service';
@@ -22,9 +22,9 @@ export class UploadFormComponent implements OnInit, OnChanges {
   @ViewChild(FalFileInputComponent) fileChooserInput?: FalFileInputComponent;
 
   /* FORM CONTROLS */
-  public readonly formGroup: FormGroup;
-  public readonly attachmentType: FormControl;
-  public readonly file: FormControl;
+  public readonly formGroup: UntypedFormGroup;
+  public readonly attachmentType: UntypedFormControl;
+  public readonly file: UntypedFormControl;
 
   /* FIELDS */
   public externalAttachment = false;
@@ -32,9 +32,9 @@ export class UploadFormComponent implements OnInit, OnChanges {
 
   constructor(private toast: ToastService,
               private util: UtilService) {
-    this.attachmentType = new FormControl(null, [Validators.required]);
-    this.file = new FormControl(null, [Validators.required]);
-    this.formGroup = new FormGroup({
+    this.attachmentType = new UntypedFormControl(null, [Validators.required]);
+    this.file = new UntypedFormControl(null, [Validators.required]);
+    this.formGroup = new UntypedFormGroup({
       attachmentType: this.attachmentType,
       file: this.file
     });

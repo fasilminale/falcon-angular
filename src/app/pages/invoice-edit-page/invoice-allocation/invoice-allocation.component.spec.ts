@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
 
@@ -11,19 +11,19 @@ describe('InvoiceAllocationComponent', () => {
   let component: InvoiceAllocationComponent;
   let fixture: ComponentFixture<InvoiceAllocationComponent>;
 
-  const testAllocationDetails = new FormGroup( {
-    invoiceNetAmount: new FormControl('1234.56'),
-    totalGlAmount: new FormControl('1234.56'),
-    invoiceAllocations: new FormArray([
-      new FormGroup({
-        allocationPercent: new FormControl(300.00),
-        customerCategory: new FormControl('CAH'),
-        shippingPointWarehouse: new FormControl('Other'),
-        glCostCenter: new FormControl(''),
-        glProfitCenter: new FormControl(''),
-        glAccount: new FormControl('71257000'),
-        glCompanyCode: new FormControl('4323345'),
-        glAmount: new FormControl(300.00)
+  const testAllocationDetails = new UntypedFormGroup( {
+    invoiceNetAmount: new UntypedFormControl('1234.56'),
+    totalGlAmount: new UntypedFormControl('1234.56'),
+    invoiceAllocations: new UntypedFormArray([
+      new UntypedFormGroup({
+        allocationPercent: new UntypedFormControl(300.00),
+        customerCategory: new UntypedFormControl('CAH'),
+        shippingPointWarehouse: new UntypedFormControl('Other'),
+        glCostCenter: new UntypedFormControl(''),
+        glProfitCenter: new UntypedFormControl(''),
+        glAccount: new UntypedFormControl('71257000'),
+        glCompanyCode: new UntypedFormControl('4323345'),
+        glAmount: new UntypedFormControl(300.00)
       })
     ])
   });
@@ -39,7 +39,7 @@ describe('InvoiceAllocationComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InvoiceAllocationComponent);
     component = fixture.componentInstance;
-    component.invoiceNetAmount = new FormControl(0);
+    component.invoiceNetAmount = new UntypedFormControl(0);
     fixture.detectChanges();
   });
 
@@ -48,7 +48,7 @@ describe('InvoiceAllocationComponent', () => {
   });
 
   it('should set form control', () => {
-    component.invoiceAllocations = testAllocationDetails.get('invoiceAllocations') as FormArray;
+    component.invoiceAllocations = testAllocationDetails.get('invoiceAllocations') as UntypedFormArray;
     component.formGroup = testAllocationDetails;
 
     expect(component._formGroup.get('invoiceAllocations')).toBeDefined();

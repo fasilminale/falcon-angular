@@ -17,7 +17,7 @@ import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-manager';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {UserService} from '../../services/user-service';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 describe('InvoiceDetailPageComponent', () => {
@@ -96,7 +96,7 @@ describe('InvoiceDetailPageComponent', () => {
         ButtonModule,
       ],
       providers: [
-        FormBuilder
+        UntypedFormBuilder
       ],
       declarations: [
         InvoiceDetailPageComponent,

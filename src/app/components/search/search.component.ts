@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-search',
@@ -12,7 +12,7 @@ export class SearchComponent implements OnChanges {
   @Input() requiredMessage = 'Falcon Invoice Number is required';
   @Input() patternMessage = 'Falcon Invoice Number is invalid';
   @Input() totalResults = 0;
-  @Input() controlGroup!: FormGroup;
+  @Input() controlGroup!: UntypedFormGroup;
 
   @Output() submitEvent: EventEmitter<string> = new EventEmitter<string>();
   @Output() clearSearch: EventEmitter<any> = new EventEmitter<any>();

@@ -6,7 +6,7 @@ import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angul
 import {SimpleChange} from '@angular/core';
 import {LoadingService} from '../../services/loading-service';
 import {RouterTestingModule} from '@angular/router/testing';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
@@ -266,13 +266,13 @@ describe('InvoiceFormComponent', () => {
     component.form.workType.setValue(workType);
     component.form.erpType.setValue(erpType);
     component.form.currency.setValue(currency);
-    (component.form.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+    (component.form.invoiceFormGroup.controls.lineItems.get('0') as UntypedFormGroup)
       .controls.companyCode.setValue(companyCode);
-    (component.form.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+    (component.form.invoiceFormGroup.controls.lineItems.get('0') as UntypedFormGroup)
       .controls.glAccount.setValue(glAccount);
-    (component.form.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+    (component.form.invoiceFormGroup.controls.lineItems.get('0') as UntypedFormGroup)
       .controls.costCenter.setValue(costCenter);
-    (component.form.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+    (component.form.invoiceFormGroup.controls.lineItems.get('0') as UntypedFormGroup)
       .controls.lineItemNetAmount.setValue('1');
     component.externalAttachment = true;
     invoiceResponse.milestones = [];
@@ -383,7 +383,7 @@ describe('InvoiceFormComponent', () => {
     spyOn(attachmentService, 'saveAttachments').and.returnValue(of(true));
     component.form.invoiceFormGroup.controls.companyCode.setValue('CODE');
     fixture.detectChanges();
-    (component.form.invoiceFormGroup.controls.lineItems.get('0') as FormGroup)
+    (component.form.invoiceFormGroup.controls.lineItems.get('0') as UntypedFormGroup)
       .controls.companyCode.setValue('CODE');
     await component.onSaveButtonClick();
     expect(requestInvoice.lineItems.length).toEqual(1);
@@ -534,7 +534,7 @@ describe('InvoiceFormComponent', () => {
   });
 
   it('should called changeLineItemNetAmount and totalLineItemNetAmount value changed and validate invoiceDate date', () => {
-    (component.form.lineItems.get('0') as FormGroup)
+    (component.form.lineItems.get('0') as UntypedFormGroup)
       .controls.lineItemNetAmount.setValue('1');
     component.form.calculateLineItemNetAmount();
     expect(component.form.totalLineItemNetAmount).toEqual(1);

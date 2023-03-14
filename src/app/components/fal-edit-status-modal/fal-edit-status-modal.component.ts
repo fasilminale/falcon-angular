@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {buttonStyle} from '@elm/elm-styleguide-ui';
 import {Observable, Subscription} from 'rxjs';
 import {CalcDetail, CalcDetailVariable} from '../../models/rate-engine/rate-engine-request';
@@ -15,9 +15,9 @@ import {InvoiceService} from '../../services/invoice-service';
 })
 export class FalEditStatusModalComponent {
 
-  public readonly newStatusControl = new FormControl('', Validators.required);
-  public readonly reasonControl: FormControl = new FormControl('');
-  public readonly form = new FormGroup({
+  public readonly newStatusControl = new UntypedFormControl('', Validators.required);
+  public readonly reasonControl: UntypedFormControl = new UntypedFormControl('');
+  public readonly form = new UntypedFormGroup({
     newStatus: this.newStatusControl,
     reason: this.reasonControl
   });

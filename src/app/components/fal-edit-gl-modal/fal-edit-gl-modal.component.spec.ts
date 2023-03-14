@@ -3,20 +3,20 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FalEditGlModalComponent } from './fal-edit-gl-modal.component';
 import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {of} from 'rxjs';
 import { SubjectValue } from 'src/app/utils/subject-value';
 
 describe('FalEditGlModalComponent', () => {
   const TEST_GL_LINE_ITEM = {
-    glLineItem: new FormGroup ({
-      allocationPercent: new FormControl('50'),
-      customerCategory: new FormControl('BAX'),
-      glCostCenter: new FormControl('000'),
-      glProfitCenter: new FormControl('N/A'),
-      glAccount: new FormControl('000'),
-      glCompanyCode: new FormControl('000'),
-      glAmount: new FormControl('0'),
+    glLineItem: new UntypedFormGroup ({
+      allocationPercent: new UntypedFormControl('50'),
+      customerCategory: new UntypedFormControl('BAX'),
+      glCostCenter: new UntypedFormControl('000'),
+      glProfitCenter: new UntypedFormControl('N/A'),
+      glAccount: new UntypedFormControl('000'),
+      glCompanyCode: new UntypedFormControl('000'),
+      glAmount: new UntypedFormControl('0'),
     })
   };
 

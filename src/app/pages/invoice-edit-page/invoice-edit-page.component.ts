@@ -1,7 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommentModel, UtilService} from '../../services/util-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormGroup} from '@angular/forms';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
@@ -47,10 +47,10 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
               private webSocketService: WebSocketService,
               private environmentService: EnvironmentService,
               public router: Router) {
-    this.tripInformationFormGroup = new FormGroup({});
-    this.invoiceAmountFormGroup = new FormGroup({});
-    this.invoiceAllocationFormGroup = new FormGroup({});
-    this.invoiceFormGroup = new FormGroup({
+    this.tripInformationFormGroup = new UntypedFormGroup({});
+    this.invoiceAmountFormGroup = new UntypedFormGroup({});
+    this.invoiceAllocationFormGroup = new UntypedFormGroup({});
+    this.invoiceFormGroup = new UntypedFormGroup({
       tripInformation: this.tripInformationFormGroup,
       invoiceAmount: this.invoiceAmountFormGroup,
       invoiceAllocation: this.invoiceAllocationFormGroup
@@ -70,10 +70,10 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   public isAutoInvoice = false;
   public isEditableInvoice = true;
   public showMilestoneToggleButton = true;
-  public invoiceFormGroup: FormGroup;
-  public tripInformationFormGroup: FormGroup;
-  public invoiceAmountFormGroup: FormGroup;
-  public invoiceAllocationFormGroup: FormGroup;
+  public invoiceFormGroup: UntypedFormGroup;
+  public tripInformationFormGroup: UntypedFormGroup;
+  public invoiceAmountFormGroup: UntypedFormGroup;
+  public invoiceAllocationFormGroup: UntypedFormGroup;
 
   public isGlobalEditMode$ = new SubjectValue<boolean>(false);
   public isTripEditMode$ = new SubjectValue<boolean>(false);
@@ -597,11 +597,11 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     this.invoice.mode = this.tripInformationFormGroup.controls.carrierMode?.value;
     this.invoice.carrier = this.tripInformationFormGroup.controls.carrier?.value;
     this.invoice.billOfLadingNumber = this.tripInformationFormGroup.controls.bolNumber?.value;
-    const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as FormGroup;
+    const originAddressFormGroup = this.tripInformationFormGroup.controls.originAddress as UntypedFormGroup;
     this.invoice.origin = LocationUtils.extractLocation(originAddressFormGroup, 'origin');
-    const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as FormGroup;
+    const destinationAddressFormGroup = this.tripInformationFormGroup.controls.destinationAddress as UntypedFormGroup;
     this.invoice.destination = LocationUtils.extractLocation(destinationAddressFormGroup, 'destination', this.invoice.destination.code);
-    const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress as FormGroup;
+    const billToAddressFormGroup = this.tripInformationFormGroup.controls.billToAddress as UntypedFormGroup;
     this.invoice.billTo = BillToLocationUtils.extractBillToLocation(billToAddressFormGroup);
     this.invoice.costLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.costBreakdownItems);
     this.invoice.pendingChargeLineItems = this.getLineItems(this.invoiceAmountFormGroup.controls.pendingChargeLineItems);
@@ -619,12 +619,12 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   getDisputeLineItems(items: AbstractControl): Array<DisputeLineItem> {
     const results: Array<DisputeLineItem> = [];
-    const lineItems = items as FormArray;
+    const lineItems = items as UntypedFormArray;
     if (!lineItems?.controls) {
       return [];
     }
     for (const control of lineItems.controls) {
-      const item = control as FormGroup;
+      const item = control as UntypedFormGroup;
       results.push({
 
         comment: CommonUtils.handleNAValues(item.controls?.comment?.value),
@@ -646,13 +646,13 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
 
   getLineItems(items: AbstractControl): Array<CostLineItem> {
     const results: Array<CostLineItem> = [];
-    const lineItems = items as FormArray;
+    const lineItems = items as UntypedFormArray;
     if (!lineItems?.controls) {
       return [];
 
     }
     for (const control of lineItems.controls) {
-      const item = control as FormGroup;
+      const item = control as UntypedFormGroup;
       results.push({
         uid: CommonUtils.handleNAValues(item.controls?.uid?.value),
         accessorialCode: CommonUtils.handleNAValues(item.controls?.accessorialCode?.value),

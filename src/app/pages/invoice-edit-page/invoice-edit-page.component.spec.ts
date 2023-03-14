@@ -14,7 +14,7 @@ import {CommentModel, UtilService} from '../../services/util-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {RateService} from '../../services/rate-service';
 import {TripInformationComponent} from './trip-information/trip-information.component';
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {BillToLocationUtils, Location, LocationUtils} from '../../models/location/location-model';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {InvoiceLockModel} from '../../models/invoice/invoice-lock-model';
@@ -44,26 +44,26 @@ describe('InvoiceEditPageComponent', () => {
     code: undefined
   };
 
-  const glLineItemFormArray = new FormArray([]);
-  glLineItemFormArray.push(new FormGroup({
-    allocationPercent: new FormControl(100),
-    customerCategory: new FormControl('CAH'),
-    glProfitCenter: new FormControl('2586931'),
-    glCostCenter: new FormControl('2586931'),
-    glAccount: new FormControl('7153200'),
-    glCompanyCode: new FormControl('2140'),
-    allocationAmount: new FormControl(183.58)
+  const glLineItemFormArray = new UntypedFormArray([]);
+  glLineItemFormArray.push(new UntypedFormGroup({
+    allocationPercent: new UntypedFormControl(100),
+    customerCategory: new UntypedFormControl('CAH'),
+    glProfitCenter: new UntypedFormControl('2586931'),
+    glCostCenter: new UntypedFormControl('2586931'),
+    glAccount: new UntypedFormControl('7153200'),
+    glCompanyCode: new UntypedFormControl('2140'),
+    allocationAmount: new UntypedFormControl(183.58)
   }));
-  const invalidGlLineItemFormArray = new FormArray([]);
-  invalidGlLineItemFormArray.push(new FormGroup({
-    allocationPercent: new FormControl(100),
-    customerCategory: new FormControl('CAH'),
-    glProfitCenter: new FormControl('2586931'),
-    glCostCenter: new FormControl('2586931'),
-    glAccount: new FormControl('7153200'),
-    glCompanyCode: new FormControl('2140'),
-    allocationAmount: new FormControl(183.58),
-    errorText: new FormControl('Values do not match with master data')
+  const invalidGlLineItemFormArray = new UntypedFormArray([]);
+  invalidGlLineItemFormArray.push(new UntypedFormGroup({
+    allocationPercent: new UntypedFormControl(100),
+    customerCategory: new UntypedFormControl('CAH'),
+    glProfitCenter: new UntypedFormControl('2586931'),
+    glCostCenter: new UntypedFormControl('2586931'),
+    glAccount: new UntypedFormControl('7153200'),
+    glCompanyCode: new UntypedFormControl('2140'),
+    allocationAmount: new UntypedFormControl(183.58),
+    errorText: new UntypedFormControl('Values do not match with master data')
   }));
 
   const MOCK_LOCATION: Location = {
@@ -76,36 +76,36 @@ describe('InvoiceEditPageComponent', () => {
     zipCode: '12345',
     code: 'TXH',
   };
-  const originAddressFormGroup = new FormGroup({
-    streetAddress: new FormControl(MOCK_LOCATION.address),
-    streetAddress2: new FormControl(MOCK_LOCATION.address2),
-    city: new FormControl(MOCK_LOCATION.city),
-    country: new FormControl(MOCK_LOCATION.country),
-    name: new FormControl(MOCK_LOCATION.name),
-    state: new FormControl(MOCK_LOCATION.state),
-    zipCode: new FormControl(MOCK_LOCATION.zipCode),
-    shippingPoint: new FormControl(MOCK_LOCATION.code)
+  const originAddressFormGroup = new UntypedFormGroup({
+    streetAddress: new UntypedFormControl(MOCK_LOCATION.address),
+    streetAddress2: new UntypedFormControl(MOCK_LOCATION.address2),
+    city: new UntypedFormControl(MOCK_LOCATION.city),
+    country: new UntypedFormControl(MOCK_LOCATION.country),
+    name: new UntypedFormControl(MOCK_LOCATION.name),
+    state: new UntypedFormControl(MOCK_LOCATION.state),
+    zipCode: new UntypedFormControl(MOCK_LOCATION.zipCode),
+    shippingPoint: new UntypedFormControl(MOCK_LOCATION.code)
   });
-  const destinationAddressFormGroup = new FormGroup({
-    streetAddress: new FormControl(MOCK_LOCATION.address),
-    streetAddress2: new FormControl(MOCK_LOCATION.address2),
-    city: new FormControl(MOCK_LOCATION.city),
-    country: new FormControl(MOCK_LOCATION.country),
-    name: new FormControl(MOCK_LOCATION.name),
-    state: new FormControl(MOCK_LOCATION.state),
-    zipCode: new FormControl(MOCK_LOCATION.zipCode),
-    shippingPoint: new FormControl(MOCK_LOCATION.code)
+  const destinationAddressFormGroup = new UntypedFormGroup({
+    streetAddress: new UntypedFormControl(MOCK_LOCATION.address),
+    streetAddress2: new UntypedFormControl(MOCK_LOCATION.address2),
+    city: new UntypedFormControl(MOCK_LOCATION.city),
+    country: new UntypedFormControl(MOCK_LOCATION.country),
+    name: new UntypedFormControl(MOCK_LOCATION.name),
+    state: new UntypedFormControl(MOCK_LOCATION.state),
+    zipCode: new UntypedFormControl(MOCK_LOCATION.zipCode),
+    shippingPoint: new UntypedFormControl(MOCK_LOCATION.code)
   });
-  const billToAddressFormGroup = new FormGroup({
-    streetAddress: new FormControl('123 Fake Street'),
-    streetAddress2: new FormControl('N/A'),
-    city: new FormControl('test'),
-    country: new FormControl('USA'),
-    name: new FormControl('test'),
-    state: new FormControl('TS'),
-    zipCode: new FormControl('12345'),
-    idCode: new FormControl('idCode'),
-    name2: new FormControl('name2'),
+  const billToAddressFormGroup = new UntypedFormGroup({
+    streetAddress: new UntypedFormControl('123 Fake Street'),
+    streetAddress2: new UntypedFormControl('N/A'),
+    city: new UntypedFormControl('test'),
+    country: new UntypedFormControl('USA'),
+    name: new UntypedFormControl('test'),
+    state: new UntypedFormControl('TS'),
+    zipCode: new UntypedFormControl('12345'),
+    idCode: new UntypedFormControl('idCode'),
+    name2: new UntypedFormControl('name2'),
   });
 
   let component: InvoiceEditPageComponent;
@@ -127,7 +127,7 @@ describe('InvoiceEditPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FalconTestingModule],
-      providers: [FormBuilder],
+      providers: [UntypedFormBuilder],
       declarations: [InvoiceEditPageComponent, TripInformationComponent]
     }).compileComponents();
     // Mock Router
@@ -195,43 +195,43 @@ describe('InvoiceEditPageComponent', () => {
   it('should handle attachments', () => {
       const fileValue = new File([], 'TestFileBlobName');
       const createEmptyLineItemGroup = () => {
-        const uid = new FormControl('test');
-        const file = new FormControl(fileValue);
-        const group = new FormGroup({
+        const uid = new UntypedFormControl('test');
+        const file = new UntypedFormControl(fileValue);
+        const group = new UntypedFormGroup({
           uid, file
         });
         return group;
       };
 
       const setUpControls = () => {
-        component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+        component.tripInformationFormGroup.addControl('carrierMode', new UntypedFormControl({
           mode: 'TL',
           reportKeyMode: 'TL',
           reportModeDescription: 'TRUCKLOAD'
         }));
-        component.tripInformationFormGroup.addControl('carrier', new FormControl({
+        component.tripInformationFormGroup.addControl('carrier', new UntypedFormControl({
           scac: 'ABCD',
           name: 'The ABCD Group',
         }));
-        component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+        component.tripInformationFormGroup.addControl('serviceLevel', new UntypedFormControl({
           level: 'GRD',
           name: 'GROUND',
         }));
-        component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+        component.tripInformationFormGroup.addControl('pickUpDate', new UntypedFormControl('2022-02-11'));
         component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
-        component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
-        component.invoiceAmountFormGroup.addControl('costBreakdownItems', new FormArray([createEmptyLineItemGroup()]));
-        component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
+        component.invoiceAmountFormGroup.addControl('amountOfInvoice', new UntypedFormControl('0'));
+        component.invoiceAmountFormGroup.addControl('costBreakdownItems', new UntypedFormArray([createEmptyLineItemGroup()]));
+        component.invoiceAmountFormGroup.addControl('currency', new UntypedFormControl('USD'));
       };
 
 
       setUpControls();
 
       const testInvoice: InvoiceDataModel = new InvoiceDataModel();
-      const fileFormGroup = new FormGroup({});
+      const fileFormGroup = new UntypedFormGroup({});
       component.invoiceAmountFormGroup.setControl('fileFormGroup', fileFormGroup);
 
-      fileFormGroup.addControl('test', new FormControl(fileValue));
+      fileFormGroup.addControl('test', new UntypedFormControl(fileValue));
 
       spyOn(invoiceService, 'updateAutoInvoice').and.returnValue(of(testInvoice));
       spyOn(attachmentService, 'saveAccessorialAttachments').and.returnValue(of(true));
@@ -761,9 +761,9 @@ describe('InvoiceEditPageComponent', () => {
 
   it('should handle the gl line item modal', async () => {
     // Setup
-    component.invoiceFormGroup = new FormGroup({
-      invoiceAllocation: new FormGroup({
-        invoiceAllocations: new FormArray([])
+    component.invoiceFormGroup = new UntypedFormGroup({
+      invoiceAllocation: new UntypedFormGroup({
+        invoiceAllocations: new UntypedFormArray([])
       })
     });
     asSpy(utilService.openGlLineItemModal).and.returnValue(of([{
@@ -781,43 +781,43 @@ describe('InvoiceEditPageComponent', () => {
   describe('clickSaveButton method', () => {
 
     const setUpControls = () => {
-      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+      component.tripInformationFormGroup.addControl('carrierMode', new UntypedFormControl({
         mode: 'TL',
         reportKeyMode: 'TL',
         reportModeDescription: 'TRUCKLOAD'
       }));
-      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+      component.tripInformationFormGroup.addControl('carrier', new UntypedFormControl({
         scac: 'ABCD',
         name: 'The ABCD Group',
       }));
-      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+      component.tripInformationFormGroup.addControl('serviceLevel', new UntypedFormControl({
         level: 'GRD',
         name: 'GROUND',
       }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.tripInformationFormGroup.addControl('pickUpDate', new UntypedFormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
-      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
-      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new UntypedFormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new UntypedFormControl('USD'));
     };
 
     const setUpControlsForInvalidGlLineItems = () => {
-      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+      component.tripInformationFormGroup.addControl('carrierMode', new UntypedFormControl({
         mode: 'TL',
         reportKeyMode: 'TL',
         reportModeDescription: 'TRUCKLOAD'
       }));
-      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+      component.tripInformationFormGroup.addControl('carrier', new UntypedFormControl({
         scac: 'ABCD',
         name: 'The ABCD Group',
       }));
-      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+      component.tripInformationFormGroup.addControl('serviceLevel', new UntypedFormControl({
         level: 'GRD',
         name: 'GROUND',
       }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.tripInformationFormGroup.addControl('pickUpDate', new UntypedFormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', invalidGlLineItemFormArray);
-      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
-      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new UntypedFormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new UntypedFormControl('USD'));
     };
 
     it('should call performPostUpdateActions when update succeeds', () => {
@@ -881,23 +881,23 @@ describe('InvoiceEditPageComponent', () => {
   describe('performSubmitAction method', () => {
 
     const setUpControls = () => {
-      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+      component.tripInformationFormGroup.addControl('carrierMode', new UntypedFormControl({
         mode: 'TL',
         reportKeyMode: 'TL',
         reportModeDescription: 'TRUCKLOAD'
       }));
-      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+      component.tripInformationFormGroup.addControl('carrier', new UntypedFormControl({
         scac: 'ABCD',
         name: 'The ABCD Group',
       }));
-      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+      component.tripInformationFormGroup.addControl('serviceLevel', new UntypedFormControl({
         level: 'GRD',
         name: 'GROUND',
       }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.tripInformationFormGroup.addControl('pickUpDate', new UntypedFormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
-      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
-      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new UntypedFormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new UntypedFormControl('USD'));
     };
 
     it('should call performPostUpdateActions when both update and submit for approval succeeds', () => {
@@ -972,23 +972,23 @@ describe('InvoiceEditPageComponent', () => {
   describe('clickSubmitForApprovalButton method', () => {
 
     const setUpControls = () => {
-      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+      component.tripInformationFormGroup.addControl('carrierMode', new UntypedFormControl({
         mode: 'TL',
         reportKeyMode: 'TL',
         reportModeDescription: 'TRUCKLOAD'
       }));
-      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+      component.tripInformationFormGroup.addControl('carrier', new UntypedFormControl({
         scac: 'ABCD',
         name: 'The ABCD Group',
       }));
-      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+      component.tripInformationFormGroup.addControl('serviceLevel', new UntypedFormControl({
         level: 'GRD',
         name: 'GROUND',
       }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.tripInformationFormGroup.addControl('pickUpDate', new UntypedFormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
-      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
-      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new UntypedFormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new UntypedFormControl('USD'));
     };
 
     it('should not pop up the modal if overridePaymentTerms is selected', () => {
@@ -996,7 +996,7 @@ describe('InvoiceEditPageComponent', () => {
       const invoiceDataModel = new InvoiceDataModel();
       invoiceDataModel.falconInvoiceNumber = 'F0000005678';
       setUpControls();
-      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({isPaymentOverrideSelected: ['override']}));
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new UntypedFormControl({isPaymentOverrideSelected: ['override']}));
       spyOn(component, 'performSubmitAction');
       spyOn(utilService, 'openConfirmationModal');
       component.clickSubmitForApprovalButton();
@@ -1026,7 +1026,7 @@ describe('InvoiceEditPageComponent', () => {
       const invoiceDataModel = new InvoiceDataModel();
       invoiceDataModel.falconInvoiceNumber = 'F0000005678';
       setUpControls();
-      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({isPaymentOverrideSelected: []}));
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new UntypedFormControl({isPaymentOverrideSelected: []}));
       spyOn(component, 'performSubmitAction');
       spyOn(utilService, 'openConfirmationModal').and.returnValue(of(false));
       component.clickSubmitForApprovalButton();
@@ -1046,7 +1046,7 @@ describe('InvoiceEditPageComponent', () => {
       const invoiceDataModel = new InvoiceDataModel();
       invoiceDataModel.falconInvoiceNumber = 'F0000005678';
       setUpControls();
-      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new FormControl({isPaymentOverrideSelected: []}));
+      component.invoiceAmountFormGroup.addControl('overridePaymentTerms', new UntypedFormControl({isPaymentOverrideSelected: []}));
       spyOn(component, 'performSubmitAction');
       spyOn(utilService, 'openConfirmationModal').and.returnValue(of(true));
       component.clickSubmitForApprovalButton();
@@ -1077,29 +1077,29 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   describe('mapTripInformationToEditAutoInvoiceModel method', () => {
-    const isPaymentOverrideSelected = new FormArray([]);
-    const overridePaymentTermsFormGroup = new FormGroup({
+    const isPaymentOverrideSelected = new UntypedFormArray([]);
+    const overridePaymentTermsFormGroup = new UntypedFormGroup({
       isPaymentOverrideSelected,
-      paymentTerms: new FormControl('ABC')
+      paymentTerms: new UntypedFormControl('ABC')
     });
     const setUpControls = () => {
-      component.tripInformationFormGroup.addControl('carrierMode', new FormControl({
+      component.tripInformationFormGroup.addControl('carrierMode', new UntypedFormControl({
         mode: 'TL',
         reportKeyMode: 'TL',
         reportModeDescription: 'TRUCKLOAD'
       }));
-      component.tripInformationFormGroup.addControl('carrier', new FormControl({
+      component.tripInformationFormGroup.addControl('carrier', new UntypedFormControl({
         scac: 'ABCD',
         name: 'The ABCD Group',
       }));
-      component.tripInformationFormGroup.addControl('serviceLevel', new FormControl({
+      component.tripInformationFormGroup.addControl('serviceLevel', new UntypedFormControl({
         level: 'GRD',
         name: 'GROUND',
       }));
-      component.tripInformationFormGroup.addControl('pickUpDate', new FormControl('2022-02-11'));
+      component.tripInformationFormGroup.addControl('pickUpDate', new UntypedFormControl('2022-02-11'));
       component.invoiceAllocationFormGroup.addControl('invoiceAllocations', glLineItemFormArray);
-      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new FormControl('0'));
-      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
+      component.invoiceAmountFormGroup.addControl('amountOfInvoice', new UntypedFormControl('0'));
+      component.invoiceAmountFormGroup.addControl('currency', new UntypedFormControl('USD'));
       component.tripInformationFormGroup.controls.originAddress = originAddressFormGroup;
       component.invoice.weightAdjustments = undefined as any;
       component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
@@ -1107,7 +1107,7 @@ describe('InvoiceEditPageComponent', () => {
     };
 
     it('should return EditAutoInvoiceModel object', () => {
-      isPaymentOverrideSelected.push(new FormControl('override'));
+      isPaymentOverrideSelected.push(new UntypedFormControl('override'));
       setUpControls();
       const result = component.mapTripInformationToEditAutoInvoiceModel();
       expect(result).toEqual({
@@ -1136,10 +1136,10 @@ describe('InvoiceEditPageComponent', () => {
         disputeLineItems: component.getDisputeLineItems(component.invoiceAmountFormGroup.controls.disputeLineItems),
         deniedChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.deniedChargeLineItems),
         deletedChargeLineItems: component.getLineItems(component.invoiceAmountFormGroup.controls.deletedChargeLineItems),
-        originAddress: LocationUtils.extractLocation(component.tripInformationFormGroup.controls.originAddress as FormGroup, 'origin'),
-        destinationAddress: LocationUtils.extractLocation(component.tripInformationFormGroup.controls.destinationAddress as FormGroup, 'destination', component.invoice.destination.code),
-        billToAddress: BillToLocationUtils.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as FormGroup),
-        shippingPoint: (component.tripInformationFormGroup.controls.originAddress as FormGroup)?.controls?.shippingPoint?.value,
+        originAddress: LocationUtils.extractLocation(component.tripInformationFormGroup.controls.originAddress as UntypedFormGroup, 'origin'),
+        destinationAddress: LocationUtils.extractLocation(component.tripInformationFormGroup.controls.destinationAddress as UntypedFormGroup, 'destination', component.invoice.destination.code),
+        billToAddress: BillToLocationUtils.extractBillToLocation(component.tripInformationFormGroup.controls.billToAddress as UntypedFormGroup),
+        shippingPoint: (component.tripInformationFormGroup.controls.originAddress as UntypedFormGroup)?.controls?.shippingPoint?.value,
         businessUnit: component.invoice.businessUnit,
         standardPaymentTermsOverride: 'ABC',
         hasRateEngineError: component.invoice.hasRateEngineError,
@@ -1151,49 +1151,49 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   describe('with populated sub forms', () => {
-    const isPaymentOverrideSelected = new FormArray([]);
-    isPaymentOverrideSelected.push(new FormControl('override'));
-    let overridePaymentTermsFormGroup = new FormGroup({
+    const isPaymentOverrideSelected = new UntypedFormArray([]);
+    isPaymentOverrideSelected.push(new UntypedFormControl('override'));
+    let overridePaymentTermsFormGroup = new UntypedFormGroup({
       isPaymentOverrideSelected: isPaymentOverrideSelected,
-      paymentTerms: new FormControl('ABC')
+      paymentTerms: new UntypedFormControl('ABC')
     });
     beforeEach(() => {
-      component.tripInformationFormGroup.controls.carrierMode = new FormControl(TEST_MODE);
-      component.tripInformationFormGroup.controls.carrier = new FormControl(TEST_CARRIER);
+      component.tripInformationFormGroup.controls.carrierMode = new UntypedFormControl(TEST_MODE);
+      component.tripInformationFormGroup.controls.carrier = new UntypedFormControl(TEST_CARRIER);
       component.tripInformationFormGroup.controls.billToAddress = billToAddressFormGroup;
-      component.invoiceAllocationFormGroup.controls.invoiceAllocations = new FormArray([]);
+      component.invoiceAllocationFormGroup.controls.invoiceAllocations = new UntypedFormArray([]);
       component.invoiceAmountFormGroup.addControl('overridePaymentTerms', overridePaymentTermsFormGroup);
-      component.invoiceAmountFormGroup.addControl('currency', new FormControl('USD'));
-      const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
-      costBreakdownItems.push(new FormGroup({
-        accessorial: new FormControl(false),
-        accessorialCode: new FormControl('Test Accessorial Code'),
-        charge: new FormControl('Test Charge Code'),
-        rateSource: new FormControl('Test Rate Source Label'),
-        rateSourcePair: new FormControl({key: 'Test Rate Source Key', label: 'Test Rate Source Label'}),
-        entrySource: new FormControl('Test Entry Source Label'),
-        entrySourcePair: new FormControl({key: 'Test Entry Source Key', label: 'Test Entry Source Label'}),
-        rate: new FormControl(123.45),
-        type: new FormControl('Test Type'),
-        quantity: new FormControl(1),
-        totalAmount: new FormControl(123.45),
-        requestStatus: new FormControl('Test Request Status Label'),
-        message: new FormControl('Test Message'),
-        createdBy: new FormControl('Test Created By'),
-        createdDate: new FormControl(TEST_DATE),
-        closedBy: new FormControl('Test Close By'),
-        closedDate: new FormControl(TEST_DATE),
-        carrierComment: new FormControl('Test Carrier Comment'),
-        responseComment: new FormControl('Test Response Comment'),
-        rateResponse: new FormControl('Test Rate Response'),
-        autoApproved: new FormControl(true),
-        attachmentRequired: new FormControl(true),
-        planned: new FormControl(true),
-        fuel: new FormControl(true),
-        manual: new FormControl(true),
-        lineItemType: new FormControl('Test Line Item Type'),
-        variables: new FormControl({variable: 'key', quantity: 'test'}),
-        deletedDate: new FormControl(TEST_DATE)
+      component.invoiceAmountFormGroup.addControl('currency', new UntypedFormControl('USD'));
+      const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new UntypedFormArray([]);
+      costBreakdownItems.push(new UntypedFormGroup({
+        accessorial: new UntypedFormControl(false),
+        accessorialCode: new UntypedFormControl('Test Accessorial Code'),
+        charge: new UntypedFormControl('Test Charge Code'),
+        rateSource: new UntypedFormControl('Test Rate Source Label'),
+        rateSourcePair: new UntypedFormControl({key: 'Test Rate Source Key', label: 'Test Rate Source Label'}),
+        entrySource: new UntypedFormControl('Test Entry Source Label'),
+        entrySourcePair: new UntypedFormControl({key: 'Test Entry Source Key', label: 'Test Entry Source Label'}),
+        rate: new UntypedFormControl(123.45),
+        type: new UntypedFormControl('Test Type'),
+        quantity: new UntypedFormControl(1),
+        totalAmount: new UntypedFormControl(123.45),
+        requestStatus: new UntypedFormControl('Test Request Status Label'),
+        message: new UntypedFormControl('Test Message'),
+        createdBy: new UntypedFormControl('Test Created By'),
+        createdDate: new UntypedFormControl(TEST_DATE),
+        closedBy: new UntypedFormControl('Test Close By'),
+        closedDate: new UntypedFormControl(TEST_DATE),
+        carrierComment: new UntypedFormControl('Test Carrier Comment'),
+        responseComment: new UntypedFormControl('Test Response Comment'),
+        rateResponse: new UntypedFormControl('Test Rate Response'),
+        autoApproved: new UntypedFormControl(true),
+        attachmentRequired: new UntypedFormControl(true),
+        planned: new UntypedFormControl(true),
+        fuel: new UntypedFormControl(true),
+        manual: new UntypedFormControl(true),
+        lineItemType: new UntypedFormControl('Test Line Item Type'),
+        variables: new UntypedFormControl({variable: 'key', quantity: 'test'}),
+        deletedDate: new UntypedFormControl(TEST_DATE)
       }));
       component.updateInvoiceFromForms();
     });
@@ -1216,7 +1216,7 @@ describe('InvoiceEditPageComponent', () => {
       expect(component.invoice.standardPaymentTermsOverride).toBeUndefined();
     });
     it('should have origin with no shipping control', () => {
-      component.tripInformationFormGroup.controls.originAddress = new FormGroup({});
+      component.tripInformationFormGroup.controls.originAddress = new UntypedFormGroup({});
       component.updateInvoiceFromForms();
       expect(component.invoice.origin).toEqual({
         name: undefined as any,
@@ -1357,29 +1357,29 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   it('should get bad cost line item data', () => {
-    const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormArray([]);
+    const costBreakdownItems = component.invoiceAmountFormGroup.controls.costBreakdownItems = new UntypedFormArray([]);
     costBreakdownItems.clear();
-    costBreakdownItems.push(new FormControl());
+    costBreakdownItems.push(new UntypedFormControl());
     const results = component.getLineItems(costBreakdownItems);
     expect(results.length).toBe(1);
   });
 
   it('should get bad dispute line item data', () => {
-    const disputeBreakdownItems = component.invoiceAmountFormGroup.controls.disputeLineItems = new FormArray([]);
+    const disputeBreakdownItems = component.invoiceAmountFormGroup.controls.disputeLineItems = new UntypedFormArray([]);
     disputeBreakdownItems.clear();
-    disputeBreakdownItems.push(new FormControl());
+    disputeBreakdownItems.push(new UntypedFormControl());
     const results = component.getDisputeLineItems(disputeBreakdownItems);
     expect(results.length).toBe(1);
   });
 
   it('should get empty list on missing control', () => {
-    component.invoiceAmountFormGroup.controls.costBreakdownItems = new FormControl('');
+    component.invoiceAmountFormGroup.controls.costBreakdownItems = new UntypedFormControl('');
     const results = component.getLineItems(component.invoiceAmountFormGroup.controls.costBreakdownItems);
     expect(results.length).toBe(0);
   });
 
   it('should get empty list on missing control for dispute', () => {
-    component.invoiceAmountFormGroup.controls.disputeLineItems = new FormControl('');
+    component.invoiceAmountFormGroup.controls.disputeLineItems = new UntypedFormControl('');
     const results = component.getDisputeLineItems(component.invoiceAmountFormGroup.controls.costDisputeItems);
     expect(results.length).toBe(0);
   });
@@ -1399,37 +1399,37 @@ describe('InvoiceEditPageComponent', () => {
   });
 
   describe('Unpopulated fields', () => {
-    const lineItems = new FormArray([]);
+    const lineItems = new UntypedFormArray([]);
     beforeEach(() => {
-      lineItems.push(new FormGroup({
-        accessorial: new FormControl(false),
-        accessorialCode: new FormControl('Test Accessorial Code'),
-        charge: new FormControl('Test Charge Code'),
-        rateSource: new FormControl('Test Rate Source Label'),
-        rateSourcePair: new FormControl({key: 'Test Rate Source Key', label: 'Test Rate Source Label'}),
-        entrySource: new FormControl('Test Entry Source Label'),
-        entrySourcePair: new FormControl({key: 'Test Entry Source Key', label: 'Test Entry Source Label'}),
-        rate: new FormControl(123.45),
-        type: new FormControl('Test Type'),
-        quantity: new FormControl(1),
-        totalAmount: new FormControl(123.45),
-        requestStatus: new FormControl('Test Request Status Label'),
-        message: new FormControl('Test Message'),
-        createdBy: new FormControl('Test Created By'),
-        createdDate: new FormControl(TEST_DATE),
-        closedBy: new FormControl('Test Close By'),
-        closedDate: new FormControl(TEST_DATE),
-        carrierComment: new FormControl('Test Carrier Comment'),
-        responseComment: new FormControl('Test Response Comment'),
-        rateResponse: new FormControl('Test Rate Response'),
-        autoApproved: new FormControl(true),
-        attachmentRequired: new FormControl(true),
-        planned: new FormControl(true),
-        fuel: new FormControl(true),
-        manual: new FormControl(true),
-        lineItemType: new FormControl('Test Line Item Type'),
-        variables: new FormControl(null),
-        deletedDate: new FormControl(null)
+      lineItems.push(new UntypedFormGroup({
+        accessorial: new UntypedFormControl(false),
+        accessorialCode: new UntypedFormControl('Test Accessorial Code'),
+        charge: new UntypedFormControl('Test Charge Code'),
+        rateSource: new UntypedFormControl('Test Rate Source Label'),
+        rateSourcePair: new UntypedFormControl({key: 'Test Rate Source Key', label: 'Test Rate Source Label'}),
+        entrySource: new UntypedFormControl('Test Entry Source Label'),
+        entrySourcePair: new UntypedFormControl({key: 'Test Entry Source Key', label: 'Test Entry Source Label'}),
+        rate: new UntypedFormControl(123.45),
+        type: new UntypedFormControl('Test Type'),
+        quantity: new UntypedFormControl(1),
+        totalAmount: new UntypedFormControl(123.45),
+        requestStatus: new UntypedFormControl('Test Request Status Label'),
+        message: new UntypedFormControl('Test Message'),
+        createdBy: new UntypedFormControl('Test Created By'),
+        createdDate: new UntypedFormControl(TEST_DATE),
+        closedBy: new UntypedFormControl('Test Close By'),
+        closedDate: new UntypedFormControl(TEST_DATE),
+        carrierComment: new UntypedFormControl('Test Carrier Comment'),
+        responseComment: new UntypedFormControl('Test Response Comment'),
+        rateResponse: new UntypedFormControl('Test Rate Response'),
+        autoApproved: new UntypedFormControl(true),
+        attachmentRequired: new UntypedFormControl(true),
+        planned: new UntypedFormControl(true),
+        fuel: new UntypedFormControl(true),
+        manual: new UntypedFormControl(true),
+        lineItemType: new UntypedFormControl('Test Line Item Type'),
+        variables: new UntypedFormControl(null),
+        deletedDate: new UntypedFormControl(null)
       }));
     });
     it('deletedChargeLineItem.deletedDate equals than null', () => {

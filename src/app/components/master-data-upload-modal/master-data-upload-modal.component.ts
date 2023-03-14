@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef, DialogRole} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {MasterDataUploadResponseModel} from '../../models/master-data-upload-response/master-data-upload-response-model';
@@ -20,9 +20,9 @@ export interface MasterDataUploadModalData {
   templateUrl: './master-data-upload-modal.component.html'
 })
 export class MasterDataUploadModalComponent {
-  fb = new FormBuilder();
-  form: FormGroup = new FormGroup({
-    initial: new FormControl()
+  fb = new UntypedFormBuilder();
+  form: UntypedFormGroup = new UntypedFormGroup({
+    initial: new UntypedFormControl()
   });
   fileToUpload: File | null = null;
   masterDataType = '';
@@ -58,8 +58,8 @@ export class MasterDataUploadModalComponent {
 
   resetForm(): void {
     this.form = this.fb.group({
-      masterDataTypeDropdown: new FormControl(),
-      fileSelector: new FormControl(),
+      masterDataTypeDropdown: new UntypedFormControl(),
+      fileSelector: new UntypedFormControl(),
     });
   }
 

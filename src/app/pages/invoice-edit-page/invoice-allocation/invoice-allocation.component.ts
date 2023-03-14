@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable, Subscription} from 'rxjs';
 import {InvoiceAllocationDetail} from '../../../models/invoice/trip-information-model';
 import {InvoiceOverviewDetail} from '../../../models/invoice/invoice-overview-detail.model';
@@ -12,16 +12,16 @@ import {GlLineItem, GlLineItemError} from 'src/app/models/line-item/line-item-mo
 })
 export class InvoiceAllocationComponent implements OnInit {
 
-  _formGroup = new FormGroup({});
+  _formGroup = new UntypedFormGroup({});
   isEditMode = true;
   totalAllocationAmount = 0;
   isAllocationAmountValid = true;
   @Output() allocationAmountInvalid = new EventEmitter<any>();
   isPrepaid?: boolean;
 
-  public totalGlAmount = new FormControl({});
-  public invoiceNetAmount = new FormControl({});
-  public invoiceAllocations = new FormArray([]);
+  public totalGlAmount = new UntypedFormControl({});
+  public invoiceNetAmount = new UntypedFormControl({});
+  public invoiceAllocations = new UntypedFormArray([]);
   public invoiceAllocationErrors?: Array<GlLineItemError>;
   @Output() editGlLineItemEvent = new EventEmitter<any>();
 
@@ -45,14 +45,14 @@ export class InvoiceAllocationComponent implements OnInit {
     );
   }
 
-  @Input() set formGroup(givenFormGroup: FormGroup) {
+  @Input() set formGroup(givenFormGroup: UntypedFormGroup) {
     givenFormGroup.setControl('totalGlAmount', this.totalGlAmount);
     givenFormGroup.setControl('invoiceNetAmount', this.invoiceNetAmount);
     givenFormGroup.setControl('invoiceAllocations', this.invoiceAllocations);
     this._formGroup = givenFormGroup;
   }
 
-  get formGroup(): FormGroup {
+  get formGroup(): UntypedFormGroup {
     return this._formGroup;
   }
 
@@ -69,15 +69,15 @@ export class InvoiceAllocationComponent implements OnInit {
         const glCostCenter = glLineItem.glCostCenter ? glLineItem.glCostCenter : glLineItem.glProfitCenter ? 'N/A' : undefined;
         const glProfitCenter = glLineItem.glProfitCenter ? glLineItem.glProfitCenter : glLineItem.glCostCenter ? 'N/A' : undefined;
 
-        const invoiceAllocationFormGroup = new FormGroup({
-          allocationPercent: new FormControl(glLineItem.allocationPercent ?? undefined),
-          customerCategory: new FormControl(glLineItem.customerCategory ?? undefined),
-          glProfitCenter: new FormControl(glProfitCenter),
-          glCostCenter: new FormControl(glCostCenter),
-          glAccount: new FormControl(glLineItem.glAccount ?? undefined, [Validators.required]),
-          glCompanyCode: new FormControl(glLineItem.glCompanyCode ?? undefined),
-          allocationAmount: new FormControl(glLineItem.glAmount ?? 0),
-          glAmount: new FormControl(glLineItem.glAmount ?? 0)
+        const invoiceAllocationFormGroup = new UntypedFormGroup({
+          allocationPercent: new UntypedFormControl(glLineItem.allocationPercent ?? undefined),
+          customerCategory: new UntypedFormControl(glLineItem.customerCategory ?? undefined),
+          glProfitCenter: new UntypedFormControl(glProfitCenter),
+          glCostCenter: new UntypedFormControl(glCostCenter),
+          glAccount: new UntypedFormControl(glLineItem.glAccount ?? undefined, [Validators.required]),
+          glCompanyCode: new UntypedFormControl(glLineItem.glCompanyCode ?? undefined),
+          allocationAmount: new UntypedFormControl(glLineItem.glAmount ?? 0),
+          glAmount: new UntypedFormControl(glLineItem.glAmount ?? 0)
         });
         this.invoiceAllocations.push(invoiceAllocationFormGroup);
       }
@@ -107,7 +107,7 @@ export class InvoiceAllocationComponent implements OnInit {
   public validateInvoiceAmount(): void {
     let sum = 0;
     this.invoiceAllocationsControls.forEach((item: any) => {
-      const lineItemAmount = item.get('allocationAmount') as FormControl;
+      const lineItemAmount = item.get('allocationAmount') as UntypedFormControl;
       sum += lineItemAmount.value;
     });
     this.isAllocationAmountValid = parseFloat(this.invoiceNetAmount.value) > 0 && sum.toFixed(2) === parseFloat(this.invoiceNetAmount.value).toFixed(2);
@@ -115,7 +115,7 @@ export class InvoiceAllocationComponent implements OnInit {
   }
 
   get invoiceAllocationsControls(): AbstractControl[] {
-    return this._formGroup.get('invoiceAllocations') ? (this._formGroup.get('invoiceAllocations') as FormArray).controls : new FormArray([]).controls;
+    return this._formGroup.get('invoiceAllocations') ? (this._formGroup.get('invoiceAllocations') as UntypedFormArray).controls : new UntypedFormArray([]).controls;
   }
 
   onEditGlLineItem(glLineItem: GlLineItem): void {

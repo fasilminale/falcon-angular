@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {of, Subject} from 'rxjs';
 import { UserService } from './user-service';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {UntypedFormBuilder, FormGroup} from '@angular/forms';
 import {InvoiceLockService} from './invoice-lock-service';
 import {InvoiceService} from './invoice-service';
 import {InvoiceLockModel} from '../models/invoice/invoice-lock-model';
@@ -29,7 +29,7 @@ describe('InvoiceLockService', () => {
       providers: [
         InvoiceService,
         WebServices,
-        FormBuilder,
+        UntypedFormBuilder,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();

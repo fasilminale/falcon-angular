@@ -1,7 +1,7 @@
 import {Location, BillToLocation, CommonUtils, LocationUtils, BillToLocationUtils, ShippingPointLocation} from './location-model';
 import {TestBed} from '@angular/core/testing';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 
 describe('Location and BillToLocation Model Tests', () => {
     const MOCK_LOCATION: Location = {
@@ -25,36 +25,36 @@ describe('Location and BillToLocation Model Tests', () => {
       zipCode: MOCK_LOCATION.zipCode,
       code: MOCK_LOCATION.code
     };
-    const originAddressFormGroup = new FormGroup({
-      streetAddress: new FormControl(MOCK_LOCATION.address),
-      streetAddress2: new FormControl(MOCK_LOCATION.address2),
-      city: new FormControl(MOCK_LOCATION.city),
-      country: new FormControl(MOCK_LOCATION.country),
-      name: new FormControl(MOCK_LOCATION.name),
-      state: new FormControl(MOCK_LOCATION.state),
-      zipCode: new FormControl(MOCK_LOCATION.zipCode),
-      shippingPoint: new FormControl(MOCK_SHIPPING_POINT_LOCATION.shippingPoint)
+    const originAddressFormGroup = new UntypedFormGroup({
+      streetAddress: new UntypedFormControl(MOCK_LOCATION.address),
+      streetAddress2: new UntypedFormControl(MOCK_LOCATION.address2),
+      city: new UntypedFormControl(MOCK_LOCATION.city),
+      country: new UntypedFormControl(MOCK_LOCATION.country),
+      name: new UntypedFormControl(MOCK_LOCATION.name),
+      state: new UntypedFormControl(MOCK_LOCATION.state),
+      zipCode: new UntypedFormControl(MOCK_LOCATION.zipCode),
+      shippingPoint: new UntypedFormControl(MOCK_SHIPPING_POINT_LOCATION.shippingPoint)
     });
-    const destinationAddressFormGroup = new FormGroup({
-      streetAddress: new FormControl(MOCK_LOCATION.address),
-      streetAddress2: new FormControl(MOCK_LOCATION.address2),
-      city: new FormControl(MOCK_LOCATION.city),
-      country: new FormControl(MOCK_LOCATION.country),
-      name: new FormControl(MOCK_LOCATION.name),
-      state: new FormControl(MOCK_LOCATION.state),
-      zipCode: new FormControl(MOCK_LOCATION.zipCode),
-      shippingPoint: new FormControl(MOCK_SHIPPING_POINT_LOCATION.shippingPoint)
+    const destinationAddressFormGroup = new UntypedFormGroup({
+      streetAddress: new UntypedFormControl(MOCK_LOCATION.address),
+      streetAddress2: new UntypedFormControl(MOCK_LOCATION.address2),
+      city: new UntypedFormControl(MOCK_LOCATION.city),
+      country: new UntypedFormControl(MOCK_LOCATION.country),
+      name: new UntypedFormControl(MOCK_LOCATION.name),
+      state: new UntypedFormControl(MOCK_LOCATION.state),
+      zipCode: new UntypedFormControl(MOCK_LOCATION.zipCode),
+      shippingPoint: new UntypedFormControl(MOCK_SHIPPING_POINT_LOCATION.shippingPoint)
     });
-    const billToAddressFormGroup = new FormGroup({
-      streetAddress: new FormControl('123 Fake Street'),
-      streetAddress2: new FormControl('address2'),
-      city: new FormControl('test'),
-      country: new FormControl('USA'),
-      name: new FormControl('test'),
-      state: new FormControl('TS'),
-      zipCode: new FormControl('12345'),
-      idCode: new FormControl('idCode'),
-      name2: new FormControl('name2'),
+    const billToAddressFormGroup = new UntypedFormGroup({
+      streetAddress: new UntypedFormControl('123 Fake Street'),
+      streetAddress2: new UntypedFormControl('address2'),
+      city: new UntypedFormControl('test'),
+      country: new UntypedFormControl('USA'),
+      name: new UntypedFormControl('test'),
+      state: new UntypedFormControl('TS'),
+      zipCode: new UntypedFormControl('12345'),
+      idCode: new UntypedFormControl('idCode'),
+      name2: new UntypedFormControl('name2'),
     });
 
     
