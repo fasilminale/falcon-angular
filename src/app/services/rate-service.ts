@@ -35,7 +35,6 @@ export class RateService {
   }
 
   public updateInvoice(invoice: any): Observable<any> {
-    console.log('invoice', invoice);
     return this.web.httpPut(`${environment.baseServiceUrl}/v1/glallocation/updateInvoice`, invoice);
   }
 
