@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef, DialogRole} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef, DialogRole} from '@angular/material/dialog';
 import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
@@ -7,7 +7,6 @@ import {MasterDataUploadResponseModel} from '../../models/master-data-upload-res
 import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {MasterDataUploadErrorModalComponent} from '../master-data-upload-error-modal/master-data-upload-error-modal.component';
 import {UserService} from '../../services/user-service';
-import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {MasterDataRow} from '../../models/master-data-row/master-data-row';
 

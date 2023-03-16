@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {UtilService} from './util-service';
-import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {of, throwError} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
 import {UntypedFormControl} from '@angular/forms';

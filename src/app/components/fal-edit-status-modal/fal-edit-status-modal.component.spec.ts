@@ -1,8 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {EditStatusModalInput, FalEditStatusModalComponent} from './fal-edit-status-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
-import {FormControl, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {of, Subject} from 'rxjs';
 import {InvoiceService} from '../../services/invoice-service';
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';

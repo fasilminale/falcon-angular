@@ -7,7 +7,7 @@ import {UserService} from '../../services/user-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {Observable, Observer, Subject, Subscription} from 'rxjs';
-import {EntryType, Invoice, InvoiceDataModel} from '../../models/invoice/invoice-model';
+import {EntryType, InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {StatusUtil} from '../../models/invoice/status-model';
 import {FreightPaymentTerms, InvoiceAllocationDetail, TripInformation} from '../../models/invoice/trip-information-model';
 import {SubjectValue} from '../../utils/subject-value';

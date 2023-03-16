@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {MatTable} from '@angular/material/table';
 import {ConfirmationModalComponent, ToastService} from '@elm/elm-styleguide-ui';
 import {Template} from 'src/app/models/template/template-model';
