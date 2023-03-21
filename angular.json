@@ -67,8 +67,6 @@
                 "src/favicon.ico",
                 "src/assets"
               ],
-              "baseHref": "/falcon/",
-              "deployUrl": "/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

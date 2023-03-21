@@ -93,6 +93,7 @@ import { InvoiceLockListPageComponent } from './pages/invoice-lock-list-page/inv
 import {FalPageHeaderComponent} from './components/fal-page-header/fal-page-header.component';
 import {FalEditStatusModalComponent} from './components/fal-edit-status-modal/fal-edit-status-modal.component';
 import {WebSocketService} from './services/web-socket-service';
+import {APP_BASE_HREF} from '@angular/common';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -239,6 +240,7 @@ const oktaConfig = {
     MatIconModule,
   ],
   providers: [
+    {provide: APP_BASE_HREF, useValue: '/falcon/'},
     WebServices,
     MatSnackBar,
     LoadingService,
