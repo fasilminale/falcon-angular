@@ -47,7 +47,12 @@ export class MasterDataUploadModalComponent {
       return rows;
     }
     // removes message config from rows, since user doesn't have permission to upload
-    return rows.filter(row => row.label !== 'Message Config')
+    for (var i = rows.length - 1; i >= 0; i--) {
+      if (rows[i].label === 'Message Config') {
+        rows.splice(i, 1);
+      }
+    }
+    return rows;
   }
 
   onSubmit(): void {
