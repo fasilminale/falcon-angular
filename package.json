@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production --preserve-symlinks",
     "test": "ng test --browsers Chrome",
     "test-headless": "ng test --browsers ChromeHeadless",
     "lint": "ng lint",
