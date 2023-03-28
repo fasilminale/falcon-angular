@@ -1,30 +1,30 @@
 import {
   AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup
 } from '@angular/forms';
 
 export class FiltersModel {
-  fb = new FormBuilder();
-  form: FormGroup = this.fb.group({
-    initial: new FormControl(),
-    originCity: new FormControl(),
-    destinationCity: new FormControl(),
-    invoiceStatuses: new FormArray([]),
-    scac: new FormControl(),
-    shippingPoints: new FormControl(),
-    mode: new FormControl(),
-    filterBySpotQuote: new FormControl(),
-    minPickupDateTime: new FormControl({}),
-    maxPickupDateTime: new FormControl({}),
-    minDeliveryDateTime: new FormControl({}),
-    maxDeliveryDateTime: new FormControl({}),
-    minInvoiceDateTime: new FormControl({}),
-    maxInvoiceDateTime: new FormControl({}),
-    minPaidDateTime: new FormControl({}),
-    maxPaidDateTime: new FormControl({}),
+  fb = new UntypedFormBuilder();
+  form: UntypedFormGroup = this.fb.group({
+    initial: new UntypedFormControl(),
+    originCity: new UntypedFormControl(),
+    destinationCity: new UntypedFormControl(),
+    invoiceStatuses: new UntypedFormArray([]),
+    scac: new UntypedFormControl(),
+    shippingPoints: new UntypedFormControl(),
+    mode: new UntypedFormControl(),
+    filterBySpotQuote: new UntypedFormControl(),
+    minPickupDateTime: new UntypedFormControl({}),
+    maxPickupDateTime: new UntypedFormControl({}),
+    minDeliveryDateTime: new UntypedFormControl({}),
+    maxDeliveryDateTime: new UntypedFormControl({}),
+    minInvoiceDateTime: new UntypedFormControl({}),
+    maxInvoiceDateTime: new UntypedFormControl({}),
+    minPaidDateTime: new UntypedFormControl({}),
+    maxPaidDateTime: new UntypedFormControl({}),
   });
 
   constructor() {
@@ -48,15 +48,15 @@ export class FiltersModel {
       minPaidDateTime: null,
       maxPaidDateTime: null,
     });
-    (this.form.get('invoiceStatuses') as FormArray)?.clear();
+    (this.form.get('invoiceStatuses') as UntypedFormArray)?.clear();
   }
 
   onCheckChange(arrayName: string, event: any): void {
-    const formArray: FormArray = this.form.get(arrayName) as FormArray;
+    const formArray: UntypedFormArray = this.form.get(arrayName) as UntypedFormArray;
     /* Selected */
     if (event.target.checked) {
       // Add a new control in the arrayForm
-      formArray.push(new FormControl(event.target.value));
+      formArray.push(new UntypedFormControl(event.target.value));
     }
     /* unselected */
     else {
@@ -85,8 +85,8 @@ export class FiltersModel {
   cloneAbstractControl<T extends AbstractControl>(control: T): T {
     let newControl: T;
 
-    if (control instanceof FormGroup) {
-      const formGroup = new FormGroup({}, control.validator, control.asyncValidator);
+    if (control instanceof UntypedFormGroup) {
+      const formGroup = new UntypedFormGroup({}, control.validator, control.asyncValidator);
       const controls = control.controls;
 
       Object.keys(controls).forEach(key => {
@@ -94,14 +94,14 @@ export class FiltersModel {
       });
 
       newControl = formGroup as any;
-    } else if (control instanceof FormArray) {
-      const formArray = new FormArray([], control.validator, control.asyncValidator);
+    } else if (control instanceof UntypedFormArray) {
+      const formArray = new UntypedFormArray([], control.validator, control.asyncValidator);
 
       control.controls.forEach(formControl => formArray.push(this.cloneAbstractControl(formControl)));
 
       newControl = formArray as any;
-    } else if (control instanceof FormControl) {
-      newControl = new FormControl(control.value, control.validator, control.asyncValidator) as any;
+    } else if (control instanceof UntypedFormControl) {
+      newControl = new UntypedFormControl(control.value, control.validator, control.asyncValidator) as any;
     } else {
       throw new Error('Error: unexpected control value');
     }
@@ -143,10 +143,10 @@ export class FiltersModel {
   }
 
   resetGroup(control: AbstractControl | null): void {
-    if (control instanceof FormArray) {
+    if (control instanceof UntypedFormArray) {
       control.clear();
     }
-    if (control instanceof FormControl) {
+    if (control instanceof UntypedFormControl) {
       control.reset();
     }
   }

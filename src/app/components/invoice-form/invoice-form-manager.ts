@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
-  FormArray,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidationErrors,
   ValidatorFn,
   Validators
@@ -35,25 +35,25 @@ export function validateDate(control: AbstractControl): ValidationErrors | null 
 export class InvoiceFormManager {
 
   /* INVOICE FORM GROUP */
-  public invoiceFormGroup = new FormGroup({});
-  public workType = new FormControl();
-  public companyCode = new FormControl();
-  public erpType = new FormControl();
-  public vendorNumber = new FormControl();
-  public externalInvoiceNumber = new FormControl();
-  public invoiceDate = new FormControl();
-  public amountOfInvoice = new FormControl();
-  public currency = new FormControl();
-  public comments = new FormControl();
-  public lineItems = new FormArray([]);
+  public invoiceFormGroup = new UntypedFormGroup({});
+  public workType = new UntypedFormControl();
+  public companyCode = new UntypedFormControl();
+  public erpType = new UntypedFormControl();
+  public vendorNumber = new UntypedFormControl();
+  public externalInvoiceNumber = new UntypedFormControl();
+  public invoiceDate = new UntypedFormControl();
+  public amountOfInvoice = new UntypedFormControl();
+  public currency = new UntypedFormControl();
+  public comments = new UntypedFormControl();
+  public lineItems = new UntypedFormArray([]);
 
   /* OVERRIDE PAYMENT TERMS FORM GROUP */
-  public osptFormGroup = new FormGroup({});
-  public isPaymentOverrideSelected = new FormArray([]);
-  public paymentTerms = new FormControl();
+  public osptFormGroup = new UntypedFormGroup({});
+  public isPaymentOverrideSelected = new UntypedFormArray([]);
+  public paymentTerms = new UntypedFormControl();
 
   /* MISC FORM CONTROLS */
-  public selectedTemplate = new FormControl();
+  public selectedTemplate = new UntypedFormControl();
 
   readonly allowedCharacters = '^[a-zA-Z0-9_-]+$';
   public isInvoiceAmountValid = true;
@@ -88,27 +88,27 @@ export class InvoiceFormManager {
   }
 
   public init(): void {
-    this.workType = new FormControl({value: null}, [required]);
-    this.companyCode = new FormControl(null,
+    this.workType = new UntypedFormControl({value: null}, [required]);
+    this.companyCode = new UntypedFormControl(null,
       {
         validators: Validators.compose([required, pattern(this.allowedCharacters)]),
         asyncValidators: Validators.composeAsync([this.validateCompanyCode()]), updateOn: 'blur'
       });
-    this.erpType = new FormControl({value: null}, [required]);
-    this.vendorNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
-    this.externalInvoiceNumber = new FormControl({value: null}, [required, pattern(this.allowedCharacters)]);
-    this.invoiceDate = new FormControl({value: null}, [required, validateDate]);
-    this.amountOfInvoice = new FormControl({value: 0}, [required, this.validateInvoiceNetAmount()]);
-    this.currency = new FormControl({value: null}, [required]);
+    this.erpType = new UntypedFormControl({value: null}, [required]);
+    this.vendorNumber = new UntypedFormControl({value: null}, [required, pattern(this.allowedCharacters)]);
+    this.externalInvoiceNumber = new UntypedFormControl({value: null}, [required, pattern(this.allowedCharacters)]);
+    this.invoiceDate = new UntypedFormControl({value: null}, [required, validateDate]);
+    this.amountOfInvoice = new UntypedFormControl({value: 0}, [required, this.validateInvoiceNetAmount()]);
+    this.currency = new UntypedFormControl({value: null}, [required]);
     // this.isPaymentOverrideSelected = new FormControl({value: false});
-    this.paymentTerms = new FormControl({value: null});
-    this.osptFormGroup = new FormGroup({
+    this.paymentTerms = new UntypedFormControl({value: null});
+    this.osptFormGroup = new UntypedFormGroup({
       isPaymentOverrideSelected: this.isPaymentOverrideSelected,
       paymentTerms: this.paymentTerms
     });
-    this.lineItems = new FormArray([]);
-    this.comments = new FormControl({value: null});
-    this.invoiceFormGroup = new FormGroup({
+    this.lineItems = new UntypedFormArray([]);
+    this.comments = new UntypedFormControl({value: null});
+    this.invoiceFormGroup = new UntypedFormGroup({
         workType: this.workType,
         companyCode: this.companyCode,
         erpType: this.erpType,
@@ -121,7 +121,7 @@ export class InvoiceFormManager {
         lineItems: this.lineItems
       }
     );
-    this.selectedTemplate = new FormControl({value: null});
+    this.selectedTemplate = new UntypedFormControl({value: null});
     this.invoiceFormGroup.enable();
     this.isPaymentOverrideSelected.enable();
     if (this.myTemplateOptions.length === 0) {
@@ -181,35 +181,35 @@ export class InvoiceFormManager {
   }
 
   public forceValueChangeEvent(control: AbstractControl): void {
-    control.setValue(control instanceof FormGroup ? (control as FormGroup).getRawValue() : control.value);
+    control.setValue(control instanceof UntypedFormGroup ? (control as UntypedFormGroup).getRawValue() : control.value);
   }
 
   public forceValueToUpperCase(control: AbstractControl): void {
     control.setValue(isFalsey(control.value) ? control.value : control.value.toUpperCase(), {emitEvent: false});
   }
 
-  public lineItemCompanyCode(index: number): FormControl {
-    return this.lineItemGroup(index).controls.companyCode as FormControl;
+  public lineItemCompanyCode(index: number): UntypedFormControl {
+    return this.lineItemGroup(index).controls.companyCode as UntypedFormControl;
   }
 
-  public lineItemCostCenter(index: number): FormControl {
-    return this.lineItemGroup(index).controls.costCenter as FormControl;
+  public lineItemCostCenter(index: number): UntypedFormControl {
+    return this.lineItemGroup(index).controls.costCenter as UntypedFormControl;
   }
 
-  public lineItemGlAccount(index: number): FormControl {
-    return this.lineItemGroup(index).controls.glAccount as FormControl;
+  public lineItemGlAccount(index: number): UntypedFormControl {
+    return this.lineItemGroup(index).controls.glAccount as UntypedFormControl;
   }
 
-  public lineItemNetAmount(index: number): FormControl {
-    return this.lineItemGroup(index).controls.lineItemNetAmount as FormControl;
+  public lineItemNetAmount(index: number): UntypedFormControl {
+    return this.lineItemGroup(index).controls.lineItemNetAmount as UntypedFormControl;
   }
 
-  public lineItemNotes(index: number): FormControl {
-    return this.lineItemGroup(index).controls.notes as FormControl;
+  public lineItemNotes(index: number): UntypedFormControl {
+    return this.lineItemGroup(index).controls.notes as UntypedFormControl;
   }
 
-  public lineItemGroup(index: number): FormGroup {
-    return this.lineItems.at(index) as FormGroup;
+  public lineItemGroup(index: number): UntypedFormGroup {
+    return this.lineItems.at(index) as UntypedFormGroup;
   }
 
   public removeLineItem(index: number): void {
@@ -221,18 +221,18 @@ export class InvoiceFormManager {
     this.lineItems.markAsDirty();
   }
 
-  public createEmptyLineItemGroup(): FormGroup {
-    const companyCode = new FormControl(null, {
+  public createEmptyLineItemGroup(): UntypedFormGroup {
+    const companyCode = new UntypedFormControl(null, {
       validators: Validators.compose([pattern(this.allowedCharacters)]),
       asyncValidators: Validators.composeAsync([this.validateCompanyCode()]), updateOn: 'blur'
     });
-    const costCenter = new FormControl(null, [required, pattern(this.allowedCharacters)]);
+    const costCenter = new UntypedFormControl(null, [required, pattern(this.allowedCharacters)]);
     this.establishTouchLink(costCenter, companyCode);
-    const glAccount = new FormControl(null, [required, pattern(this.allowedCharacters)]);
+    const glAccount = new UntypedFormControl(null, [required, pattern(this.allowedCharacters)]);
     this.establishTouchLink(glAccount, costCenter);
-    const lineItemNetAmount = new FormControl('0', [required, this.validateInvoiceNetAmount()]);
+    const lineItemNetAmount = new UntypedFormControl('0', [required, this.validateInvoiceNetAmount()]);
     this.establishTouchLink(lineItemNetAmount, glAccount);
-    const notes = new FormControl(null);
+    const notes = new UntypedFormControl(null);
     this.establishTouchLink(notes, lineItemNetAmount);
     this.subscriptions.add(companyCode.valueChanges.subscribe(
       () => this.forceValueToUpperCase(companyCode)));
@@ -242,13 +242,13 @@ export class InvoiceFormManager {
       () => this.forceValueToUpperCase(glAccount)));
     this.subscriptions.add(notes.valueChanges.subscribe(
       () => this.forceValueToUpperCase(notes)));
-    return new FormGroup({companyCode, costCenter, glAccount, lineItemNetAmount, notes});
+    return new UntypedFormGroup({companyCode, costCenter, glAccount, lineItemNetAmount, notes});
   }
 
   public calculateLineItemNetAmount(): void {
     this.totalLineItemNetAmount = 0;
     for (const control of this.lineItems.controls) {
-      const lineItemGroup = (control as FormGroup);
+      const lineItemGroup = (control as UntypedFormGroup);
       this.totalLineItemNetAmount += parseFloat(lineItemGroup.controls.lineItemNetAmount.value);
     }
   }

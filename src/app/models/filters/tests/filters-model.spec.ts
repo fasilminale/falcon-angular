@@ -2,7 +2,7 @@ import {TestBed} from '@angular/core/testing';
 import {AppModule} from '../../../app.module';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FiltersModel} from '../filters-model';
-import {AbstractControl, FormArray, FormControl} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormControl} from '@angular/forms';
 
 let testingFiltersModel: FiltersModel;
 
@@ -99,7 +99,7 @@ describe('Models: Filter |', () => {
   });
 
   it('should disable clone', () => {
-    const control = new FormControl('');
+    const control = new UntypedFormControl('');
     control.disable();
     const clone = testingFiltersModel.cloneAbstractControl(control);
     expect(clone.disabled).toBeTrue();
@@ -112,9 +112,9 @@ describe('Models: Filter |', () => {
     });
 
     it('should remove value to array when checked', () => {
-      const invoiceStatuses = testingFiltersModel.form.controls.invoiceStatuses as FormArray;
-      invoiceStatuses.push(new FormControl('test a'));
-      invoiceStatuses.push(new FormControl('test b'));
+      const invoiceStatuses = testingFiltersModel.form.controls.invoiceStatuses as UntypedFormArray;
+      invoiceStatuses.push(new UntypedFormControl('test a'));
+      invoiceStatuses.push(new UntypedFormControl('test b'));
       expect(testingFiltersModel.form.get('invoiceStatuses')?.value).toEqual(['test a', 'test b']);
       testingFiltersModel.onCheckChange('invoiceStatuses', {target: {checked: false, value: 'test b'}});
       expect(testingFiltersModel.form.get('invoiceStatuses')?.value).toEqual(['test a']);
@@ -123,20 +123,20 @@ describe('Models: Filter |', () => {
 
   describe('isChecked', () => {
     it('should return true when checked', () => {
-      const invoiceStatuses = testingFiltersModel.form.controls.invoiceStatuses as FormArray;
-      invoiceStatuses.push(new FormControl('test a'));
+      const invoiceStatuses = testingFiltersModel.form.controls.invoiceStatuses as UntypedFormArray;
+      invoiceStatuses.push(new UntypedFormControl('test a'));
       expect(testingFiltersModel.isChecked('invoiceStatuses', 'test a')).toBeTrue();
     });
 
     it('should return false when not checked', () => {
-      const invoiceStatuses = testingFiltersModel.form.controls.invoiceStatuses as FormArray;
-      invoiceStatuses.push(new FormControl('test a'));
+      const invoiceStatuses = testingFiltersModel.form.controls.invoiceStatuses as UntypedFormArray;
+      invoiceStatuses.push(new UntypedFormControl('test a'));
       expect(testingFiltersModel.isChecked('invoiceStatuses', 'test b')).toBeFalse();
     });
 
     it('should return false when given a bad array', () => {
-      const invoiceStatuses = testingFiltersModel.form.controls.invoiceStatuses as FormArray;
-      invoiceStatuses.push(new FormControl('test a'));
+      const invoiceStatuses = testingFiltersModel.form.controls.invoiceStatuses as UntypedFormArray;
+      invoiceStatuses.push(new UntypedFormControl('test a'));
       expect(testingFiltersModel.isChecked('testArray', 'test a')).toBeFalse();
     });
   });

@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {forkJoin, Observable, Subject, Subscription} from 'rxjs';
 import {FREIGHT_PAYMENT_TERM_OPTIONS, TripInformation, WeightAdjustment} from '../../../models/invoice/trip-information-model';
 import {MasterDataService} from '../../../services/master-data-service';
@@ -60,11 +60,11 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public carrierSCACs: Array<CarrierSCAC> = [];
   public carrierDetails: Array<CarrierDetailModel> = [];
 
-  public totalGrossWeight = new FormControl({value: 0, disabled: true});
-  public originalTotalGrossWeight = new FormControl(0);
-  public weightAdjustments = new FormArray([]);
-  public totalVolume = new FormControl({value: 0, disabled: true});
-  public totalPalletCount = new FormControl({value: 0, disabled: true});
+  public totalGrossWeight = new UntypedFormControl({value: 0, disabled: true});
+  public originalTotalGrossWeight = new UntypedFormControl(0);
+  public weightAdjustments = new UntypedFormArray([]);
+  public totalVolume = new UntypedFormControl({value: 0, disabled: true});
+  public totalPalletCount = new UntypedFormControl({value: 0, disabled: true});
 
   public filteredCarrierModeOptions: Array<SelectOption<CarrierModeCodeReference>> = [];
   public filteredServiceLevels: Array<SelectOption<ServiceLevel>> = [];
@@ -72,24 +72,24 @@ export class TripInformationComponent implements OnInit, OnDestroy{
   public filteredShippingPoints$ = new Subject<Array<ShippingPointLocationSelectOption>>();
   public masterDataShippingPointWarehouses: Array<ShippingPointWarehouseLocation> = [];
 
-  public tripIdControl = new FormControl();
-  public vendorNumberControl = new FormControl({}, [required]);
-  public freightOrders = new FormControl();
-  public invoiceDateControl = new FormControl({}, [required]);
-  public pickUpDateControl = new FormControl({}, [ElmValidators.required(), validateDate]);
-  public deliveryDateControl = new FormControl({}, [required]);
-  public proTrackingNumberControl = new FormControl({}, [required]);
-  public bolNumberControl = new FormControl({}, [CustomValidators.requiredNonNA, validateAlphanumeric, maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
-  public freightPaymentTermsControl = new FormControl({}, [required]);
-  public carrierControl = new FormControl({}, [required]);
-  public carrierModeControl = new FormControl({}, [required]);
-  public serviceLevelControl = new FormControl({}, [required]);
+  public tripIdControl = new UntypedFormControl();
+  public vendorNumberControl = new UntypedFormControl({}, [required]);
+  public freightOrders = new UntypedFormControl();
+  public invoiceDateControl = new UntypedFormControl({}, [required]);
+  public pickUpDateControl = new UntypedFormControl({}, [ElmValidators.required(), validateDate]);
+  public deliveryDateControl = new UntypedFormControl({}, [required]);
+  public proTrackingNumberControl = new UntypedFormControl({}, [required]);
+  public bolNumberControl = new UntypedFormControl({}, [CustomValidators.requiredNonNA, validateAlphanumeric, maxLength(this.MAX_BOL_NUMBER_LENGTH)]);
+  public freightPaymentTermsControl = new UntypedFormControl({}, [required]);
+  public carrierControl = new UntypedFormControl({}, [required]);
+  public carrierModeControl = new UntypedFormControl({}, [required]);
+  public serviceLevelControl = new UntypedFormControl({}, [required]);
 
-  private _formGroup = new FormGroup({});
-  public originAddressFormGroup = new FormGroup({});
-  public destinationAddressFormGroup = new FormGroup({});
-  public billToAddressFormGroup = new FormGroup({});
-  private _editableFormArray = new FormArray([
+  private _formGroup = new UntypedFormGroup({});
+  public originAddressFormGroup = new UntypedFormGroup({});
+  public destinationAddressFormGroup = new UntypedFormGroup({});
+  public billToAddressFormGroup = new UntypedFormGroup({});
+  private _editableFormArray = new UntypedFormArray([
     this.pickUpDateControl,
     this.carrierControl,
     this.carrierModeControl,
@@ -198,7 +198,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     };
   }
 
-  @Input() set formGroup(givenFormGroup: FormGroup) {
+  @Input() set formGroup(givenFormGroup: UntypedFormGroup) {
     givenFormGroup.setControl('tripId', this.tripIdControl);
     givenFormGroup.setControl('vendorNumber', this.vendorNumberControl);
     givenFormGroup.setControl('invoiceDate', this.invoiceDateControl);
@@ -222,7 +222,7 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     this._formGroup = givenFormGroup;
   }
 
-  get formGroup(): FormGroup {
+  get formGroup(): UntypedFormGroup {
     return this._formGroup;
   }
 
@@ -351,11 +351,11 @@ export class TripInformationComponent implements OnInit, OnDestroy{
     }
   }
 
-  public toWeightAdjustmentFormGroup(weightAdjustment: WeightAdjustment): FormGroup {
-    const formGroup = new FormGroup({
-      amount: new FormControl(weightAdjustment.amount),
-      customerCategory: new FormControl(weightAdjustment.customerCategory),
-      freightClasses: new FormControl(weightAdjustment.freightClasses.join(', '))
+  public toWeightAdjustmentFormGroup(weightAdjustment: WeightAdjustment): UntypedFormGroup {
+    const formGroup = new UntypedFormGroup({
+      amount: new UntypedFormControl(weightAdjustment.amount),
+      customerCategory: new UntypedFormControl(weightAdjustment.customerCategory),
+      freightClasses: new UntypedFormControl(weightAdjustment.freightClasses.join(', '))
     });
     formGroup.disable();
     return formGroup;

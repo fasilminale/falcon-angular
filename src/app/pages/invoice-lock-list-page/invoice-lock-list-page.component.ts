@@ -5,7 +5,7 @@ import {DataTableComponent, ElmDataTableHeader, ModalService, ToastService} from
 import {InvoiceDataModel} from '../../models/invoice/invoice-model';
 import {Observable, Subscription} from 'rxjs';
 import {SearchComponent} from '../../components/search/search.component';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../../services/loading-service';
 import {WebServices} from '../../services/web-services';
@@ -51,7 +51,7 @@ export class InvoiceLockListPageComponent implements OnInit, OnDestroy {
 
   public isResetTableData$ = new SubjectValue<boolean>(false);
 
-  controlGroup: FormGroup;
+  controlGroup: UntypedFormGroup;
 
   constructor(
     private router: Router,

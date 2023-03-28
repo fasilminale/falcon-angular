@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {TemplateInputModalComponent, TemplateInputModalComponentData} from './template-input-modal.component';
-import {MatDialogRef, MAT_DIALOG_DATA} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {TemplateService} from '../../services/template-service';
 import {of} from 'rxjs';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';

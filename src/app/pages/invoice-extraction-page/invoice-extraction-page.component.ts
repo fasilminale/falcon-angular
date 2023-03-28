@@ -11,7 +11,7 @@ import {
   DataTableComponent,
   ElmDataTableHeader
 } from '@elm/elm-styleguide-ui';
-import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {InvoiceService} from '../../services/invoice-service';
 import {UtilService} from "../../services/util-service";

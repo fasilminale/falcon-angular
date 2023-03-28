@@ -12,7 +12,7 @@ import { WebServices } from 'src/app/services/web-services';
 import FilerSaver from 'file-saver';
 import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 
 describe('MasterDataPageComponent', () => {
   let component: MasterDataPageComponent;
@@ -41,7 +41,7 @@ describe('MasterDataPageComponent', () => {
         RouterTestingModule,
         FalconTestingModule],
       declarations: [MasterDataPageComponent],
-      providers: [EnvironmentService, FormBuilder]
+      providers: [EnvironmentService, UntypedFormBuilder]
     })
       .compileComponents();
   });

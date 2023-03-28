@@ -53,7 +53,7 @@
                        formControlName="invoiceDate"
                        outsideDays="hidden"
                        [showTimezone]="false"
-                       [enableTextInput]="false"
+                       [enableTextInput]="true"
                        width="100%">
       </elm-date-picker>
       <elm-input-subtext *ngIf="invoiceDateControl.invalid"
@@ -77,7 +77,7 @@
                        formControlName="pickUpDate"
                        outsideDays="hidden"
                        [showTimezone]="false"
-                       [enableTextInput]="false"
+                       [enableTextInput]="true"
                        width="100%"
                        [ngClass]="{'field-invalid': !pickUpDateControl.value}">
       </elm-date-picker>
@@ -108,7 +108,7 @@
                        formControlName="deliveryDate"
                        outsideDays="hidden"
                        [showTimezone]="false"
-                       [enableTextInput]="false"
+                       [enableTextInput]="true"
                        width="100%">
       </elm-date-picker>
       <elm-input-subtext *ngIf="deliveryDateControl.invalid"

@@ -1,9 +1,9 @@
 import {TestBed} from '@angular/core/testing';
 import {UtilService} from './util-service';
-import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {of, throwError} from 'rxjs';
 import {FalconTestingModule} from '../testing/falcon-testing.module';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {InvoiceDataModel} from '../models/invoice/invoice-model';
 import * as saveAsFunctions from 'file-saver';
 import {WebServices} from './web-services';
@@ -32,7 +32,7 @@ describe('UtilService', () => {
   const testEditChargeData = {
     title: 'Test Edit Charge Modal',
     innerHtmlMessage: 'I\'m a test edit charge modal',
-    costLineItem: new FormControl()
+    costLineItem: new UntypedFormControl()
   };
 
   const weightAdjustmentTestModalData = {

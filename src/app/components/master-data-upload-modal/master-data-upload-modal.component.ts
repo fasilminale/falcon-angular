@@ -1,13 +1,12 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef, DialogRole} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef, DialogRole} from '@angular/material/dialog';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {WebServices} from '../../services/web-services';
 import {environment} from '../../../environments/environment';
 import {MasterDataUploadResponseModel} from '../../models/master-data-upload-response/master-data-upload-response-model';
 import {ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {MasterDataUploadErrorModalComponent} from '../master-data-upload-error-modal/master-data-upload-error-modal.component';
 import {UserService} from '../../services/user-service';
-import {UserInfoModel} from '../../models/user-info/user-info-model';
 import {ElmUamPermission} from '../../utils/elm-uam-permission';
 import {MasterDataRow} from '../../models/master-data-row/master-data-row';
 
@@ -20,9 +19,9 @@ export interface MasterDataUploadModalData {
   templateUrl: './master-data-upload-modal.component.html'
 })
 export class MasterDataUploadModalComponent {
-  fb = new FormBuilder();
-  form: FormGroup = new FormGroup({
-    initial: new FormControl()
+  fb = new UntypedFormBuilder();
+  form: UntypedFormGroup = new UntypedFormGroup({
+    initial: new UntypedFormControl()
   });
   fileToUpload: File | null = null;
   masterDataType = '';
@@ -63,8 +62,8 @@ export class MasterDataUploadModalComponent {
 
   resetForm(): void {
     this.form = this.fb.group({
-      masterDataTypeDropdown: new FormControl(),
-      fileSelector: new FormControl(),
+      masterDataTypeDropdown: new UntypedFormControl(),
+      fileSelector: new UntypedFormControl(),
     });
   }
 

@@ -1,9 +1,9 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FalEditChargeModalComponent, EditChargeModalInput, VariableFormControl} from './fal-edit-charge-modal.component';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {CalcDetail} from '../../models/rate-engine/rate-engine-request';
-import {FormControl, Validators} from '@angular/forms';
+import {UntypedFormControl, Validators} from '@angular/forms';
 import {Subject} from 'rxjs';
 
 describe('FalEditChargeModalComponent', () => {
@@ -73,7 +73,7 @@ describe('FalEditChargeModalComponent', () => {
   describe('#Set File Name for Display', () => {
     beforeEach(() => {
       // set mock data for edit scenario
-      MOCK_MODAL_INPUT.costLineItem = new FormControl({
+      MOCK_MODAL_INPUT.costLineItem = new UntypedFormControl({
         accessorialCode: 'TEST',
         charge: 'TEST CHARGE NAME',
         variables: TEST_CALC_DETAIL.variables
@@ -103,7 +103,7 @@ describe('FalEditChargeModalComponent', () => {
   describe('#EditSpotQuoteCharge', () => {
     beforeEach(() => {
       // set mock data for edit scenario
-      MOCK_MODAL_INPUT.costLineItem = new FormControl({
+      MOCK_MODAL_INPUT.costLineItem = new UntypedFormControl({
         uid: 'SPOTQUOTE1',
         charge: 'Spot Quote',
         variables: TEST_CALC_DETAIL.variables
@@ -151,7 +151,7 @@ describe('FalEditChargeModalComponent', () => {
   describe('#EditCharge', () => {
     beforeEach(() => {
       // set mock data for edit scenario
-      MOCK_MODAL_INPUT.costLineItem = new FormControl({
+      MOCK_MODAL_INPUT.costLineItem = new UntypedFormControl({
         accessorialCode: 'TEST',
         charge: 'TEST CHARGE NAME',
         variables: TEST_CALC_DETAIL.variables

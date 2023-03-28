@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ChipComponent, FilterChip} from './chip.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
-import {FormArray, FormControl} from '@angular/forms';
+import {UntypedFormArray, UntypedFormControl} from '@angular/forms';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
@@ -47,8 +47,8 @@ describe('ChipComponent', () => {
   });
 
   function addFilter(value?: string): void {
-    const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as FormArray;
-    loadStatusArray.push(new FormControl(value ? value : 'CREATED'));
+    const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as UntypedFormArray;
+    loadStatusArray.push(new UntypedFormControl(value ? value : 'CREATED'));
     component.filtersModel.form.get('originCity')?.setValue('TestOriginCity');
     component.filtersModel.form.get('destinationCity')?.setValue('TestDestinationCity');
     component.filtersModel.form.get('scac')?.setValue('ABCD');
@@ -111,8 +111,8 @@ describe('ChipComponent', () => {
 
   describe('formatArrayChip', () => {
     it('properly format a chip with a single value', () => {
-      const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as FormArray;
-      loadStatusArray.push(new FormControl('CREATED'));
+      const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as UntypedFormArray;
+      loadStatusArray.push(new UntypedFormControl('CREATED'));
       const statusChip: FilterChip =
         component.formatArrayChip('Status:&nbsp', loadStatusArray, invoiceStatuses, 'invoiceStatuses'
         );
@@ -125,9 +125,9 @@ describe('ChipComponent', () => {
 
   describe('getTooltips', () => {
     it('should properly return tooltips', () => {
-      const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as FormArray;
-      loadStatusArray.push(new FormControl('CREATED'));
-      loadStatusArray.push(new FormControl('SUBMITTED'));
+      const loadStatusArray = component.filtersModel.form.get('invoiceStatuses') as UntypedFormArray;
+      loadStatusArray.push(new UntypedFormControl('CREATED'));
+      loadStatusArray.push(new UntypedFormControl('SUBMITTED'));
       const tooltips = component.getTooltips(loadStatusArray, invoiceStatuses);
       expect(tooltips).toBe('Created<br>Submitted');
     });

@@ -10,9 +10,9 @@ import {
   ViewChild
 } from '@angular/core';
 import {
-  AbstractControl, FormArray,
-  FormControl,
-  FormGroup,
+  AbstractControl, UntypedFormArray,
+  UntypedFormControl,
+  UntypedFormGroup,
   NG_VALUE_ACCESSOR
 } from '@angular/forms';
 import {FalFileInputComponent} from '../fal-file-input/fal-file-input.component';
@@ -26,7 +26,7 @@ import {Template, TemplateToSave} from '../../models/template/template-model';
 import {InvoiceService} from '../../services/invoice-service';
 import {ATTACHMENT_SERVICE, AttachmentService} from '../../services/attachment-service';
 import {Milestone} from '../../models/milestone/milestone-model';
-import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {Observable, of, Subscription} from 'rxjs';
 import {InvoiceFormManager} from './invoice-form-manager';
 import {KeyedLabel} from '../../models/generic/keyed-label';
@@ -101,7 +101,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     // Bug is styleguide .... for some reason formarray supporting checkbox is not clearing out.
-    (this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).clear();
+    (this.form.osptFormGroup.controls.isPaymentOverrideSelected as UntypedFormArray).clear();
     this.form.destroy();
     this.subscriptions.unsubscribe();
   }
@@ -220,7 +220,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
             this.form.invoiceFormGroup.disable();
 
             if (!!invoice.standardPaymentTermsOverride) {
-              ElmFormHelper.checkCheckbox(this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray,
+              ElmFormHelper.checkCheckbox(this.form.osptFormGroup.controls.isPaymentOverrideSelected as UntypedFormArray,
                 this.form.overridePaymentTermsOptions[0], true);
             }
 
@@ -526,8 +526,8 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
       .toNumber(this.form.amountOfInvoice.value)
       .toFixed(2);
     for (let i = 0; i < this.form.lineItems.controls.length; i++) {
-      const lineItem = this.form.lineItems.at(i) as FormGroup;
-      const lineItemAmount = lineItem.get('lineItemNetAmount') as FormControl;
+      const lineItem = this.form.lineItems.at(i) as UntypedFormGroup;
+      const lineItemAmount = lineItem.get('lineItemNetAmount') as UntypedFormControl;
       sum += this.util.toNumber(lineItemAmount.value);
     }
     this.validAmount = parseFloat(invoiceAmount) > 0 && sum.toFixed(2) === invoiceAmount;
@@ -623,7 +623,7 @@ export class InvoiceFormComponent implements OnInit, OnChanges, OnDestroy {
     this.form.currency.enable();
     this.form.lineItems.enable();
     this.form.comments.enable();
-    (this.form.osptFormGroup.controls.isPaymentOverrideSelected as FormArray).enable();
+    (this.form.osptFormGroup.controls.isPaymentOverrideSelected as UntypedFormArray).enable();
   }
 
   public async checkCompanyCode(): Promise<string | null> {

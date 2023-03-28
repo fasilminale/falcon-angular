@@ -7,7 +7,7 @@ import {LoadingService} from '../../services/loading-service';
 import {InvoiceDataModel, InvoiceUtils} from '../../models/invoice/invoice-model';
 import {ConfirmationModalComponent, DataTableComponent, ElmDataTableHeader, ModalService, ToastService} from '@elm/elm-styleguide-ui';
 import {StatusModel} from '../../models/invoice/status-model';
-import {MatDialog, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {InvoiceFilterModalComponent} from '../../components/invoice-filter-modal/invoice-filter-modal.component';
 import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
@@ -18,7 +18,7 @@ import {SelectOption} from 'src/app/models/select-option-model/select-option-mod
 import {InvoiceService} from 'src/app/services/invoice-service';
 import {Subscription} from 'rxjs';
 import {SearchComponent} from '../../components/search/search.component';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 import {UtilService} from '../../services/util-service';
 
 
@@ -66,7 +66,7 @@ export class InvoiceListPageComponent implements OnInit, OnDestroy {
   public masterDataShippingPoints: Array<SelectOption<string>> = [];
   public masterDataModes: Array<SelectOption<string>> = [];
 
-  controlGroup: FormGroup;
+  controlGroup: UntypedFormGroup;
 
   constructor(
     private router: Router,

@@ -39,8 +39,9 @@ export class FalFileInputComponent extends FalControlValueAccessorComponent<File
   }
 
   public reset(): void {
-    // @ts-ignore
-    this.childInput?.nativeElement.value = '';
+    if (this.childInput) {
+      this.childInput.nativeElement.value = '';
+    }
   }
 
 }

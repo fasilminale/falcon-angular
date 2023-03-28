@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {SearchComponent} from './search.component';
-import {FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {UntypedFormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {InputsModule} from '@elm/elm-styleguide-ui';
 
@@ -17,12 +17,12 @@ describe('SearchComponent', () => {
         InputsModule
       ],
       declarations: [SearchComponent],
-      providers: [FormBuilder]
+      providers: [UntypedFormBuilder]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
-    component.controlGroup = new FormBuilder().group({
+    component.controlGroup = new UntypedFormBuilder().group({
       control: [null, [Validators.pattern('^[a-zA-Z0-9_-]*$'), Validators.required]]
     }, {updateOn: 'submit'});
     fixture.detectChanges();
