@@ -249,7 +249,7 @@
                 </div>
                 <div *ngIf="_.value.variables?.length === 0 && _.value.charge !== 'OTHER' && _.value.charge !== 'Spot Quote'"
                      class="edit-icon-invisible"></div>
-                <div *ngIf="_.value.charge !== 'Spot Quote'" class="material-icons edit-icon" (click)="onDeleteCostLineItem(_, i)">delete</div>
+                <div class="material-icons edit-icon" (click)="onDeleteCostLineItem(_, i)">delete</div>
               </div>
               <div
                 *ngIf="!(_.value.entrySource === 'FAL' || (_.value.entrySource === 'CP' && _.value.rateSource === 'Contract'))">
