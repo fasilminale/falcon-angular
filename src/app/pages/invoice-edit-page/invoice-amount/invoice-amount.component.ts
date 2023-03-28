@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable, Subscription} from 'rxjs';
 import {FalRadioOption} from 'src/app/components/fal-radio-input/fal-radio-input.component';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
@@ -22,7 +22,7 @@ export class InvoiceAmountComponent implements OnInit {
   static readonly INVOICE_AMOUNT_CL = 'invoice-amount-cl';
   static readonly INVOICE_AMOUNT_PAYTERM = 'invoice-amount-pt';
 
-  fileFormGroup = new FormGroup({});
+  fileFormGroup = new UntypedFormGroup({});
 
   private readonly subscriptions = new Subscription();
 
@@ -78,13 +78,13 @@ export class InvoiceAmountComponent implements OnInit {
     );
   }
 
-  @Input() set formGroup(givenFormGroup: FormGroup) {
+  @Input() set formGroup(givenFormGroup: UntypedFormGroup) {
     this.amountOfInvoiceControl.valueChanges.subscribe(() => this.requestGlAllocation.emit(true));
     givenFormGroup.setControl('amountOfInvoice', this.amountOfInvoiceControl);
-    givenFormGroup.setControl('currency', new FormControl(''));
+    givenFormGroup.setControl('currency', new UntypedFormControl(''));
     givenFormGroup.setControl('overridePaymentTerms', this.overridePaymentTermsFormGroup);
-    givenFormGroup.setControl('paymentTerms', new FormControl(''));
-    givenFormGroup.setControl('mileage', new FormControl());
+    givenFormGroup.setControl('paymentTerms', new UntypedFormControl(''));
+    givenFormGroup.setControl('mileage', new UntypedFormControl());
     givenFormGroup.setControl('fileFormGroup', this.fileFormGroup);
     this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls);
     givenFormGroup.setControl('costBreakdownItems', this.costBreakdownItems);
@@ -105,26 +105,26 @@ export class InvoiceAmountComponent implements OnInit {
 
   get pendingChargeLineItemControls(): AbstractControl[] {
     return this._formGroup.get('pendingChargeLineItems')
-      ? (this._formGroup.get('pendingChargeLineItems') as FormArray).controls
-      : new FormArray([]).controls;
+      ? (this._formGroup.get('pendingChargeLineItems') as UntypedFormArray).controls
+      : new UntypedFormArray([]).controls;
   }
 
   get deniedChargeLineItemControls(): AbstractControl[] {
     return this._formGroup.get('deniedChargeLineItems')
-      ? (this._formGroup.get('deniedChargeLineItems') as FormArray).controls
-      : new FormArray([]).controls;
+      ? (this._formGroup.get('deniedChargeLineItems') as UntypedFormArray).controls
+      : new UntypedFormArray([]).controls;
   }
 
   get disputeLineItemControls(): AbstractControl[] {
     return this._formGroup.get('disputeLineItems')
-      ? (this._formGroup.get('disputeLineItems') as FormArray).controls
-      : new FormArray([]).controls;
+      ? (this._formGroup.get('disputeLineItems') as UntypedFormArray).controls
+      : new UntypedFormArray([]).controls;
   }
 
   get deletedChargeLineItemControls(): AbstractControl[] {
     return this._formGroup.get('deletedChargeLineItems')
-      ? (this._formGroup.get('deletedChargeLineItems') as FormArray).controls
-      : new FormArray([]).controls;
+      ? (this._formGroup.get('deletedChargeLineItems') as UntypedFormArray).controls
+      : new UntypedFormArray([]).controls;
   }
 
   get costBreakdownTotal(): number {
@@ -177,8 +177,8 @@ export class InvoiceAmountComponent implements OnInit {
   public readonly dateFormat = 'MM-dd-YYYY';
   public readonly ellipsisPipeLimit = 10;
 
-  _formGroup = new FormGroup({});
-  amountOfInvoiceControl = new FormControl('', [Validators.required]);
+  _formGroup = new UntypedFormGroup({});
+  amountOfInvoiceControl = new UntypedFormControl('', [Validators.required]);
   @Output() invoiceAmountFormInvalid = new EventEmitter<any>();
   isValidCostBreakdownAmount = true;
   isPrepaid?: boolean;
@@ -196,20 +196,20 @@ export class InvoiceAmountComponent implements OnInit {
   public overridePaymentTermsOptions = [
     {label: 'Override Standard Payment Terms', value: 'override', disabled: false}
   ];
-  isPaymentOverrideSelected = new FormArray([]);
-  overridePaymentTermsFormGroup = new FormGroup({
+  isPaymentOverrideSelected = new UntypedFormArray([]);
+  overridePaymentTermsFormGroup = new UntypedFormGroup({
     isPaymentOverrideSelected: this.isPaymentOverrideSelected,
-    paymentTerms: new FormControl('')
+    paymentTerms: new UntypedFormControl('')
   });
 
   public costBreakdownOptions$: SubjectValue<Array<SelectOption<CalcDetail>>> = new SubjectValue<Array<SelectOption<CalcDetail>>>([]);
 
   readOnlyForm = true;
-  costBreakdownItems = new FormArray([]);
-  pendingChargeLineItems = new FormArray([]);
-  deniedChargeLineItems = new FormArray([]);
-  deletedChargeLineItems = new FormArray([]);
-  disputeLineItems = new FormArray([]);
+  costBreakdownItems = new UntypedFormArray([]);
+  pendingChargeLineItems = new UntypedFormArray([]);
+  deniedChargeLineItems = new UntypedFormArray([]);
+  deletedChargeLineItems = new UntypedFormArray([]);
+  disputeLineItems = new UntypedFormArray([]);
   pendingAccessorialCode = '';
   paymentTermValid: boolean = true;
 
@@ -276,7 +276,7 @@ export class InvoiceAmountComponent implements OnInit {
     this.emitOverrideStandardPaymentTermsValidity();
   }
 
-  loadForm(givenFormGroup: FormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
+  loadForm(givenFormGroup: UntypedFormGroup, invoiceAmountDetail?: InvoiceAmountDetail): void {
     givenFormGroup.get('currency')?.setValue(invoiceAmountDetail?.currency ?? '');
     if (!!invoiceAmountDetail?.standardPaymentTermsOverride) {
       ElmFormHelper.checkCheckbox(this.isPaymentOverrideSelected,
@@ -287,11 +287,11 @@ export class InvoiceAmountComponent implements OnInit {
     this.overridePaymentTermsFormGroup.controls.paymentTerms.setValue(invoiceAmountDetail?.standardPaymentTermsOverride ?? '');
     givenFormGroup.get('mileage')?.setValue(invoiceAmountDetail?.mileage ?? '');
     givenFormGroup.get('mileage')?.disable();
-    (givenFormGroup.get('costBreakdownItems') as FormArray).clear();
-    (givenFormGroup.get('pendingChargeLineItems') as FormArray).clear();
-    (givenFormGroup.get('disputeLineItems') as FormArray)?.clear();
-    (givenFormGroup.get('deletedChargeLineItems') as FormArray)?.clear();
-    (givenFormGroup.get('deniedChargeLineItems') as FormArray)?.clear();
+    (givenFormGroup.get('costBreakdownItems') as UntypedFormArray).clear();
+    (givenFormGroup.get('pendingChargeLineItems') as UntypedFormArray).clear();
+    (givenFormGroup.get('disputeLineItems') as UntypedFormArray)?.clear();
+    (givenFormGroup.get('deletedChargeLineItems') as UntypedFormArray)?.clear();
+    (givenFormGroup.get('deniedChargeLineItems') as UntypedFormArray)?.clear();
 
     this.insertLineItems(this.costBreakdownItems, this.costBreakdownItemsControls, invoiceAmountDetail?.costLineItems);
     this.insertLineItems(this.pendingChargeLineItems, this.pendingChargeLineItemControls, invoiceAmountDetail?.pendingChargeLineItems);
@@ -304,44 +304,44 @@ export class InvoiceAmountComponent implements OnInit {
     );
   }
 
-  insertLineItems(items: FormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
+  insertLineItems(items: UntypedFormArray, controls: AbstractControl[], lineItems?: CostLineItem[]): void {
     if (lineItems && lineItems.length > 0) {
       lineItems.forEach((lineItem) => {
         const quantityAssertion = lineItem.quantity !== null && lineItem.quantity !== undefined;
-        const group = new FormGroup({
-          attachment: new FormControl(lineItem.attachment ?? null),
-          attachmentLink: new FormControl(lineItem.attachmentLink ?? null),
-          accessorial: new FormControl(lineItem.accessorial ?? false),
-          accessorialCode: new FormControl(lineItem.accessorialCode),
-          uid: new FormControl(lineItem.uid),
-          charge: new FormControl(lineItem.chargeCode),
-          rateSource: new FormControl(lineItem.rateSource?.label ?? 'N/A'),
-          rateSourcePair: new FormControl(lineItem.rateSource),
-          entrySource: new FormControl(lineItem.entrySource?.label ?? 'N/A'),
-          entrySourcePair: new FormControl(lineItem.entrySource),
-          rate: new FormControl(lineItem.rateAmount ? `${lineItem.rateAmount}` : 'N/A'),
-          type: new FormControl(lineItem.rateType ? lineItem.rateType : ''),
-          quantity: new FormControl(quantityAssertion ? lineItem.quantity : 'N/A'),
-          totalAmount: new FormControl(lineItem.chargeLineTotal || 0),
-          requestStatus: new FormControl(lineItem.requestStatus?.label ?? 'N/A'),
-          requestStatusPair: new FormControl(lineItem.requestStatus),
-          message: new FormControl(lineItem.message ?? 'N/A'),
-          createdBy: new FormControl(lineItem.createdBy ?? 'N/A'),
-          createdDate: new FormControl(lineItem.createdDate ?? 'N/A'),
-          closedBy: new FormControl(lineItem.closedBy ?? 'N/A'),
-          closedDate: new FormControl(lineItem.closedDate ?? 'N/A'),
-          carrierComment: new FormControl(lineItem.carrierComment ?? 'N/A'),
-          responseComment: new FormControl(lineItem.responseComment ?? 'N/A'),
-          rateResponse: new FormControl(lineItem.rateResponse ?? 'N/A'),
-          autoApproved: new FormControl(lineItem.autoApproved ?? true),
-          attachmentRequired: new FormControl(lineItem.attachmentRequired ?? false),
-          planned: new FormControl(lineItem.planned ?? false),
-          fuel: new FormControl(lineItem.fuel ?? false),
-          manual: new FormControl(false),
-          lineItemType: new FormControl(lineItem.lineItemType ?? null),
-          variables: new FormControl(lineItem.variables ?? []),
-          deletedDate: new FormControl(lineItem.deletedDate),
-          persisted: new FormControl(lineItem.persisted),
+        const group = new UntypedFormGroup({
+          attachment: new UntypedFormControl(lineItem.attachment ?? null),
+          attachmentLink: new UntypedFormControl(lineItem.attachmentLink ?? null),
+          accessorial: new UntypedFormControl(lineItem.accessorial ?? false),
+          accessorialCode: new UntypedFormControl(lineItem.accessorialCode),
+          uid: new UntypedFormControl(lineItem.uid),
+          charge: new UntypedFormControl(lineItem.chargeCode),
+          rateSource: new UntypedFormControl(lineItem.rateSource?.label ?? 'N/A'),
+          rateSourcePair: new UntypedFormControl(lineItem.rateSource),
+          entrySource: new UntypedFormControl(lineItem.entrySource?.label ?? 'N/A'),
+          entrySourcePair: new UntypedFormControl(lineItem.entrySource),
+          rate: new UntypedFormControl(lineItem.rateAmount ? `${lineItem.rateAmount}` : 'N/A'),
+          type: new UntypedFormControl(lineItem.rateType ? lineItem.rateType : ''),
+          quantity: new UntypedFormControl(quantityAssertion ? lineItem.quantity : 'N/A'),
+          totalAmount: new UntypedFormControl(lineItem.chargeLineTotal || 0),
+          requestStatus: new UntypedFormControl(lineItem.requestStatus?.label ?? 'N/A'),
+          requestStatusPair: new UntypedFormControl(lineItem.requestStatus),
+          message: new UntypedFormControl(lineItem.message ?? 'N/A'),
+          createdBy: new UntypedFormControl(lineItem.createdBy ?? 'N/A'),
+          createdDate: new UntypedFormControl(lineItem.createdDate ?? 'N/A'),
+          closedBy: new UntypedFormControl(lineItem.closedBy ?? 'N/A'),
+          closedDate: new UntypedFormControl(lineItem.closedDate ?? 'N/A'),
+          carrierComment: new UntypedFormControl(lineItem.carrierComment ?? 'N/A'),
+          responseComment: new UntypedFormControl(lineItem.responseComment ?? 'N/A'),
+          rateResponse: new UntypedFormControl(lineItem.rateResponse ?? 'N/A'),
+          autoApproved: new UntypedFormControl(lineItem.autoApproved ?? true),
+          attachmentRequired: new UntypedFormControl(lineItem.attachmentRequired ?? false),
+          planned: new UntypedFormControl(lineItem.planned ?? false),
+          fuel: new UntypedFormControl(lineItem.fuel ?? false),
+          manual: new UntypedFormControl(false),
+          lineItemType: new UntypedFormControl(lineItem.lineItemType ?? null),
+          variables: new UntypedFormControl(lineItem.variables ?? []),
+          deletedDate: new UntypedFormControl(lineItem.deletedDate),
+          persisted: new UntypedFormControl(lineItem.persisted),
         });
         group.get('rateSourcePair')?.valueChanges?.subscribe(
           value => group.get('rateSource')?.setValue(value?.label ?? 'N/A')
@@ -359,17 +359,17 @@ export class InvoiceAmountComponent implements OnInit {
 
   insertDisputeLineItems(disputeLineItems?: DisputeLineItem[]): void {
     if (disputeLineItems && disputeLineItems.length > 0) {
-      this.disputeLineItems = new FormArray([]);
+      this.disputeLineItems = new UntypedFormArray([]);
       disputeLineItems.forEach((disputeLineItem) => {
-        this.disputeLineItemControls.push(new FormGroup({
-          comment: new FormControl(disputeLineItem.comment),
-          attachment: new FormControl(disputeLineItem.attachment),
-          createdDate: new FormControl(disputeLineItem.createdDate),
-          createdBy: new FormControl(disputeLineItem.createdBy),
-          disputeStatus: new FormControl(disputeLineItem.disputeStatus),
-          responseComment: new FormControl(disputeLineItem.responseComment ? disputeLineItem.responseComment : 'N/A'),
-          closedDate: new FormControl(disputeLineItem.closedDate ?? 'N/A'),
-          closedBy: new FormControl(disputeLineItem.closedBy ?? 'N/A')
+        this.disputeLineItemControls.push(new UntypedFormGroup({
+          comment: new UntypedFormControl(disputeLineItem.comment),
+          attachment: new UntypedFormControl(disputeLineItem.attachment),
+          createdDate: new UntypedFormControl(disputeLineItem.createdDate),
+          createdBy: new UntypedFormControl(disputeLineItem.createdBy),
+          disputeStatus: new UntypedFormControl(disputeLineItem.disputeStatus),
+          responseComment: new UntypedFormControl(disputeLineItem.responseComment ? disputeLineItem.responseComment : 'N/A'),
+          closedDate: new UntypedFormControl(disputeLineItem.closedDate ?? 'N/A'),
+          closedBy: new UntypedFormControl(disputeLineItem.closedBy ?? 'N/A')
         }));
       });
     }
@@ -426,7 +426,7 @@ export class InvoiceAmountComponent implements OnInit {
 
       newLineItemGroup.get('attachment')?.setValue(attachment);
       this.fileFormGroup.removeControl(newLineItemGroup.get('uid')?.value);
-      this.fileFormGroup.addControl(newLineItemGroup.get('uid')?.value, new FormControl(modalResponse.file));
+      this.fileFormGroup.addControl(newLineItemGroup.get('uid')?.value, new UntypedFormControl(modalResponse.file));
       this.rateEngineCall.emit(this.pendingAccessorialCode);
     }
   }
@@ -438,35 +438,35 @@ export class InvoiceAmountComponent implements OnInit {
     }
   }
 
-  createEmptyLineItemGroup(): FormGroup {
+  createEmptyLineItemGroup(): UntypedFormGroup {
     const attachmentString = {url: 'no-file'};
-    const attachment = new FormControl(attachmentString);
-    const charge = new FormControl(null);
-    const rateSource = new FormControl('');
-    const rateSourcePair = new FormControl(null);
-    const entrySource = new FormControl('');
-    const entrySourcePair = new FormControl(null);
-    const requestStatus = new FormControl('');
-    const requestStatusPair = new FormControl(null);
-    const createdDate = new FormControl(new Date().toISOString());
-    const createdBy = new FormControl(null);
-    const rate = new FormControl('N/A');
-    const type = new FormControl('N/A');
-    const quantity = new FormControl('N/A');
-    const totalAmount = new FormControl(0);
-    const message = new FormControl('');
-    const manual = new FormControl(true);
-    const expanded = new FormControl(false);
-    const lineItemType = new FormControl(null);
-    const accessorialCode = new FormControl(null);
-    const uid = new FormControl(null);
-    const autoApproved = new FormControl(true);
-    const persisted = new FormControl(false);
-    const responseComment = new FormControl(null);
-    const variables = new FormControl([]);
-    const file = new FormControl(null);
-    const toBeRated = new FormControl(true);
-    const group = new FormGroup({
+    const attachment = new UntypedFormControl(attachmentString);
+    const charge = new UntypedFormControl(null);
+    const rateSource = new UntypedFormControl('');
+    const rateSourcePair = new UntypedFormControl(null);
+    const entrySource = new UntypedFormControl('');
+    const entrySourcePair = new UntypedFormControl(null);
+    const requestStatus = new UntypedFormControl('');
+    const requestStatusPair = new UntypedFormControl(null);
+    const createdDate = new UntypedFormControl(new Date().toISOString());
+    const createdBy = new UntypedFormControl(null);
+    const rate = new UntypedFormControl('N/A');
+    const type = new UntypedFormControl('N/A');
+    const quantity = new UntypedFormControl('N/A');
+    const totalAmount = new UntypedFormControl(0);
+    const message = new UntypedFormControl('');
+    const manual = new UntypedFormControl(true);
+    const expanded = new UntypedFormControl(false);
+    const lineItemType = new UntypedFormControl(null);
+    const accessorialCode = new UntypedFormControl(null);
+    const uid = new UntypedFormControl(null);
+    const autoApproved = new UntypedFormControl(true);
+    const persisted = new UntypedFormControl(false);
+    const responseComment = new UntypedFormControl(null);
+    const variables = new UntypedFormControl([]);
+    const file = new UntypedFormControl(null);
+    const toBeRated = new UntypedFormControl(true);
+    const group = new UntypedFormGroup({
       attachment, charge, rateSource, rateSourcePair,
       entrySource, entrySourcePair,
       requestStatus, requestStatusPair,
@@ -596,7 +596,7 @@ export class InvoiceAmountComponent implements OnInit {
         // @ts-ignore
         this.fileFormGroup.removeControl(editChargeDetails.uid);
         // @ts-ignore
-        this.fileFormGroup.addControl(editChargeDetails.uid, new FormControl(editChargeDetails.file));
+        this.fileFormGroup.addControl(editChargeDetails.uid, new UntypedFormControl(editChargeDetails.file));
 
       }
     }

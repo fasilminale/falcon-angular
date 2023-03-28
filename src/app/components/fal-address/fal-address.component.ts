@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {Observable, Subscription} from 'rxjs';
 import {ShippingPointLocationSelectOption} from 'src/app/models/location/location-model';
 
@@ -17,23 +17,23 @@ export class FalAddressComponent {
     'Office'
   ];
 
-  public _formGroup = new FormGroup({});
-  private _editableFormArray = new FormArray([]);
+  public _formGroup = new UntypedFormGroup({});
+  private _editableFormArray = new UntypedFormArray([]);
   @Input() addressType!: 'origin' | 'destination';
   @Input() destinationType?: string;
   @Output() originShippingPointChangeEvent = new EventEmitter<string>();
   public masterDataShippingPoints: Array<ShippingPointLocationSelectOption> = [];
 
-  public nameControl = new FormControl('', [required]);
-  public countryControl = new FormControl('', [required]);
-  public cityControl = new FormControl('', [required]);
-  public zipCodeControl = new FormControl('', [required, minLength(5)]);
-  public stateControl = new FormControl('', [required]);
-  public streetAddressControl = new FormControl('', [required]);
-  public streetAddress2Control = new FormControl();
-  public shippingPointControl = new FormControl('', [required]);
-  public name2Control = new FormControl();
-  public idCodeControl = new FormControl();
+  public nameControl = new UntypedFormControl('', [required]);
+  public countryControl = new UntypedFormControl('', [required]);
+  public cityControl = new UntypedFormControl('', [required]);
+  public zipCodeControl = new UntypedFormControl('', [required, minLength(5)]);
+  public stateControl = new UntypedFormControl('', [required]);
+  public streetAddressControl = new UntypedFormControl('', [required]);
+  public streetAddress2Control = new UntypedFormControl();
+  public shippingPointControl = new UntypedFormControl('', [required]);
+  public name2Control = new UntypedFormControl();
+  public idCodeControl = new UntypedFormControl();
 
   @Input() showShippingItemField = true;
   @Input() validateField = true; // TODO: Temporary for FAL-750. Replace when edit capability is implemented
@@ -55,7 +55,7 @@ export class FalAddressComponent {
     );
   }
 
-  @Input() set formGroup(newFormGroup: FormGroup) {
+  @Input() set formGroup(newFormGroup: UntypedFormGroup) {
     newFormGroup.setControl('name', this.nameControl);
     newFormGroup.setControl('country', this.countryControl);
     newFormGroup.setControl('city', this.cityControl);

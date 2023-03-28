@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
-import {AbstractControl, AbstractControlOptions, AsyncValidatorFn, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {AbstractControl, AbstractControlOptions, AsyncValidatorFn, UntypedFormControl, UntypedFormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {buttonStyle} from '@elm/elm-styleguide-ui';
 import {Subscription} from 'rxjs';
 import {CalcDetail, CalcDetailVariable} from '../../models/rate-engine/rate-engine-request';
@@ -13,13 +13,13 @@ import {SelectOption} from '../../models/select-option-model/select-option-model
 })
 export class FalEditChargeModalComponent {
 
-  public readonly chargeControl = new FormControl('', Validators.required);
-  public readonly accessorialControl = new FormControl('');
-  public readonly variableControls = new FormGroup({});
-  public readonly commentControl: FormControl = new FormControl('');
-  public readonly file: FormControl = new FormControl('');
+  public readonly chargeControl = new UntypedFormControl('', Validators.required);
+  public readonly accessorialControl = new UntypedFormControl('');
+  public readonly variableControls = new UntypedFormGroup({});
+  public readonly commentControl: UntypedFormControl = new UntypedFormControl('');
+  public readonly file: UntypedFormControl = new UntypedFormControl('');
   public fileName: string;
-  public readonly form = new FormGroup({
+  public readonly form = new UntypedFormGroup({
     charge: this.chargeControl,
     variables: this.variableControls
   });
@@ -324,7 +324,7 @@ export type NewChargeModalOutput = undefined | {
  * An extension to FormControl that allows useful metadata
  * related to variables to be passed along inside the control.
  */
-export class VariableFormControl extends FormControl {
+export class VariableFormControl extends UntypedFormControl {
   constructor(
     /**
      * The name of the variable represented by this FormControl

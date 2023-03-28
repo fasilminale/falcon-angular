@@ -67,8 +67,6 @@
                 "src/favicon.ico",
                 "src/assets"
               ],
-              "baseHref": "/falcon/",
-              "deployUrl": "/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -156,8 +154,9 @@
       }
     }
   },
-  "defaultProject": "elm-falcon-ui",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

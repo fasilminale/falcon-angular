@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {InvoiceFormManager} from './invoice-form-manager';
-import {AbstractControl, FormArray, FormControl} from '@angular/forms';
+import {AbstractControl, UntypedFormArray, UntypedFormControl} from '@angular/forms';
 import Spy = jasmine.Spy;
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {of} from 'rxjs';
@@ -25,8 +25,8 @@ describe('InvoiceFormManager', () => {
     spyOn(masterDataService, 'checkCompanyCode').and.returnValue(of('TEST'));
   });
 
-  function createSpyFormControl(): FormControl {
-    const formControl = new FormControl();
+  function createSpyFormControl(): UntypedFormControl {
+    const formControl = new UntypedFormControl();
     spyOn(formControl.statusChanges, 'subscribe').and.callThrough();
     spyOn(formControl.valueChanges, 'subscribe').and.callThrough();
     spyOn(formControl, 'markAsTouched').and.callThrough();
@@ -85,11 +85,11 @@ describe('InvoiceFormManager', () => {
         // PAYMENT TERMS TESTS
         describe('given a payment override is selected', () => {
           beforeEach(() => {
-            (invoiceFormManager.isPaymentOverrideSelected as FormArray)
-              .push(new FormControl(invoiceFormManager.overridePaymentTermsOptions[0].value));
+            (invoiceFormManager.isPaymentOverrideSelected as UntypedFormArray)
+              .push(new UntypedFormControl(invoiceFormManager.overridePaymentTermsOptions[0].value));
           });
           it(', payment override should be selected', () => {
-            expect((invoiceFormManager.isPaymentOverrideSelected as FormArray).at(0).value)
+            expect((invoiceFormManager.isPaymentOverrideSelected as UntypedFormArray).at(0).value)
               .toEqual(invoiceFormManager.overridePaymentTermsOptions[0].value);
           });
           describe('and payment terms are present', () => {
@@ -101,11 +101,11 @@ describe('InvoiceFormManager', () => {
             });
             describe(', then payment override is unselected', () => {
               beforeEach(() => {
-                (invoiceFormManager.isPaymentOverrideSelected as FormArray).clear();
-                (invoiceFormManager.isPaymentOverrideSelected as FormArray).push(new FormControl(null));
+                (invoiceFormManager.isPaymentOverrideSelected as UntypedFormArray).clear();
+                (invoiceFormManager.isPaymentOverrideSelected as UntypedFormArray).push(new UntypedFormControl(null));
               });
               it(', payment override should be unselected', () => {
-                expect((invoiceFormManager.isPaymentOverrideSelected as FormArray).at(0).value).toBeNull();
+                expect((invoiceFormManager.isPaymentOverrideSelected as UntypedFormArray).at(0).value).toBeNull();
               });
               it(', payment terms should be cleared', () => {
                 expect(invoiceFormManager.paymentTerms.value).toBeNull();

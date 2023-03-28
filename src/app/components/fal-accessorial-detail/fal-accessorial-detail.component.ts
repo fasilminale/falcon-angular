@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {AbstractControl, FormControl} from '@angular/forms';
+import {AbstractControl, UntypedFormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-fal-accessorial-detail',
@@ -66,7 +66,7 @@ import {AbstractControl, FormControl} from '@angular/forms';
 export class FalAccessorialDetailComponent implements OnInit {
 
   public readonly dateFormat = 'MM-dd-YYYY';
-  @Input() lineItem: AbstractControl = new FormControl({});
+  @Input() lineItem: AbstractControl = new UntypedFormControl({});
 
   constructor() {
   }

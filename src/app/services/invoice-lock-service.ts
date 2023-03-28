@@ -6,7 +6,7 @@ import { WebServices } from './web-services';
 import { UserInfoModel } from '../models/user-info/user-info-model';
 import {map, share} from 'rxjs/operators';
 import {PaginationModel} from '../models/PaginationModel';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, FormGroup, Validators} from '@angular/forms';
 import {InvoiceLockModel} from '../models/invoice/invoice-lock-model';
 import {InvoiceService} from './invoice-service';
 
@@ -16,7 +16,7 @@ import {InvoiceService} from './invoice-service';
 export class InvoiceLockService {
   private invoiceLockCache: InvoiceLockModel | null;
 
-  constructor(private http: HttpClient, private web: WebServices, private fb: FormBuilder) {
+  constructor(private http: HttpClient, private web: WebServices, private fb: UntypedFormBuilder) {
     this.invoiceLockCache = null;
   }
 

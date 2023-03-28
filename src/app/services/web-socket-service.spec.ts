@@ -7,7 +7,7 @@ import {WebSocketService} from './web-socket-service';
 import {UserService} from './user-service';
 import {EnvironmentService} from './environment-service/environment-service';
 import {InvoiceService} from './invoice-service';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 
 describe('WebSocket Tests', () => {
 
@@ -18,7 +18,7 @@ describe('WebSocket Tests', () => {
     TestBed.configureTestingModule({
       imports: [FalconTestingModule],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
 
       ]
     });

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {FiltersModel} from '../../models/filters/filters-model';
-import {FormArray, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormGroup} from '@angular/forms';
 import {StatusModel} from 'src/app/models/invoice/status-model';
 import {FilterService} from '../../services/filter-service';
 import {KeyedLabel} from 'src/app/models/generic/keyed-label';
@@ -55,37 +55,37 @@ export class ChipComponent implements OnChanges {
     if (statusForm?.value.length > 0) {
       this.chips.push(
         this.formatArrayChip(
-          'Status:&nbsp', statusForm as FormArray, this.filterService.invoiceStatuses, 'invoiceStatuses'
+          'Status:&nbsp', statusForm as UntypedFormArray, this.filterService.invoiceStatuses, 'invoiceStatuses'
         ));
     }
     if (originCity?.value?.length > 0) {
       this.chips.push(
-        this.formatChip('Origin:&nbsp', originCity as FormGroup, 'originCity')
+        this.formatChip('Origin:&nbsp', originCity as UntypedFormGroup, 'originCity')
       );
     }
 
     if (destinationCity?.value?.length > 0) {
       this.chips.push(
-        this.formatChip('Dest:&nbsp', destinationCity as FormGroup, 'destinationCity')
+        this.formatChip('Dest:&nbsp', destinationCity as UntypedFormGroup, 'destinationCity')
       );
     }
 
     if (scac?.value?.length > 0) {
       this.chips.push(
         this.formatChip(
-          'Carrier:&nbsp', scac as FormGroup, 'scac')
+          'Carrier:&nbsp', scac as UntypedFormGroup, 'scac')
       );
     }
 
     if (filterBySpotQuote?.value) {
       this.chips.push(
-        this.formatSpotBooleanChip('Spot Quote', filterBySpotQuote as FormGroup, 'filterBySpotQuote')
+        this.formatSpotBooleanChip('Spot Quote', filterBySpotQuote as UntypedFormGroup, 'filterBySpotQuote')
       );
     }
 
     if (shippingPointCode?.value?.length > 0) {
       this.chips.push(
-        this.formatChip('Shipping point:&nbsp', shippingPointCode as FormGroup, 'shippingPoints')
+        this.formatChip('Shipping point:&nbsp', shippingPointCode as UntypedFormGroup, 'shippingPoints')
       );
     }
 
@@ -132,7 +132,7 @@ export class ChipComponent implements OnChanges {
     if (mode?.value?.length > 0) {
       const arrObjMode = mode?.value.map((m: any) => ({'key': m, 'label': m}));
       this.chips.push(
-        this.formatArrayChip('Mode:&nbsp', mode as FormArray, arrObjMode, 'mode')
+        this.formatArrayChip('Mode:&nbsp', mode as UntypedFormArray, arrObjMode, 'mode')
       );
     }
   }
@@ -147,7 +147,7 @@ export class ChipComponent implements OnChanges {
     };
   }
 
-  formatArrayChip(type: string, formArray: FormArray, arrayOptions: Array<KeyedLabel>, group: string): FilterChip {
+  formatArrayChip(type: string, formArray: UntypedFormArray, arrayOptions: Array<KeyedLabel>, group: string): FilterChip {
     if (formArray.value.length === 1) {
       return {
         type,
@@ -163,7 +163,7 @@ export class ChipComponent implements OnChanges {
     };
   }
 
-  formatSpotBooleanChip(type: string, formGroup: FormGroup, group: string): { label: any; type: string; group: string } {
+  formatSpotBooleanChip(type: string, formGroup: UntypedFormGroup, group: string): { label: any; type: string; group: string } {
     return {
       type,
       label: '',
@@ -171,7 +171,7 @@ export class ChipComponent implements OnChanges {
     };
   }
 
-  formatChip(type: string, formGroup: FormGroup, group: string): { label: any; type: string; group: string } {
+  formatChip(type: string, formGroup: UntypedFormGroup, group: string): { label: any; type: string; group: string } {
     return {
       type,
       label: formGroup.value,
@@ -183,7 +183,7 @@ export class ChipComponent implements OnChanges {
     return options.filter(option => option.key === value)[0].label;
   }
 
-  getTooltips(formArray: FormArray, options: Array<StatusModel>): string {
+  getTooltips(formArray: UntypedFormArray, options: Array<StatusModel>): string {
     const tooltips: string[] = [];
     for (const value of formArray.value) {
       tooltips.push(this.getLabel(value, options));

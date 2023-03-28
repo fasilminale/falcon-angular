@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InvoiceDetailPageComponent} from './invoice-detail-page.component';
 import {HttpTestingController} from '@angular/common/http/testing';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {RouterTestingModule} from '@angular/router/testing';
 import {LoadingService} from '../../services/loading-service';
 import {of} from 'rxjs';
@@ -17,7 +17,7 @@ import {ButtonModule, ElmButtonComponent} from '@elm/elm-styleguide-ui';
 import {InvoiceFormManager} from '../../components/invoice-form/invoice-form-manager';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
 import {UserService} from '../../services/user-service';
-import {FormBuilder} from '@angular/forms';
+import {UntypedFormBuilder} from '@angular/forms';
 import {UserInfoModel} from '../../models/user-info/user-info-model';
 
 describe('InvoiceDetailPageComponent', () => {
@@ -96,7 +96,7 @@ describe('InvoiceDetailPageComponent', () => {
         ButtonModule,
       ],
       providers: [
-        FormBuilder
+        UntypedFormBuilder
       ],
       declarations: [
         InvoiceDetailPageComponent,

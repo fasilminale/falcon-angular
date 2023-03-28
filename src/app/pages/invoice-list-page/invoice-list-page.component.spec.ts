@@ -12,12 +12,12 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {of} from 'rxjs';
 import {StatusModel} from '../../models/invoice/status-model';
 import {FalconTestingModule} from '../../testing/falcon-testing.module';
-import {MatDialog} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {FilterService} from '../../services/filter-service';
 import {Sort} from '@angular/material/sort';
 import {UserService} from '../../services/user-service';
 import {By} from '@angular/platform-browser';
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {SearchComponent} from '../../components/search/search.component';
 import {ModalService} from '@elm/elm-styleguide-ui';
 import {PaginationModel} from '../../models/PaginationModel';
@@ -106,7 +106,7 @@ describe('InvoiceListPageComponent', () => {
       ],
       declarations: [InvoiceListPageComponent, SearchComponent],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         {
           provide: MatDialog,
           useClass: DialogMock
@@ -438,9 +438,9 @@ describe('InvoiceListPageComponent', () => {
   }));
 
   it('should download a list of invoices', fakeAsync(() => {
-    component.filterService.invoiceFilterModel.fb.group({invoiceStatuses: new FormArray([])});
+    component.filterService.invoiceFilterModel.fb.group({invoiceStatuses: new UntypedFormArray([])});
     const formArray: any = component.filterService.invoiceFilterModel.form.get('invoiceStatuses');
-    formArray.push(new FormControl('APPROVED'));
+    formArray.push(new UntypedFormControl('APPROVED'));
     spyOn(utilService, 'downloadCsv').and.stub();
     component.downloadCsv();
     expect(utilService.downloadCsv).toHaveBeenCalled();
@@ -450,7 +450,7 @@ describe('InvoiceListPageComponent', () => {
     const sub = component.subscription;
     const service = component.userService;
     const paginationModel = new PaginationModel();
-    const controlGroup = new FormGroup({});
+    const controlGroup = new UntypedFormGroup({});
     component.paginationModel = paginationModel;
     component.controlGroup = controlGroup;
     spyOn(sub, 'unsubscribe').and.callThrough();

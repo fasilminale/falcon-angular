@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {GlLineItem, GlLineItemError} from '../../models/line-item/line-item-model';
 import {ToastService} from '@elm/elm-styleguide-ui';
 import {InvoiceService} from '../../services/invoice-service';
@@ -12,15 +12,15 @@ import {InvoiceService} from '../../services/invoice-service';
 })
 export class FalEditGlModalComponent {
 
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public glLineItems: Array<GlLineItem>;
-  public readonly allocationPercentControl: FormControl = new FormControl('');
-  public readonly customerCategoryControl: FormControl = new FormControl('');
-  public readonly glCostCenterControl: FormControl = new FormControl('');
-  public readonly glProfitCenterControl: FormControl = new FormControl('');
-  public readonly glAccountControl: FormControl = new FormControl('', Validators.required);
-  public readonly glCompanyCodeControl: FormControl = new FormControl('', Validators.required);
-  public readonly glAmountControl: FormControl = new FormControl('');
+  public readonly allocationPercentControl: UntypedFormControl = new UntypedFormControl('');
+  public readonly customerCategoryControl: UntypedFormControl = new UntypedFormControl('');
+  public readonly glCostCenterControl: UntypedFormControl = new UntypedFormControl('');
+  public readonly glProfitCenterControl: UntypedFormControl = new UntypedFormControl('');
+  public readonly glAccountControl: UntypedFormControl = new UntypedFormControl('', Validators.required);
+  public readonly glCompanyCodeControl: UntypedFormControl = new UntypedFormControl('', Validators.required);
+  public readonly glAmountControl: UntypedFormControl = new UntypedFormControl('');
   public invoiceAllocationErrors?: GlLineItemError;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: EditGlLineItemModal,
@@ -38,7 +38,7 @@ export class FalEditGlModalComponent {
 
     this.glLineItems = data.glLineItems;
 
-    this.form = new FormGroup({
+    this.form = new UntypedFormGroup({
       allocationPercent: this.allocationPercentControl,
       customerCategory: this.customerCategoryControl,
       glCostCenter: this.glCostCenterControl,

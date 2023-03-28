@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormArray, UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {Observable, of, Subject} from 'rxjs';
 import {InvoiceAmountDetail} from 'src/app/models/invoice/invoice-amount-detail-model';
 import {FalconTestingModule} from 'src/app/testing/falcon-testing.module';
@@ -89,7 +89,7 @@ describe('InvoiceAmountComponent', () => {
     utilService = TestBed.inject(UtilService);
     fixture = TestBed.createComponent(InvoiceAmountComponent);
     component = fixture.componentInstance;
-    component.formGroup = new FormGroup({});
+    component.formGroup = new UntypedFormGroup({});
     fixture.detectChanges();
   });
 
@@ -118,17 +118,17 @@ describe('InvoiceAmountComponent', () => {
     describe('> After Adding Line Items', () => {
       beforeEach(() => {
         component.amountOfInvoiceControl.setValue(30);
-        component.costBreakdownItems.push(new FormGroup({
-          totalAmount: new FormControl(10),
-          rateSource: new FormControl('Contract')
+        component.costBreakdownItems.push(new UntypedFormGroup({
+          totalAmount: new UntypedFormControl(10),
+          rateSource: new UntypedFormControl('Contract')
         }));
-        component.costBreakdownItems.push(new FormGroup({
-          totalAmount: new FormControl(20),
-          rateSource: new FormControl('Manual')
+        component.costBreakdownItems.push(new UntypedFormGroup({
+          totalAmount: new UntypedFormControl(20),
+          rateSource: new UntypedFormControl('Manual')
         }));
-        component.costBreakdownItems.push(new FormGroup({
-          totalAmount: new FormControl(),
-          rateSource: new FormControl('Manual')
+        component.costBreakdownItems.push(new UntypedFormGroup({
+          totalAmount: new UntypedFormControl(),
+          rateSource: new UntypedFormControl('Manual')
         }));
       });
       it('should get costBreakdownTotal as total', () => {
@@ -217,7 +217,7 @@ describe('InvoiceAmountComponent', () => {
     let loadInvoiceOverviewDetail$: Subject<InvoiceOverviewDetail>;
     beforeEach(() => {
       loadInvoiceAmountDetail$ = new Subject();
-      component.formGroup = new FormGroup({});
+      component.formGroup = new UntypedFormGroup({});
       component.loadInvoiceAmountDetail$ = loadInvoiceAmountDetail$.asObservable();
     });
     beforeEach(() => {
@@ -421,12 +421,12 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should not populate form when no invoice amount details when form group has no fields set', done => {
-      component._formGroup = new FormGroup(
+      component._formGroup = new UntypedFormGroup(
         {
-          costBreakdownItems: new FormArray([]),
-          pendingChargeLineItems: new FormArray([]),
-          deniedChargeLineItems: new FormArray([]),
-          disputeLineItems: new FormArray([])
+          costBreakdownItems: new UntypedFormArray([]),
+          pendingChargeLineItems: new UntypedFormArray([]),
+          deniedChargeLineItems: new UntypedFormArray([]),
+          disputeLineItems: new UntypedFormArray([])
         }
       );
       loadInvoiceAmountDetail$.subscribe(() => {
@@ -596,15 +596,15 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should call acceptCharge and add the line item to cost breakdown charges', async (done) => {
-      component.pendingChargeLineItems.push(new FormGroup({
-        charge: new FormControl('Charge'),
-        requestStatus: new FormControl('Successful'),
-        responseComment: new FormControl('N/A'),
-        closedDate: new FormControl('N/A'),
-        closedBy: new FormControl('N/A')
+      component.pendingChargeLineItems.push(new UntypedFormGroup({
+        charge: new UntypedFormControl('Charge'),
+        requestStatus: new UntypedFormControl('Successful'),
+        responseComment: new UntypedFormControl('N/A'),
+        closedDate: new UntypedFormControl('N/A'),
+        closedBy: new UntypedFormControl('N/A')
       }));
-      component.costBreakdownItems.push(new FormGroup({
-        charge: new FormControl('Other Charge')
+      component.costBreakdownItems.push(new UntypedFormGroup({
+        charge: new UntypedFormControl('Other Charge')
       }));
 
       const modalResponse$ = new Subject<any>();
@@ -624,15 +624,15 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should call denyCharge and add the line item to denied charges', async (done) => {
-      component.pendingChargeLineItems.push(new FormGroup({
-        charge: new FormControl('Pending Charge'),
-        requestStatus: new FormControl('Successful'),
-        responseComment: new FormControl('N/A'),
-        closedDate: new FormControl('N/A'),
-        closedBy: new FormControl('N/A')
+      component.pendingChargeLineItems.push(new UntypedFormGroup({
+        charge: new UntypedFormControl('Pending Charge'),
+        requestStatus: new UntypedFormControl('Successful'),
+        responseComment: new UntypedFormControl('N/A'),
+        closedDate: new UntypedFormControl('N/A'),
+        closedBy: new UntypedFormControl('N/A')
       }));
-      component.costBreakdownItems.push(new FormGroup({
-        charge: new FormControl('Other Charge')
+      component.costBreakdownItems.push(new UntypedFormGroup({
+        charge: new UntypedFormControl('Other Charge')
       }));
 
       const modalResponse$ = new Subject<any>();
@@ -704,13 +704,13 @@ describe('InvoiceAmountComponent', () => {
   });
 
   describe('select rate charge', () => {
-    let lineItem: FormGroup;
+    let lineItem: UntypedFormGroup;
     beforeEach(() => {
       spyOn(component.rateEngineCall, 'emit');
       component.amountOfInvoiceControl.setValue(10);
-      component.costBreakdownItems.push(new FormGroup({
-        charge: new FormControl('Fuel Surcharge - Miles'),
-        totalAmount: new FormControl(10)
+      component.costBreakdownItems.push(new UntypedFormGroup({
+        charge: new UntypedFormControl('Fuel Surcharge - Miles'),
+        totalAmount: new UntypedFormControl(10)
       }));
       lineItem = component.createEmptyLineItemGroup();
       component.costBreakdownItems.push(lineItem);
@@ -729,7 +729,7 @@ describe('InvoiceAmountComponent', () => {
 
     it('resolve dispute accept action', done => {
       // Setup
-      const disputeLineItem = new FormGroup({})
+      const disputeLineItem = new UntypedFormGroup({})
       const resolveDisputeModal$ = new Subject<CommentModel>();
       asSpy(utilService.openCommentModal).and.returnValue(resolveDisputeModal$.asObservable());
       component.resolveDispute('Accept', disputeLineItem);
@@ -746,7 +746,7 @@ describe('InvoiceAmountComponent', () => {
 
     it('resolve dispute deny action', done => {
       // Setup
-      const disputeLineItem = new FormGroup({})
+      const disputeLineItem = new UntypedFormGroup({})
       const resolveDisputeModal$ = new Subject<CommentModel>();
       asSpy(utilService.openCommentModal).and.returnValue(resolveDisputeModal$.asObservable());
       component.resolveDispute('Deny', disputeLineItem);
@@ -983,17 +983,17 @@ describe('InvoiceAmountComponent', () => {
   it('should be able to get cost breakdown total while missing line total', () => {
     component.amountOfInvoiceControl.setValue(123.45);
     component.costBreakdownItems.clear();
-    component.costBreakdownItems.push(new FormGroup({}));
+    component.costBreakdownItems.push(new UntypedFormGroup({}));
     const result = component.costBreakdownTotal;
     expect(result).toBe(0);
   });
 
   it('should call onEditCostLineItem and emit to rate engine', async () => {
-    component._formGroup = new FormGroup({
-      pendingChargeLineItems: new FormArray([
-        new FormGroup({
-          uid: new FormControl('OTHER1'),
-          charge: new FormControl('OTHER')
+    component._formGroup = new UntypedFormGroup({
+      pendingChargeLineItems: new UntypedFormArray([
+        new UntypedFormGroup({
+          uid: new UntypedFormControl('OTHER1'),
+          charge: new UntypedFormControl('OTHER')
         })
       ])
     });
@@ -1019,10 +1019,10 @@ describe('InvoiceAmountComponent', () => {
   });
 
   it('should call onEditCostLineItem with file being passed.', async () => {
-    component.costBreakdownItems.push(new FormGroup({
-      uid: new FormControl('OTHER1'),
-      charge: new FormControl('OTHER'),
-      attachment: new FormControl()
+    component.costBreakdownItems.push(new UntypedFormGroup({
+      uid: new UntypedFormControl('OTHER1'),
+      charge: new UntypedFormControl('OTHER'),
+      attachment: new UntypedFormControl()
     }));
     const costLineItem = component.costBreakdownItemsControls[0];
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
@@ -1041,9 +1041,9 @@ describe('InvoiceAmountComponent', () => {
   });
 
   it('should call onEditCostLineItem for Spot Quote.', async () => {
-    component.costBreakdownItems.push(new FormGroup({
-      uid: new FormControl('SPOTQUOTE1'),
-      charge: new FormControl('Spot Quote'),
+    component.costBreakdownItems.push(new UntypedFormGroup({
+      uid: new UntypedFormControl('SPOTQUOTE1'),
+      charge: new UntypedFormControl('Spot Quote'),
     }));
     const costLineItem = component.costBreakdownItemsControls[0];
     spyOn(component.getAccessorialDetails, 'emit').and.stub();
@@ -1061,10 +1061,10 @@ describe('InvoiceAmountComponent', () => {
   });
 
   it('should call onEditCostLineItem with NO new file being passed and no existing file', async () => {
-    component.costBreakdownItems.push(  new FormGroup({
-      uid: new FormControl('OTHER1'),
-      charge: new FormControl('OTHER'),
-      attachment: new FormControl()
+    component.costBreakdownItems.push(  new UntypedFormGroup({
+      uid: new UntypedFormControl('OTHER1'),
+      charge: new UntypedFormControl('OTHER'),
+      attachment: new UntypedFormControl()
     }));
 
     const costLineItem = component.costBreakdownItemsControls[0];
@@ -1083,9 +1083,9 @@ describe('InvoiceAmountComponent', () => {
   });
 
   it('should call onEditCostLineItem with NO new file being passed and an existing file.', async () => {
-    component.costBreakdownItems.push(  new FormGroup({
-      charge: new FormControl('OTHER'),
-      attachment: new FormControl()
+    component.costBreakdownItems.push(  new UntypedFormGroup({
+      charge: new UntypedFormControl('OTHER'),
+      attachment: new UntypedFormControl()
     }));
     const attachment = {fileName: 'test'};
     component.costBreakdownItemsControls[0].get('attachment')?.setValue(attachment);
@@ -1115,9 +1115,9 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should call onDeleteCostLineItem and remove the line item', async () => {
-      component.costBreakdownItems.push(new FormGroup({
-        accessorialCode: new FormControl('TST'),
-        persisted: new FormControl(true),
+      component.costBreakdownItems.push(new UntypedFormGroup({
+        accessorialCode: new UntypedFormControl('TST'),
+        persisted: new UntypedFormControl(true),
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
       await component.onDeleteCostLineItem(costLineItem, 0);
@@ -1126,10 +1126,10 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should call onDeleteCostLineItem and remove the OTHER line item', async () => {
-      component.costBreakdownItems.push(new FormGroup({
-        accessorialCode: new FormControl(''),
-        charge: new FormControl('OTHER'),
-        persisted: new FormControl(true),
+      component.costBreakdownItems.push(new UntypedFormGroup({
+        accessorialCode: new UntypedFormControl(''),
+        charge: new UntypedFormControl('OTHER'),
+        persisted: new UntypedFormControl(true),
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
       await component.onDeleteCostLineItem(costLineItem, 0);
@@ -1138,17 +1138,17 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should call onDeleteCostLineItem and remove the OTHER line item', async () => {
-      component.costBreakdownItems.push(new FormGroup({
-        uid: new FormControl('OTHER1'),
-        accessorialCode: new FormControl(''),
-        charge: new FormControl('OTHER'),
-        persisted: new FormControl(true),
+      component.costBreakdownItems.push(new UntypedFormGroup({
+        uid: new UntypedFormControl('OTHER1'),
+        accessorialCode: new UntypedFormControl(''),
+        charge: new UntypedFormControl('OTHER'),
+        persisted: new UntypedFormControl(true),
       }));
-      component.costBreakdownItems.push(new FormGroup({
-        uid: new FormControl('OTHER2'),
-        accessorialCode: new FormControl(''),
-        charge: new FormControl('OTHER'),
-        persisted: new FormControl(true),
+      component.costBreakdownItems.push(new UntypedFormGroup({
+        uid: new UntypedFormControl('OTHER2'),
+        accessorialCode: new UntypedFormControl(''),
+        charge: new UntypedFormControl('OTHER'),
+        persisted: new UntypedFormControl(true),
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
       await component.onDeleteCostLineItem(costLineItem, 0);
@@ -1160,10 +1160,10 @@ describe('InvoiceAmountComponent', () => {
     });
 
     it('should call onDeleteCostLineItem and remove the line item without modal', async () => {
-      component.costBreakdownItems.push(new FormGroup({
-        accessorialCode: new FormControl('TST'),
-        persisted: new FormControl(false),
-        entrySource: new FormControl('FAL')
+      component.costBreakdownItems.push(new UntypedFormGroup({
+        accessorialCode: new UntypedFormControl('TST'),
+        persisted: new UntypedFormControl(false),
+        entrySource: new UntypedFormControl('FAL')
       }));
       const costLineItem = component.costBreakdownItemsControls[0];
       await component.onDeleteCostLineItem(costLineItem, 0);

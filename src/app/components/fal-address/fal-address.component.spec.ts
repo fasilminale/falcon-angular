@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, UntypedFormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { BillToLocation, EMPTY_LOCATION, ShippingPointLocation, ShippingPointLocationSelectOption } from 'src/app/models/location/location-model';
 import { FalconTestingModule } from 'src/app/testing/falcon-testing.module';
@@ -21,7 +21,7 @@ describe('FalAddressComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FalAddressComponent);
     component = fixture.componentInstance;
-    component.formGroup = new FormGroup({});
+    component.formGroup = new UntypedFormGroup({});
 
     component.loadAddress$ = new Subject<ShippingPointLocation>().asObservable();
     component.loadFilteredShippingPointLocations$ = new Subject<ShippingPointLocationSelectOption[]>().asObservable();
@@ -34,7 +34,7 @@ describe('FalAddressComponent', () => {
   });
 
   it('should set form group', () => {
-    component.formGroup = new FormGroup({});
+    component.formGroup = new UntypedFormGroup({});
     expect(component._formGroup.get('name')).toBeDefined();
     expect(component._formGroup.get('country')).toBeDefined();
     expect(component._formGroup.get('city')).toBeDefined();

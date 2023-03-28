@@ -8,7 +8,7 @@ import {Carrier, TenderMethod} from '../../../models/master-data-models/carrier-
 import {YesNo} from '../../../models/master-data-models/yes-no-model';
 import {CarrierModeCode, TripType} from '../../../models/master-data-models/carrier-mode-code-model';
 import {ServiceLevel} from '../../../models/master-data-models/service-level-model';
-import {FormControl, FormGroup} from '@angular/forms';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
 import {FreightPaymentTerms, TripInformation, WeightAdjustment} from '../../../models/invoice/trip-information-model';
 import {CarrierSCAC} from '../../../models/master-data-models/carrier-scac';
 import {CarrierDetailModel} from '../../../models/master-data-models/carrier-detail-model';
@@ -404,9 +404,9 @@ describe('TripInformationComponent', () => {
   });
 
   describe('#formGroup', () => {
-    let parentFormGroup: FormGroup;
+    let parentFormGroup: UntypedFormGroup;
     beforeEach(() => {
-      parentFormGroup = new FormGroup({});
+      parentFormGroup = new UntypedFormGroup({});
     });
     it('should have default value', () => {
       fixture.detectChanges();
@@ -1198,17 +1198,17 @@ describe('TripInformationComponent', () => {
     }
 
     it('should return null when match is found', () => {
-      const control = new FormControl({id: 'A'});
+      const control = new UntypedFormControl({id: 'A'});
       const result = component.validateIsOption(options, comparator)(control);
       expect(result).toBeNull();
     });
     it('should return error when match is NOT found', () => {
-      const control = new FormControl({id: 'C'});
+      const control = new UntypedFormControl({id: 'C'});
       const result = component.validateIsOption(options, comparator)(control);
       expect(result).toEqual({invalidSelectOption: true});
     });
     it('should return null for carriers when comparator is provided', () => {
-      const control = new FormControl({scac: 'SOME'});
+      const control = new UntypedFormControl({scac: 'SOME'});
       const scacOptions: Array<SelectOption<unknown>> = [{value: {scac: 'SOME', name: 'Some Carrier'}}] as any;
       const result = component.validateIsOption(scacOptions, component.compareCarrierWith)(control);
       expect(result).toBeNull();
@@ -1404,7 +1404,7 @@ describe('TripInformationComponent', () => {
   });
 
   it('should test errors is null', () => {
-    component.bolNumberControl = {} as FormControl;
+    component.bolNumberControl = {} as UntypedFormControl;
     const messages = component.bolNumberControlErrorMessages;
     expect(messages).toEqual([]);
   });

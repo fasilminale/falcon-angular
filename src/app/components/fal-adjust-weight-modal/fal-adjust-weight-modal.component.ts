@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {UntypedFormControl, UntypedFormGroup} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-fal-adjust-weight-modal',
@@ -9,14 +9,14 @@ import {MAT_DIALOG_DATA, MatDialogRef} from 'node_modules/@elm/elm-styleguide-ui
 })
 export class FalAdjustWeightModalComponent implements OnInit {
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   @Output() confirmAction: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: WeightAdjustmentModalInput, private dialogRef: MatDialogRef<FalAdjustWeightModalComponent>) {
-    this.form = new FormGroup({
-      currentWeight: new FormControl(data.currentWeight),
-      adjustedWeight: new FormControl(0.0)
+    this.form = new UntypedFormGroup({
+      currentWeight: new UntypedFormControl(data.currentWeight),
+      adjustedWeight: new UntypedFormControl(0.0)
     });
   }
 

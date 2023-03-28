@@ -28,7 +28,7 @@ import {NgbDatepickerModule, NgbModule, NgbTooltipModule} from '@ng-bootstrap/ng
 import {FalDateInputComponent} from './components/fal-date-input/fal-date-input.component';
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LoadingService} from './services/loading-service';
-import {MatDialog, MatDialogModule} from 'node_modules/@elm/elm-styleguide-ui/node_modules/@angular/material/dialog';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatListModule} from '@angular/material/list';
@@ -93,6 +93,7 @@ import { InvoiceLockListPageComponent } from './pages/invoice-lock-list-page/inv
 import {FalPageHeaderComponent} from './components/fal-page-header/fal-page-header.component';
 import {FalEditStatusModalComponent} from './components/fal-edit-status-modal/fal-edit-status-modal.component';
 import {WebSocketService} from './services/web-socket-service';
+import {APP_BASE_HREF} from '@angular/common';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -239,6 +240,7 @@ const oktaConfig = {
     MatIconModule,
   ],
   providers: [
+    {provide: APP_BASE_HREF, useValue: '/falcon/'},
     WebServices,
     MatSnackBar,
     LoadingService,
