@@ -583,7 +583,8 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       standardPaymentTermsOverride: paymentTermsOverridenValue,
       billOfLadingNumber: CommonUtils.handleNAValues(this.invoice.billOfLadingNumber),
       currency: this.invoiceAmountFormGroup.controls.currency.value,
-      payable: this.invoice.payable
+      payable: this.invoice.payable,
+      isSpotQuotePresent: this.invoice.isSpotQuotePresent
     };
   }
 
