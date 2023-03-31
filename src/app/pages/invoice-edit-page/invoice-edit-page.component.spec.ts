@@ -1109,6 +1109,7 @@ describe('InvoiceEditPageComponent', () => {
     it('should return EditAutoInvoiceModel object', () => {
       isPaymentOverrideSelected.push(new UntypedFormControl('override'));
       setUpControls();
+      component.invoice.isSpotQuotePresent = false;
       const result = component.mapTripInformationToEditAutoInvoiceModel();
       expect(result).toEqual({
         amountOfInvoice: component.invoiceAmountFormGroup.controls.amountOfInvoice.value,
@@ -1145,7 +1146,8 @@ describe('InvoiceEditPageComponent', () => {
         hasRateEngineError: component.invoice.hasRateEngineError,
         billOfLadingNumber: 'TESTBOL123',
         currency: 'USD',
-        payable: false
+        payable: false,
+        isSpotQuotePresent: false
       });
     });
   });
