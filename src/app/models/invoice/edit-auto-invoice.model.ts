@@ -33,4 +33,5 @@ export interface EditAutoInvoiceModel {
   billOfLadingNumber: string;
   currency: string;
   payable: boolean;
+  isSpotQuotePresent: boolean;
 }
