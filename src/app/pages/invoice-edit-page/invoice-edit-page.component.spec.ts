@@ -1147,7 +1147,7 @@ describe('InvoiceEditPageComponent', () => {
         billOfLadingNumber: 'TESTBOL123',
         currency: 'USD',
         payable: false,
-        isSpotQuotePresent: false
+        spotQuotePresent: false
       });
     });
   });
