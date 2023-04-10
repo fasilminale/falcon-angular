@@ -19,6 +19,7 @@ import { SelectOption } from '../select-option-model/select-option-model';
 import {RemitHistoryItem} from "./remit-history-item";
 import {WeightAdjustment} from './trip-information-model';
 import {HistoryLog} from './history-log';
+import { Revenue, RevenueTotal } from './revenue.model';
 
 export class InvoiceDataModel {
 
@@ -120,6 +121,8 @@ export class InvoiceDataModel {
   glLineItemsErrors?: Array<GlLineItemError>;
   glLineItemsInvalid: boolean;
   freightOrders: Array<FreightOrder>;
+  revenues: Array<Revenue>;
+  totalRevenuesPerCustomer: Array<RevenueTotal>;
 
   constructor(json?: any) {
     const {currency, status, date, paymentTerms, getCityStateStr} = InvoiceDataModel;
@@ -233,6 +236,9 @@ export class InvoiceDataModel {
     this.glLineItemsErrors = json?.glLineItemsErrors ?? [];
     this.glLineItemsInvalid = json?.glLineItemsInvalid ?? false;
     this.freightOrders = json?.freightOrders ?? [];
+
+    this.revenues = json?.revenues ?? [];
+    this.totalRevenuesPerCustomer = json?.totalRevenuesPerCustomer ?? [];
   }
 
   private static getCityStateStr(value:Location):string {

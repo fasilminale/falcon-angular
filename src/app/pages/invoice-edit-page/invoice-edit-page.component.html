@@ -111,6 +111,11 @@
         >
         </app-invoice-allocation>
         <hr/>
+
+        <app-invoice-customer-revenues [formGroup]="invoiceCustomerRevenueDetailFormGroup"
+        [loadCustomerRevenueDetails]="loadCustomerRevenueDetails$.asObservable()">
+        </app-invoice-customer-revenues>
+        <hr/>
         <div *ngIf="invoice.hasRateEngineError" class="headline3 w-100 text-center text-danger">
           <small>There were errors while attempting to re-rate.</small>
         </div>

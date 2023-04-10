@@ -1,0 +1,21 @@
+.invoice-customer-revenue-header {
+    background-color: #f6f6f6;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+ .invoice-customer-revenue-header > div{
+    font-size: 14px;
+    font-weight: 700;
+ }
+
+ .invoice-customer-revenue-row{
+   margin-bottom: 15px;
+ }
+
+.invoice-customer-revenue-total-div {
+  background-color:#f6f6f6;
+}
+
+:host::ng-deep .elm-input-subtext.elm-input-error {
+  margin-top: unset !important;
+}
