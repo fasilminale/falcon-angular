@@ -26,6 +26,7 @@ import {CostLineItem, DisputeLineItem, GlLineItem} from '../../models/line-item/
 import {InvoiceLockService} from '../../services/invoice-lock-service';
 import {WebSocketService} from '../../services/web-socket-service';
 import {EnvironmentService} from '../../services/environment-service/environment-service';
+import { InvoiceCustomerRevenueDetail } from 'src/app/models/invoice/invoice-customer-revenue-detail.model';
 
 
 @Component({
@@ -50,10 +51,12 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
     this.tripInformationFormGroup = new UntypedFormGroup({});
     this.invoiceAmountFormGroup = new UntypedFormGroup({});
     this.invoiceAllocationFormGroup = new UntypedFormGroup({});
+    this.invoiceCustomerRevenueDetailFormGroup = new UntypedFormGroup({});
     this.invoiceFormGroup = new UntypedFormGroup({
       tripInformation: this.tripInformationFormGroup,
       invoiceAmount: this.invoiceAmountFormGroup,
-      invoiceAllocation: this.invoiceAllocationFormGroup
+      invoiceAllocation: this.invoiceAllocationFormGroup,
+      invoiceCustomerRevenue: this.invoiceCustomerRevenueDetailFormGroup
     });
   }
 
@@ -74,6 +77,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   public tripInformationFormGroup: UntypedFormGroup;
   public invoiceAmountFormGroup: UntypedFormGroup;
   public invoiceAllocationFormGroup: UntypedFormGroup;
+  public invoiceCustomerRevenueDetailFormGroup: UntypedFormGroup;
 
   public isGlobalEditMode$ = new SubjectValue<boolean>(false);
   public isTripEditMode$ = new SubjectValue<boolean>(false);
@@ -82,6 +86,7 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
   public loadInvoiceOverviewDetail$ = new Subject<InvoiceOverviewDetail>();
   public loadInvoiceAmountDetail$ = new Subject<InvoiceAmountDetail>();
   public loadAllocationDetails$ = new Subject<InvoiceAllocationDetail>();
+  public loadCustomerRevenueDetails$ = new Subject<InvoiceCustomerRevenueDetail>();
   public chargeLineItemOptions$ = new Subject<RateDetailResponse>();
 
   public standardPaymentTermsOverrideValid = true;
@@ -230,6 +235,13 @@ export class InvoiceEditPageComponent implements OnInit, OnDestroy {
       glLineItems: invoice.glLineItems,
       glLineItemsErrors: this.invoice.glLineItemsErrors,
       glLineItemsInvalid: this.invoice.glLineItemsInvalid
+    });
+
+    this.loadCustomerRevenueDetails$.next({
+      totalRevenueAmount: invoice.totalRevenuesPerCustomer && invoice.totalRevenuesPerCustomer.length > 0 
+        ? invoice.totalRevenuesPerCustomer.map(rc => rc.value).reduce(function(rc1, rc2) { return rc1 + rc2; }) : 0,
+      revenues: invoice.revenues,
+      totalRevenuesPerCustomer: invoice.totalRevenuesPerCustomer
     });
   }
 

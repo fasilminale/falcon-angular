@@ -322,7 +322,33 @@ describe('InvoiceEditPageComponent', () => {
           assumedDeliveryDateTime: new Date().toISOString(),
           tripTenderTime: new Date().toISOString(),
           totalGrossWeight: 1000,
-          payable: false
+          payable: false,
+          revenues: [{
+            customer: "BAX",
+            rate: {
+              accessorialList: [],
+              lineItems: [{
+                description: "Description",
+                rate: '',
+                rateType: "WEIGHT",
+                runningTotal: "300.00",
+                lineItemTotal: "300.00",
+                lineItemType: "LineType",
+                step: '',
+                quantity: 1,
+                costName: '',
+                accessorial: false,
+                message: ''
+              }]
+            }
+          }],
+          totalRevenuesPerCustomer: [{
+            customer: "BAX",
+            value: 300.00
+          },{
+            customer: "BD",
+            value: 300.00
+          }]
         };
         spyOn(component, 'updateInvoiceFromForms').and.stub();
         spyOn(rateService, 'rateInvoice').and.returnValue(of(testInvoice));
