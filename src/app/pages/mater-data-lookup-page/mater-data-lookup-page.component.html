@@ -1,0 +1,171 @@
+<elm-page-header [breadcrumbs]="breadcrumbs"
+                 [helpUrl]="environmentService.helpUrl"
+                 headerTitle="Master Data Lookup">
+</elm-page-header>
+<div>
+  <ul #nav="ngbNav"
+      [destroyOnHide]="false"
+      class="nav-tabs mb-3"
+      ngbNav>
+    <li ngbNavItem="CarrierLookup">
+      <a ngbNavLink>Carrier Lookup</a>
+      <ng-template ngbNavContent>
+
+        <elm-card [addPadding]="true" height="300px" overflow="visible">
+          <div class="row dropdowns">
+            <div class="col-xl flex-col-standard-spacing"
+                 [formGroup]="lookupGroup">
+              <label class="assignment-label">Carrier</label>
+              <ng-select (change)="getCarrier()"
+                         [items]="carriers"
+                         [searchable]="true"
+                         bindLabel="label"
+                         bindValue="scac"
+                         class="label-spacing"
+                         formControlName="selectControl"
+                         placeholder="Select One....">
+              </ng-select>
+            </div>
+            <div class="col-md flex-row-standard-spacing" >
+              <div style="margin-left: 16px;">
+                <label class="form-label elm-field-label1"
+                       for="scac" >
+                  SCAC
+                </label>
+                <div [innerHTML]="this.selectedCarrier.scac"
+                     id="scac"></div>
+              </div>
+
+              <div style="margin-left: 16px;">
+                <label class="form-label elm-field-label1"
+                       for="name">
+                  Carrier Name
+                </label>
+                <div [innerHTML]="this.selectedCarrier.name"
+                     id="name"></div>
+              </div>
+              <div style="margin-left: 16px;">
+                <label class="form-label elm-field-label1"
+                       for="email">
+                  Tender Email
+                </label>
+                <div [innerHTML]="this.selectedCarrier.tenderEmail"
+                     id="email"></div>
+              </div>
+              <div style="margin-left: 16px;">
+                <label class="form-label elm-field-label1"
+                       for="method">
+                  Tender Method
+                </label>
+                <div [innerHTML]="this.selectedCarrier.tenderMethod"
+                     id="method"></div>
+              </div>
+            </div>
+
+          </div>
+        </elm-card>
+      </ng-template>
+    </li>
+    <li ngbNavItem="LookupShippingPoint">
+      <a ngbNavLink>Shipping Point Warehouse Lookup</a>
+      <ng-template ngbNavContent>
+
+        <elm-card [addPadding]="true">
+          <div >
+            <div class="flex-row-standard-spacing">
+              <div [formGroup]="lookupGroup">
+                <label class="assignment-label">Shipping Point Code</label>
+                <elm-text-input formControlName="shippingControl"
+                                width="200px"
+                                labelPosition="top"
+                                (keyup.enter)="getShippingPointTableData()"
+                                [addSpacing]="true">
+                </elm-text-input>
+              </div>
+              <div [formGroup]="lookupGroup">
+                <label class="assignment-label">Address</label>
+                <elm-text-input formControlName="addressControl"
+                                width="200px"
+                                labelPosition="top"
+                                (keyup.enter)="getShippingPointTableData()"
+                                [addSpacing]="true">
+                </elm-text-input>
+              </div>
+              <div [formGroup]="lookupGroup">
+                <label class="assignment-label">City</label>
+                <elm-text-input formControlName="cityControl"
+                                width="200px"
+                                labelPosition="top"
+                                (keyup.enter)="getShippingPointTableData()"
+                                [addSpacing]="true">
+                </elm-text-input>
+              </div>
+              <div [formGroup]="lookupGroup">
+                <label class="assignment-label">State</label>
+                <elm-text-input formControlName="stateControl"
+                                width="100px"
+                                labelPosition="top"
+                                (keyup.enter)="getShippingPointTableData()"
+                                [addSpacing]="true">
+                </elm-text-input>
+              </div>
+              <div [formGroup]="lookupGroup">
+                <label class="assignment-label">Zip</label>
+                <elm-text-input formControlName="zipControl"
+                                width="100px"
+                                labelPosition="top"
+                                (keyup.enter)="getShippingPointTableData()"
+                                [addSpacing]="true">
+                </elm-text-input>
+              </div>
+              <div [formGroup]="lookupGroup">
+                <label class="assignment-label">Country</label>
+                <elm-text-input formControlName="countryControl"
+                                width="100px"
+                                labelPosition="top"
+                                (keyup.enter)="getShippingPointTableData()"
+                                [addSpacing]="true">
+                </elm-text-input>
+              </div>
+            </div>
+          </div>
+          <div class="actions">
+            <elm-button
+              (buttonClick)="getShippingPointTableData()"
+              [isDisabled]="!(lookupGroup.controls.shippingControl.value ||
+                              lookupGroup.controls.addressControl.value ||
+                              lookupGroup.controls.cityControl.value ||
+                              lookupGroup.controls.stateControl.value ||
+                              lookupGroup.controls.zipControl.value ||
+                              lookupGroup.controls.countryControl.value
+                        )">
+              LOOKUP
+            </elm-button>
+          </div>
+        </elm-card>
+        <elm-card [margin]="'16px 0 0'">
+          <elm-section-header (reloadEvent)="getShippingPointTableData()"
+                              [sectionSubtitle]="lastRefresh"
+                              [showReload]="false"
+                              sectionTitle="Search Results ({{shippingPointPageState.totalResults}})"></elm-section-header>
+          <elm-data-table [headers]="shippingLookupHeaders"
+                          [data]="shippingPoints"
+                          [totalResults]="shippingPointPageState.totalResults"
+                          [pageSizes]="shippingPointPageState.pageSizeOptions"
+                          tableType="standard"
+                          [shouldSort] = "false"
+                          [showPagination]="false"
+                          [noResultsMessage]="this.noResultsMessage">
+
+          </elm-data-table>
+        </elm-card>
+      </ng-template>
+    </li>
+
+  </ul>
+  <div [ngbNavOutlet]="nav"></div>
+</div>
+
+
+
+

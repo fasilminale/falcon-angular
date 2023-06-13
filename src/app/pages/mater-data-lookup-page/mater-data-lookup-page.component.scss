@@ -1,0 +1,8 @@
+@use "@elm/elm-styleguide-ui/src/styles/utility/elm-colors" as colors;
+@use "src/app/styles/mixins";
+@use "src/app/styles/user-action-container";
+
+::ng-deep.no-results-found{
+  text-align: center;
+  white-space: pre-wrap;
+}

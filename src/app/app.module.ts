@@ -94,6 +94,7 @@ import {FalPageHeaderComponent} from './components/fal-page-header/fal-page-head
 import {FalEditStatusModalComponent} from './components/fal-edit-status-modal/fal-edit-status-modal.component';
 import {WebSocketService} from './services/web-socket-service';
 import {APP_BASE_HREF} from '@angular/common';
+import { MaterDataLookupPageComponent } from './pages/mater-data-lookup-page/mater-data-lookup-page.component';
 
 const getOktaConfig = () => {
   const fullURL = window.location.origin;
@@ -197,7 +198,8 @@ const oktaConfig = {
     FalAdjustWeightModalComponent,
     FalEditGlModalComponent,
     FalHistoryLogModalComponent,
-    InvoiceLockListPageComponent
+    InvoiceLockListPageComponent,
+    MaterDataLookupPageComponent
   ],
   imports: [
     BrowserModule,
